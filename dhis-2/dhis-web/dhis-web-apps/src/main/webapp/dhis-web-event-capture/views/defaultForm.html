@@ -495,10 +495,10 @@
                                         <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                                     </span>
                                 </div>
-                                <div ng-switch-when="BOOLEAN" class="form-control">
-
-                                    <label class="radio-inline">
-                                        <span>
+                                <span>
+                                <div ng-switch-when="BOOLEAN">
+                                    <span class="form-control input-with-audit">
+                                        <label class="radio-inline">
                                             <input type="radio"
                                                 ng-model="currentEvent[de.dataElement.id]"
                                                 ng-required={{prStDes[de.dataElement.id].compulsory}}
@@ -507,11 +507,8 @@
                                                 ng-change="saveDatavalue()"
                                                 value="">
                                             {{'no_value'| translate}}
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                        </span>
-                                    </label>
-                                    <label class="radio-inline">
-                                        <span>
+                                        </label>
+                                        <label class="radio-inline">
                                             <input type="radio"
                                                 ng-model="currentEvent[de.dataElement.id]"
                                                 ng-required={{prStDes[de.dataElement.id].compulsory}}
@@ -520,11 +517,8 @@
                                                 ng-change="saveDatavalue()"
                                                 value="true">
                                             {{'yes'| translate}}
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                        </span>
-                                    </label>
-                                    <label class="radio-inline">
-                                        <span>
+                                        </label>
+                                        <label class="radio-inline">
                                             <input type="radio"
                                                 ng-model="currentEvent[de.dataElement.id]"
                                                 ng-required={{prStDes[de.dataElement.id].compulsory}}
@@ -533,10 +527,12 @@
                                                 ng-change="saveDatavalue()"
                                                 value="false">
                                                 {{'no'| translate}}
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                        </span>
-                                    </label>
+                                        </label>
+                                    </span>
+                                    <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                                 </div>
+
+
                                 <div ng-switch-when="DATE">
                                     <span>
                                         <input type="text"
