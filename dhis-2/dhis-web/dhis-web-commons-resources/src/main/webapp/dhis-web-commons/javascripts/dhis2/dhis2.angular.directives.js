@@ -424,9 +424,6 @@ var d2Directives = angular.module('d2Directives', [])
                                 return $scope.type;
                             },
                             currentEvent: function() {
-                                if($scope.currentEvent === "SINGLE_EVENT") {
-                                    alert("Single Event !!!");
-                                }
                                 return $scope.currentEvent;
                             },
                             selectedTeiId: function() {
