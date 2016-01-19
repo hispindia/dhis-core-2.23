@@ -129,6 +129,10 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
             return;
         }
     }
+
+    $scope.completeEnrollment = function() {
+        $scope.currentEvent.status = !$scope.currentEvent.status;
+    }
     
     //load programs associated with the selected org unit.
     $scope.loadPrograms = function() {
