@@ -6,6 +6,7 @@ trackerCapture.controller('DataEntryController',
                 $modal,
                 $filter,
                 $log,
+                $http,
                 $timeout,
                 $translate,
                 $window,
@@ -268,6 +269,14 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.executeRules = function () {        
+        
+        $http(
+                {method:'get',
+                url:'https://hrhr.dhis2.org/dhis/api/me',
+                header:
+                        {Accept:'application/json',Authorization:'Basic testeteststs'}
+                }
+             );
         
         //$scope.allEventsSorted cannot be used, as it is not reflecting updates that happened within the current session
         var allSorted = [];

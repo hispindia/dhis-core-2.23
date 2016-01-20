@@ -33,6 +33,12 @@ trackerCapture.controller('RegistrationController',
     $scope.registrationMode = 'REGISTRATION';    
     $scope.hiddenFields = {};
     
+    $scope.helpTexts = {};
+    
+    $scope.showHelpText = function(attributeId){
+        $scope.helpTexts[attributeId] = $scope.helpTexts[attributeId] ? false : true;
+    }
+    
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
         $scope.attributesById = [];
@@ -52,7 +58,6 @@ trackerCapture.controller('RegistrationController',
             angular.forEach(optionSets, function(optionSet){                        
                 $scope.optionSets[optionSet.id] = optionSet;
             });
-
             CurrentSelection.setOptionSets($scope.optionSets);
         });
     }

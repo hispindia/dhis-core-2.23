@@ -3,6 +3,10 @@
     <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled)">
         <td>
             <span ng-bind="attribute.name"></span><span ng-if="attribute.mandatory || attribute.unique" class="required">*</span>
+            <a ng-if="attribute.description" Title="{{attribute.description}}" ng-click="showHelpText(attribute.id)">
+                <span class="glyphicon glyphicon-info-sign" ></span>
+                <span ng-show="helpTexts[attribute.id]" ><br>{{attribute.description}}</span>
+            </a>
         </td>
         <td>
             <ng-form name="innerForm">
