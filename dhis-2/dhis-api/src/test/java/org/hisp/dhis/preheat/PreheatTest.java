@@ -28,6 +28,7 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import org.hisp.dhis.dataelement.DataElement;
 import org.junit.Test;
 
@@ -109,5 +110,88 @@ public class PreheatTest
         assertEquals( de1.getCode(), preheat.get( PreheatIdentifier.CODE, DataElement.class, de1.getCode() ).getCode() );
         assertEquals( de2.getCode(), preheat.get( PreheatIdentifier.CODE, DataElement.class, de2.getCode() ).getCode() );
         assertEquals( de3.getCode(), preheat.get( PreheatIdentifier.CODE, DataElement.class, de3.getCode() ).getCode() );
+    }
+
+    @Test
+    public void testPutCollectionUid()
+    {
+        Preheat preheat = new Preheat();
+
+        DataElement de1 = new DataElement( "dataElementA" );
+        DataElement de2 = new DataElement( "dataElementB" );
+        DataElement de3 = new DataElement( "dataElementC" );
+
+        de1.setAutoFields();
+        de2.setAutoFields();
+        de3.setAutoFields();
+
+        preheat.put( PreheatIdentifier.UID, Lists.newArrayList( de1, de2, de3 ) );
+
+        assertFalse( preheat.isEmpty() );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID ) );
+        assertTrue( preheat.isEmpty( PreheatIdentifier.CODE ) );
+
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de1.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de2.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de3.getUid() ) );
+
+        assertEquals( de1.getUid(), preheat.get( PreheatIdentifier.UID, DataElement.class, de1.getUid() ).getUid() );
+        assertEquals( de2.getUid(), preheat.get( PreheatIdentifier.UID, DataElement.class, de2.getUid() ).getUid() );
+        assertEquals( de3.getUid(), preheat.get( PreheatIdentifier.UID, DataElement.class, de3.getUid() ).getUid() );
+    }
+
+    @Test
+    public void testPutCollectionRemoveOneUid()
+    {
+        Preheat preheat = new Preheat();
+
+        DataElement de1 = new DataElement( "dataElementA" );
+        DataElement de2 = new DataElement( "dataElementB" );
+        DataElement de3 = new DataElement( "dataElementC" );
+
+        de1.setAutoFields();
+        de2.setAutoFields();
+        de3.setAutoFields();
+
+        preheat.put( PreheatIdentifier.UID, Lists.newArrayList( de1, de2, de3 ) );
+
+        assertFalse( preheat.isEmpty() );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID ) );
+        assertTrue( preheat.isEmpty( PreheatIdentifier.CODE ) );
+
+        preheat.remove( PreheatIdentifier.UID, DataElement.class, de2.getUid() );
+
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de1.getUid() ) );
+        assertFalse( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de2.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de3.getUid() ) );
+
+        assertEquals( de1.getUid(), preheat.get( PreheatIdentifier.UID, DataElement.class, de1.getUid() ).getUid() );
+        assertEquals( de3.getUid(), preheat.get( PreheatIdentifier.UID, DataElement.class, de3.getUid() ).getUid() );
+    }
+
+    @Test
+    public void testPutCollectionRemoveAllUid()
+    {
+        Preheat preheat = new Preheat();
+
+        DataElement de1 = new DataElement( "dataElementA" );
+        DataElement de2 = new DataElement( "dataElementB" );
+        DataElement de3 = new DataElement( "dataElementC" );
+
+        de1.setAutoFields();
+        de2.setAutoFields();
+        de3.setAutoFields();
+
+        preheat.put( PreheatIdentifier.UID, Lists.newArrayList( de1, de2, de3 ) );
+
+        assertFalse( preheat.isEmpty() );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID ) );
+        assertTrue( preheat.isEmpty( PreheatIdentifier.CODE ) );
+
+        preheat.remove( PreheatIdentifier.UID, DataElement.class, Lists.newArrayList( de1.getUid(), de2.getUid(), de3.getUid() ) );
+
+        assertFalse( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de1.getUid() ) );
+        assertFalse( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de2.getUid() ) );
+        assertFalse( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de3.getUid() ) );
     }
 }

@@ -30,6 +30,7 @@ package org.hisp.dhis.preheat;
 
 import org.hisp.dhis.common.IdentifiableObject;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,6 +43,22 @@ public class Preheat
 
     public Preheat()
     {
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
+    {
+        if ( !containsKey( identifier, klass, key ) )
+        {
+            return null;
+        }
+
+        return (T) map.get( identifier ).get( klass ).get( key );
+    }
+
+    public boolean containsKey( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
+    {
+        return !(isEmpty() || isEmpty( identifier ) || isEmpty( identifier, klass )) && map.get( identifier ).get( klass ).containsKey( key );
     }
 
     public boolean isEmpty()
@@ -78,19 +95,33 @@ public class Preheat
         return this;
     }
 
-    @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
+    public <T extends IdentifiableObject> Preheat put( PreheatIdentifier identifier, Collection<T> objects )
     {
-        if ( !containsKey( identifier, klass, key ) )
+        for ( T object : objects )
         {
-            return null;
+            put( identifier, object );
         }
 
-        return (T) map.get( identifier ).get( klass ).get( key );
+        return this;
     }
 
-    public boolean containsKey( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
+    public Preheat remove( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
     {
-        return !(isEmpty() || isEmpty( identifier ) || isEmpty( identifier, klass )) && map.get( identifier ).get( klass ).containsKey( key );
+        if ( containsKey( identifier, klass, key ) )
+        {
+            map.get( identifier ).get( klass ).remove( key );
+        }
+
+        return this;
+    }
+
+    public Preheat remove( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, Collection<String> keys )
+    {
+        for ( String key : keys )
+        {
+            remove( identifier, klass, key );
+        }
+
+        return this;
     }
 }
