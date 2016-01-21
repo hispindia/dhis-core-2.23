@@ -31,19 +31,10 @@ package org.hisp.dhis.preheat;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface PreheatService
+public class PreheatException extends RuntimeException
 {
-    /**
-     * Preheat a set of pre-defined classes. If size == 0, then preheat all metadata classes automatically.
-     *
-     * @param params Params for preheating
-     */
-    Preheat preheat( PreheatParams params );
-
-    /**
-     * Validate PreheatParams.
-     *
-     * @param params PreheatParams
-     */
-    void validate( PreheatParams params ) throws PreheatException;
+    public PreheatException( String message )
+    {
+        super( message );
+    }
 }

@@ -28,22 +28,56 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface PreheatService
+public class PreheatParams
 {
-    /**
-     * Preheat a set of pre-defined classes. If size == 0, then preheat all metadata classes automatically.
-     *
-     * @param params Params for preheating
-     */
-    Preheat preheat( PreheatParams params );
+    private PreheatMode preheatMode = PreheatMode.ALL;
 
-    /**
-     * Validate PreheatParams.
-     *
-     * @param params PreheatParams
-     */
-    void validate( PreheatParams params ) throws PreheatException;
+    private Collection<Class<?>> classes = new ArrayList<>();
+
+    private Map<Class<?>, Collection<String>> references = new HashMap<>();
+
+    public PreheatParams()
+    {
+    }
+
+    public PreheatMode getPreheatMode()
+    {
+        return preheatMode;
+    }
+
+    public PreheatParams setPreheatMode( PreheatMode preheatMode )
+    {
+        this.preheatMode = preheatMode;
+        return this;
+    }
+
+    public Collection<Class<?>> getClasses()
+    {
+        return classes;
+    }
+
+    public PreheatParams setClasses( Collection<Class<?>> classes )
+    {
+        this.classes = classes;
+        return this;
+    }
+
+    public Map<Class<?>, Collection<String>> getReferences()
+    {
+        return references;
+    }
+
+    public PreheatParams setReferences( Map<Class<?>, Collection<String>> references )
+    {
+        this.references = references;
+        return this;
+    }
 }

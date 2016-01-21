@@ -31,19 +31,15 @@ package org.hisp.dhis.preheat;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface PreheatService
+public enum PreheatMode
 {
     /**
-     * Preheat a set of pre-defined classes. If size == 0, then preheat all metadata classes automatically.
-     *
-     * @param params Params for preheating
+     * Scan objects for references.
      */
-    Preheat preheat( PreheatParams params );
+    REFERENCE,
 
     /**
-     * Validate PreheatParams.
-     *
-     * @param params PreheatParams
+     * Load inn all object of given types.
      */
-    void validate( PreheatParams params ) throws PreheatException;
+    ALL;
 }

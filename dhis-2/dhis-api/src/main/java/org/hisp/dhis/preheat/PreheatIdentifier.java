@@ -28,22 +28,33 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface PreheatService
+public enum PreheatIdentifier
 {
     /**
-     * Preheat a set of pre-defined classes. If size == 0, then preheat all metadata classes automatically.
-     *
-     * @param params Params for preheating
+     * Preheat using UID identifiers.
      */
-    Preheat preheat( PreheatParams params );
+    UID,
 
     /**
-     * Validate PreheatParams.
-     *
-     * @param params PreheatParams
+     * Preheat using CODE identifiers.
      */
-    void validate( PreheatParams params ) throws PreheatException;
+    CODE;
+
+    <T extends IdentifiableObject> String getIdentifier( T object )
+    {
+        switch ( this )
+        {
+            case UID:
+                return object.getUid();
+            case CODE:
+                return object.getCode();
+        }
+
+        throw new RuntimeException( "Unhandled identifier type." );
+    }
 }
