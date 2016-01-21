@@ -567,8 +567,6 @@ public class InMemoryQueryEngineTest
 
         query.add( Restrictions.like( "dataElements.dataElementGroups.name", "A", MatchMode.END ) );
         List<? extends IdentifiableObject> objects = queryEngine.query( query );
-
-        System.err.println( "xyz: " + objects );
     }
 
     @Test
