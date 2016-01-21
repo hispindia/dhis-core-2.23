@@ -45,6 +45,23 @@ public class DefaultPreheatService implements PreheatService
     @Override
     public void validate( PreheatParams params ) throws PreheatException
     {
-
+        if ( PreheatMode.ALL == params.getPreheatMode() )
+        {
+            if ( params.getClasses().isEmpty() )
+            {
+                throw new PreheatException( "PreheatMode.ALL, but no classes was provided." );
+            }
+        }
+        else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
+        {
+            if ( params.getReferences().isEmpty() )
+            {
+                throw new PreheatException( "PreheatMode.REFERENCE, but no references was provided." );
+            }
+        }
+        else
+        {
+            throw new PreheatException( "Invalid preheat mode." );
+        }
     }
 }

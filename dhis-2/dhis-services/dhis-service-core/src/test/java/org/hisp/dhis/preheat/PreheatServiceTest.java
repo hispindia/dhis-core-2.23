@@ -28,69 +28,50 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.dataelement.DataElement;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class PreheatParams
+public class PreheatServiceTest
+    extends DhisSpringTest
 {
-    private PreheatMode preheatMode = PreheatMode.ALL;
+    @Autowired
+    private PreheatService preheatService;
 
-    private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
-
-    private Collection<Class<?>> classes = new ArrayList<>();
-
-    private Map<Class<?>, Collection<String>> references = new HashMap<>();
-
-    public PreheatParams()
+    @Test( expected = PreheatException.class )
+    public void testValidateAllFail()
     {
+        PreheatParams params = new PreheatParams().setPreheatMode( PreheatMode.ALL );
+        preheatService.validate( params );
     }
 
-    public PreheatMode getPreheatMode()
+    @Test
+    public void testValidateAll()
     {
-        return preheatMode;
+        PreheatParams params = new PreheatParams().setPreheatMode( PreheatMode.ALL );
+        params.getClasses().add( DataElement.class );
+
+        preheatService.validate( params );
     }
 
-    public PreheatParams setPreheatMode( PreheatMode preheatMode )
+    @Test( expected = PreheatException.class )
+    public void testValidateRefFail()
     {
-        this.preheatMode = preheatMode;
-        return this;
+        PreheatParams params = new PreheatParams().setPreheatMode( PreheatMode.REFERENCE );
+        preheatService.validate( params );
     }
 
-    public PreheatIdentifier getPreheatIdentifier()
+    @Test
+    public void testValidateRef()
     {
-        return preheatIdentifier;
-    }
+        PreheatParams params = new PreheatParams().setPreheatMode( PreheatMode.REFERENCE );
+        params.getReferences().put( DataElement.class, Lists.newArrayList( "ID1", "ID2" ) );
 
-    public PreheatParams setPreheatIdentifier( PreheatIdentifier preheatIdentifier )
-    {
-        this.preheatIdentifier = preheatIdentifier;
-        return this;
-    }
-
-    public Collection<Class<?>> getClasses()
-    {
-        return classes;
-    }
-
-    public PreheatParams setClasses( Collection<Class<?>> classes )
-    {
-        this.classes = classes;
-        return this;
-    }
-
-    public Map<Class<?>, Collection<String>> getReferences()
-    {
-        return references;
-    }
-
-    public PreheatParams setReferences( Map<Class<?>, Collection<String>> references )
-    {
-        this.references = references;
-        return this;
+        preheatService.validate( params );
     }
 }
