@@ -28,10 +28,6 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -41,18 +37,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class DefaultPreheatService implements PreheatService
 {
     @Override
-    public void preheat( Set<Class<?>> classes )
+    public Preheat preheat( PreheatParams params )
     {
-        reset();
+        return null;
     }
 
     @Override
-    public void preheat( Map<Class<?>, Collection<String>> classes )
-    {
-        reset();
-    }
-
-    private void reset()
+    public void validate( PreheatParams params ) throws PreheatException
     {
 
     }
