@@ -149,4 +149,43 @@ public class PreheatServiceTest
         assertTrue( references.get( DataElement.class ).contains( de3.getUid() ) );
         assertEquals( user.getUid(), references.get( User.class ).get( 0 ) );
     }
+
+    @Test
+    public void testScanReferenceCodeDEG()
+    {
+        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
+        dataElementGroup.setAutoFields();
+
+        DataElement de1 = new DataElement( "DataElement1" );
+        DataElement de2 = new DataElement( "DataElement1" );
+        DataElement de3 = new DataElement( "DataElement1" );
+
+        de1.setAutoFields();
+        de1.setCode( "DataElementCode1" );
+        de2.setAutoFields();
+        de2.setCode( "DataElementCode2" );
+        de3.setAutoFields();
+        de3.setCode( "DataElementCode3" );
+
+        User user = new User();
+        user.setAutoFields();
+
+        dataElementGroup.addDataElement( de1 );
+        dataElementGroup.addDataElement( de2 );
+        dataElementGroup.addDataElement( de3 );
+
+        dataElementGroup.setUser( user );
+
+        Map<Class<? extends IdentifiableObject>, List<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.CODE );
+
+        assertTrue( references.containsKey( DataElement.class ) );
+        assertTrue( references.containsKey( User.class ) );
+
+        assertEquals( 3, references.get( DataElement.class ).size() );
+        assertTrue( references.get( User.class ).isEmpty() );
+
+        assertTrue( references.get( DataElement.class ).contains( de1.getCode() ) );
+        assertTrue( references.get( DataElement.class ).contains( de2.getCode() ) );
+        assertTrue( references.get( DataElement.class ).contains( de3.getCode() ) );
+    }
 }
