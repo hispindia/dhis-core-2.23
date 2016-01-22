@@ -28,6 +28,11 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+
+import java.util.Collection;
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
@@ -46,4 +51,13 @@ public interface PreheatService
      * @param params PreheatParams
      */
     void validate( PreheatParams params ) throws PreheatException;
+
+    /**
+     * Scan object and collect all references (both id object and collections with id objects).
+     *
+     * @param object     Object to scan
+     * @param identifier Identifier to collect
+     * @return Maps classes to collections of identifiers
+     */
+    Map<Class<? extends IdentifiableObject>, Collection<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier );
 }

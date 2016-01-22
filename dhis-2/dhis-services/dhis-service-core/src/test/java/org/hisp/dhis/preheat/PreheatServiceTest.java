@@ -30,9 +30,20 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
+import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.legend.LegendSet;
+import org.hisp.dhis.option.OptionSet;
+import org.hisp.dhis.user.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
+import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -73,5 +84,31 @@ public class PreheatServiceTest
         params.getReferences().put( DataElement.class, Lists.newArrayList( "ID1", "ID2" ) );
 
         preheatService.validate( params );
+    }
+
+    @Test
+    public void testScanNoObjectsDE()
+    {
+        DataElement dataElement = new DataElement( "DataElementA" );
+        dataElement.setAutoFields();
+
+        Map<Class<? extends IdentifiableObject>, Collection<String>> references = preheatService.scanObjectForReferences( dataElement, PreheatIdentifier.UID );
+
+        assertTrue( references.containsKey( OptionSet.class ) );
+        assertTrue( references.containsKey( LegendSet.class ) );
+        assertTrue( references.containsKey( DataElementCategoryCombo.class ) );
+        assertTrue( references.containsKey( User.class ) );
+    }
+
+    @Test
+    public void testScanNoObjectsDEG()
+    {
+        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
+        dataElementGroup.setAutoFields();
+
+        Map<Class<? extends IdentifiableObject>, Collection<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
+
+        assertTrue( references.containsKey( DataElement.class ) );
+        assertTrue( references.containsKey( User.class ) );
     }
 }
