@@ -1499,7 +1499,7 @@ trackerCapture.controller('DataEntryController',
                     else {
                         if ($scope.currentStage.allowGenerateNextVisit) {
                             if($scope.currentStage.repeatable){
-                                $scope.showCreateEvent($scope.currentStage, $scope.eventCreationActions.add);
+                                $scope.showCreateEvent($scope.currentStage, $scope.eventCreationActions.schedule);
                             }
                             else{
                                 var index = -1, stage = null;
@@ -1511,7 +1511,7 @@ trackerCapture.controller('DataEntryController',
                                 }
                                 if(stage ){
                                     if(!$scope.eventsByStage[stage.id] || $scope.eventsByStage[stage.id] && $scope.eventsByStage[stage.id].length === 0){
-                                        $scope.showCreateEvent(stage, $scope.eventCreationActions.add);
+                                        $scope.showCreateEvent(stage, $scope.eventCreationActions.schedule);
                                     }
                                 }                                
                             }
