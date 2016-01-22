@@ -40,9 +40,10 @@ import org.hisp.dhis.user.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -92,7 +93,7 @@ public class PreheatServiceTest
         DataElement dataElement = new DataElement( "DataElementA" );
         dataElement.setAutoFields();
 
-        Map<Class<? extends IdentifiableObject>, Collection<String>> references = preheatService.scanObjectForReferences( dataElement, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, List<String>> references = preheatService.scanObjectForReferences( dataElement, PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( OptionSet.class ) );
         assertTrue( references.containsKey( LegendSet.class ) );
@@ -106,9 +107,46 @@ public class PreheatServiceTest
         DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
         dataElementGroup.setAutoFields();
 
-        Map<Class<? extends IdentifiableObject>, Collection<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, List<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertTrue( references.containsKey( User.class ) );
+    }
+
+    @Test
+    public void testScanReferenceUidDEG()
+    {
+        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
+        dataElementGroup.setAutoFields();
+
+        DataElement de1 = new DataElement( "DataElement1" );
+        DataElement de2 = new DataElement( "DataElement1" );
+        DataElement de3 = new DataElement( "DataElement1" );
+
+        de1.setAutoFields();
+        de2.setAutoFields();
+        de3.setAutoFields();
+
+        User user = new User();
+        user.setAutoFields();
+
+        dataElementGroup.addDataElement( de1 );
+        dataElementGroup.addDataElement( de2 );
+        dataElementGroup.addDataElement( de3 );
+
+        dataElementGroup.setUser( user );
+
+        Map<Class<? extends IdentifiableObject>, List<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
+
+        assertTrue( references.containsKey( DataElement.class ) );
+        assertTrue( references.containsKey( User.class ) );
+
+        assertEquals( 3, references.get( DataElement.class ).size() );
+        assertEquals( 1, references.get( User.class ).size() );
+
+        assertTrue( references.get( DataElement.class ).contains( de1.getUid() ) );
+        assertTrue( references.get( DataElement.class ).contains( de2.getUid() ) );
+        assertTrue( references.get( DataElement.class ).contains( de3.getUid() ) );
+        assertEquals( user.getUid(), references.get( User.class ).get( 0 ) );
     }
 }

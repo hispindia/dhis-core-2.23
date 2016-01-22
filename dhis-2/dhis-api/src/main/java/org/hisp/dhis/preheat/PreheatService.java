@@ -30,7 +30,7 @@ package org.hisp.dhis.preheat;
 
 import org.hisp.dhis.common.IdentifiableObject;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,5 +59,5 @@ public interface PreheatService
      * @param identifier Identifier to collect
      * @return Maps classes to collections of identifiers
      */
-    Map<Class<? extends IdentifiableObject>, Collection<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier );
+    Map<Class<? extends IdentifiableObject>, List<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier );
 }

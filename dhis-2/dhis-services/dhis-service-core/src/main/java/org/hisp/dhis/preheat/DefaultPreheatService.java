@@ -33,6 +33,7 @@ import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.PropertyType;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
+import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,9 +84,9 @@ public class DefaultPreheatService implements PreheatService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, Collection<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier )
+    public Map<Class<? extends IdentifiableObject>, List<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier )
     {
-        Map<Class<? extends IdentifiableObject>, Collection<String>> map = new HashMap<>();
+        Map<Class<? extends IdentifiableObject>, List<String>> map = new HashMap<>();
 
         if ( object == null )
         {
@@ -102,11 +103,51 @@ public class DefaultPreheatService implements PreheatService
             {
                 Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getKlass();
                 if ( !map.containsKey( klass ) ) map.put( klass, new ArrayList<>() );
+                Object reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+
+                if ( reference != null )
+                {
+                    IdentifiableObject identifiableObject = (IdentifiableObject) reference;
+
+                    if ( PreheatIdentifier.UID == identifier )
+                    {
+                        if ( identifiableObject.getUid() != null )
+                        {
+                            map.get( klass ).add( identifiableObject.getUid() );
+                        }
+                    }
+                    else if ( PreheatIdentifier.CODE == identifier )
+                    {
+                        if ( identifiableObject.getCode() != null )
+                        {
+                            map.get( klass ).add( identifiableObject.getCode() );
+                        }
+                    }
+                }
             }
             else
             {
                 Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getItemKlass();
                 if ( !map.containsKey( klass ) ) map.put( klass, new ArrayList<>() );
+                Collection<IdentifiableObject> reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+
+                for ( IdentifiableObject identifiableObject : reference )
+                {
+                    if ( PreheatIdentifier.UID == identifier )
+                    {
+                        if ( identifiableObject.getUid() != null )
+                        {
+                            map.get( klass ).add( identifiableObject.getUid() );
+                        }
+                    }
+                    else if ( PreheatIdentifier.CODE == identifier )
+                    {
+                        if ( identifiableObject.getCode() != null )
+                        {
+                            map.get( klass ).add( identifiableObject.getCode() );
+                        }
+                    }
+                }
             }
         } );
 
