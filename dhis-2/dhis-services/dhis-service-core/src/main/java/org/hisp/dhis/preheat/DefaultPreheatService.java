@@ -85,7 +85,6 @@ public class DefaultPreheatService implements PreheatService
                 else if ( PreheatIdentifier.CODE == params.getPreheatIdentifier() )
                 {
                     List<? extends IdentifiableObject> objects = manager.getByCode( klass, identifiers );
-                    System.err.println( "objects: " + objects );
                     preheat.put( params.getPreheatIdentifier(), objects );
                 }
             }
