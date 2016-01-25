@@ -895,7 +895,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
         ModalService.showModal({}, modalOptions).then(function(result){
             
             DHIS2EventFactory.delete(dhis2Event).then(function(data){
-                
+
                 $scope.currentFileNames = [];
                 delete $scope.fileNames[$scope.currentEvent.event];
                 var continueLoop = true, index = -1;
@@ -909,6 +909,16 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 $scope.dhis2Events.splice(index,1);                
                 $scope.currentEvent = {}; 
                 $scope.fileNames['SINGLE_EVENT'] = [];
+            }, function(error){
+
+                //temporarily error message because of new audit functionality
+                var dialogOptions = {
+                    headerText: 'error',
+                    bodyText: 'delete_error_audit'
+                };
+                DialogService.showDialog({}, dialogOptions);
+
+                return $q.reject(error);
             });
         });        
     };
