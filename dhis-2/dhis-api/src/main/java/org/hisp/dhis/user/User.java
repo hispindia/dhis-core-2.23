@@ -681,6 +681,7 @@ public class User
         return "{" +
             "\"id\":\"" + id + "\", " +
             "\"uid\":\"" + uid + "\", " +
+            "\"code\":\"" + code + "\", " +
             "\"created\":\"" + created + "\", " +
             "\"lastUpdated\":\"" + lastUpdated + "\", " +
             "\"surname\":\"" + surname + "\", " +

@@ -29,6 +29,7 @@ package org.hisp.dhis.preheat;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.PropertyType;
 import org.hisp.dhis.schema.Schema;
@@ -37,11 +38,12 @@ import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -53,10 +55,43 @@ public class DefaultPreheatService implements PreheatService
     @Autowired
     private SchemaService schemaService;
 
+    @Autowired
+    private IdentifiableObjectManager manager;
+
     @Override
     public Preheat preheat( PreheatParams params )
     {
-        return null;
+        Preheat preheat = new Preheat();
+
+        if ( PreheatMode.ALL == params.getPreheatMode() )
+        {
+            for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
+            {
+                List<? extends IdentifiableObject> objects = manager.getAllNoAcl( klass ); // should we use getAll here? are we allowed to reference unshared objects?
+                preheat.put( params.getPreheatIdentifier(), objects );
+            }
+        }
+        else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
+        {
+            for ( Class<? extends IdentifiableObject> klass : params.getReferences().keySet() )
+            {
+                Collection<String> identifiers = params.getReferences().get( klass );
+
+                if ( PreheatIdentifier.UID == params.getPreheatIdentifier() )
+                {
+                    List<? extends IdentifiableObject> objects = manager.getByUid( klass, identifiers );
+                    preheat.put( params.getPreheatIdentifier(), objects );
+                }
+                else if ( PreheatIdentifier.CODE == params.getPreheatIdentifier() )
+                {
+                    List<? extends IdentifiableObject> objects = manager.getByCode( klass, identifiers );
+                    System.err.println( "objects: " + objects );
+                    preheat.put( params.getPreheatIdentifier(), objects );
+                }
+            }
+        }
+
+        return preheat;
     }
 
     @Override
@@ -84,9 +119,9 @@ public class DefaultPreheatService implements PreheatService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, List<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier )
+    public Map<Class<? extends IdentifiableObject>, Set<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier )
     {
-        Map<Class<? extends IdentifiableObject>, List<String>> map = new HashMap<>();
+        Map<Class<? extends IdentifiableObject>, Set<String>> map = new HashMap<>();
 
         if ( object == null )
         {
@@ -102,7 +137,7 @@ public class DefaultPreheatService implements PreheatService
             if ( !p.isCollection() )
             {
                 Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getKlass();
-                if ( !map.containsKey( klass ) ) map.put( klass, new ArrayList<>() );
+                if ( !map.containsKey( klass ) ) map.put( klass, new HashSet<>() );
                 Object reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                 if ( reference != null )
@@ -128,7 +163,7 @@ public class DefaultPreheatService implements PreheatService
             else
             {
                 Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getItemKlass();
-                if ( !map.containsKey( klass ) ) map.put( klass, new ArrayList<>() );
+                if ( !map.containsKey( klass ) ) map.put( klass, new HashSet<>() );
                 Collection<IdentifiableObject> reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                 for ( IdentifiableObject identifiableObject : reference )

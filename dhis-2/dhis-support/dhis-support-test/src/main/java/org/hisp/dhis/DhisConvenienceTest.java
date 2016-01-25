@@ -964,7 +964,7 @@ public abstract class DhisConvenienceTest
      *                              evaluated by this rule.
      * @param sequentialSampleCount How many sequential past periods to sample.
      * @param annualSampleCount     How many years of past periods to sample.
-    */
+     */
     public static ValidationRule createMonitoringRule( char uniqueCharacter, Operator operator, Expression leftSide,
         Expression rightSide, PeriodType periodType, int organisationUnitLevel, int sequentialSampleCount,
         int annualSampleCount )
@@ -1083,6 +1083,7 @@ public abstract class DhisConvenienceTest
         user.setSurname( "Surname" + uniqueCharacter );
         user.setEmail( "Email" + uniqueCharacter );
         user.setPhoneNumber( "PhoneNumber" + uniqueCharacter );
+        user.setCode( "UserCode" + uniqueCharacter );
 
         return user;
     }
@@ -1125,7 +1126,7 @@ public abstract class DhisConvenienceTest
     {
         return createProgram( uniqueCharacter, null, null );
     }
-    
+
     public static Program createProgram( char uniqueCharacter, Set<ProgramStage> programStages,
         OrganisationUnit unit )
     {
@@ -1610,7 +1611,7 @@ public abstract class DhisConvenienceTest
         List<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add( new SimpleGrantedAuthority( "ALL" ) );
 
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User( 
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(
             user.getUserCredentials().getUsername(), user.getUserCredentials().getPassword(), authorities );
 
         Authentication authentication = new UsernamePasswordAuthenticationToken( userDetails, "", authorities );

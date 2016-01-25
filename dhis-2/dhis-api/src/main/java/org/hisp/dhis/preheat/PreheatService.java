@@ -32,6 +32,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -59,5 +60,5 @@ public interface PreheatService
      * @param identifier Identifier to collect
      * @return Maps classes to collections of identifiers
      */
-    Map<Class<? extends IdentifiableObject>, List<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier );
+    Map<Class<? extends IdentifiableObject>, Set<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier );
 }

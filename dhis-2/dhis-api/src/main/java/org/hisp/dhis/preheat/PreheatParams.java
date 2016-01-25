@@ -28,10 +28,12 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.ArrayList;
-import java.util.Collection;
+import org.hisp.dhis.common.IdentifiableObject;
+
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -42,9 +44,9 @@ public class PreheatParams
 
     private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
 
-    private Collection<Class<?>> classes = new ArrayList<>();
+    private Set<Class<? extends IdentifiableObject>> classes = new HashSet<>();
 
-    private Map<Class<?>, Collection<String>> references = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, Set<String>> references = new HashMap<>();
 
     public PreheatParams()
     {
@@ -72,23 +74,23 @@ public class PreheatParams
         return this;
     }
 
-    public Collection<Class<?>> getClasses()
+    public Set<Class<? extends IdentifiableObject>> getClasses()
     {
         return classes;
     }
 
-    public PreheatParams setClasses( Collection<Class<?>> classes )
+    public PreheatParams setClasses( Set<Class<? extends IdentifiableObject>> classes )
     {
         this.classes = classes;
         return this;
     }
 
-    public Map<Class<?>, Collection<String>> getReferences()
+    public Map<Class<? extends IdentifiableObject>, Set<String>> getReferences()
     {
         return references;
     }
 
-    public PreheatParams setReferences( Map<Class<?>, Collection<String>> references )
+    public PreheatParams setReferences( Map<Class<? extends IdentifiableObject>, Set<String>> references )
     {
         this.references = references;
         return this;
