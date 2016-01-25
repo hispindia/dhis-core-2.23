@@ -60,12 +60,19 @@ public class DefaultPreheatService implements PreheatService
     private IdentifiableObjectManager manager;
 
     @Override
+    @SuppressWarnings( "unchecked" )
     public Preheat preheat( PreheatParams params )
     {
         Preheat preheat = new Preheat();
 
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {
+            if ( params.getClasses().isEmpty() )
+            {
+                schemaService.getMetadataSchemas().stream().filter( Schema::isIdentifiableObject )
+                    .forEach( schema -> params.getClasses().add( (Class<? extends IdentifiableObject>) schema.getKlass() ) );
+            }
+
             for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
             {
                 List<? extends IdentifiableObject> objects = manager.getAllNoAcl( klass ); // should we use getAll here? are we allowed to reference unshared objects?
@@ -99,10 +106,7 @@ public class DefaultPreheatService implements PreheatService
     {
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {
-            if ( params.getClasses().isEmpty() )
-            {
-                throw new PreheatException( "PreheatMode.ALL, but no classes was provided." );
-            }
+            // nothing to validate for now, if classes is empty it will get all metadata classes
         }
         else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
         {

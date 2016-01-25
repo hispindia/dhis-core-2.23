@@ -38,6 +38,7 @@ import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.user.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -59,6 +60,7 @@ public class PreheatServiceTest
     @Autowired
     private IdentifiableObjectManager manager;
 
+    @Ignore
     @Test( expected = PreheatException.class )
     public void testValidateAllFail()
     {
@@ -255,6 +257,50 @@ public class PreheatServiceTest
         PreheatParams params = new PreheatParams();
         params.setPreheatMode( PreheatMode.ALL );
         params.setClasses( Sets.newHashSet( DataElement.class, DataElementGroup.class, User.class ) );
+
+        preheatService.validate( params );
+        Preheat preheat = preheatService.preheat( params );
+
+        assertFalse( preheat.isEmpty() );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID ) );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID, DataElement.class ) );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID, DataElementGroup.class ) );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID, User.class ) );
+
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de1.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de2.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, de3.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElementGroup.class, dataElementGroup.getUid() ) );
+        assertTrue( preheat.containsKey( PreheatIdentifier.UID, User.class, user.getUid() ) );
+    }
+
+    @Test
+    @SuppressWarnings( "unchecked" )
+    public void testPreheatAllMetadataUID()
+    {
+        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
+        dataElementGroup.setAutoFields();
+
+        DataElement de1 = createDataElement( 'A' );
+        DataElement de2 = createDataElement( 'B' );
+        DataElement de3 = createDataElement( 'C' );
+
+        manager.save( de1 );
+        manager.save( de2 );
+        manager.save( de3 );
+
+        User user = createUser( 'A' );
+        manager.save( user );
+
+        dataElementGroup.addDataElement( de1 );
+        dataElementGroup.addDataElement( de2 );
+        dataElementGroup.addDataElement( de3 );
+
+        dataElementGroup.setUser( user );
+        manager.save( dataElementGroup );
+
+        PreheatParams params = new PreheatParams();
+        params.setPreheatMode( PreheatMode.ALL );
 
         preheatService.validate( params );
         Preheat preheat = preheatService.preheat( params );
