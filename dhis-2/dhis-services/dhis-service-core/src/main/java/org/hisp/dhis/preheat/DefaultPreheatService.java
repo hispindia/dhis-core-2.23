@@ -193,7 +193,6 @@ public class DefaultPreheatService implements PreheatService
                     }
                 }
             }
-
         } );
 
         return map;
