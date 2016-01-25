@@ -187,4 +187,23 @@ public class DefaultPreheatService implements PreheatService
 
         return map;
     }
+
+    @Override
+    public Map<Class<? extends IdentifiableObject>, Set<String>> scanObjectsForReferences( Set<Object> objects, PreheatIdentifier identifier )
+    {
+        Map<Class<? extends IdentifiableObject>, Set<String>> referenceMap = new HashMap<>();
+
+        for ( Object object : objects )
+        {
+            Map<Class<? extends IdentifiableObject>, Set<String>> references = scanObjectForReferences( object, identifier );
+
+            for ( Class<? extends IdentifiableObject> klass : references.keySet() )
+            {
+                if ( !referenceMap.containsKey( klass ) ) referenceMap.put( klass, new HashSet<>() );
+                referenceMap.get( klass ).addAll( references.get( klass ) );
+            }
+        }
+
+        return referenceMap;
+    }
 }
