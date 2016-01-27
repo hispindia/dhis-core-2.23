@@ -55,7 +55,7 @@
                                name="foo" 
                                class="form-control input-with-audit"
                                ng-model="selectedTei[attribute.id]" 
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
@@ -117,7 +117,7 @@
                                name="foo" 
                                class="form-control input-with-audit"
                                ng-model="selectedTei[attribute.id]"
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
@@ -130,11 +130,11 @@
                         <d2-audit dataelement-id="{{attribute.id}}" dataelement-name="{{attribute.name}}" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>
                     </span>
                     <span ng-switch-when="EMAIL">
-                        <input type="email" 
+                        <input type="email"
                                name="foo" 
                                class="form-control input-with-audit"
                                ng-model="selectedTei[attribute.id]"
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
@@ -149,8 +149,8 @@
                                name="foo" 
                                class="form-control input-with-audit"
                                ng-model="selectedTei[attribute.id]" 
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }" 
-                               d2-attribute-validator 
+                               d2-attribute-validator
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }" 
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
                                selected-tei-id={{selectedTei.trackedEntityInstance}}  
@@ -165,12 +165,11 @@
                                name="foo" 
                                class="form-control-trimmed input-with-audit"
                                ng-model="selectedTei[attribute.id]" 
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator 
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
-                               selected-tei-id={{selectedTei.trackedEntityInstance}}  
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               selected-tei-id={{selectedTei.trackedEntityInstance}}
                                ng-disabled="true" 
                                ng-blur="teiValueUpdated(selectedTei, attribute.id)"
                                style="width:75%;"
@@ -190,7 +189,7 @@
                                name="foo" 
                                class="form-control input-with-audit"
                                ng-model="selectedTei[attribute.id]" 
-                               ng-model-options="{ updateOn: 'blur', allowInvalid: true }"
+                               ng-model-options="{ updateOn: 'default blur', allowInvalid: true }"
                                d2-attribute-validator
                                attribute-data={{attribute}}
                                selected-program-id={{selectedProgram.id}}  
