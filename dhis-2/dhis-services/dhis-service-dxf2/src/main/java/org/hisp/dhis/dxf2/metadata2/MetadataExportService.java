@@ -41,4 +41,6 @@ public interface MetadataExportService
     Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> getMetadata( MetadataExportParams params );
 
     void validate( MetadataExportParams params ) throws MetadataExportException;
+
+    MetadataExportParams getParamsFromMap( Map<String, String> parameters );
 }

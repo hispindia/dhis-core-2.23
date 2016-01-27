@@ -56,6 +56,8 @@ public class DefaultSchemaService implements SchemaService
 
     private Map<String, Schema> singularSchemaMap = new HashMap<>();
 
+    private Map<String, Schema> pluralSchemaMap = new HashMap<>();
+
     private Map<Class<?>, Schema> dynamicClassSchemaMap = new HashMap<>();
 
     @Autowired
@@ -92,6 +94,7 @@ public class DefaultSchemaService implements SchemaService
 
             classSchemaMap.put( schema.getKlass(), schema );
             singularSchemaMap.put( schema.getSingular(), schema );
+            pluralSchemaMap.put( schema.getPlural(), schema );
 
             updateSelf( schema );
         }
@@ -170,6 +173,12 @@ public class DefaultSchemaService implements SchemaService
     public Schema getSchemaBySingularName( String name )
     {
         return singularSchemaMap.get( name );
+    }
+
+    @Override
+    public Schema getSchemaByPluralName( String name )
+    {
+        return pluralSchemaMap.get( name );
     }
 
     @Override

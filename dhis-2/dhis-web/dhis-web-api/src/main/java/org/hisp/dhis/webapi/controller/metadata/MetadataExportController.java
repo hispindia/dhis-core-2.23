@@ -43,6 +43,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Date;
@@ -66,12 +67,13 @@ public class MetadataExportController
     private DefaultFieldFilterService fieldFilterService;
 
     @RequestMapping( value = "", method = RequestMethod.GET )
-    public @ResponseBody RootNode getMetadata()
+    public @ResponseBody RootNode getMetadata( @RequestParam Map<String, String> rpParameters )
     {
         RootNode rootNode = NodeUtils.createMetadata();
         rootNode.addChild( new SimpleNode( "date", new Date(), true ) );
 
-        MetadataExportParams params = new MetadataExportParams();
+        MetadataExportParams params = metadataExportService.getParamsFromMap( rpParameters );
+
         Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = metadataExportService.getMetadata( params );
 
         for ( Class<? extends IdentifiableObject> klass : metadata.keySet() )

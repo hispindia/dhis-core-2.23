@@ -28,6 +28,8 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
@@ -36,6 +38,7 @@ import org.hisp.dhis.schema.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +49,8 @@ import java.util.Map;
 @Component
 public class DefaultMetadataExportService implements MetadataExportService
 {
+    private static final Log log = LogFactory.getLog( MetadataExportService.class );
+
     @Autowired
     private SchemaService schemaService;
 
@@ -64,6 +69,8 @@ public class DefaultMetadataExportService implements MetadataExportService
                 .forEach( schema -> params.getClasses().add( (Class<? extends IdentifiableObject>) schema.getKlass() ) );
         }
 
+        log.info( "Export started at " + new Date() );
+
         for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
         {
             Query query;
@@ -79,8 +86,11 @@ public class DefaultMetadataExportService implements MetadataExportService
             }
 
             List<? extends IdentifiableObject> objects = queryService.query( query );
+            log.info( "Exported " + objects.size() + " objects of type " + klass.getSimpleName() );
             metadata.put( klass, objects );
         }
+
+        log.info( "Export done at " + new Date() );
 
         return metadata;
     }
@@ -89,5 +99,24 @@ public class DefaultMetadataExportService implements MetadataExportService
     public void validate( MetadataExportParams params ) throws MetadataExportException
     {
 
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public MetadataExportParams getParamsFromMap( Map<String, String> parameters )
+    {
+        MetadataExportParams params = new MetadataExportParams();
+
+        for ( String p : parameters.keySet() )
+        {
+            Schema schema = schemaService.getSchemaByPluralName( p );
+
+            if ( schema != null && schema.isIdentifiableObject() && "true".equalsIgnoreCase( parameters.get( p ) ) )
+            {
+                params.addClass( (Class<? extends IdentifiableObject>) schema.getKlass() );
+            }
+        }
+
+        return params;
     }
 }
