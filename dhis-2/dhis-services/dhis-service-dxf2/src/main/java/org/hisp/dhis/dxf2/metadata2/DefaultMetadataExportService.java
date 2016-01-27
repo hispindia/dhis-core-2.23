@@ -31,6 +31,10 @@ package org.hisp.dhis.dxf2.metadata2;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.fieldfilter.FieldFilterService;
+import org.hisp.dhis.node.NodeUtils;
+import org.hisp.dhis.node.types.RootNode;
+import org.hisp.dhis.node.types.SimpleNode;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.schema.Schema;
@@ -60,6 +64,9 @@ public class DefaultMetadataExportService implements MetadataExportService
     private QueryService queryService;
 
     @Autowired
+    private FieldFilterService fieldFilterService;
+
+    @Autowired
     private CurrentUserService currentUserService;
 
     @Override
@@ -82,7 +89,7 @@ public class DefaultMetadataExportService implements MetadataExportService
         {
             Query query;
 
-            if ( params.hasQuery( klass ) )
+            if ( params.getQuery( klass ) != null )
             {
                 query = params.getQuery( klass );
             }
@@ -105,6 +112,22 @@ public class DefaultMetadataExportService implements MetadataExportService
         log.info( "Export done at " + new Date() );
 
         return metadata;
+    }
+
+    @Override
+    public RootNode getMetadataAsNode( MetadataExportParams params )
+    {
+        RootNode rootNode = NodeUtils.createMetadata();
+        rootNode.addChild( new SimpleNode( "date", new Date(), true ) );
+
+        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = getMetadata( params );
+
+        for ( Class<? extends IdentifiableObject> klass : metadata.keySet() )
+        {
+            rootNode.addChild( fieldFilterService.filter( klass, metadata.get( klass ), params.getFields( klass ) ) );
+        }
+
+        return rootNode;
     }
 
     @Override

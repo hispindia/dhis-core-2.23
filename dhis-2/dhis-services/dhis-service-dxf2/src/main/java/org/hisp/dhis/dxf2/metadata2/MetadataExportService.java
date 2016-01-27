@@ -29,6 +29,7 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.node.types.RootNode;
 
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,8 @@ import java.util.Map;
 public interface MetadataExportService
 {
     Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> getMetadata( MetadataExportParams params );
+
+    RootNode getMetadataAsNode( MetadataExportParams params );
 
     void validate( MetadataExportParams params ) throws MetadataExportException;
 

@@ -28,11 +28,13 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.query.Query;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +46,10 @@ public class MetadataExportParams
     private Set<Class<? extends IdentifiableObject>> classes = new HashSet<>();
 
     private Map<Class<? extends IdentifiableObject>, Query> queries = new HashMap<>();
+
+    private Map<Class<? extends IdentifiableObject>, List<String>> fields = new HashMap<>();
+
+    private static final List<String> defaultFields = Lists.newArrayList( ":owner" );
 
     public MetadataExportParams()
     {
@@ -80,13 +86,25 @@ public class MetadataExportParams
         return this;
     }
 
-    public boolean hasQuery( Class<? extends IdentifiableObject> klass )
-    {
-        return queries.containsKey( klass );
-    }
-
     public Query getQuery( Class<? extends IdentifiableObject> klass )
     {
-        return queries.containsKey( klass ) ? queries.get( klass ) : null;
+        return queries.get( klass );
+    }
+
+    public MetadataExportParams addFields( Class<? extends IdentifiableObject> klass, List<String> classFields )
+    {
+        if ( !fields.containsKey( klass ) )
+        {
+            fields.put( klass, classFields );
+        }
+
+        fields.get( klass ).addAll( classFields );
+        return this;
+    }
+
+    public List<String> getFields( Class<? extends IdentifiableObject> klass )
+    {
+        List<String> strings = fields.get( klass );
+        return strings != null ? strings : defaultFields;
     }
 }

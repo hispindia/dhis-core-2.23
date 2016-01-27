@@ -28,17 +28,9 @@ package org.hisp.dhis.webapi.controller.metadata;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.collect.Lists;
-import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportParams;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
-import org.hisp.dhis.fieldfilter.DefaultFieldFilterService;
-import org.hisp.dhis.node.NodeUtils;
-import org.hisp.dhis.node.types.CollectionNode;
 import org.hisp.dhis.node.types.RootNode;
-import org.hisp.dhis.node.types.SimpleNode;
-import org.hisp.dhis.schema.Schema;
-import org.hisp.dhis.schema.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,8 +38,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,29 +50,10 @@ public class MetadataExportController
     @Autowired
     private MetadataExportService metadataExportService;
 
-    @Autowired
-    private SchemaService schemaService;
-
-    @Autowired
-    private DefaultFieldFilterService fieldFilterService;
-
     @RequestMapping( value = "", method = RequestMethod.GET )
     public @ResponseBody RootNode getMetadata( @RequestParam Map<String, String> rpParameters )
     {
-        RootNode rootNode = NodeUtils.createMetadata();
-        rootNode.addChild( new SimpleNode( "date", new Date(), true ) );
-
         MetadataExportParams params = metadataExportService.getParamsFromMap( rpParameters );
-
-        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = metadataExportService.getMetadata( params );
-
-        for ( Class<? extends IdentifiableObject> klass : metadata.keySet() )
-        {
-            Schema schema = schemaService.getDynamicSchema( klass );
-            CollectionNode collectionNode = fieldFilterService.filter( klass, metadata.get( klass ), Lists.newArrayList( ":owner" ) );
-            rootNode.addChild( collectionNode );
-        }
-
-        return rootNode;
+        return metadataExportService.getMetadataAsNode( params );
     }
 }
