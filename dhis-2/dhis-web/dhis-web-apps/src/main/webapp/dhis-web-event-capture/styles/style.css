@@ -470,3 +470,7 @@ div#orgUnitTree {
     margin-left: 5%;
     display: inline-block;
 }
+
+.form-narrow-column {
+    width: 80px;
+}

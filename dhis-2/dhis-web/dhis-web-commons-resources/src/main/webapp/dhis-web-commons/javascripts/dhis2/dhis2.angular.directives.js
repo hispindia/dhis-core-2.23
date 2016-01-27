@@ -391,7 +391,8 @@ var d2Directives = angular.module('d2Directives', [])
                 dataElementName: '@dataelementName',
                 currentEvent:'@',
                 type:'@',
-                selectedTeiId:'@'
+                selectedTeiId:'@',
+                isAuditIconPresent:'=?'
             },
             controller:function($scope, $modal) {
                 if (!$scope.dataElementId) {
@@ -400,11 +401,14 @@ var d2Directives = angular.module('d2Directives', [])
 
                 $scope.showAuditIcon = function() {
                     if ($scope.currentEvent && $scope.currentEvent !== 'SINGLE_EVENT') {
+                        $scope.isAuditIconPresent = true;
                         return true;
                     }
                     if ($scope.type === "attribute" && $scope.selectedTeiId) {
+                        $scope.isAuditIconPresent = true;
                         return true;
                     }
+                    $scope.isAuditIconPresent = false;
                     return false;
                 }
 

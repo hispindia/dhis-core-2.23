@@ -6,6 +6,8 @@
             </th>
             <th class="" ng-bind="valueLabel">
             </th>
+            <th class="form-narrow-column" ng-if="currentEvent.event">
+            </th>
             <th class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]" ng-bind="providedElsewhereLabel">
             </th>
         </tr>
@@ -34,18 +36,17 @@
                                             ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                             name="foo"
                                             on-select="saveDatavalue(prStDe, innerForm.foo)"
-                                            style="width:85%;">
+                                            ng-style="{'width': '100%'}">
                                     <ui-select-match allow-clear="true" ng-class="getInputNotifcationClass(prStDe.dataElement.id, true)"  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">{{$select.selected.name  || $select.selected}}</ui-select-match>
                                     <ui-select-choices  repeat="option.name as option in optionSets[prStDe.dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
                                         <span ng-bind-html="option.name | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div ng-if="selectedProgram.dataEntryMethod && optionSets[prStDe.dataElement.optionSet.id].options.length < 7">
                                 <label>
                                     <input type="radio"
-                                           class="form-control input-with-audit"
+                                           class="form-control"
                                            ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                            name={{prStDe.dataElement.id}}
                                            ng-required={{prStDe.compulsory}}
@@ -53,13 +54,12 @@
                                            ng-model="currentEvent[prStDe.dataElement.id]"
                                            ng-change="saveDatavalue(prStDe, innerForm.foo)"
                                            value=""> {{'no_value' | translate}}
-                                    <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                     <br>
                                 </label><br>
                                 <span ng-repeat="option in optionSets[prStDe.dataElement.optionSet.id].options">
                                     <label>
                                         <input type="radio"
-                                               class="form-control input-with-audit"
+                                               class="form-control"
                                                ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                                name={{prStDe.dataElement.id}}
                                                ng-required={{prStDe.compulsory}}
@@ -67,7 +67,6 @@
                                                ng-model="currentEvent[prStDe.dataElement.id]"
                                                ng-change="saveDatavalue(prStDe, innerForm.foo)"
                                                value={{option.name}}> {{option.name}}
-                                        <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                                     </label><br>
                                 </span>
                             </div>
@@ -81,7 +80,7 @@
                             <div class="hideInPrint">
                                 <input type="number"
                                        number-type={{prStDe.dataElement.valueType}}
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        d2-number-validator
@@ -89,7 +88,6 @@
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -99,7 +97,7 @@
                             <div class="hideInPrint">
                                 <input type="number"
                                        number-type={{prStDe.dataElement.valueType}}
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        d2-number-validator
@@ -107,7 +105,6 @@
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -117,7 +114,7 @@
                             <div class="hideInPrint">
                                 <input type="number"
                                        number-type={{prStDe.dataElement.valueType}}
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class='getInputNotifcationClass(prStDe.dataElement.id,false)'
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        d2-number-validator
@@ -125,7 +122,6 @@
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -135,7 +131,7 @@
                             <div class="hideInPrint">
                                 <input type="number"
                                        number-type={{prStDe.dataElement.valueType}}
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        d2-number-validator
@@ -143,7 +139,6 @@
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -153,7 +148,7 @@
                             <div class="hideInPrint">
                                 <input type="number"
                                        number-type={{prStDe.dataElement.valueType}}
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        d2-number-validator
@@ -161,7 +156,6 @@
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -171,14 +165,13 @@
                             <div class="hideInPrint">
                                 <textarea rows="3"
                                           ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
-                                          class="form-control input-with-audit"
+                                          class="form-control"
                                           ng-model="currentEvent[prStDe.dataElement.id]"
                                           ng-required={{prStDe.compulsory}}
                                           ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                           ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                           name="foo">
                                 </textarea>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <textarea rows="3" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}></textarea>
@@ -188,13 +181,12 @@
                             <div class="hideInPrint">
                                 <input type="text"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        ng-required={{prStDe.compulsory}}
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -204,7 +196,6 @@
                             <div class="hideInPrint">
                             <span>
                                 <dhis2-radio-button
-                                    class="input-with-audit"
                                     dh-required="prStDe.compulsory"
                                     dh-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id] === true"
                                     dh-value="currentEvent[prStDe.dataElement.id]"
@@ -214,7 +205,6 @@
                                     dh-id="prStDe.dataElement.id"
                                     dh-click="saveDataValueForRadio(prStDe, currentEvent, value)">
                                 </dhis2-radio-button>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                               </span>
                             </div>
                             <div class="not-for-screen">
@@ -229,14 +219,13 @@
                                        d2-date
                                        d2-date-validator
                                        max-date="prStDe.allowFutureDate ? '' : 0"
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        ng-required={{prStDe.compulsory}}
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        blur-or-change="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -245,13 +234,12 @@
                         <div ng-switch-when="TRUE_ONLY">
                             <div class="hideInPrint">
                                 <input type="checkbox"
-                                       class="form-control-checkbox  input-with-audit"
+                                       class="form-control-checkbox"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        ng-required={{prStDe.compulsory}}
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-change="saveDatavalue(prStDe, innerForm.foo)"
                                        name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" ng-checked={{currentEvent[prStDe.dataElement.id]}}>
@@ -269,13 +257,12 @@
                                             multiple
                                             on-remove="saveMultiSelectState($item,currentEvent,prStDe,false)"
                                             on-select="saveMultiSelectState($item,currentEvent,prStDe,true)"
-                                            style="width:85%; overflow:visible">
+                                            ng-style="{'width': '100%'}">
                                     <ui-select-match allow-clear="true" ng-class={{getInputNotifcationClass(prStDe.dataElement.id,false)}}  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}" >{{$item.dataElement.formName ? $item.dataElement.formName : $item.dataElement.name }}</ui-select-match>
                                     <ui-select-choices repeat="prStDe.dataElement as prStDe in currentStage.multiSelectGroups[prStDe.dataElement.id].dataElements | filter: $select.search | limitTo:maxOptionSize">
                                         <span ng-bind-html="prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name | highlight: $select.search"></span>
                                     </ui-select-choices>
                                 </ui-select>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -320,14 +307,13 @@
                         <div ng-switch-default>
                             <div class="hideInPrint">
                                 <input type="text"
-                                       class="form-control input-with-audit"
+                                       class="form-control"
                                        ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
                                        ng-model="currentEvent[prStDe.dataElement.id]"
                                        ng-required={{prStDe.compulsory}}
                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
                                        ng-blur="saveDatavalue(prStDe, innerForm.foo)"
-                                       name="foo"/>
-                                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
+                                       name="foo">
                             </div>
                             <div class="not-for-screen">
                                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
@@ -346,6 +332,9 @@
                         {{errorMessages[currentEvent.event][prStDe.dataElement.id]}}
                     </div>
                 </ng-form>
+            </td>
+            <td ng-if="currentEvent.event" class="form-narrow-column">
+                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
             </td>
             <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
                 <div ng-show="prStDe.allowProvidedElsewhere">
@@ -376,6 +365,8 @@
                         </th>
                         <th class="" ng-bind="valueLabel">
                         </th>
+                        <th class="form-narrow-column" ng-if="currentEvent.event">
+                        </th>
                         <th class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]" ng-bind="providedElsewhereLabel">
                         </th>
                     </tr>
@@ -405,19 +396,19 @@
                                                         ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                         name="foo"
                                                         on-select="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
-                                                        style="width:85%;">
+                                                        ng-style="{'width':'100%'}"/>
                                                 <ui-select-match allow-clear="true" ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,true, currentEvent)"  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}">{{$select.selected.name  || $select.selected}}</ui-select-match>
                                                 <ui-select-choices  repeat="option.name as option in optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
                                                     <span ng-bind-html="option.name | highlight: $select.search"></span>
                                                 </ui-select-choices>
                                             </ui-select>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
+
                                         </div>
                                         <div ng-if="selectedProgram.dataEntryMethod && optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options.length < 7">
                                             <label>
                                                   <span>
                                                     <input type="radio"
-                                                           class="form-control input-with-audit"
+                                                           class="form-control"
                                                            ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                            name={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}
                                                            ng-required={{prStDes[de.dataElement.id].compulsory}}
@@ -425,14 +416,13 @@
                                                            ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                            ng-change="saveDatavalue(prStDes[de.dataElement.id])"
                                                            value=""> {{'no_value' | translate}}<br>
-                                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                                     </span>
 
                                             </label><br>
                                                 <span ng-repeat="option in optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options">
                                                     <label>
                                                         <input type="radio"
-                                                               class="form-control input-with-audit"
+                                                               class="form-control"
                                                                ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                                name={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}
                                                                ng-required={{prStDes[de.dataElement.id].compulsory}}
@@ -440,7 +430,6 @@
                                                                ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                                ng-change="saveDatavalue(prStDes[de.dataElement.id])"
                                                                value={{option.name}}> {{option.name}}
-                                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                                     </label><br>
                                                 </span>
                                         </div>
@@ -452,19 +441,16 @@
                                 <div ng-if="!prStDes[de.dataElement.id].dataElement.optionSetValue" ng-switch="prStDes[de.dataElement.id].dataElement.valueType">
                                     <div ng-switch-when="NUMBER">
                                         <div class="hideInPrint">
-                                              <span>
                                                 <input type="number"
                                                        d2-number-validator
                                                        number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
-                                                       class="form-control input-with-audit"
+                                                       class="form-control"
                                                        ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                        ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                        ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                        ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                        name="foo"/>
-                                                   <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
-                                                </span>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -475,14 +461,13 @@
                                             <input type="number"
                                                    d2-number-validator
                                                    number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
-                                                   name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
+                                                   name="foo" />
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -493,14 +478,13 @@
                                             <input type="number"
                                                    d2-number-validator
                                                    number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -511,14 +495,13 @@
                                             <input type="number"
                                                    d2-number-validator
                                                    number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -529,14 +512,13 @@
                                             <input type="number"
                                                    d2-number-validator
                                                    number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -555,7 +537,6 @@
                                                 dh-id="de.dataElement.id"
                                                 dh-click="saveDataValueForRadio(prStDes[de.dataElement.id], currentEvent, value)">
                                             </dhis2-radio-button>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <label class="radio-inline"><input type="radio" ng-checked="{{currentEvent[prStDes[de.dataElement.id].dataElement.id] === 'true'}}">{{'yes' | translate}}</label>
@@ -569,14 +550,13 @@
                                                    d2-date
                                                    d2-date-validator
                                                    max-date="prStDes[de.dataElement.id].allowFutureDate ? '' : 0"
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    blur-or-change="saveDatavalue(prStDes[de.dataElement.id])"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -585,13 +565,12 @@
                                     <div ng-switch-when="TRUE_ONLY">
                                         <div class="hideInPrint">
                                             <input type="checkbox"
-                                                   class="form-control-checkbox input-with-audit"
+                                                   class="form-control-checkbox"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-change="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="checkbox" class="form-control-checkbox" ng-checked={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -600,14 +579,14 @@
                                     <div ng-switch-when="LONG_TEXT">
                                         <div class="hideInPrint">
                                                 <textarea rows="3"
-                                                          class="form-control input-with-audit"
+                                                          class="form-control"
+
                                                           ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                           ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                           ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                           ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                           ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                           name="foo"></textarea>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <textarea rows="3" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}></textarea>
@@ -616,14 +595,13 @@
                                     <div ng-switch-when="TEXT">
                                         <div class="hideInPrint">
                                             <input type="text"
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -668,14 +646,13 @@
                                     <div ng-switch-default>
                                         <div class="hideInPrint">
                                             <input type="text"
-                                                   class="form-control input-with-audit"
+                                                   class="form-control"
                                                    ng-class="getInputNotifcationClass(prStDes[de.dataElement.id].dataElement.id,false, currentEvent)"
                                                    ng-model="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
                                                    ng-required={{prStDes[de.dataElement.id].compulsory}}
                                                    ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                                                    ng-blur="saveDatavalue(prStDes[de.dataElement.id])"
                                                    name="foo"/>
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                                         </div>
                                         <div class="not-for-screen">
                                             <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
@@ -693,6 +670,9 @@
                                     </div>
                                 </div>
                             </ng-form>
+                        </td>
+                        <td ng-if="currentEvent.event">
+                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                         </td>
                         <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
                             <div ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">

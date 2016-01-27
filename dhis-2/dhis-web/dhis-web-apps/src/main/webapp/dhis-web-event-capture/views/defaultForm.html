@@ -1,14 +1,16 @@
 <div  ng-if='!selectedProgramStage.programStageSections.length'>
     <div ng-include="'views/event-details.html'"></div>
     <table class="dhis2-list-table-striped">
-        <thead>                        
+        <thead>
             <tr>
                 <th>
                     {{'data_element'| translate}}                    
                 </th>
                 <th>
                     {{'value'| translate}}                    
-                </th>         
+                </th>
+                <th class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                </th>
             </tr>                        
         </thead>
         <tbody>
@@ -19,28 +21,24 @@
                 <td >
                     <ng-form name="innerForm">
                         <div ng-if="prStDes[eventGridColumn.id].dataElement.optionSetValue">
-                            <div ng-if="!selectedProgram.dataEntryMethod || optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options.length >= 7">                                
-                                <span>
-                                    <ui-select ng-model="currentEvent[eventGridColumn.id]"
+                            <div ng-if="!selectedProgram.dataEntryMethod || optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options.length >= 7">
+                                <ui-select ng-model="currentEvent[eventGridColumn.id]"
                                            theme="select2" 
                                            ng-required={{eventGridColumn.compulsory}}
                                            name="foo" 
                                            input-field-id={{eventGridColumn.id}} 
                                            ng-disabled="assignedFields[eventGridColumn.id]"
                                            on-select="saveDatavalue()"
-                                           style="width:85%;">
-                                        <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.name  || $select.selected}}</ui-select-match>
-                                        <ui-select-choices  repeat="option.name as option in optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
-                                           <span ng-bind-html="option.name | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                    </ui-select>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
-                            </div>                                    
+                                           style="width:100%;">
+                                    <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.name  || $select.selected}}</ui-select-match>
+                                    <ui-select-choices  repeat="option.name as option in optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
+                                        <span ng-bind-html="option.name | highlight: $select.search"></span>
+                                    </ui-select-choices>
+                                </ui-select>
+                            </div>
                             <div ng-if="selectedProgram.dataEntryMethod && optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options.length < 7">                                    
                                 <label>
-                                    <span>
-                                        <input type="radio"
+                                    <input type="radio"
                                            name="foo"
                                            input-field-id={{eventGridColumn.id}}
                                            ng-change="saveDatavalue()" 
@@ -48,13 +46,10 @@
                                            ng-disabled="assignedFields[eventGridColumn.id]"
                                            ng-model="currentEvent[eventGridColumn.id]"
                                            value=""> {{'no_value' | translate}}
-                                        <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                     <br>
                                 </label>                                    
                                 <label ng-repeat="option in  optionSets[prStDes[eventGridColumn.id].dataElement.optionSet.id].options">
-                                    <span>
-                                        <input type="radio"
+                                    <input type="radio"
                                            name={{eventGridColumn.id}}
                                            input-field-id={{eventGridColumn.id}}    
                                            ng-change="saveDatavalue()" 
@@ -62,16 +57,13 @@
                                            ng-disabled="assignedFields[eventGridColumn.id]"
                                            ng-model="currentEvent[eventGridColumn.id]"
                                            value={{option.name}}> {{option.name}}<br>
-                                        <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                 </label>
                             </div>
                         </div>
 
                         <div ng-if="!prStDes[eventGridColumn.id].dataElement.optionSetValue" ng-switch="eventGridColumn.valueType">
                             <div ng-switch-when="NUMBER">
-                                <span>
-                                    <input type="number"
+                                <input type="number"
                                        d2-number-validator
                                        number-type={{eventGridColumn.valueType}}
                                        ng-model="currentEvent[eventGridColumn.id]"                                        
@@ -80,13 +72,10 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
-                                       class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                       class="form-control"/>
                             </div>
                             <div ng-switch-when="INTEGER">
-                                <span>
-                                    <input type="number"
+                                <input type="number"
                                        d2-number-validator
                                        number-type={{eventGridColumn.valueType}}
                                        ng-model="currentEvent[eventGridColumn.id]"                                        
@@ -95,13 +84,11 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
-                                       class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
+                                       class="form-control"/>
                                 </span>
                             </div>
                             <div ng-switch-when="INTEGER_POSITIVE">
-                                <span>
-                                    <input type="number"
+                                <input type="number"
                                        d2-number-validator
                                        number-type={{eventGridColumn.valueType}}
                                        ng-model="currentEvent[eventGridColumn.id]"                                        
@@ -110,13 +97,10 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
-                                       class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                       class="form-control"/>
                             </div>
                             <div ng-switch-when="INTEGER_NEGATIVE">
-                                <span>
-                                    <input type="number"
+                                <input type="number"
                                        d2-number-validator
                                        number-type={{eventGridColumn.valueType}}
                                        ng-model="currentEvent[eventGridColumn.id]"                                        
@@ -125,13 +109,10 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
-                                       class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                       class="form-control"/>
                             </div>
                             <div ng-switch-when="INTEGER_ZERO_OR_POSITIVE">
-                                <span>
-                                    <input type="number"
+                                <input type="number"
                                        d2-number-validator
                                        number-type={{eventGridColumn.valueType}}
                                        ng-model="currentEvent[eventGridColumn.id]"                                        
@@ -140,41 +121,32 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
-                                       class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                       class="form-control"/>
                             </div>
                             <div ng-switch-when="TEXT">
-                                <span>
-                                    <input type="text"
+                                <input type="text"
                                         ng-model="currentEvent[eventGridColumn.id]"                                        
                                         ng-required={{eventGridColumn.compulsory}}
                                         ng-disabled="assignedFields[eventGridColumn.id]"
                                         name="foo" 
                                         input-field-id={{eventGridColumn.id}} 
                                         ng-blur="saveDatavalue()" 
-                                        class="form-control input-with-audit"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                        class="form-control"/>
                             </div>
                             <div ng-switch-when="LONG_TEXT">
-                                <span>
-                                    <textarea rows="3"
+                                <textarea rows="3"
                                         ng-model="currentEvent[eventGridColumn.id]"                                        
                                         ng-required={{eventGridColumn.compulsory}}
                                         ng-disabled="assignedFields[eventGridColumn.id]"
                                         name="foo" 
                                         input-field-id={{eventGridColumn.id}} 
                                         ng-blur="saveDatavalue()" 
-                                        class="form-control input-with-audit">
+                                        class="form-control">
                                     </textarea>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
                             </div>
                             <div ng-switch-when="BOOLEAN" class="form-control">
                                 <label class="radio-inline">
-                                    <span>
-                                        <input  type="radio"
+                                    <input  type="radio"
                                             ng-model="currentEvent[eventGridColumn.id]"                                                                
                                             ng-required={{eventGridColumn.compulsory}}
                                             ng-disabled="assignedFields[eventGridColumn.id]"
@@ -182,12 +154,9 @@
                                             ng-change="saveDatavalue()"
                                            value="">
                                         {{'no_value'| translate}}
-                                        <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                 </label>
                                 <label class="radio-inline">
-                                    <span>
-                                        <input  type="radio"
+                                    <input  type="radio"
                                             ng-model="currentEvent[eventGridColumn.id]"                                                                
                                             ng-required={{eventGridColumn.compulsory}}
                                             ng-disabled="assignedFields[eventGridColumn.id]"
@@ -195,12 +164,9 @@
                                             ng-change="saveDatavalue()" 
                                            value="true"> 
                                         {{'yes'| translate}}
-                                        <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                 </label>
                                 <label class="radio-inline">
-                                    <span>
-                                        <input  type="radio"
+                                    <input  type="radio"
                                             ng-model="currentEvent[eventGridColumn.id]"                                                                
                                             ng-required={{eventGridColumn.compulsory}}
                                             ng-disabled="assignedFields[eventGridColumn.id]"
@@ -208,13 +174,10 @@
                                             ng-change="saveDatavalue()" 
                                             value="false">
                                            {{'no'| translate}}
-                                         <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                 </label>
                             </div>
                             <div ng-switch-when="DATE">
-                                <span>
-                                    <input type="text"
+                                <input type="text"
                                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                                        d2-date
                                        max-date="prStDes[eventGridColumn.id].allowFutureDate ? '' : 0"                                        
@@ -225,13 +188,10 @@
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        blur-or-change="saveDatavalue()" 
-                                       class="form-control input-with-audit">
-                                 <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                       class="form-control">
                             </div>
                             <div ng-switch-when="DATETIME">
-                                <span>
-                                    <input type="text"
+                                <input type="text"
                                        placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                                        d2-date
                                        max-date="prStDes[eventGridColumn.id].allowFutureDate ? '' : 0"
@@ -241,21 +201,15 @@
                                        name="foo"
                                        input-field-id={{eventGridColumn.id}}
                                        style="width:85%;"/>
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
                             </div>
                             <div ng-switch-when="TRUE_ONLY">
-                                <span>
-                                    <input type="checkbox"
+                                <input type="checkbox"
                                        ng-model="currentEvent[eventGridColumn.id]"                                                               
                                        ng-required={{eventGridColumn.compulsory}}
                                        ng-disabled="assignedFields[eventGridColumn.id]"
                                        name="foo" 
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-change="saveDatavalue()" />
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
-
                             </div>
                             <div ng-switch-when="FILE_RESOURCE">                                
                                 <div class="input-group">
@@ -290,22 +244,22 @@
                                 </div>
                             </div>
                             <div ng-switch-default>
-                                <span>
-                                    <input type="text"
+                                <input type="text"
                                         ng-model="currentEvent[eventGridColumn.id]"
                                         ng-required={{eventGridColumn.compulsory}}
                                         ng-disabled="assignedFields[eventGridColumn.id]"
                                         name="foo"
                                         input-field-id={{eventGridColumn.id}}
                                         ng-blur="saveDatavalue()"
-                                        class="form-control input-with-audit">
-                                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                </span>
+                                        class="form-control">
                             </div>
                         </div>                        
                         <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                                         
-                        </div>                        
-                    </ng-form>                    
+                        </div>
+                    </ng-form>
+                </td>
+                <td class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                 </td>
             </tr>        
         </tbody>
@@ -323,8 +277,7 @@
         <div class="vertical-spacing" ng-if="!section.programStageDataElements || section.programStageDataElements.length === 0">
             <div class="alert alert-warning">{{'section'| translate}} {{section.name}} {{'has_no_dataelements'| translate}}</div>
         </div>  
-        
-        <table class="dhis2-list-table-striped">                    
+        <table class="dhis2-list-table-striped">
             <thead>                        
                 <tr>
                     <th>
@@ -332,7 +285,10 @@
                     </th>
                     <th>
                         {{'value'| translate}}                    
-                    </th>         
+                    </th>
+                    <th class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+
+                    </th>
                 </tr>                        
             </thead>
             <tbody>       
@@ -341,7 +297,7 @@
                         {{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.name}}                         
                         <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
                     </td>
-                    <td >
+                    <td>
                         <ng-form name="innerForm">
                             <div ng-if="prStDes[de.dataElement.id].dataElement.optionSetValue">
                                 <span ng-if="!selectedProgram.dataEntryMethod || optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options.length >= 7">
@@ -353,19 +309,17 @@
                                                name="foo" 
                                                input-field-id={{de.dataElement.id}} 
                                                on-select="saveDatavalue()"
-                                               style="width:85%;">
+                                               style="width:100%;">
                                             <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.name || $select.selected}}</ui-select-match>
                                             <ui-select-choices  repeat="option.name as option in optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options | filter: $select.search | limitTo:maxOptionSize">
                                                 <span ng-bind-html="option.name | highlight: $select.search"></span>
                                             </ui-select-choices>
                                         </ui-select>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                                     </span>
                                 </span>
                                 <span ng-if="selectedProgram.dataEntryMethod && optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options.length < 7">                                    
                                     <label>
-                                        <span>
-                                            <input type="radio"
+                                         <input type="radio"
                                                name={{de.dataElement.id}}
                                                input-field-id={{de.dataElement.id}} 
                                                ng-change="saveDatavalue()" 
@@ -373,14 +327,11 @@
                                                ng-disabled="assignedFields[de.dataElement.id]"
                                                ng-model="currentEvent[de.dataElement.id]"
                                                value="">{{'no_value' | translate}}
-                                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                        </span>
                                         <br>
                                     </label><br>
                                     <span ng-repeat="option in optionSets[prStDes[de.dataElement.id].dataElement.optionSet.id].options">
                                         <label>
-                                            <span>
-                                                <input type="radio"
+                                            <input type="radio"
                                                    name={{de.dataElement.id}}
                                                    input-field-id={{de.dataElement.id}}
                                                    ng-change="saveDatavalue()" 
@@ -388,8 +339,6 @@
                                                    ng-disabled="assignedFields[de.dataElement.id]"
                                                    ng-model="currentEvent[de.dataElement.id]"
                                                    value={{option.name}}> {{option.name}}
-                                                <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                            </span>
                                                 <br>
                                         </label><br>
                                     </span>                                    
@@ -397,8 +346,7 @@
                             </div>
                             <div ng-if="!prStDes[de.dataElement.id].dataElement.optionSetValue" ng-switch="prStDes[de.dataElement.id].dataElement.valueType">                                
                                 <div ng-switch-when="NUMBER">
-                                    <span>
-                                        <input type="number"
+                                    <input type="number"
                                             d2-number-validator
                                             number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
                                             ng-model="currentEvent[de.dataElement.id]"
@@ -407,13 +355,10 @@
                                             name="foo"
                                             input-field-id={{de.dataElement.id}}
                                             ng-blur="saveDatavalue()"
-                                            class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                            class="form-control"/>
                                 </div>
                                 <div ng-switch-when="INTEGER">
-                                    <span>
-                                        <input type="number"
+                                    <input type="number"
                                            d2-number-validator 
                                            number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
                                            ng-model="currentEvent[de.dataElement.id]"                                                
@@ -421,14 +366,11 @@
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}} 
-                                           ng-blur="saveDatavalue()" 
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           ng-blur="saveDatavalue()"
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="INTEGER_POSITIVE">
-                                    <span>
-                                        <input type="number"
+                                    <input type="number"
                                            d2-number-validator 
                                            number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
                                            ng-model="currentEvent[de.dataElement.id]"                                                
@@ -436,14 +378,11 @@
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}} 
-                                           ng-blur="saveDatavalue()" 
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           ng-blur="saveDatavalue()"
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="INTEGER_NEGATIVE">
-                                    <span>
-                                        <input type="number"
+                                    <input type="number"
                                            d2-number-validator 
                                            number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
                                            ng-model="currentEvent[de.dataElement.id]"                                                
@@ -451,14 +390,11 @@
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}} 
-                                           ng-blur="saveDatavalue()" 
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           ng-blur="saveDatavalue()"
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="INTEGER_ZERO_OR_POSITIVE">
-                                    <span>
-                                        <input type="number"
+                                    <input type="number"
                                            d2-number-validator 
                                            number-type={{prStDes[de.dataElement.id].dataElement.valueType}}
                                            ng-model="currentEvent[de.dataElement.id]"                                                
@@ -466,41 +402,32 @@
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}} 
-                                           ng-blur="saveDatavalue()" 
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           ng-blur="saveDatavalue()"
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="TEXT">
-                                    <span>
-                                        <input type="text"
+                                    <input type="text"
                                             ng-model="currentEvent[de.dataElement.id]"                                   
                                             ng-required={{prStDes[de.dataElement.id].compulsory}}
                                             ng-disabled="assignedFields[de.dataElement.id]"
                                             name="foo" 
                                             input-field-id={{de.dataElement.id}} 
-                                            ng-blur="saveDatavalue()" 
-                                            class="form-control input-with-audit">
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                            ng-blur="saveDatavalue()"
+                                            class="form-control"/>
                                 </div>
                                 <div ng-switch-when="LONG_TEXT">
-                                    <span>
-                                        <textarea rows="3"
+                                    <textarea rows="3"
                                             ng-model="currentEvent[de.dataElement.id]"
                                             ng-required={{prStDes[de.dataElement.id].compulsory}}
                                             ng-disabled="assignedFields[de.dataElement.id]"
                                             name="foo"
                                             input-field-id={{de.dataElement.id}}
                                             ng-blur="saveDatavalue()"
-                                            class="form-control input-with-audit">
-                                        </textarea>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                            class="form-control"/>
+                                    </textarea>
                                 </div>
-                                <span>
                                 <div ng-switch-when="BOOLEAN">
-                                    <span class="form-control input-with-audit">
+                                    <span class="form-control">
                                         <label class="radio-inline">
                                             <input type="radio"
                                                 ng-model="currentEvent[de.dataElement.id]"
@@ -532,13 +459,11 @@
                                                 {{'no'| translate}}
                                         </label>
                                     </span>
-                                    <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                                 </div>
 
 
                                 <div ng-switch-when="DATE">
-                                    <span>
-                                        <input type="text"
+                                    <input type="text"
                                            placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                                            d2-date
                                            max-date="prStDes[de.dataElement.id].allowFutureDate ? '' : 0"                                                  
@@ -548,14 +473,11 @@
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}} 
-                                           blur-or-change="saveDatavalue()" 
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           blur-or-change="saveDatavalue()"
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="DATETIME">
-                                    <span>
-                                        <input type="text"
+                                    <input type="text"
                                            placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                                            d2-date
                                            max-date="prStDes[de.dataElement.id].allowFutureDate ? '' : 0"
@@ -566,21 +488,16 @@
                                            name="foo"
                                            input-field-id={{de.dataElement.id}}
                                            blur-or-change="saveDatavalue()"
-                                           class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                           class="form-control"/>
                                 </div>
                                 <div ng-switch-when="TRUE_ONLY">
-                                    <span>
-                                        <input type="checkbox"
+                                    <input type="checkbox"
                                            ng-model="currentEvent[de.dataElement.id]"                                                               
                                            ng-required={{prStDes[de.dataElement.id].compulsory}}
                                            ng-disabled="assignedFields[de.dataElement.id]"
                                            name="foo" 
                                            input-field-id={{de.dataElement.id}}
                                            ng-change="saveDatavalue()" />
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
                                 </div>
                                 <div ng-switch-when="FILE_RESOURCE">
                                     <div class="input-group">
@@ -615,17 +532,14 @@
                                     </div>                                    
                                 </div>
                                 <div ng-switch-default>
-                                    <span>
-                                        <input type="text"
+                                    <input type="text"
                                             ng-model="currentEvent[de.dataElement.id]"
                                             ng-required={{prStDes[de.dataElement.id].compulsory}}
                                             ng-disabled="assignedFields[de.dataElement.id]"
                                             name="foo"
                                             input-field-id={{de.dataElement.id}}
                                             ng-blur="saveDatavalue()"
-                                            class="form-control input-with-audit"/>
-                                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                                    </span>
+                                            class="form-control"/>
                                 </div>
                             </div>                        
                             <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                                         
@@ -634,6 +548,9 @@
                                 {{warningMessages[de.dataElement.id]}}
                             </div>
                         </ng-form>
+                    </td>
+                    <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                     </td>
                 </tr>
             </tbody>

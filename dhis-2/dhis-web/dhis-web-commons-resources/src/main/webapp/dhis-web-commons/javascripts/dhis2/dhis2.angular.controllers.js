@@ -82,6 +82,10 @@ var d2Controllers = angular.module('d2Controllers', [])
         }
     });
 
+})
+.controller('InputController', function( $scope) {
+    $scope.inputObj = {isAuditIconPresent:false};
 });
+
 
 
