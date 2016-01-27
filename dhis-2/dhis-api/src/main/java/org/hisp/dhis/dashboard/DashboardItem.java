@@ -95,7 +95,7 @@ public class DashboardItem
 
     public DashboardItem()
     {
-        setAutoFields();
+
     }
 
     public DashboardItem( String uid )

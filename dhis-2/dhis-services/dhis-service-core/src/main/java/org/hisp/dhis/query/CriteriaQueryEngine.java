@@ -36,6 +36,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.hibernate.HibernateGenericStore;
 import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.Schema;
+import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ import java.util.Map;
 public class CriteriaQueryEngine<T extends IdentifiableObject>
     implements QueryEngine<T>
 {
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @Autowired
     private final List<HibernateGenericStore<T>> hibernateGenericStores = new ArrayList<>();
 
@@ -76,7 +80,12 @@ public class CriteriaQueryEngine<T extends IdentifiableObject>
             return new ArrayList<>();
         }
 
-        Criteria criteria = buildCriteria( store.getSharingCriteria(), query );
+        if ( query.getUser() == null )
+        {
+            query.setUser( currentUserService.getCurrentUser() );
+        }
+
+        Criteria criteria = buildCriteria( store.getSharingCriteria( query.getUser() ), query );
 
         if ( criteria == null )
         {
@@ -108,7 +117,12 @@ public class CriteriaQueryEngine<T extends IdentifiableObject>
             return 0;
         }
 
-        Criteria criteria = buildCriteria( store.getSharingCriteria(), countQuery );
+        if ( query.getUser() == null )
+        {
+            query.setUser( currentUserService.getCurrentUser() );
+        }
+
+        Criteria criteria = buildCriteria( store.getSharingCriteria( query.getUser() ), countQuery );
 
         if ( criteria == null )
         {

@@ -200,11 +200,19 @@ public class HibernateGenericStore<T>
         return getSharingCriteria( "r%" );
     }
 
-    private Criteria getSharingCriteria( String access )
+    public final Criteria getSharingCriteria( String access )
+    {
+        return getSharingCriteria( currentUserService.getCurrentUser(), access );
+    }
+
+    public final Criteria getSharingCriteria( User user )
+    {
+        return getSharingCriteria( user, "r%" );
+    }
+
+    private Criteria getSharingCriteria( User user, String access )
     {
         Criteria criteria = sessionFactory.getCurrentSession().createCriteria( getClazz(), "c" ).setCacheable( cacheable );
-
-        User user = currentUserService.getCurrentUser();
 
         if ( !sharingEnabled( user ) || user == null )
         {

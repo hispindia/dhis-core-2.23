@@ -35,6 +35,8 @@ import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
+import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,6 +59,9 @@ public class DefaultMetadataExportService implements MetadataExportService
     @Autowired
     private QueryService queryService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @Override
     @SuppressWarnings( "unchecked" )
     public Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> getMetadata( MetadataExportParams params )
@@ -71,6 +76,8 @@ public class DefaultMetadataExportService implements MetadataExportService
 
         log.info( "Export started at " + new Date() );
 
+        User defaultUser = currentUserService.getCurrentUser();
+
         for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
         {
             Query query;
@@ -83,6 +90,11 @@ public class DefaultMetadataExportService implements MetadataExportService
             {
                 Schema schema = schemaService.getDynamicSchema( klass );
                 query = Query.from( schema );
+            }
+
+            if ( query.getUser() == null )
+            {
+                query.setUser( defaultUser );
             }
 
             List<? extends IdentifiableObject> objects = queryService.query( query );

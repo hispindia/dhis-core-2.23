@@ -31,6 +31,7 @@ package org.hisp.dhis.query;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.schema.Schema;
+import org.hisp.dhis.user.User;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,8 @@ import java.util.List;
  */
 public class Query extends Criteria
 {
+    private User user;
+
     private List<Order> orders = new ArrayList<>();
 
     private Integer firstResult = 0;
@@ -90,6 +93,16 @@ public class Query extends Criteria
     public void clearOrders()
     {
         orders.clear();
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser( User user )
+    {
+        this.user = user;
     }
 
     public Integer getFirstResult()
