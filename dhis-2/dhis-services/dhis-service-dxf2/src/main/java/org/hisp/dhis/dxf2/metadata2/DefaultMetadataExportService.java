@@ -66,8 +66,17 @@ public class DefaultMetadataExportService implements MetadataExportService
 
         for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
         {
-            Schema schema = schemaService.getDynamicSchema( klass );
-            Query query = Query.from( schema );
+            Query query;
+
+            if ( params.hasQuery( klass ) )
+            {
+                query = params.getQuery( klass );
+            }
+            else
+            {
+                Schema schema = schemaService.getDynamicSchema( klass );
+                query = Query.from( schema );
+            }
 
             List<? extends IdentifiableObject> objects = queryService.query( query );
             metadata.put( klass, objects );

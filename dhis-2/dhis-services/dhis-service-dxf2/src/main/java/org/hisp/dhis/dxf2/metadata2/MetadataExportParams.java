@@ -29,8 +29,11 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.query.Query;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -39,6 +42,8 @@ import java.util.Set;
 public class MetadataExportParams
 {
     private Set<Class<? extends IdentifiableObject>> classes = new HashSet<>();
+
+    private Map<Class<? extends IdentifiableObject>, Query> queries = new HashMap<>();
 
     public MetadataExportParams()
     {
@@ -52,5 +57,36 @@ public class MetadataExportParams
     public void setClasses( Set<Class<? extends IdentifiableObject>> classes )
     {
         this.classes = classes;
+    }
+
+    public MetadataExportParams addClass( Class<? extends IdentifiableObject> klass )
+    {
+        classes.add( klass );
+        return this;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public MetadataExportParams addQuery( Query query )
+    {
+        if ( !query.getSchema().isIdentifiableObject() )
+        {
+            return this;
+        }
+
+        Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) query.getSchema().getKlass();
+        classes.add( klass );
+        queries.put( klass, query );
+
+        return this;
+    }
+
+    public boolean hasQuery( Class<? extends IdentifiableObject> klass )
+    {
+        return queries.containsKey( klass );
+    }
+
+    public Query getQuery( Class<? extends IdentifiableObject> klass )
+    {
+        return queries.containsKey( klass ) ? queries.get( klass ) : null;
     }
 }

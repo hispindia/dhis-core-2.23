@@ -40,7 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -89,6 +89,41 @@ public class MetadataExportServiceTest
 
         assertEquals( 1, metadata.get( User.class ).size() );
         assertEquals( 1, metadata.get( DataElementGroup.class ).size() );
+        assertEquals( 3, metadata.get( DataElement.class ).size() );
+    }
+
+    @Test
+    @SuppressWarnings( "unchecked" )
+    public void testMetadataExportWithCustomClasses()
+    {
+        DataElementGroup deg1 = createDataElementGroup( 'A' );
+        DataElement de1 = createDataElement( 'A' );
+        DataElement de2 = createDataElement( 'B' );
+        DataElement de3 = createDataElement( 'C' );
+
+        manager.save( de1 );
+        manager.save( de2 );
+        manager.save( de3 );
+
+        User user = createUser( 'A' );
+        manager.save( user );
+
+        deg1.addDataElement( de1 );
+        deg1.addDataElement( de2 );
+        deg1.addDataElement( de3 );
+
+        deg1.setUser( user );
+        manager.save( deg1 );
+
+        MetadataExportParams params = new MetadataExportParams();
+        params.addClass( DataElement.class );
+
+        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = metadataExportService.getMetadata( params );
+
+        assertFalse( metadata.containsKey( User.class ) );
+        assertFalse( metadata.containsKey( DataElementGroup.class ) );
+        assertTrue( metadata.containsKey( DataElement.class ) );
+
         assertEquals( 3, metadata.get( DataElement.class ).size() );
     }
 }
