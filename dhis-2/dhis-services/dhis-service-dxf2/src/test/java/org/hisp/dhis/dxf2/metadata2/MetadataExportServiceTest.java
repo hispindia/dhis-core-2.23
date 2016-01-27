@@ -33,6 +33,10 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.query.Disjunction;
+import org.hisp.dhis.query.Query;
+import org.hisp.dhis.query.Restrictions;
+import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.user.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +57,9 @@ public class MetadataExportServiceTest
 
     @Autowired
     private IdentifiableObjectManager manager;
+
+    @Autowired
+    private SchemaService schemaService;
 
     @Test
     public void testValidate()
@@ -125,5 +132,53 @@ public class MetadataExportServiceTest
         assertTrue( metadata.containsKey( DataElement.class ) );
 
         assertEquals( 3, metadata.get( DataElement.class ).size() );
+    }
+
+    @Test
+    @SuppressWarnings( "unchecked" )
+    public void testMetadataExportWithCustomQueries()
+    {
+        DataElementGroup deg1 = createDataElementGroup( 'A' );
+        DataElement de1 = createDataElement( 'A' );
+        DataElement de2 = createDataElement( 'B' );
+        DataElement de3 = createDataElement( 'C' );
+
+        manager.save( de1 );
+        manager.save( de2 );
+        manager.save( de3 );
+
+        User user = createUser( 'A' );
+        manager.save( user );
+
+        deg1.addDataElement( de1 );
+        deg1.addDataElement( de2 );
+        deg1.addDataElement( de3 );
+
+        deg1.setUser( user );
+        manager.save( deg1 );
+
+        Query deQuery = Query.from( schemaService.getDynamicSchema( DataElement.class ) );
+
+        Disjunction disjunction = deQuery.disjunction();
+        disjunction.add( Restrictions.eq( "id", de1.getUid() ) );
+        disjunction.add( Restrictions.eq( "id", de2.getUid() ) );
+
+        deQuery.add( disjunction );
+
+        Query degQuery = Query.from( schemaService.getDynamicSchema( DataElementGroup.class ) );
+        degQuery.add( Restrictions.eq( "id", "INVALID UID" ) );
+
+        MetadataExportParams params = new MetadataExportParams();
+        params.addQuery( deQuery );
+        params.addQuery( degQuery );
+
+        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = metadataExportService.getMetadata( params );
+
+        assertFalse( metadata.containsKey( User.class ) );
+        assertTrue( metadata.containsKey( DataElementGroup.class ) );
+        assertTrue( metadata.containsKey( DataElement.class ) );
+
+        assertEquals( 2, metadata.get( DataElement.class ).size() );
+        assertEquals( 0, metadata.get( DataElementGroup.class ).size() );
     }
 }
