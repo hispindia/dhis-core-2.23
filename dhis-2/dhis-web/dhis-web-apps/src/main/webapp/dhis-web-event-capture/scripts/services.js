@@ -298,6 +298,7 @@ var eventCaptureServices = angular.module('eventCaptureServices', ['ngResource']
                 return response.data;
             }, function(){
                 dhis2.ec.store.remove( 'events', dhis2Event.event );
+                return response.data;
             });
             return promise;           
         },    
