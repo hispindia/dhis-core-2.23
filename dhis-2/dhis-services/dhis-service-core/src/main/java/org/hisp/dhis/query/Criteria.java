@@ -64,14 +64,6 @@ public abstract class Criteria
             }
 
             Restriction restriction = (Restriction) criterion;
-
-            /* Commented out for now, validation of this happens in QueryParser
-            if ( !schema.haveProperty( restriction.getPath() ) )
-            {
-                continue;
-            }
-            */
-
             this.criterions.add( restriction );
         }
 
