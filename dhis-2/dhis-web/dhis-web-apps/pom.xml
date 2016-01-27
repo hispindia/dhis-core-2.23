@@ -110,6 +110,6 @@
 
   <properties>
     <rootDir>../../</rootDir>
-    <apps.version>2.22-SNAPSHOT</apps.version>
+    <apps.version>2.23-SNAPSHOT</apps.version>
   </properties>
 </project>
