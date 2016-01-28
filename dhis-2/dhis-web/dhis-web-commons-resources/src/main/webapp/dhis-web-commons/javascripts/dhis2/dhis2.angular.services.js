@@ -394,7 +394,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     ' ng-class="getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id,true)"' +
                                     ' blur-or-change="saveDatavalue(prStDes.' + fieldId + ')"' +
                                     ' class="input-with-audit"' +
-                                    ' ng-required="{{true}}"><d2-audit is-audit-icon-present="isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                    ' ng-required="{{true}}"><d2-audit class="hideInPrint" is-audit-icon-present="isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                             }
                             else {
                                 fieldId = attributes['id'].substring(4, attributes['id'].length - 1).split("-")[1];
@@ -424,7 +424,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             '<span ng-bind-html="option.name | highlight: $select.search">' +
                                             '</span>' +
                                             '</ui-select-choices>' +
-                                            '</ui-select><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                            '</ui-select><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                     }
                                     else {
                                         //check data element type and generate corresponding angular input field
@@ -438,7 +438,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
                                                 ' number-type="' + prStDe.dataElement.valueType + '" ' +
                                                 ' ng-blur="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
-                                                commonInputFieldProperty + '><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                                commonInputFieldProperty + '><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "BOOLEAN") {
                                             newInputField = '<span ng-controller="InputController" class="hideInPrint"><label class="radio-inline"><input type="radio" ng-style="{\'width\' : inputObj.isAuditIconPresent ? \'85%\' : \'100%\' }" ng-change="saveDatavalue()" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}</label>' +
@@ -457,20 +457,20 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                 ' d2-date-validator ' +
                                                 ' max-date="' + maxDate + '"' +
                                                 ' blur-or-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
-                                                commonInputFieldProperty + ' ><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                                commonInputFieldProperty + ' ><d2-audit class="hideInPrint"  is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "TRUE_ONLY") {
                                             newInputField = '<span class="hideInPrint"><input type="checkbox" ' +
                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
                                                 ' ng-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
-                                                commonInputFieldProperty + ' ><d2-audit dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="checkbox" ng-checked={{currentEvent.' + fieldId + '}}></span>';
+                                                commonInputFieldProperty + ' ><d2-audit class="hideInPrint" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="checkbox" ng-checked={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "LONG_TEXT") {
                                             newInputField = '<span ng-controller="InputController" class="hideInPrint"><textarea row="3" ' +
                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
                                                 ' ng-blur="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
                                                 ' ng-style="{\'width\' : inputObj.isAuditIconPresent ? \'85%\' : \'100%\' }"' +
-                                                commonInputFieldProperty + '></textarea><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><textarea row="3" value={{currentEvent.' + fieldId + '}}></textarea></span>';
+                                                commonInputFieldProperty + '></textarea><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><textarea row="3" value={{currentEvent.' + fieldId + '}}></textarea></span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "FILE_RESOURCE") {
                                             newInputField = '<span class="input-group">\n\
@@ -491,7 +491,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                                 d2-file-input="currentEvent"\n\
                                                                                 d2-file-input-current-name="currentFileNames"\n\
                                                                                 d2-file-input-name="fileNames">\n\
-                                                                                <d2-audit dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit> \n\
+                                                                                <d2-audit class="hideInPrint" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit> \n\
                                                                     </span>\n\
                                                                 </span>\n\
                                                             </span>\n\
@@ -502,7 +502,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
                                                 ' ng-style="{\'width\' : inputObj.isAuditIconPresent ? \'85%\' : \'100%\' }"' +
                                                 ' ng-blur="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
-                                                commonInputFieldProperty + ' ><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                                commonInputFieldProperty + ' ><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="{{prStDes.' + fieldId + '.dataElement.id}}" dataelement-name="{{prStDes[prStDes.' + fieldId + '.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                     }
                                 }
@@ -583,7 +583,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                         'repeat="option.name as option in optionSets.' + optionSetId + '.options | filter: $select.search | limitTo:maxOptionSize">' +
                                         '<span ng-bind-html="option.name | highlight: $select.search"></span>' +
                                         '</ui-select-choices>' +
-                                        '</ui-select><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit></span>';
+                                        '</ui-select><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit></span>';
                                 }
                                 else {
                                     //check attribute type and generate corresponding angular input field
@@ -593,18 +593,18 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             ' number-type="' + att.valueType + '" ' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
                                             commonInputFieldProperty + ' >' +
-                                            '<d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>' +
+                                            '<d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>' +
                                             '</span>';
                                     }
                                     else if (att.valueType === "BOOLEAN") {
                                         newInputField = '<label class="radio-inline"><span><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}' +
-                                            '<d2-audit dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
+                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
                                             '</span></label>' +
                                             '<label class="radio-inline"><span><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="true">{{\'yes\'| translate}}' +
-                                            '<d2-audit dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
+                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
                                             '</span></label>' +
                                             '<label class="radio-inline"><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="false">{{\'no\'| translate}}' +
-                                            '<d2-audit dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit>'+
+                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit>'+
                                             '</span></label>';
                                     }
                                     else if (att.valueType === "DATE") {
@@ -614,23 +614,23 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             ' d2-date' +
                                             ' blur-or-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
                                             commonInputFieldProperty + ' >'+
-                                            '<d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit>'+
+                                            '<d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit>'+
                                             '</span>';
                                     }
                                     else if (att.valueType === "TRUE_ONLY") {
                                         newInputField = '<span><input type="checkbox" ' +
                                             ' ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ><d2-audit dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                            commonInputFieldProperty + ' ><d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                                     }
                                     else if (att.valueType === "EMAIL") {
                                         newInputField = '<span ng-controller="InputController"><input type="email" ng-class="{\'input-with-audit\':inputObj.isAuditIconPresent}"' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                            commonInputFieldProperty + ' ><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                                     }
                                     else if (att.valueType === "TRACKER_ASSOCIATE") {
                                         newInputField = '<span ng-controller="InputController"><input type="text" ng-class="{\'input-with-audit\':inputObj.isAuditIconPresent}"' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>' +
+                                            commonInputFieldProperty + ' ><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>' +
                                             '<span class="hideInPrint"><a href ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="getTrackerAssociate(attributesById.' + attId + ', selectedTei.' + attId + ')" title="{{\'add\' | translate}} {{attributesById.' + attId + '.name}}" ' +
                                             '<i class="fa fa-external-link fa-2x vertical-center"></i> ' +
                                             '</a> ' +
@@ -641,12 +641,12 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     else if (att.valueType === "LONG_TEXT") {
                                         newInputField = '<span><textarea row ="3" ' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ></textarea><d2-audit dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                            commonInputFieldProperty + ' ></textarea><d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                                     }
                                     else {
                                         newInputField = '<span ng-controller="InputController"><input ng-style="{\'width\' : inputObj.isAuditIconPresent ? \'85%\' : \'100%\' }" type="text" ' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + '><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                            commonInputFieldProperty + '><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                                     }
                                 }
                             }
@@ -676,7 +676,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     ' ng-disabled="\'' + target + '\' === \'PROFILE\'"' +
                                     ' d2-date' +
                                     ' max-date="' + enMaxDate + '"' +
-                                    ' ng-required="true"><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                    ' ng-required="true"><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                             }
                             if (programId === 'dateOfIncident' && trackedEntityForm.displayIncidentDate) {
                                 fieldName = 'dateOfIncident';
@@ -690,7 +690,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     ' ng-model="selectedEnrollment.dateOfIncident" ' +
                                     ' ng-disabled="\'' + target + '\' === \'PROFILE\'"' +
                                     ' d2-date ' +
-                                    ' max-date="' + inMaxDate + '"><d2-audit is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
+                                    ' max-date="' + inMaxDate + '"><d2-audit class="hideInPrint" is-audit-icon-present="inputObj.isAuditIconPresent" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit></span>';
                             }
                         }
 

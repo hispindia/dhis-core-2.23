@@ -199,7 +199,7 @@
                 </div>
             </ng-form>            
         </td>
-        <td ng-if="selectedTeiId">
+        <td class="hideInPrint" ng-if="selectedTeiId">
             <d2-audit dataelement-id="{{attribute.id}}" dataelement-name="{{attribute.name}}" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>
         </td>
     </tr>           

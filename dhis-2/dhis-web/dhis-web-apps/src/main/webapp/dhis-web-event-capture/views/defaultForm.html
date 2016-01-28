@@ -9,7 +9,7 @@
                 <th>
                     {{'value'| translate}}                    
                 </th>
-                <th class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                <th class="form-narrow-column hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                 </th>
             </tr>                        
         </thead>
@@ -258,7 +258,7 @@
                         </div>
                     </ng-form>
                 </td>
-                <td class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                <td class="form-narrow-column hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                     <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                 </td>
             </tr>        
@@ -286,7 +286,7 @@
                     <th>
                         {{'value'| translate}}                    
                     </th>
-                    <th class="form-narrow-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                    <th class="form-narrow-column hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
 
                     </th>
                 </tr>                        
@@ -549,7 +549,7 @@
                             </div>
                         </ng-form>
                     </td>
-                    <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                    <td class="hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                         <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                     </td>
                 </tr>
