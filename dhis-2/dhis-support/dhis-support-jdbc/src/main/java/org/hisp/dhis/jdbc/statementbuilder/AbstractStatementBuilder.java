@@ -40,8 +40,11 @@ import static org.hisp.dhis.system.util.DateUtils.getSqlDateString;
 public abstract class AbstractStatementBuilder
     implements StatementBuilder
 {
-    static final String AZaz = "'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'";
-    static final String AZaz09 = "'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'";
+    static final String AZaz = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+    static final String AZaz09 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    static final String AZaz_QUOTED = QUOTE + AZaz + QUOTE;
+    static final String AZaz09_QUOTED = QUOTE + AZaz09 + QUOTE;
 
     @Override
     public String encode( String value )
@@ -95,17 +98,17 @@ public abstract class AbstractStatementBuilder
     public String getUid()
     {
         return concatenate(
-            getCharAt( AZaz, "1 + " + getRandom( AZaz.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ),
-            getCharAt( AZaz09, "1 + " + getRandom( AZaz09.length() ) ) );
+            getCharAt( AZaz_QUOTED , "1 + " + getRandom( AZaz.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ),
+            getCharAt( AZaz09_QUOTED, "1 + " + getRandom( AZaz09.length() ) ) );
     }
 
     @Override
