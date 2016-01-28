@@ -223,6 +223,12 @@ public interface DataApprovalLevelService
     void deleteDataApprovalLevel( DataApprovalLevel dataApprovalLevel );
 
     /**
+     * Reorders the remaining approval levels, if necessary, after deleting
+     * an approval level. Should follow the deleting of an approval level.
+     */
+    void postDeleteDataApprovalLevel();
+
+    /**
      * Gets the approval level at which this user may make approval actions
      * (if the user is authorized for any) on this organisation unit.
      *

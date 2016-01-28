@@ -48,4 +48,10 @@ public class DataApprovalLevelController
     {
         dataApprovalLevelService.prepareAddDataApproval( entity );
     }
+
+    @Override
+    protected void postDeleteEntity()
+    {
+        dataApprovalLevelService.postDeleteDataApprovalLevel();
+    }
 }
