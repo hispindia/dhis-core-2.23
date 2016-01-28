@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.dxf2.metadata2;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -31,20 +31,11 @@ package org.hisp.dhis.preheat;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum PreheatMode
+public class MetadataImportException
+    extends Exception
 {
-    /**
-     * Scan objects for references.
-     */
-    REFERENCE,
-
-    /**
-     * Load inn all object of given types.
-     */
-    ALL,
-
-    /**
-     * Preheating is disabled.
-     */
-    NONE;
+    public MetadataImportException( String message )
+    {
+        super( message );
+    }
 }

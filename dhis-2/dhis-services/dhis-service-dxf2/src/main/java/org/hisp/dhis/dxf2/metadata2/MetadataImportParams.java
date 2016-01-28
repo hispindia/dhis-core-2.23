@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.dxf2.metadata2;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,23 +28,70 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.preheat.PreheatMode;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum PreheatMode
+public class MetadataImportParams<T extends IdentifiableObject>
 {
-    /**
-     * Scan objects for references.
-     */
-    REFERENCE,
+    private PreheatMode preheatMode = PreheatMode.ALL;
 
-    /**
-     * Load inn all object of given types.
-     */
-    ALL,
+    private Map<Class<T>, List<T>> objects = new HashMap<>();
 
-    /**
-     * Preheating is disabled.
-     */
-    NONE;
+    public MetadataImportParams()
+    {
+    }
+
+    public PreheatMode getPreheatMode()
+    {
+        return preheatMode;
+    }
+
+    public void setPreheatMode( PreheatMode preheatMode )
+    {
+        this.preheatMode = preheatMode;
+    }
+
+    public List<Class<? extends IdentifiableObject>> getClasses()
+    {
+        return new ArrayList<>( objects.keySet() );
+    }
+
+    public List<T> getObjects( Class<T> klass )
+    {
+        return objects.get( klass );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public MetadataImportParams addObject( T object )
+    {
+        if ( object == null )
+        {
+            return this;
+        }
+
+        Class<T> klass = (Class<T>) object.getClass();
+
+        if ( !objects.containsKey( klass ) )
+        {
+            objects.put( klass, new ArrayList<>() );
+        }
+
+        objects.get( klass ).add( object );
+
+        return this;
+    }
+
+    public MetadataImportParams addObjects( List<T> objects )
+    {
+        objects.forEach( this::addObject );
+        return this;
+    }
 }

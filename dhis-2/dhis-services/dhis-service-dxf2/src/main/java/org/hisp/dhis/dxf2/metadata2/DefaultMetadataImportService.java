@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.dxf2.metadata2;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,23 +28,32 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum PreheatMode
+@Component
+public class DefaultMetadataImportService implements MetadataImportService
 {
-    /**
-     * Scan objects for references.
-     */
-    REFERENCE,
+    @Override
+    public void importMetadata( MetadataImportParams params )
+    {
 
-    /**
-     * Load inn all object of given types.
-     */
-    ALL,
+    }
 
-    /**
-     * Preheating is disabled.
-     */
-    NONE;
+    @Override
+    public void validate( MetadataImportParams params ) throws MetadataImportException
+    {
+
+    }
+
+    @Override
+    public MetadataImportParams getParamsFromMap( Map<String, String> parameters )
+    {
+        MetadataImportParams params = new MetadataImportParams();
+        return params;
+    }
 }

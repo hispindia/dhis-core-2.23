@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.dxf2.metadata2;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,23 +28,16 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum PreheatMode
+public interface MetadataImportService
 {
-    /**
-     * Scan objects for references.
-     */
-    REFERENCE,
+    void importMetadata( MetadataImportParams params );
 
-    /**
-     * Load inn all object of given types.
-     */
-    ALL,
+    void validate( MetadataImportParams params ) throws MetadataImportException;
 
-    /**
-     * Preheating is disabled.
-     */
-    NONE;
+    MetadataImportParams getParamsFromMap( Map<String, String> parameters );
 }
