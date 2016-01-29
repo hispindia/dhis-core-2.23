@@ -474,3 +474,8 @@ div#orgUnitTree {
 .form-narrow-column {
     width: 80px;
 }
+
+.audit-icon-column {
+    width: 30px;
+    align: center;
+}
