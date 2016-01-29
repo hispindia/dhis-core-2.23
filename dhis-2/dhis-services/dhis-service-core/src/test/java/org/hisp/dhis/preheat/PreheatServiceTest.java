@@ -94,10 +94,10 @@ public class PreheatServiceTest
     }
 
     @Test
-    public void testScanNoObjectsDE()
+    public void testCollectNoObjectsDE()
     {
         DataElement dataElement = createDataElement( 'A' );
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectForReferences( dataElement, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElement, PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( OptionSet.class ) );
         assertTrue( references.containsKey( LegendSet.class ) );
@@ -106,17 +106,17 @@ public class PreheatServiceTest
     }
 
     @Test
-    public void testScanNoObjectsDEG()
+    public void testCollectNoObjectsDEG()
     {
         DataElementGroup dataElementGroup = createDataElementGroup( 'A' );
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup, PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertTrue( references.containsKey( User.class ) );
     }
 
     @Test
-    public void testScanObjectReferenceUidDEG()
+    public void testCollectReferenceUidDEG1()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
 
@@ -132,7 +132,7 @@ public class PreheatServiceTest
 
         deg1.setUser( user );
 
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectForReferences( deg1, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( deg1, PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertTrue( references.containsKey( User.class ) );
@@ -148,7 +148,7 @@ public class PreheatServiceTest
     }
 
     @Test
-    public void testScanObjectsReferenceUidDEG()
+    public void testCollectReferenceUidDEG2()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
         DataElementGroup deg2 = createDataElementGroup( 'B' );
@@ -161,7 +161,7 @@ public class PreheatServiceTest
         deg1.addDataElement( de2 );
         deg2.addDataElement( de3 );
 
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectsForReferences(
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
             Sets.newHashSet( deg1, deg2 ), PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( DataElement.class ) );
@@ -173,7 +173,7 @@ public class PreheatServiceTest
     }
 
     @Test
-    public void testScanObjectReferenceCodeDEG()
+    public void testCollectReferenceCodeDEG1()
     {
         DataElementGroup dataElementGroup = createDataElementGroup( 'A' );
 
@@ -189,7 +189,7 @@ public class PreheatServiceTest
 
         dataElementGroup.setUser( user );
 
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.CODE );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup, PreheatIdentifier.CODE );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertTrue( references.containsKey( User.class ) );
@@ -205,7 +205,7 @@ public class PreheatServiceTest
     }
 
     @Test
-    public void testScanObjectsReferenceCodeDEG()
+    public void testCollectReferenceCodeDEG2()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
         DataElementGroup deg2 = createDataElementGroup( 'B' );
@@ -218,7 +218,7 @@ public class PreheatServiceTest
         deg1.addDataElement( de2 );
         deg2.addDataElement( de3 );
 
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectsForReferences(
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
             Sets.newHashSet( deg1, deg2 ), PreheatIdentifier.CODE );
 
         assertTrue( references.containsKey( DataElement.class ) );
@@ -442,7 +442,7 @@ public class PreheatServiceTest
         dataElementGroup.setUser( user );
         manager.save( dataElementGroup );
 
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.scanObjectForReferences( dataElementGroup, PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup, PreheatIdentifier.UID );
 
         PreheatParams params = new PreheatParams();
         params.setPreheatMode( PreheatMode.REFERENCE );

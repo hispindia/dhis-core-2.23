@@ -122,14 +122,14 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public Map<Class<? extends IdentifiableObject>, Set<String>> scanObjectForReferences( Object object, PreheatIdentifier identifier )
+    public Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Object object, PreheatIdentifier identifier )
     {
-        return scanObjectsForReferences( Sets.newHashSet( object ), identifier );
+        return collectReferences( Sets.newHashSet( object ), identifier );
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, Set<String>> scanObjectsForReferences( Set<Object> objects, PreheatIdentifier identifier )
+    public Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Set<Object> objects, PreheatIdentifier identifier )
     {
         Map<Class<? extends IdentifiableObject>, Set<String>> map = new HashMap<>();
 
