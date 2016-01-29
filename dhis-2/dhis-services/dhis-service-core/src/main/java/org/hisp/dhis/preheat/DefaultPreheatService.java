@@ -104,7 +104,7 @@ public class DefaultPreheatService implements PreheatService
     @Override
     public void validate( PreheatParams params ) throws PreheatException
     {
-        if ( PreheatMode.ALL == params.getPreheatMode() )
+        if ( PreheatMode.ALL == params.getPreheatMode() || PreheatMode.NONE == params.getPreheatMode() )
         {
             // nothing to validate for now, if classes is empty it will get all metadata classes
         }
