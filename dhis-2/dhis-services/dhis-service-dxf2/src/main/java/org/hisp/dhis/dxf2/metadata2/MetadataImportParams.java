@@ -29,7 +29,9 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatMode;
+import org.hisp.dhis.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,11 +41,15 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class MetadataImportParams<T extends IdentifiableObject>
+public class MetadataImportParams
 {
     private PreheatMode preheatMode = PreheatMode.ALL;
 
-    private Map<Class<T>, List<T>> objects = new HashMap<>();
+    private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
+
+    private User user;
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public MetadataImportParams()
     {
@@ -59,37 +65,56 @@ public class MetadataImportParams<T extends IdentifiableObject>
         this.preheatMode = preheatMode;
     }
 
+    public ImportStrategy getImportStrategy()
+    {
+        return importStrategy;
+    }
+
+    public void setImportStrategy( ImportStrategy importStrategy )
+    {
+        this.importStrategy = importStrategy;
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser( User user )
+    {
+        this.user = user;
+    }
+
     public List<Class<? extends IdentifiableObject>> getClasses()
     {
         return new ArrayList<>( objects.keySet() );
     }
 
-    public List<T> getObjects( Class<T> klass )
+    public List<? extends IdentifiableObject> getObjects( Class<? extends IdentifiableObject> klass )
     {
         return objects.get( klass );
     }
 
-    @SuppressWarnings( "unchecked" )
-    public MetadataImportParams addObject( T object )
+    public MetadataImportParams addObject( IdentifiableObject object )
     {
         if ( object == null )
         {
             return this;
         }
 
-        Class<T> klass = (Class<T>) object.getClass();
+        Class<? extends IdentifiableObject> klass = object.getClass();
 
         if ( !objects.containsKey( klass ) )
         {
             objects.put( klass, new ArrayList<>() );
         }
 
-        objects.get( klass ).add( object );
+        objects.get( klass ).add( klass.cast( object ) );
 
         return this;
     }
 
-    public MetadataImportParams addObjects( List<T> objects )
+    public MetadataImportParams addObjects( List<? extends IdentifiableObject> objects )
     {
         objects.forEach( this::addObject );
         return this;

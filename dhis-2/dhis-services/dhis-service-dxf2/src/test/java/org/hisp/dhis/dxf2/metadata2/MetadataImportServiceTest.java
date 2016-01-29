@@ -28,73 +28,55 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.preheat.PreheatService;
-import org.hisp.dhis.schema.SchemaService;
-import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.constant.Constant;
+import org.hisp.dhis.dxf2.render.RenderService;
+import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.core.io.ClassPathResource;
 
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@Component
-public class DefaultMetadataImportService implements MetadataImportService
+public class MetadataImportServiceTest
+    extends DhisSpringTest
 {
-    private static final Log log = LogFactory.getLog( MetadataImportService.class );
+    @Autowired
+    private MetadataImportService metadataImportService;
 
     @Autowired
-    private SchemaService schemaService;
-
-    @Autowired
-    private PreheatService preheatService;
-
-    @Autowired
-    private CurrentUserService currentUserService;
+    private RenderService renderService;
 
     @Autowired
     private IdentifiableObjectManager manager;
 
-    @Override
-    public void importMetadata( MetadataImportParams params )
+    @Test
+    public void testConstantImport() throws IOException
     {
-        if ( params.getUser() == null )
-        {
-            params.setUser( currentUserService.getCurrentUser() );
-        }
+        Constant constant1 = fromJson( "dxf2/constant1.json", Constant.class );
+        Constant constant2 = fromJson( "dxf2/constant2.json", Constant.class );
 
-        for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
-        {
-            List<? extends IdentifiableObject> objects = params.getObjects( klass );
-            objects.forEach( this::importObject );
-        }
-    }
-
-    @Override
-    public void validate( MetadataImportParams params ) throws MetadataImportException
-    {
-
-    }
-
-    @Override
-    public MetadataImportParams getParamsFromMap( Map<String, String> parameters )
-    {
         MetadataImportParams params = new MetadataImportParams();
-        return params;
+        params.addObject( constant1 );
+        params.addObject( constant2 );
+
+        metadataImportService.importMetadata( params );
+
+        constant1 = manager.get( Constant.class, "abcdefghijA" );
+        constant2 = manager.get( Constant.class, "abcdefghijB" );
+
+        assertNotNull( constant1 );
+        assertNotNull( constant2 );
     }
 
-    //------------------------------------------------------------------------------------------------
-    // Helpers
-    //------------------------------------------------------------------------------------------------
-
-    private void importObject( IdentifiableObject object )
+    private <T extends IdentifiableObject> T fromJson( String path, Class<T> klass ) throws IOException
     {
-        manager.save( object );
+        return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );
     }
 }
