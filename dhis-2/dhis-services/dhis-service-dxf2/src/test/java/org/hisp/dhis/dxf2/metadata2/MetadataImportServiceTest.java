@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.constant.Constant;
+import org.hisp.dhis.render.RenderService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -47,6 +48,15 @@ public class MetadataImportServiceTest
 
     @Autowired
     private IdentifiableObjectManager manager;
+
+    @Autowired
+    private RenderService _renderService;
+
+    @Override
+    protected void setUpTest() throws Exception
+    {
+        renderService = _renderService;
+    }
 
     @Test
     public void testConstantImport()

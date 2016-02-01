@@ -99,7 +99,6 @@ import org.hisp.dhis.validation.ValidationRuleGroup;
 import org.joda.time.DateTime;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -161,7 +160,6 @@ public abstract class DhisConvenienceTest
 
     protected UserService userService;
 
-    @Autowired
     protected RenderService renderService;
 
     static
@@ -1448,6 +1446,8 @@ public abstract class DhisConvenienceTest
 
     protected <T extends IdentifiableObject> T fromJson( String path, Class<T> klass )
     {
+        Assert.notNull( renderService, "RenderService must be injected in test" );
+
         try
         {
             return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );

@@ -122,16 +122,22 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Object object, PreheatIdentifier identifier )
+    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Object object )
     {
-        return collectReferences( Sets.newHashSet( object ), identifier );
+        return collectReferences( Sets.newHashSet( object ) );
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Set<Object> objects, PreheatIdentifier identifier )
+    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Set<Object> objects )
     {
-        Map<Class<? extends IdentifiableObject>, Set<String>> map = new HashMap<>();
+        Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> map = new HashMap<>();
+
+        map.put( PreheatIdentifier.UID, new HashMap<>() );
+        map.put( PreheatIdentifier.CODE, new HashMap<>() );
+
+        Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = map.get( PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = map.get( PreheatIdentifier.CODE );
 
         if ( objects.isEmpty() )
         {
@@ -149,7 +155,10 @@ public class DefaultPreheatService implements PreheatService
                 if ( !p.isCollection() )
                 {
                     Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getKlass();
-                    if ( !map.containsKey( klass ) ) map.put( klass, new HashSet<>() );
+
+                    if ( !uidMap.containsKey( klass ) ) uidMap.put( klass, new HashSet<>() );
+                    if ( !codeMap.containsKey( klass ) ) codeMap.put( klass, new HashSet<>() );
+
                     Object reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     if ( reference != null )
@@ -159,20 +168,17 @@ public class DefaultPreheatService implements PreheatService
                         String uid = identifiableObject.getUid();
                         String code = identifiableObject.getCode();
 
-                        if ( PreheatIdentifier.UID == identifier )
-                        {
-                            if ( uid != null ) map.get( klass ).add( uid );
-                        }
-                        else if ( PreheatIdentifier.CODE == identifier )
-                        {
-                            if ( code != null ) map.get( klass ).add( code );
-                        }
+                        if ( uid != null ) uidMap.get( klass ).add( uid );
+                        if ( code != null ) codeMap.get( klass ).add( code );
                     }
                 }
                 else
                 {
                     Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getItemKlass();
-                    if ( !map.containsKey( klass ) ) map.put( klass, new HashSet<>() );
+
+                    if ( !uidMap.containsKey( klass ) ) uidMap.put( klass, new HashSet<>() );
+                    if ( !codeMap.containsKey( klass ) ) codeMap.put( klass, new HashSet<>() );
+
                     Collection<IdentifiableObject> reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     for ( IdentifiableObject identifiableObject : reference )
@@ -180,14 +186,8 @@ public class DefaultPreheatService implements PreheatService
                         String uid = identifiableObject.getUid();
                         String code = identifiableObject.getCode();
 
-                        if ( PreheatIdentifier.UID == identifier )
-                        {
-                            if ( uid != null ) map.get( klass ).add( uid );
-                        }
-                        else if ( PreheatIdentifier.CODE == identifier )
-                        {
-                            if ( code != null ) map.get( klass ).add( code );
-                        }
+                        if ( uid != null ) uidMap.get( klass ).add( uid );
+                        if ( code != null ) codeMap.get( klass ).add( code );
                     }
                 }
             }

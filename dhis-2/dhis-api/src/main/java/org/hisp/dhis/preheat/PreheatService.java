@@ -55,20 +55,25 @@ public interface PreheatService
     /**
      * Scan object and collect all references (both id object and collections with id objects).
      *
-     * @param object     Object to scan
-     * @param identifier Identifier to collect
+     * @param object Object to scan
      * @return Maps classes to collections of identifiers
      */
-    Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Object object, PreheatIdentifier identifier );
+    Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Object object );
 
     /**
      * Scan objects and collect all references (both id object and collections with id objects).
      *
-     * @param objects    Objects to scan
-     * @param identifier Identifier to collect
+     * @param objects Objects to scan
      * @return Maps classes to collections of identifiers
      */
-    Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Set<Object> objects, PreheatIdentifier identifier );
+    Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Set<Object> objects );
 
+    /**
+     * Connects id object references on a given object using a given identifier + a preheated Preheat cache.
+     *
+     * @param object     Object to connect to
+     * @param preheat    Preheat Cache to use
+     * @param identifier Use this identifier type to attach references
+     */
     <T extends IdentifiableObject> void connectReferences( T object, Preheat preheat, PreheatIdentifier identifier );
 }
