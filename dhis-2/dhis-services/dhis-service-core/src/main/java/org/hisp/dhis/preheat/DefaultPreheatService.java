@@ -76,24 +76,40 @@ public class DefaultPreheatService implements PreheatService
             for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
             {
                 List<? extends IdentifiableObject> objects = manager.getAllNoAcl( klass ); // should we use getAll here? are we allowed to reference unshared objects?
-                preheat.put( params.getPreheatIdentifier(), objects );
+
+                if ( PreheatIdentifier.UID == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier() )
+                {
+                    preheat.put( PreheatIdentifier.UID, objects );
+                }
+
+                if ( PreheatIdentifier.CODE == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier() )
+                {
+                    preheat.put( PreheatIdentifier.CODE, objects );
+                }
             }
         }
         else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
         {
-            for ( Class<? extends IdentifiableObject> klass : params.getReferences().keySet() )
-            {
-                Collection<String> identifiers = params.getReferences().get( klass );
+            Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = params.getReferences().get( PreheatIdentifier.UID );
+            Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = params.getReferences().get( PreheatIdentifier.CODE );
 
-                if ( PreheatIdentifier.UID == params.getPreheatIdentifier() )
+            if ( uidMap != null && (PreheatIdentifier.UID == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier()) )
+            {
+                for ( Class<? extends IdentifiableObject> klass : uidMap.keySet() )
                 {
+                    Collection<String> identifiers = uidMap.get( klass );
                     List<? extends IdentifiableObject> objects = manager.getByUid( klass, identifiers );
-                    preheat.put( params.getPreheatIdentifier(), objects );
+                    preheat.put( PreheatIdentifier.UID, objects );
                 }
-                else if ( PreheatIdentifier.CODE == params.getPreheatIdentifier() )
+            }
+
+            if ( codeMap != null && (PreheatIdentifier.CODE == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier()) )
+            {
+                for ( Class<? extends IdentifiableObject> klass : codeMap.keySet() )
                 {
+                    Collection<String> identifiers = codeMap.get( klass );
                     List<? extends IdentifiableObject> objects = manager.getByCode( klass, identifiers );
-                    preheat.put( params.getPreheatIdentifier(), objects );
+                    preheat.put( PreheatIdentifier.CODE, objects );
                 }
             }
         }

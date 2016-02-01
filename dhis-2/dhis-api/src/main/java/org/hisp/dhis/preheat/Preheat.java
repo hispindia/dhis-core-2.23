@@ -68,12 +68,12 @@ public class Preheat
 
         if ( PreheatIdentifier.UID == identifier || PreheatIdentifier.AUTO == identifier )
         {
-            reference = get( identifier, object.getClass(), object.getUid() );
+            reference = get( PreheatIdentifier.UID, object.getClass(), object.getUid() );
         }
 
         if ( PreheatIdentifier.CODE == identifier || (reference == null && PreheatIdentifier.AUTO == identifier) )
         {
-            reference = get( identifier, object.getClass(), object.getCode() );
+            reference = get( PreheatIdentifier.CODE, object.getClass(), object.getCode() );
         }
 
         return reference;
