@@ -38,7 +38,7 @@ import org.hisp.dhis.dataset.CompleteDataSetRegistrationService;
 import org.hisp.dhis.dataset.CompleteDataSetRegistrations;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.DataSetService;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.utils.InputUtils;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.i18n.I18nFormat;

@@ -28,7 +28,7 @@ package org.hisp.dhis.webapi.service;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

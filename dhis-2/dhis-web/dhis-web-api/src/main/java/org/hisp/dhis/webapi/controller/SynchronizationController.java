@@ -29,7 +29,7 @@ package org.hisp.dhis.webapi.controller;
  */
 
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.synch.AvailabilityStatus;
 import org.hisp.dhis.dxf2.synch.SynchronizationManager;
 import org.hisp.dhis.setting.SettingKey;

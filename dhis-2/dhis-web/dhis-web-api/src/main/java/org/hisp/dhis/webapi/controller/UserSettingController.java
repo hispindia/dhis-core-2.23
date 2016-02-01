@@ -28,7 +28,7 @@ package org.hisp.dhis.webapi.controller;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.user.CurrentUserService;

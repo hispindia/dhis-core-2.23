@@ -32,7 +32,7 @@ import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.dataintegrity.DataIntegrityReport;
 import org.hisp.dhis.dataintegrity.FlattenedDataIntegrityReport;
 import org.hisp.dhis.dxf2.metadata.ImportSummary;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.node.exception.InvalidTypeException;
 import org.hisp.dhis.node.types.CollectionNode;
 import org.hisp.dhis.node.types.RootNode;

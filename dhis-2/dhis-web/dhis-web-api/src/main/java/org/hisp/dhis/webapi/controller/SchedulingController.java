@@ -29,7 +29,7 @@ package org.hisp.dhis.webapi.controller;
  */
 
 import org.hisp.dhis.common.ListMap;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.scheduling.SchedulingManager;
 import org.hisp.dhis.webapi.utils.ContextUtils;
 import org.hisp.dhis.webapi.webdomain.SchedulingStrategy;

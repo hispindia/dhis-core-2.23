@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.beanutils.BeanUtils;
 import org.hisp.dhis.appmanager.App;
 import org.hisp.dhis.appmanager.AppManager;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.keyjsonvalue.KeyJsonValue;
 import org.hisp.dhis.keyjsonvalue.KeyJsonValueService;

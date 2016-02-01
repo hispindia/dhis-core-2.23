@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.render;
+package org.hisp.dhis.render;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -31,11 +31,14 @@ package org.hisp.dhis.dxf2.render;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
-
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
@@ -158,7 +161,7 @@ public class DefaultRenderService
 
         return true;
     }
-    
+
     //--------------------------------------------------------------------------
     // Helpers
     //--------------------------------------------------------------------------
@@ -175,7 +178,7 @@ public class DefaultRenderService
 
     private void configureObjectMappers()
     {
-        ObjectMapper[] objectMappers = new ObjectMapper[] { jsonMapper, xmlMapper };
+        ObjectMapper[] objectMappers = new ObjectMapper[]{ jsonMapper, xmlMapper };
 
         for ( ObjectMapper objectMapper : objectMappers )
         {

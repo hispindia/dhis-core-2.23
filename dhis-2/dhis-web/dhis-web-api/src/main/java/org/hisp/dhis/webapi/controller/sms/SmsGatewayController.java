@@ -31,7 +31,7 @@ package org.hisp.dhis.webapi.controller.sms;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
 import org.hisp.dhis.sms.config.ClickatellGatewayConfig;

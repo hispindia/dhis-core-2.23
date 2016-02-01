@@ -38,7 +38,7 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.configuration.Configuration;
 import org.hisp.dhis.configuration.ConfigurationService;
 import org.hisp.dhis.dataelement.DataElementGroup;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.external.conf.ConfigurationKey;
 import org.hisp.dhis.external.conf.DhisConfigurationProvider;
 import org.hisp.dhis.indicator.IndicatorGroup;

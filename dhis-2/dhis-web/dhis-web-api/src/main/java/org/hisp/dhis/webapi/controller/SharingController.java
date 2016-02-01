@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.security.acl.AccessStringHelper;
 import org.hisp.dhis.security.acl.AclService;

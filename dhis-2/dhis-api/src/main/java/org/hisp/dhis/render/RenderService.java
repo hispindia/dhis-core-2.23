@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.render;
+package org.hisp.dhis.render;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo

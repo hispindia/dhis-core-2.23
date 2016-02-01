@@ -36,7 +36,7 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.sms.SmsSender;
 import org.hisp.dhis.sms.incoming.IncomingSms;

@@ -35,7 +35,7 @@ import org.hisp.dhis.dxf2.datavalueset.DataValueSetService;
 import org.hisp.dhis.dxf2.datavalueset.tasks.ImportDataValueTask;
 import org.hisp.dhis.dxf2.importsummary.ImportSummaries;
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.scheduling.TaskCategory;
 import org.hisp.dhis.scheduling.TaskId;
 import org.hisp.dhis.system.scheduling.Scheduler;

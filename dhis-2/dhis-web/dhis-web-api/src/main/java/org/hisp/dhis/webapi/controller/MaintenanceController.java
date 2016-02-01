@@ -35,7 +35,7 @@ import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dxf2.common.Options;
 import org.hisp.dhis.dxf2.metadata.ExportService;
 import org.hisp.dhis.dxf2.metadata.MetaData;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.schema.SchemaValidator;
 import org.hisp.dhis.dxf2.webmessage.WebMessage;
 import org.hisp.dhis.validation.ValidationViolation;

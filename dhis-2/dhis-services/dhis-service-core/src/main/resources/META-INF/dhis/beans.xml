@@ -37,6 +37,8 @@
 
   <bean id="org.hisp.dhis.fieldfilter.FieldFilterService" class="org.hisp.dhis.fieldfilter.DefaultFieldFilterService" />
 
+  <bean id="org.hisp.dhis.render.RenderService" class="org.hisp.dhis.render.DefaultRenderService" />
+
   <!-- Store definitions -->
 
   <bean id="org.hisp.dhis.dataentryform.DataEntryFormStore" class="org.hisp.dhis.dataentryform.hibernate.HibernateDataEntryFormStore">
@@ -1122,12 +1124,12 @@
   <bean id="org.hisp.dhis.sms.SmsMessageSender" class="org.hisp.dhis.sms.SmsMessageSender" />
 
   <bean id="org.hisp.dhis.sms.task.SendSmsTask" class="org.hisp.dhis.sms.task.SendSmsTask" scope="prototype" />
-  
+
   <bean id="org.hisp.dhis.sms.SmsConsumerThread" class="org.hisp.dhis.sms.SmsConsumerThread" />
-  
-  <bean id="org.hisp.dhis.sms.config.GatewayAdministratonService" 
-  			class="org.hisp.dhis.sms.config.DefaultGatewayAdministrationService" />
-  
+
+  <bean id="org.hisp.dhis.sms.config.GatewayAdministratonService"
+    class="org.hisp.dhis.sms.config.DefaultGatewayAdministrationService" />
+
   <!-- I18nService -->
 
   <bean id="org.hisp.dhis.i18n.I18nService" class="org.hisp.dhis.i18n.DefaultI18nService">

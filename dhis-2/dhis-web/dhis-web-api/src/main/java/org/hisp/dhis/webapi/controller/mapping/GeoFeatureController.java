@@ -36,7 +36,7 @@ import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.DimensionalObjectUtils;
 import org.hisp.dhis.common.DisplayProperty;
 import org.hisp.dhis.commons.filter.FilterUtils;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.organisationunit.FeatureType;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroup;

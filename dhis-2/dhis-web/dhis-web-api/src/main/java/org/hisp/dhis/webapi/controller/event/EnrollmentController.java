@@ -37,7 +37,7 @@ import org.hisp.dhis.dxf2.events.enrollment.EnrollmentService;
 import org.hisp.dhis.dxf2.importsummary.ImportStatus;
 import org.hisp.dhis.dxf2.importsummary.ImportSummaries;
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
-import org.hisp.dhis.dxf2.render.RenderService;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.fieldfilter.FieldFilterService;
 import org.hisp.dhis.importexport.ImportStrategy;
