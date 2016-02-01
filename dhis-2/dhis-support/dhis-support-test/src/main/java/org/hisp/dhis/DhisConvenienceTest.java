@@ -35,6 +35,7 @@ import org.hisp.dhis.chart.Chart;
 import org.hisp.dhis.chart.ChartType;
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.DimensionalObject;
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.common.cache.CacheStrategy;
 import org.hisp.dhis.constant.Constant;
@@ -78,6 +79,7 @@ import org.hisp.dhis.programrule.ProgramRuleActionType;
 import org.hisp.dhis.programrule.ProgramRuleVariable;
 import org.hisp.dhis.programrule.ProgramRuleVariableSourceType;
 import org.hisp.dhis.relationship.RelationshipType;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.sqlview.SqlView;
 import org.hisp.dhis.sqlview.SqlViewType;
 import org.hisp.dhis.trackedentity.TrackedEntity;
@@ -97,6 +99,8 @@ import org.hisp.dhis.validation.ValidationRuleGroup;
 import org.joda.time.DateTime;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -112,6 +116,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -153,6 +158,9 @@ public abstract class DhisConvenienceTest
     // -------------------------------------------------------------------------
 
     protected UserService userService;
+
+    @Autowired
+    protected RenderService renderService;
 
     static
     {
@@ -1435,6 +1443,11 @@ public abstract class DhisConvenienceTest
     // -------------------------------------------------------------------------
     // Supportive methods
     // -------------------------------------------------------------------------
+
+    protected <T extends IdentifiableObject> T fromJson( String path, Class<T> klass ) throws IOException
+    {
+        return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );
+    }
 
     /**
      * Injects the externalDir property of LocationManager to

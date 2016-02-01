@@ -29,13 +29,10 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.DhisSpringTest;
-import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.constant.Constant;
-import org.hisp.dhis.render.RenderService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
@@ -49,9 +46,6 @@ public class MetadataImportServiceTest
 {
     @Autowired
     private MetadataImportService metadataImportService;
-
-    @Autowired
-    private RenderService renderService;
 
     @Autowired
     private IdentifiableObjectManager manager;
@@ -73,10 +67,5 @@ public class MetadataImportServiceTest
 
         assertNotNull( constant1 );
         assertNotNull( constant2 );
-    }
-
-    private <T extends IdentifiableObject> T fromJson( String path, Class<T> klass ) throws IOException
-    {
-        return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );
     }
 }
