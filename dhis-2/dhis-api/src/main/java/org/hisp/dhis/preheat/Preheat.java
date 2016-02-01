@@ -56,6 +56,29 @@ public class Preheat
         return (T) map.get( identifier ).get( klass ).get( key );
     }
 
+    @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, T object )
+    {
+        if ( object == null )
+        {
+            return null;
+        }
+
+        T reference = null;
+
+        if ( PreheatIdentifier.UID == identifier || PreheatIdentifier.AUTO == identifier )
+        {
+            reference = get( identifier, object.getClass(), object.getUid() );
+        }
+
+        if ( PreheatIdentifier.CODE == identifier || (reference != null && PreheatIdentifier.AUTO == identifier) )
+        {
+            reference = get( identifier, object.getClass(), object.getCode() );
+        }
+
+        return reference;
+    }
+
     public boolean containsKey( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, String key )
     {
         return !(isEmpty() || isEmpty( identifier ) || isEmpty( identifier, klass )) && map.get( identifier ).get( klass ).containsKey( key );

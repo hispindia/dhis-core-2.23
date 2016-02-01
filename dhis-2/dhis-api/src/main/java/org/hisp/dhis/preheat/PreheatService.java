@@ -69,4 +69,6 @@ public interface PreheatService
      * @return Maps classes to collections of identifiers
      */
     Map<Class<? extends IdentifiableObject>, Set<String>> collectReferences( Set<Object> objects, PreheatIdentifier identifier );
+
+    <T extends IdentifiableObject> void connectReferences( T object, Preheat preheat, PreheatIdentifier identifier );
 }

@@ -43,7 +43,12 @@ public enum PreheatIdentifier
     /**
      * Preheat using CODE identifiers.
      */
-    CODE;
+    CODE,
+
+    /**
+     * Find first non-null identifier in order: UID, CODE
+     */
+    AUTO;
 
     <T extends IdentifiableObject> String getIdentifier( T object )
     {
