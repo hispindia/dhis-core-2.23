@@ -477,8 +477,7 @@ public class PreheatServiceTest
     @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceConnectUID()
     {
-        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
-        dataElementGroup.setAutoFields();
+        DataElementGroup dataElementGroup = fromJson( "preheat/degAUidRef.json", DataElementGroup.class );
 
         DataElement de1 = createDataElement( 'A' );
         DataElement de2 = createDataElement( 'B' );
@@ -491,23 +490,6 @@ public class PreheatServiceTest
         User user = createUser( 'A' );
         manager.save( user );
 
-        dataElementGroup.addDataElement( de1 );
-        dataElementGroup.addDataElement( de2 );
-        dataElementGroup.addDataElement( de3 );
-
-        dataElementGroup.setUser( user );
-
-        manager.save( dataElementGroup );
-        manager.evict( dataElementGroup );
-
-        List<DataElement> members = new ArrayList<>( dataElementGroup.getMembers() );
-        members.set( 0, createDataElementIdentifier( de1.getUid(), PreheatIdentifier.UID ) );
-        members.set( 1, createDataElementIdentifier( de2.getUid(), PreheatIdentifier.UID ) );
-        members.set( 2, createDataElementIdentifier( de3.getUid(), PreheatIdentifier.UID ) );
-
-        dataElementGroup.setMembers( new HashSet<>( members ) );
-        dataElementGroup.setUser( createUserIdentifier( user.getUid(), PreheatIdentifier.UID ) );
-
         Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup, PreheatIdentifier.UID );
 
         PreheatParams params = new PreheatParams();
@@ -518,9 +500,7 @@ public class PreheatServiceTest
         Preheat preheat = preheatService.preheat( params );
         preheatService.connectReferences( dataElementGroup, preheat, PreheatIdentifier.UID );
 
-        manager.update( dataElementGroup );
-
-        members = new ArrayList<>( dataElementGroup.getMembers() );
+        List<DataElement> members = new ArrayList<>( dataElementGroup.getMembers() );
 
         assertEquals( "DataElementA", members.get( 0 ).getName() );
         assertEquals( "DataElementCodeA", members.get( 0 ).getCode() );
@@ -538,8 +518,7 @@ public class PreheatServiceTest
     @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceConnectCODE()
     {
-        DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
-        dataElementGroup.setAutoFields();
+        DataElementGroup dataElementGroup = fromJson( "preheat/degACodeRef.json", DataElementGroup.class );
 
         DataElement de1 = createDataElement( 'A' );
         DataElement de2 = createDataElement( 'B' );
@@ -551,23 +530,6 @@ public class PreheatServiceTest
 
         User user = createUser( 'A' );
         manager.save( user );
-
-        dataElementGroup.addDataElement( de1 );
-        dataElementGroup.addDataElement( de2 );
-        dataElementGroup.addDataElement( de3 );
-
-        dataElementGroup.setUser( user );
-
-        manager.save( dataElementGroup );
-        manager.evict( dataElementGroup );
-
-        List<DataElement> members = new ArrayList<>( dataElementGroup.getMembers() );
-        members.set( 0, createDataElementIdentifier( de1.getCode(), PreheatIdentifier.CODE ) );
-        members.set( 1, createDataElementIdentifier( de2.getCode(), PreheatIdentifier.CODE ) );
-        members.set( 2, createDataElementIdentifier( de3.getCode(), PreheatIdentifier.CODE ) );
-
-        dataElementGroup.setMembers( new HashSet<>( members ) );
-        dataElementGroup.setUser( createUserIdentifier( user.getCode(), PreheatIdentifier.CODE ) );
 
         Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup, PreheatIdentifier.CODE );
 
@@ -582,7 +544,7 @@ public class PreheatServiceTest
 
         manager.update( dataElementGroup );
 
-        members = new ArrayList<>( dataElementGroup.getMembers() );
+        List<DataElement> members = new ArrayList<>( dataElementGroup.getMembers() );
 
         assertEquals( "DataElementA", members.get( 0 ).getName() );
         assertEquals( "DataElementCodeA", members.get( 0 ).getCode() );

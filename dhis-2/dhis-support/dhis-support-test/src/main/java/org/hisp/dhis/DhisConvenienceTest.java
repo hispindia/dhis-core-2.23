@@ -147,6 +147,8 @@ public abstract class DhisConvenienceTest
 
     protected static final String BASE_OU_UID = "ouabcdefgh";
 
+    protected static final String BASE_USER_UID = "userabcdef";
+
     private static final String EXT_TEST_DIR = System.getProperty( "user.home" ) + File.separator + "dhis2_test_dir";
 
     private static Date date;
@@ -1079,7 +1081,7 @@ public abstract class DhisConvenienceTest
     {
         UserCredentials credentials = new UserCredentials();
         User user = new User();
-        user.setAutoFields();
+        user.setUid( BASE_USER_UID + uniqueCharacter );
 
         credentials.setUserInfo( user );
         user.setUserCredentials( credentials );
@@ -1444,9 +1446,18 @@ public abstract class DhisConvenienceTest
     // Supportive methods
     // -------------------------------------------------------------------------
 
-    protected <T extends IdentifiableObject> T fromJson( String path, Class<T> klass ) throws IOException
+    protected <T extends IdentifiableObject> T fromJson( String path, Class<T> klass )
     {
-        return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );
+        try
+        {
+            return renderService.fromJson( new ClassPathResource( path ).getInputStream(), klass );
+        }
+        catch ( IOException e )
+        {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     /**

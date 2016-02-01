@@ -34,8 +34,6 @@ import org.hisp.dhis.constant.Constant;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -51,7 +49,7 @@ public class MetadataImportServiceTest
     private IdentifiableObjectManager manager;
 
     @Test
-    public void testConstantImport() throws IOException
+    public void testConstantImport()
     {
         Constant constant1 = fromJson( "dxf2/constant1.json", Constant.class );
         Constant constant2 = fromJson( "dxf2/constant2.json", Constant.class );
