@@ -116,25 +116,25 @@ public class DefaultImportService
     }
 
     @Override
-    public ImportSummary importMetaData( String userUid, MetaData metaData, TaskId taskId )
+    public ImportSummary importMetaData( String userUid, Metadata metadata, TaskId taskId )
     {
-        return importMetaData( userUid, metaData, ImportOptions.getDefaultImportOptions(), taskId );
+        return importMetaData( userUid, metadata, ImportOptions.getDefaultImportOptions(), taskId );
     }
 
     @Override
-    public ImportSummary importMetaData( String userUid, MetaData metaData )
+    public ImportSummary importMetaData( String userUid, Metadata metadata )
     {
-        return importMetaData( userUid, metaData, ImportOptions.getDefaultImportOptions() );
+        return importMetaData( userUid, metadata, ImportOptions.getDefaultImportOptions() );
     }
 
     @Override
-    public ImportSummary importMetaData( String userUid, MetaData metaData, ImportOptions importOptions )
+    public ImportSummary importMetaData( String userUid, Metadata metadata, ImportOptions importOptions )
     {
-        return importMetaData( userUid, metaData, importOptions, null );
+        return importMetaData( userUid, metadata, importOptions, null );
     }
 
     @Override
-    public ImportSummary importMetaData( String userUid, MetaData metaData, ImportOptions importOptions, TaskId taskId )
+    public ImportSummary importMetaData( String userUid, Metadata metadata, ImportOptions importOptions, TaskId taskId )
     {
         User user = userService.getUser( userUid );
         String username = user != null ? user.getUsername() : null;
@@ -152,7 +152,7 @@ public class DefaultImportService
 
         for ( Schema schema : schemaService.getMetadataSchemas() )
         {
-            Object value = ReflectionUtils.invokeGetterMethod( schema.getPlural(), metaData );
+            Object value = ReflectionUtils.invokeGetterMethod( schema.getPlural(), metadata );
 
             if ( value != null )
             {

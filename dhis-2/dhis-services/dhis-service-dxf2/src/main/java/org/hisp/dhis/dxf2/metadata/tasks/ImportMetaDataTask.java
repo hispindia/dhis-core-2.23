@@ -31,7 +31,7 @@ package org.hisp.dhis.dxf2.metadata.tasks;
 import org.hisp.dhis.security.SecurityContextRunnable;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.scheduling.TaskId;
 
 /**
@@ -48,21 +48,21 @@ public class ImportMetaDataTask
 
     private final TaskId taskId;
 
-    private final MetaData metaData;
+    private final Metadata metadata;
 
-    public ImportMetaDataTask( String userUid, ImportService importService, ImportOptions importOptions, TaskId taskId, MetaData metaData )
+    public ImportMetaDataTask( String userUid, ImportService importService, ImportOptions importOptions, TaskId taskId, Metadata metadata )
     {
         super();
         this.userUid = userUid;
         this.importService = importService;
         this.importOptions = importOptions;
         this.taskId = taskId;
-        this.metaData = metaData;
+        this.metadata = metadata;
     }
 
     @Override
     public void call()
     {
-        importService.importMetaData( userUid, metaData, importOptions, taskId );
+        importService.importMetaData( userUid, metadata, importOptions, taskId );
     }
 }

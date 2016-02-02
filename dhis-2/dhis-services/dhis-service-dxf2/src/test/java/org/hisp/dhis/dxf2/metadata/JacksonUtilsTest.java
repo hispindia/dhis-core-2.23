@@ -41,18 +41,18 @@ public class JacksonUtilsTest
     @Test
     public void serializableTest() throws Exception
     {
-        JacksonUtils.toJsonAsString( new MetaData() );
-        JacksonUtils.toXmlAsString( new MetaData() );
-        JacksonUtils.toJsonWithViewAsString( new MetaData(), DetailedView.class );
-        JacksonUtils.toXmlWithViewAsString( new MetaData(), DetailedView.class );
-        JacksonUtils.toJsonWithViewAsString( new MetaData(), ExportView.class );
-        JacksonUtils.toXmlWithViewAsString( new MetaData(), ExportView.class );
+        JacksonUtils.toJsonAsString( new Metadata() );
+        JacksonUtils.toXmlAsString( new Metadata() );
+        JacksonUtils.toJsonWithViewAsString( new Metadata(), DetailedView.class );
+        JacksonUtils.toXmlWithViewAsString( new Metadata(), DetailedView.class );
+        JacksonUtils.toJsonWithViewAsString( new Metadata(), ExportView.class );
+        JacksonUtils.toXmlWithViewAsString( new Metadata(), ExportView.class );
     }
 
     @Test
     public void deserializableTest() throws Exception
     {
-        JacksonUtils.fromJson( "{}", MetaData.class );
-        JacksonUtils.fromXml( "<?xml version='1.0' encoding='UTF-8'?><metaData xmlns=\"http://dhis2.org/schema/dxf/2.0\"/>", MetaData.class );
+        JacksonUtils.fromJson( "{}", Metadata.class );
+        JacksonUtils.fromXml( "<?xml version='1.0' encoding='UTF-8'?><metaData xmlns=\"http://dhis2.org/schema/dxf/2.0\"/>", Metadata.class );
     }
 }

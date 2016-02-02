@@ -39,7 +39,7 @@ import org.hisp.dhis.hibernate.exception.UpdateAccessDeniedException;
 import org.hisp.dhis.query.Order;
 import org.hisp.dhis.schema.descriptors.DashboardItemSchemaDescriptor;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,7 +63,7 @@ public class DashboardItemController
     private DashboardService dashboardService;
 
     @Override
-    protected List<DashboardItem> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders )
+    protected List<DashboardItem> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders )
     {
         List<DashboardItem> entityList;
 
@@ -72,7 +72,7 @@ public class DashboardItemController
             int count = manager.getCount( getEntityClass() );
 
             Pager pager = new Pager( options.getPage(), count, options.getPageSize() );
-            metaData.setPager( pager );
+            metadata.setPager( pager );
 
             entityList = Lists.newArrayList( manager.getBetween( getEntityClass(), pager.getOffset(), pager.getPageSize() ) );
         }

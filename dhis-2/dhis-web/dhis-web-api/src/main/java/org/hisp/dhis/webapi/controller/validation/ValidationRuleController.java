@@ -37,7 +37,7 @@ import org.hisp.dhis.schema.descriptors.ValidationRuleSchemaDescriptor;
 import org.hisp.dhis.validation.ValidationRule;
 import org.hisp.dhis.validation.ValidationRuleService;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,7 +60,7 @@ public class ValidationRuleController
     private ValidationRuleService validationRuleService;
 
     @Override
-    protected List<ValidationRule> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
+    protected List<ValidationRule> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
     {
         if ( options.contains( "dataSet" ) )
         {
@@ -74,6 +74,6 @@ public class ValidationRuleController
             return Lists.newArrayList( validationRuleService.getValidationRulesByDataElements( ds.getDataElements() ) );
         }
 
-        return super.getEntityList( metaData, options, filters, orders );
+        return super.getEntityList( metadata, options, filters, orders );
     }
 }

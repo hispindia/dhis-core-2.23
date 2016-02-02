@@ -39,7 +39,7 @@ import org.hisp.dhis.datavalue.DataValueService;
 import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.dxf2.datavalueset.DataValueSetService;
 import org.hisp.dhis.dxf2.metadata.ExportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.node.types.RootNode;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -118,9 +118,9 @@ public class DataSetController
     {
         WebOptions options = filterMetadataOptions();
 
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
-        InputStream input = new ByteArrayInputStream( JacksonUtils.toXmlWithViewAsString( metaData, ExportView.class ).getBytes( "UTF-8" ) );
+        InputStream input = new ByteArrayInputStream( JacksonUtils.toXmlWithViewAsString( metadata, ExportView.class ).getBytes( "UTF-8" ) );
 
         TransformerFactory tf = TransformerFactory.newInstance();
         tf.setURIResolver( new ClassPathUriResolver() );

@@ -35,7 +35,7 @@ import org.hisp.dhis.commons.util.DebugUtils;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.scheduling.TaskId;
 
 import java.io.IOException;
@@ -76,17 +76,17 @@ public class ImportMetaDataTask
     @Override
     public void call()
     {
-        MetaData metaData;
+        Metadata metadata;
 
         try
         {
             if ( "json".equals( format ) )
             {
-                metaData = JacksonUtils.fromJson( inputStream, MetaData.class );
+                metadata = JacksonUtils.fromJson( inputStream, Metadata.class );
             }
             else
             {
-                metaData = JacksonUtils.fromXml( inputStream, MetaData.class );
+                metadata = JacksonUtils.fromXml( inputStream, Metadata.class );
             }
         }
         catch ( IOException ex )
@@ -96,6 +96,6 @@ public class ImportMetaDataTask
             throw new RuntimeException( "Failed to parse meta data input stream", ex );
         }
 
-        importService.importMetaData( userUid, metaData, importOptions, taskId );
+        importService.importMetaData( userUid, metadata, importOptions, taskId );
     }
 }

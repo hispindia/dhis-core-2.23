@@ -39,7 +39,7 @@ import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryParserException;
 import org.hisp.dhis.schema.descriptors.ProgramSchemaDescriptor;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -80,7 +80,7 @@ public class ProgramController
 
     @Override
     @SuppressWarnings( "unchecked" )
-    protected List<Program> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
+    protected List<Program> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
     {
         Boolean userFilter = Boolean.parseBoolean( options.getOptions().get( "userFilter" ) );
 
@@ -101,7 +101,7 @@ public class ProgramController
         {
             Set<Program> programs = programService.getCurrentUserPrograms();
             entityList.retainAll( programs );
-            metaData.setPager( null );
+            metadata.setPager( null );
         }
 
         return entityList;

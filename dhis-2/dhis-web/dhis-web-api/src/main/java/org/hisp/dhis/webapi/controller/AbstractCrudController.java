@@ -79,7 +79,7 @@ import org.hisp.dhis.webapi.service.ContextService;
 import org.hisp.dhis.webapi.service.LinkService;
 import org.hisp.dhis.webapi.service.WebMessageService;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -166,7 +166,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
         List<Order> orders = orderParams.getOrders( getSchema() );
 
         WebOptions options = new WebOptions( rpParameters );
-        WebMetaData metaData = new WebMetaData();
+        WebMetadata metadata = new WebMetadata();
 
         if ( !aclService.canRead( currentUserService.getCurrentUser(), getEntityClass() ) )
         {
@@ -178,9 +178,9 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
             fields.addAll( Preset.defaultPreset().getFields() );
         }
 
-        List<T> entities = getEntityList( metaData, options, filters, orders );
+        List<T> entities = getEntityList( metadata, options, filters, orders );
         translate( entities, translateParams );
-        Pager pager = metaData.getPager();
+        Pager pager = metadata.getPager();
 
         if ( options.hasPaging() && pager == null )
         {
@@ -860,7 +860,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
     //--------------------------------------------------------------------------
 
     @SuppressWarnings( "unchecked" )
-    protected List<T> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
+    protected List<T> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders ) throws QueryParserException
     {
         List<T> entityList;
         Query query = queryService.getQueryFromUrl( getEntityClass(), filters, orders );

@@ -34,7 +34,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dxf2.common.Options;
 import org.hisp.dhis.dxf2.metadata.ExportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.schema.SchemaValidator;
 import org.hisp.dhis.dxf2.webmessage.WebMessage;
@@ -183,8 +183,8 @@ public class MaintenanceController
         Options options = new Options();
         options.setAssumeTrue( true );
 
-        MetaData metaData = exportService.getMetaData( options );
-        Schema schema = schemaService.getDynamicSchema( MetaData.class );
+        Metadata metadata = exportService.getMetaData( options );
+        Schema schema = schemaService.getDynamicSchema( Metadata.class );
 
         Map<String, Map<String, List<ValidationViolation>>> output = new HashMap<>();
 
@@ -197,7 +197,7 @@ public class MaintenanceController
 
             output.put( property.getName(), new HashMap<>() );
 
-            Collection<?> collection = (Collection<?>) property.getGetterMethod().invoke( metaData );
+            Collection<?> collection = (Collection<?>) property.getGetterMethod().invoke( metadata );
 
             for ( Object object : collection )
             {

@@ -33,7 +33,7 @@ import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.dxf2.metadata.ExportService;
 import org.hisp.dhis.dxf2.metadata.ImportService;
 import org.hisp.dhis.dxf2.metadata.ImportSummary;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.dxf2.metadata.tasks.ImportMetaDataTask;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.scheduling.TaskCategory;
@@ -93,9 +93,9 @@ public class MetaDataController
     public String export( @RequestParam Map<String, String> parameters, Model model )
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
-        model.addAttribute( "model", metaData );
+        model.addAttribute( "model", metadata );
         model.addAttribute( "viewClass", options.getViewClass( "export" ) );
 
         return "export";
@@ -105,24 +105,24 @@ public class MetaDataController
     public void exportXml( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_XML, CacheStrategy.NO_CACHE, "metadata.xml", true );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toXmlWithView( response.getOutputStream(), metaData, viewClass );
+        JacksonUtils.toXmlWithView( response.getOutputStream(), metadata, viewClass );
     }
 
     @RequestMapping( value = MetaDataController.RESOURCE_PATH + ".json", produces = "*/*" )
     public void exportJson( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_JSON, CacheStrategy.NO_CACHE, "metadata.json", true );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toJsonWithView( response.getOutputStream(), metaData, viewClass );
+        JacksonUtils.toJsonWithView( response.getOutputStream(), metadata, viewClass );
     }
 
     @RequestMapping( value = { MetaDataController.RESOURCE_PATH + ".zip" }, produces = "*/*" )
@@ -144,7 +144,7 @@ public class MetaDataController
     public void exportZippedXML( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_ZIP, CacheStrategy.NO_CACHE, "metadata.xml.zip", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -153,14 +153,14 @@ public class MetaDataController
         zip.putNextEntry( new ZipEntry( "metadata.xml" ) );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toXmlWithView( zip, metaData, viewClass );
+        JacksonUtils.toXmlWithView( zip, metadata, viewClass );
     }
 
     @RequestMapping( value = { MetaDataController.RESOURCE_PATH + ".json.zip" }, produces = "*/*" )
     public void exportZippedJSON( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_ZIP, CacheStrategy.NO_CACHE, "metadata.json.zip", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -169,7 +169,7 @@ public class MetaDataController
         zip.putNextEntry( new ZipEntry( "metadata.json" ) );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toJsonWithView( zip, metaData, viewClass );
+        JacksonUtils.toJsonWithView( zip, metadata, viewClass );
     }
 
     @RequestMapping( value = { MetaDataController.RESOURCE_PATH + ".gz" }, produces = "*/*" )
@@ -191,7 +191,7 @@ public class MetaDataController
     public void exportGZippedXML( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_GZIP, CacheStrategy.NO_CACHE, "metadata.xml.gz", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -199,14 +199,14 @@ public class MetaDataController
         GZIPOutputStream gzip = new GZIPOutputStream( response.getOutputStream() );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toXmlWithView( gzip, metaData, viewClass );
+        JacksonUtils.toXmlWithView( gzip, metadata, viewClass );
     }
 
     @RequestMapping( value = { MetaDataController.RESOURCE_PATH + ".json.gz" }, produces = "*/*" )
     public void exportGZippedJSON( @RequestParam Map<String, String> parameters, HttpServletResponse response ) throws IOException
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_GZIP, CacheStrategy.NO_CACHE, "metadata.json.gz", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -214,7 +214,7 @@ public class MetaDataController
         GZIPOutputStream gzip = new GZIPOutputStream( response.getOutputStream() );
 
         Class<?> viewClass = JacksonUtils.getViewClass( options.getViewClass( "export" ) );
-        JacksonUtils.toJsonWithView( gzip, metaData, viewClass );
+        JacksonUtils.toJsonWithView( gzip, metadata, viewClass );
     }
 
     //--------------------------------------------------------------------------
@@ -224,15 +224,15 @@ public class MetaDataController
     @RequestMapping( value = MetaDataController.RESOURCE_PATH, method = RequestMethod.POST, consumes = { "application/xml", "text/*" } )
     public void importXml( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request ) throws IOException
     {
-        MetaData metaData = JacksonUtils.fromXml( request.getInputStream(), MetaData.class );
+        Metadata metadata = JacksonUtils.fromXml( request.getInputStream(), Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportXml( importOptions, response, metaData );
+            startSyncImportXml( importOptions, response, metadata );
         }
     }
 
@@ -246,15 +246,15 @@ public class MetaDataController
     @RequestMapping( value = MetaDataController.RESOURCE_PATH, method = RequestMethod.POST, consumes = "application/json" )
     public void importJson( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request ) throws IOException
     {
-        MetaData metaData = JacksonUtils.fromJson( request.getInputStream(), MetaData.class );
+        Metadata metadata = JacksonUtils.fromJson( request.getInputStream(), Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportJson( importOptions, response, metaData );
+            startSyncImportJson( importOptions, response, metadata );
         }
     }
 
@@ -271,15 +271,15 @@ public class MetaDataController
         ZipInputStream zip = new ZipInputStream( request.getInputStream() );
         zip.getNextEntry();
 
-        MetaData metaData = JacksonUtils.fromXml( zip, MetaData.class );
+        Metadata metadata = JacksonUtils.fromXml( zip, Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportXml( importOptions, response, metaData );
+            startSyncImportXml( importOptions, response, metadata );
         }
     }
 
@@ -296,15 +296,15 @@ public class MetaDataController
         ZipInputStream zip = new ZipInputStream( request.getInputStream() );
         zip.getNextEntry();
 
-        MetaData metaData = JacksonUtils.fromJson( zip, MetaData.class );
+        Metadata metadata = JacksonUtils.fromJson( zip, Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportJson( importOptions, response, metaData );
+            startSyncImportJson( importOptions, response, metadata );
         }
     }
 
@@ -319,15 +319,15 @@ public class MetaDataController
     public void importGZippedXml( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request ) throws IOException
     {
         GZIPInputStream gzip = new GZIPInputStream( request.getInputStream() );
-        MetaData metaData = JacksonUtils.fromXml( gzip, MetaData.class );
+        Metadata metadata = JacksonUtils.fromXml( gzip, Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportXml( importOptions, response, metaData );
+            startSyncImportXml( importOptions, response, metadata );
         }
     }
 
@@ -342,15 +342,15 @@ public class MetaDataController
     public void importGZippedJson( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request ) throws IOException
     {
         GZIPInputStream gzip = new GZIPInputStream( request.getInputStream() );
-        MetaData metaData = JacksonUtils.fromJson( gzip, MetaData.class );
+        Metadata metadata = JacksonUtils.fromJson( gzip, Metadata.class );
 
         if ( importOptions.isAsync() )
         {
-            startAsyncImport( importOptions, response, request, metaData );
+            startAsyncImport( importOptions, response, request, metadata );
         }
         else
         {
-            startSyncImportJson( importOptions, response, metaData );
+            startSyncImportJson( importOptions, response, metadata );
         }
     }
 
@@ -365,33 +365,33 @@ public class MetaDataController
     // Helpers
     //--------------------------------------------------------------------------
 
-    private void startSyncImportXml( ImportOptions importOptions, HttpServletResponse response, MetaData metaData ) throws IOException
+    private void startSyncImportXml( ImportOptions importOptions, HttpServletResponse response, Metadata metadata ) throws IOException
     {
         String userUid = currentUserService.getCurrentUser().getUid();
 
-        ImportSummary importSummary = importService.importMetaData( userUid, metaData, importOptions, null );
+        ImportSummary importSummary = importService.importMetaData( userUid, metadata, importOptions, null );
         response.setStatus( HttpServletResponse.SC_OK );
         response.setContentType( ContextUtils.CONTENT_TYPE_XML );
         JacksonUtils.toXml( response.getOutputStream(), importSummary );
     }
 
-    private void startSyncImportJson( ImportOptions importOptions, HttpServletResponse response, MetaData metaData ) throws IOException
+    private void startSyncImportJson( ImportOptions importOptions, HttpServletResponse response, Metadata metadata ) throws IOException
     {
         String userUid = currentUserService.getCurrentUser().getUid();
 
-        ImportSummary importSummary = importService.importMetaData( userUid, metaData, importOptions, null );
+        ImportSummary importSummary = importService.importMetaData( userUid, metadata, importOptions, null );
         response.setStatus( HttpServletResponse.SC_OK );
         response.setContentType( ContextUtils.CONTENT_TYPE_JSON );
         JacksonUtils.toJson( response.getOutputStream(), importSummary );
     }
 
-    private void startAsyncImport( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request, MetaData metaData )
+    private void startAsyncImport( ImportOptions importOptions, HttpServletResponse response, HttpServletRequest request, Metadata metadata )
     {
         String userUid = currentUserService.getCurrentUser().getUid();
 
         TaskId taskId = new TaskId( TaskCategory.METADATA_IMPORT, currentUserService.getCurrentUser() );
 
-        scheduler.executeTask( new ImportMetaDataTask( userUid, importService, importOptions, taskId, metaData ) );
+        scheduler.executeTask( new ImportMetaDataTask( userUid, importService, importOptions, taskId, metadata ) );
 
         response.setHeader( "Location", ContextUtils.getRootPath( request ) + "/system/tasks/" + TaskCategory.METADATA_IMPORT );
         response.setStatus( HttpServletResponse.SC_ACCEPTED );

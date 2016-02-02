@@ -45,7 +45,7 @@ import org.hisp.dhis.dxf2.datavalueset.DataValueSetService;
 import org.hisp.dhis.dxf2.importsummary.ImportStatus;
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.util.CodecUtils;
@@ -264,18 +264,18 @@ public class DefaultSynchronizationManager
 
         String json = restTemplate.getForObject( url, String.class );
 
-        MetaData metaData = null;
+        Metadata metadata = null;
 
         try
         {
-            metaData = JacksonUtils.fromJson( json, MetaData.class );
+            metadata = JacksonUtils.fromJson( json, Metadata.class );
         }
         catch ( IOException ex )
         {
             throw new RuntimeException( "Failed to parse remote JSON document", ex );
         }
 
-        org.hisp.dhis.dxf2.metadata.ImportSummary summary = importService.importMetaData( userUid, metaData );
+        org.hisp.dhis.dxf2.metadata.ImportSummary summary = importService.importMetaData( userUid, metadata );
 
         return summary;
     }

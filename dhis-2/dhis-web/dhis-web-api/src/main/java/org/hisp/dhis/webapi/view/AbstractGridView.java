@@ -28,15 +28,6 @@ package org.hisp.dhis.webapi.view;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.hisp.dhis.common.Grid;
 import org.hisp.dhis.common.GridHeader;
 import org.hisp.dhis.common.IdentifiableObject;
@@ -44,8 +35,16 @@ import org.hisp.dhis.common.NameableObject;
 import org.hisp.dhis.system.grid.ListGrid;
 import org.hisp.dhis.system.util.PredicateUtils;
 import org.hisp.dhis.system.util.ReflectionUtils;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.springframework.web.servlet.view.AbstractView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -61,16 +60,16 @@ public abstract class AbstractGridView extends AbstractView
 
         List<Grid> grids = new ArrayList<>();
 
-        if ( WebMetaData.class.isAssignableFrom( object.getClass() ) )
+        if ( WebMetadata.class.isAssignableFrom( object.getClass() ) )
         {
-            WebMetaData webMetaData = (WebMetaData) object;
-            Collection<Field> fields = ReflectionUtils.collectFields( WebMetaData.class, PredicateUtils.idObjectCollections );
+            WebMetadata metadata = (WebMetadata) object;
+            Collection<Field> fields = ReflectionUtils.collectFields( WebMetadata.class, PredicateUtils.idObjectCollections );
 
             for ( Field field : fields )
             {
-                List<IdentifiableObject> identifiableObjects = ReflectionUtils.invokeGetterMethod( field.getName(), webMetaData );
+                List<IdentifiableObject> identifiableObjects = ReflectionUtils.invokeGetterMethod( field.getName(), metadata );
 
-                if ( identifiableObjects.isEmpty() )
+                if ( identifiableObjects == null || identifiableObjects.isEmpty() )
                 {
                     continue;
                 }

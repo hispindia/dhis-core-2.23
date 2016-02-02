@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 /**
  * @author Lars Helge Overland
  */
-public class CsvMetaDataImportTest
+public class CsvMetadataImportTest
     extends DhisSpringTest
 {
     @Autowired
@@ -75,11 +75,11 @@ public class CsvMetaDataImportTest
     {        
         input = new ClassPathResource( "metadata/dataElements.csv" ).getInputStream();
         
-        MetaData metaData = csvImportService.fromCsv( input, DataElement.class );
+        Metadata metadata = csvImportService.fromCsv( input, DataElement.class );
         
-        assertEquals( 2, metaData.getDataElements().size() );
+        assertEquals( 2, metadata.getDataElements().size() );
         
-        ImportSummary summary = importService.importMetaData( null, metaData, importOptions );
+        ImportSummary summary = importService.importMetaData( null, metadata, importOptions );
         
         assertEquals( 2, summary.getImportCount().getImported() );
         
@@ -94,15 +94,15 @@ public class CsvMetaDataImportTest
     {
         input = new ClassPathResource( "metadata/optionSets.csv" ).getInputStream();
 
-        MetaData metaData = csvImportService.fromCsv( input, OptionSet.class );
+        Metadata metadata = csvImportService.fromCsv( input, OptionSet.class );
         
-        assertEquals( 4, metaData.getOptionSets().size() );
-        assertEquals( 3, metaData.getOptionSets().get( 0 ).getOptions().size() );
-        assertEquals( 3, metaData.getOptionSets().get( 1 ).getOptions().size() );
-        assertEquals( 3, metaData.getOptionSets().get( 2 ).getOptions().size() );
-        assertEquals( 3, metaData.getOptionSets().get( 3 ).getOptions().size() );
+        assertEquals( 4, metadata.getOptionSets().size() );
+        assertEquals( 3, metadata.getOptionSets().get( 0 ).getOptions().size() );
+        assertEquals( 3, metadata.getOptionSets().get( 1 ).getOptions().size() );
+        assertEquals( 3, metadata.getOptionSets().get( 2 ).getOptions().size() );
+        assertEquals( 3, metadata.getOptionSets().get( 3 ).getOptions().size() );
 
-        ImportSummary summary = importService.importMetaData( null, metaData, importOptions );
+        ImportSummary summary = importService.importMetaData( null, metadata, importOptions );
 
         assertEquals( 16, summary.getImportCount().getImported() );
         

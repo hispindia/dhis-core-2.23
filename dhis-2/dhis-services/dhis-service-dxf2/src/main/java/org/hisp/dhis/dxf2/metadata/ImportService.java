@@ -41,11 +41,11 @@ public interface ImportService
 {
     <T extends IdentifiableObject> ImportTypeSummary importObject( String userUid, T object, ImportOptions importOptions );
 
-    ImportSummary importMetaData( String userUid, MetaData metaData );
+    ImportSummary importMetaData( String userUid, Metadata metadata );
 
-    ImportSummary importMetaData( String userUid, MetaData metaData, TaskId taskId );
+    ImportSummary importMetaData( String userUid, Metadata metadata, TaskId taskId );
 
-    ImportSummary importMetaData( String userUid, MetaData metaData, ImportOptions importOptions );
+    ImportSummary importMetaData( String userUid, Metadata metadata, ImportOptions importOptions );
 
-    ImportSummary importMetaData( String userUid, MetaData metaData, ImportOptions importOptions, TaskId taskId );
+    ImportSummary importMetaData( String userUid, Metadata metadata, ImportOptions importOptions, TaskId taskId );
 }

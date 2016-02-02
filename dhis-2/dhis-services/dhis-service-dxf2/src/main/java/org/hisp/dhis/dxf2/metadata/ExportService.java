@@ -42,14 +42,14 @@ import java.util.List;
  */
 public interface ExportService
 {
-    MetaData getMetaData( Options options );
+    Metadata getMetaData( Options options );
 
-    MetaData getMetaData( Options options, TaskId taskId );
+    Metadata getMetaData( Options options, TaskId taskId );
 
 //  @author Ovidiu Rosu <rosu.ovi@gmail.com>
-    MetaData getFilteredMetaData( FilterOptions filterOptions ) throws IOException;
+    Metadata getFilteredMetaData( FilterOptions filterOptions ) throws IOException;
 
-    MetaData getFilteredMetaData( FilterOptions filterOptions, TaskId taskId ) throws IOException;
+    Metadata getFilteredMetaData( FilterOptions filterOptions, TaskId taskId ) throws IOException;
 
     List<MetaDataFilter> getFilters();
 

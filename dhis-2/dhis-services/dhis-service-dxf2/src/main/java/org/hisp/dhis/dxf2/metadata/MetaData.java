@@ -113,7 +113,7 @@ import java.util.List;
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @JacksonXmlRootElement( localName = "metaData", namespace = DxfNamespaces.DXF_2_0 )
-public class MetaData
+public class Metadata
 {
     private Date created;
 
@@ -257,7 +257,7 @@ public class MetaData
 
     private List<ColorSet> colorSets = new ArrayList<>();
 
-    public MetaData()
+    public Metadata()
     {
     }
 

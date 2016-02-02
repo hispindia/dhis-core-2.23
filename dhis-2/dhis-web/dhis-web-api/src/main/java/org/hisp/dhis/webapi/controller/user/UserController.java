@@ -61,7 +61,7 @@ import org.hisp.dhis.user.Users;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
 import org.hisp.dhis.webapi.utils.ContextUtils;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -112,7 +112,7 @@ public class UserController
     // -------------------------------------------------------------------------
 
     @Override
-    protected List<User> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders )
+    protected List<User> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders )
     {
         UserQueryParams params = new UserQueryParams();
         params.setQuery( options.get( "query" ) );
@@ -143,7 +143,7 @@ public class UserController
         if ( options.hasPaging() && filters.isEmpty() )
         {
             Pager pager = new Pager( options.getPage(), count, options.getPageSize() );
-            metaData.setPager( pager );
+            metadata.setPager( pager );
             params.setFirst( pager.getOffset() );
             params.setMax( pager.getPageSize() );
         }

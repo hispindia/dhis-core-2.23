@@ -35,7 +35,7 @@ import org.hisp.dhis.security.SecurityContextRunnable;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.csv.CsvImportService;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.scheduling.TaskId;
 
 import java.io.IOException;
@@ -85,11 +85,11 @@ public class ImportMetaDataCsvTask
     @Override
     public void call()
     {
-        MetaData metaData;
+        Metadata metadata;
 
         try
         {
-            metaData = csvImportService.fromCsv( inputStream, clazz );
+            metadata = csvImportService.fromCsv( inputStream, clazz );
         }
         catch ( IOException ex )
         {
@@ -97,6 +97,6 @@ public class ImportMetaDataCsvTask
             return;
         }
 
-        importService.importMetaData( userUid, metaData, importOptions, taskId );
+        importService.importMetaData( userUid, metadata, importOptions, taskId );
     }
 }

@@ -50,7 +50,7 @@ import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.webapi.utils.ContextUtils;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
 import org.hisp.dhis.webapi.webdomain.MessageConversation;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -126,7 +126,7 @@ public class MessageConversationController
     }
 
     @Override
-    protected List<org.hisp.dhis.message.MessageConversation> getEntityList( WebMetaData metaData, WebOptions options, List<String> filters, List<Order> orders )
+    protected List<org.hisp.dhis.message.MessageConversation> getEntityList( WebMetadata metadata, WebOptions options, List<String> filters, List<Order> orders )
     {
         List<org.hisp.dhis.message.MessageConversation> entityList;
 
@@ -139,7 +139,7 @@ public class MessageConversationController
             int count = messageService.getMessageConversationCount();
 
             Pager pager = new Pager( options.getPage(), count, options.getPageSize() );
-            metaData.setPager( pager );
+            metadata.setPager( pager );
 
             entityList = new ArrayList<>( messageService.getMessageConversations( pager.getOffset(), pager.getPageSize() ) );
         }

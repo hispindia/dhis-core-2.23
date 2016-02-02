@@ -40,7 +40,7 @@ import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.schema.descriptors.DataElementGroupSchemaDescriptor;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
-import org.hisp.dhis.webapi.webdomain.WebMetaData;
+import org.hisp.dhis.webapi.webdomain.WebMetadata;
 import org.hisp.dhis.webapi.webdomain.WebOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -83,26 +83,26 @@ public class DataElementGroupController
             throw new WebMessageException( WebMessageUtils.notFound( "DataElementGroup not found for uid: " + uid ) );
         }
 
-        WebMetaData metaData = new WebMetaData();
+        WebMetadata metadata = new WebMetadata();
         List<DataElementOperand> dataElementOperands = Lists.newArrayList( dataElementCategoryService.getOperands( dataElementGroups.get( 0 ).getMembers() ) );
 
         Collections.sort( dataElementOperands, IdentifiableObjectNameComparator.INSTANCE );
 
         Collections.sort( dataElementOperands, IdentifiableObjectNameComparator.INSTANCE );
 
-        metaData.setDataElementOperands( dataElementOperands );
+        metadata.setDataElementOperands( dataElementOperands );
 
         if ( options.hasPaging() )
         {
             Pager pager = new Pager( options.getPage(), dataElementOperands.size(), options.getPageSize() );
-            metaData.setPager( pager );
+            metadata.setPager( pager );
             dataElementOperands = PagerUtils.pageCollection( dataElementOperands, pager );
         }
 
-        metaData.setDataElementOperands( dataElementOperands );
-        linkService.generateLinks( metaData, false );
+        metadata.setDataElementOperands( dataElementOperands );
+        linkService.generateLinks( metadata, false );
 
-        model.addAttribute( "model", metaData );
+        model.addAttribute( "model", metadata );
         model.addAttribute( "viewClass", options.getViewClass( "basic" ) );
 
         return StringUtils.uncapitalize( getEntitySimpleName() );
@@ -125,7 +125,7 @@ public class DataElementGroupController
             throw new WebMessageException( WebMessageUtils.notFound( "DataElementGroup not found for uid: " + uid ) );
         }
 
-        WebMetaData metaData = new WebMetaData();
+        WebMetadata metadata = new WebMetadata();
         List<DataElementOperand> dataElementOperands = Lists.newArrayList();
 
         for ( DataElementOperand dataElementOperand : dataElementCategoryService.getOperands( dataElementGroups.get( 0 ).getMembers() ) )
@@ -136,19 +136,19 @@ public class DataElementGroupController
             }
         }
 
-        metaData.setDataElementOperands( dataElementOperands );
+        metadata.setDataElementOperands( dataElementOperands );
 
         if ( options.hasPaging() )
         {
             Pager pager = new Pager( options.getPage(), dataElementOperands.size(), options.getPageSize() );
-            metaData.setPager( pager );
+            metadata.setPager( pager );
             dataElementOperands = PagerUtils.pageCollection( dataElementOperands, pager );
         }
 
-        metaData.setDataElementOperands( dataElementOperands );
-        linkService.generateLinks( metaData, false );
+        metadata.setDataElementOperands( dataElementOperands );
+        linkService.generateLinks( metadata, false );
 
-        model.addAttribute( "model", metaData );
+        model.addAttribute( "model", metadata );
         model.addAttribute( "viewClass", options.getViewClass( "basic" ) );
 
         return StringUtils.uncapitalize( getEntitySimpleName() );

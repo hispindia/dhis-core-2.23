@@ -98,17 +98,17 @@ public class DefaultExportService
     //-------------------------------------------------------------------------------------------------------
 
     @Override
-    public MetaData getMetaData( Options options )
+    public Metadata getMetaData( Options options )
     {
         return getMetaData( options, null );
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public MetaData getMetaData( Options options, TaskId taskId )
+    public Metadata getMetaData( Options options, TaskId taskId )
     {
-        MetaData metaData = new MetaData();
-        metaData.setCreated( new Date() );
+        Metadata metadata = new Metadata();
+        metadata.setCreated( new Date() );
 
         User user = currentUserService.getCurrentUser();
         String username = currentUserService.getCurrentUsername();
@@ -160,7 +160,7 @@ public class DefaultExportService
                 notifier.notify( taskId, message );
             }
 
-            ReflectionUtils.invokeSetterMethod( schema.getPlural(), metaData, new ArrayList<>( idObjects ) );
+            ReflectionUtils.invokeSetterMethod( schema.getPlural(), metadata, new ArrayList<>( idObjects ) );
         }
 
         log.info( "Export done at " + new Date() );
@@ -170,7 +170,7 @@ public class DefaultExportService
             notifier.notify( taskId, NotificationLevel.INFO, "Export done", true );
         }
 
-        return metaData;
+        return metadata;
     }
 
     //-------------------------------------------------------------------------------------------------------
@@ -178,16 +178,16 @@ public class DefaultExportService
     //-------------------------------------------------------------------------------------------------------
 
     @Override
-    public MetaData getFilteredMetaData( FilterOptions filterOptions ) throws IOException
+    public Metadata getFilteredMetaData( FilterOptions filterOptions ) throws IOException
     {
         return getFilteredMetaData( filterOptions, null );
     }
 
     @Override
-    public MetaData getFilteredMetaData( FilterOptions filterOptions, TaskId taskId ) throws IOException
+    public Metadata getFilteredMetaData( FilterOptions filterOptions, TaskId taskId ) throws IOException
     {
-        MetaData metaData = new MetaData();
-        metaData.setCreated( new Date() );
+        Metadata metadata = new Metadata();
+        metadata.setCreated( new Date() );
 
         log.info( "User '" + currentUserService.getCurrentUsername() + "' started export at " + new Date() );
 
@@ -234,7 +234,7 @@ public class DefaultExportService
                 notifier.notify( taskId, message );
             }
 
-            ReflectionUtils.invokeSetterMethod( identifiableObjectEntry.getKey(), metaData, identifiableObjectEntry.getValue() );
+            ReflectionUtils.invokeSetterMethod( identifiableObjectEntry.getKey(), metadata, identifiableObjectEntry.getValue() );
         }
 
         log.info( "Export done at " + new Date() );
@@ -244,7 +244,7 @@ public class DefaultExportService
             notifier.notify( taskId, NotificationLevel.INFO, "Export done", true );
         }
 
-        return metaData;
+        return metadata;
     }
 
     //-------------------------------------------------------------------------------------------------------

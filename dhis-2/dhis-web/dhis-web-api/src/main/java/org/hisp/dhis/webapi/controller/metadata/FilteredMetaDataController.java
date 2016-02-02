@@ -37,7 +37,7 @@ import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.dxf2.metadata.ExportService;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.dxf2.metadata.tasks.ImportMetaDataTask;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.scheduling.TaskCategory;
@@ -119,9 +119,9 @@ public class FilteredMetaDataController
     public String detailedExport( @RequestParam Map<String, String> parameters, Model model )
     {
         WebOptions options = new WebOptions( parameters );
-        MetaData metaData = exportService.getMetaData( options );
+        Metadata metadata = exportService.getMetaData( options );
 
-        model.addAttribute( "model", metaData );
+        model.addAttribute( "model", metadata );
         model.addAttribute( "viewClass", "export" );
 
         return "export";
@@ -132,10 +132,10 @@ public class FilteredMetaDataController
     public void exportXml( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_XML, CacheStrategy.NO_CACHE, "metaData.xml", true );
-        JacksonUtils.toXmlWithView( response.getOutputStream(), metaData, ExportView.class );
+        JacksonUtils.toXmlWithView( response.getOutputStream(), metadata, ExportView.class );
     }
 
     @RequestMapping( method = RequestMethod.POST, value = FilteredMetaDataController.RESOURCE_PATH + ".json", produces = "*/*" )
@@ -143,10 +143,10 @@ public class FilteredMetaDataController
     public void exportJson( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_JSON, CacheStrategy.NO_CACHE, "metaData.json", true );
-        JacksonUtils.toJsonWithView( response.getOutputStream(), metaData, ExportView.class );
+        JacksonUtils.toJsonWithView( response.getOutputStream(), metadata, ExportView.class );
     }
 
     @RequestMapping( method = RequestMethod.POST, value = { FilteredMetaDataController.RESOURCE_PATH + ".xml.zip" }, produces = "*/*" )
@@ -154,7 +154,7 @@ public class FilteredMetaDataController
     public void exportZippedXML( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_ZIP, CacheStrategy.NO_CACHE, "metaData.xml.zip", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -162,7 +162,7 @@ public class FilteredMetaDataController
         ZipOutputStream zip = new ZipOutputStream( response.getOutputStream() );
         zip.putNextEntry( new ZipEntry( "metaData.xml" ) );
 
-        JacksonUtils.toXmlWithView( zip, metaData, ExportView.class );
+        JacksonUtils.toXmlWithView( zip, metadata, ExportView.class );
     }
 
     @RequestMapping( method = RequestMethod.POST, value = { FilteredMetaDataController.RESOURCE_PATH + ".json.zip" }, produces = "*/*" )
@@ -170,7 +170,7 @@ public class FilteredMetaDataController
     public void exportZippedJSON( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_ZIP, CacheStrategy.NO_CACHE, "metaData.json.zip", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
@@ -178,7 +178,7 @@ public class FilteredMetaDataController
         ZipOutputStream zip = new ZipOutputStream( response.getOutputStream() );
         zip.putNextEntry( new ZipEntry( "metaData.json" ) );
 
-        JacksonUtils.toJsonWithView( zip, metaData, ExportView.class );
+        JacksonUtils.toJsonWithView( zip, metadata, ExportView.class );
     }
 
     @RequestMapping( method = RequestMethod.POST, value = { FilteredMetaDataController.RESOURCE_PATH + ".xml.gz" }, produces = "*/*" )
@@ -186,13 +186,13 @@ public class FilteredMetaDataController
     public void exportGZippedXML( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_GZIP, CacheStrategy.NO_CACHE, "metaData.xml.gz", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
 
         GZIPOutputStream gzip = new GZIPOutputStream( response.getOutputStream() );
-        JacksonUtils.toXmlWithView( gzip, metaData, ExportView.class );
+        JacksonUtils.toXmlWithView( gzip, metadata, ExportView.class );
     }
 
     @RequestMapping( method = RequestMethod.POST, value = { FilteredMetaDataController.RESOURCE_PATH + ".json.gz" }, produces = "*/*" )
@@ -200,13 +200,13 @@ public class FilteredMetaDataController
     public void exportGZippedJSON( @RequestParam String exportJsonValue, HttpServletResponse response ) throws IOException
     {
         FilterOptions filterOptions = new FilterOptions( JSONObject.fromObject( exportJsonValue ) );
-        MetaData metaData = exportService.getFilteredMetaData( filterOptions );
+        Metadata metadata = exportService.getFilteredMetaData( filterOptions );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_GZIP, CacheStrategy.NO_CACHE, "metaData.json.gz", true );
         response.addHeader( ContextUtils.HEADER_CONTENT_TRANSFER_ENCODING, "binary" );
 
         GZIPOutputStream gzip = new GZIPOutputStream( response.getOutputStream() );
-        JacksonUtils.toJsonWithView( gzip, metaData, ExportView.class );
+        JacksonUtils.toJsonWithView( gzip, metadata, ExportView.class );
     }
 
     //--------------------------------------------------------------------------
@@ -257,12 +257,12 @@ public class FilteredMetaDataController
         TaskId taskId = new TaskId( TaskCategory.METADATA_IMPORT, currentUserService.getCurrentUser() );
         User user = currentUserService.getCurrentUser();
 
-        MetaData metaData = new ObjectMapper().readValue( json.getString( "metaData" ), MetaData.class );
+        Metadata metadata = new ObjectMapper().readValue( json.getString( "metaData" ), Metadata.class );
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( strategy );
         importOptions.setDryRun( dryRun );
 
-        scheduler.executeTask( new ImportMetaDataTask( user.getUid(), importService, importOptions, taskId, metaData ) );
+        scheduler.executeTask( new ImportMetaDataTask( user.getUid(), importService, importOptions, taskId, metadata ) );
     }
 }

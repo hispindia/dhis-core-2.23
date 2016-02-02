@@ -43,7 +43,7 @@ import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementDomain;
 import org.hisp.dhis.dataelement.DataElementGroup;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.expression.Expression;
 import org.hisp.dhis.expression.ExpressionService;
 import org.hisp.dhis.expression.MissingValueStrategy;
@@ -87,48 +87,48 @@ public class DefaultCsvImportService
     // -------------------------------------------------------------------------
 
     @Override
-    public MetaData fromCsv( InputStream input, Class<? extends IdentifiableObject> clazz )
+    public Metadata fromCsv( InputStream input, Class<? extends IdentifiableObject> clazz )
         throws IOException
     {
         CsvReader reader = new CsvReader( input, Charset.forName( "UTF-8" ) );
         reader.readRecord(); // Ignore first row
 
-        MetaData metaData = new MetaData();
+        Metadata metadata = new Metadata();
 
         if ( DataElement.class.equals( clazz ) )
         {
-            metaData.setDataElements( dataElementsFromCsv( reader ) );
+            metadata.setDataElements( dataElementsFromCsv( reader ) );
         }
         else if ( DataElementGroup.class.equals( clazz ) )
         {
-            metaData.setDataElementGroups( dataElementGroupsFromCsv( reader ) );
+            metadata.setDataElementGroups( dataElementGroupsFromCsv( reader ) );
         }
         else if ( DataElementCategoryOption.class.equals( clazz ) )
         {
-            metaData.setCategoryOptions( categoryOptionsFromCsv( reader ) );
+            metadata.setCategoryOptions( categoryOptionsFromCsv( reader ) );
         }
         else if ( CategoryOptionGroup.class.equals( clazz ) )
         {
-            metaData.setCategoryOptionGroups( categoryOptionGroupsFromCsv( reader ) );
+            metadata.setCategoryOptionGroups( categoryOptionGroupsFromCsv( reader ) );
         }
         else if ( OrganisationUnit.class.equals( clazz ) )
         {
-            metaData.setOrganisationUnits( organisationUnitsFromCsv( reader ) );
+            metadata.setOrganisationUnits( organisationUnitsFromCsv( reader ) );
         }
         else if ( OrganisationUnitGroup.class.equals( clazz ) )
         {
-            metaData.setOrganisationUnitGroups( organisationUnitGroupsFromCsv( reader ) );
+            metadata.setOrganisationUnitGroups( organisationUnitGroupsFromCsv( reader ) );
         }
         else if ( ValidationRule.class.equals( clazz ) )
         {
-            metaData.setValidationRules( validationRulesFromCsv( reader ) );
+            metadata.setValidationRules( validationRulesFromCsv( reader ) );
         }
         else if ( OptionSet.class.equals( clazz ) )
         {
-            setOptionSetsFromCsv( reader, metaData );
+            setOptionSetsFromCsv( reader, metadata );
         }
 
-        return metaData;
+        return metadata;
     }
 
     // -------------------------------------------------------------------------
@@ -378,7 +378,7 @@ public class DefaultCsvImportService
      * <li>option code</li>
      * </ul>
      */
-    private void setOptionSetsFromCsv( CsvReader reader, MetaData metaData )
+    private void setOptionSetsFromCsv( CsvReader reader, Metadata metadata )
         throws IOException
     {
         ListMap<String, Option> nameOptionMap = new ListMap<>();
@@ -409,7 +409,7 @@ public class DefaultCsvImportService
 
                 nameOptionMap.putValue( optionSet.getName(), option );
 
-                metaData.getOptions().add( option );
+                metadata.getOptions().add( option );
             }
         }
 
@@ -423,7 +423,7 @@ public class DefaultCsvImportService
 
             optionSet.setOptions( options );
 
-            metaData.getOptionSets().add( optionSet );
+            metadata.getOptionSets().add( optionSet );
         }
     }
 

@@ -32,13 +32,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 
 /**
  * @author Lars Helge Overland
  */
 public interface CsvImportService
 {
-    MetaData fromCsv( InputStream input, Class<? extends IdentifiableObject> clazz )
+    Metadata fromCsv( InputStream input, Class<? extends IdentifiableObject> clazz )
         throws IOException;
 }

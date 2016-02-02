@@ -43,7 +43,7 @@ import org.hisp.dhis.common.IdentifiableProperty;
 import org.hisp.dhis.common.MergeStrategy;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.metadata.ImportService;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.organisationunit.FeatureType;
@@ -134,8 +134,8 @@ public class DefaultGmlImportService
 
         if ( preProcessed.isSuccess && preProcessed.dxf2MetaData != null )
         {
-            MetaData metaData = dxf2ToMetaData( preProcessed.dxf2MetaData );
-            importService.importMetaData( userUid, metaData, importOptions, taskId );
+            Metadata metadata = dxf2ToMetaData( preProcessed.dxf2MetaData );
+            importService.importMetaData( userUid, metadata, importOptions, taskId );
         }
         else
         {
@@ -153,12 +153,12 @@ public class DefaultGmlImportService
     private PreProcessingResult preProcessGml( InputStream inputStream )
     {
         InputStream dxfStream = null;
-        MetaData metaData = null;
+        Metadata metadata = null;
 
         try
         {
             dxfStream = transformGml( inputStream );
-            metaData = renderService.fromXml( dxfStream, MetaData.class );
+            metadata = renderService.fromXml( dxfStream, Metadata.class );
         }
         catch ( IOException | TransformerException e )
         {
@@ -171,7 +171,7 @@ public class DefaultGmlImportService
 
         Map<String, OrganisationUnit> uidMap = Maps.newHashMap(), codeMap = Maps.newHashMap(), nameMap = Maps.newHashMap();
 
-        matchAndFilterOnIdentifiers( metaData.getOrganisationUnits(), uidMap, codeMap, nameMap );
+        matchAndFilterOnIdentifiers( metadata.getOrganisationUnits(), uidMap, codeMap, nameMap );
 
         Map<String, OrganisationUnit> persistedUidMap = getMatchingPersistedOrgUnits( uidMap.keySet(), IdentifiableProperty.UID );
         Map<String, OrganisationUnit> persistedCodeMap = getMatchingPersistedOrgUnits( codeMap.keySet(), IdentifiableProperty.CODE );
@@ -205,7 +205,7 @@ public class DefaultGmlImportService
             mergeNonGeoData( persisted, imported );
         }
 
-        String dxf2MetaData = metaDataToDxf2( metaData );
+        String dxf2MetaData = metaDataToDxf2( metadata );
 
         if ( dxf2MetaData == null )
         {
@@ -303,14 +303,14 @@ public class DefaultGmlImportService
         }
     }
 
-    private String metaDataToDxf2( MetaData metaData )
+    private String metaDataToDxf2( Metadata metadata )
     {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         String dxf2 = null;
 
         try
         {
-            renderService.toXml( baos, metaData );
+            renderService.toXml( baos, metadata );
             dxf2 = baos.toString();
         }
         catch ( IOException e )
@@ -325,20 +325,20 @@ public class DefaultGmlImportService
         return dxf2;
     }
 
-    private MetaData dxf2ToMetaData( String dxf2Content )
+    private Metadata dxf2ToMetaData( String dxf2Content )
     {
-        MetaData metaData;
+        Metadata metadata;
 
         try
         {
-            metaData = renderService.fromXml( dxf2Content, MetaData.class );
+            metadata = renderService.fromXml( dxf2Content, Metadata.class );
         }
         catch ( IOException e )
         {
-            metaData = new MetaData();
+            metadata = new Metadata();
         }
 
-        return metaData;
+        return metadata;
     }
 
     private String createNotifierErrorMessage( Throwable throwable )

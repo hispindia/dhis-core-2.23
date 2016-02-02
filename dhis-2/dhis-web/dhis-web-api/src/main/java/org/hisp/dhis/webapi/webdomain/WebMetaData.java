@@ -31,19 +31,16 @@ package org.hisp.dhis.webapi.webdomain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.common.LinkableObject;
 import org.hisp.dhis.common.Pager;
-import org.hisp.dhis.dxf2.metadata.MetaData;
+import org.hisp.dhis.dxf2.metadata.Metadata;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class WebMetaData
-    extends MetaData
+public class WebMetadata
+    extends Metadata
 {
     private Pager pager;
-
-    private LinkableObject linkableObject;
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
@@ -55,25 +52,5 @@ public class WebMetaData
     public void setPager( Pager pager )
     {
         this.pager = pager;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public String getLink()
-    {
-        if ( linkableObject == null )
-        {
-            return null;
-        }
-
-        return linkableObject.getHref();
-    }
-
-    public void setLink( String link )
-    {
-        if ( linkableObject != null )
-        {
-            linkableObject.setHref( link );
-        }
     }
 }
