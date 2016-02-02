@@ -33,7 +33,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,8 +69,8 @@ public interface RenderService
      * i.e. A property called "dataElements" would be tried to parsed as a collection of data elements.
      *
      * @param inputStream Stream to read from
-     * @param format      Payload format (JSON and XML is supported)
+     * @param format      Payload format (only JSON is supported)
      * @return Map of all id object types that were found
      */
-    Map<Class<? extends IdentifiableObject>, Collection<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format );
+    Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format ) throws IOException;
 }
