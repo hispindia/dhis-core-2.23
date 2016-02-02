@@ -49,7 +49,7 @@ public class UserKeyJsonValue
     private String key;
 
     /**
-     * A value referenced by a key and user, json-formatted data stored as a string.
+     * A value referenced by a key and user, JSON-formatted data stored as a string.
      */
     private String value;
 

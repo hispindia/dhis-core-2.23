@@ -56,7 +56,6 @@ public class Preheat
         return (T) map.get( identifier ).get( klass ).get( key );
     }
 
-    @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, T object )
     {
         if ( object == null )

@@ -40,9 +40,9 @@ import static org.junit.Assert.*;
 /**
  * @author Stian Sandvold.
  */
-public class UserKeyJsonValueStoreTest extends DhisSpringTest
+public class UserKeyJsonValueStoreTest 
+    extends DhisSpringTest
 {
-
     @Autowired
     private UserKeyJsonValueStore userKeyJsonValueStore;
 
@@ -66,7 +66,6 @@ public class UserKeyJsonValueStoreTest extends DhisSpringTest
     @Test
     public void testAddUserKeyJsonValuesAndGetKeysByUser()
     {
-
         UserKeyJsonValue userKeyJsonValueA = new UserKeyJsonValue();
 
         userKeyJsonValueA.setValue( "{}" );
@@ -88,7 +87,6 @@ public class UserKeyJsonValueStoreTest extends DhisSpringTest
     @Test
     public void testAddUserKeyJsonValuesAndGetUserKEyJsonValuesByUser()
     {
-
         UserKeyJsonValue userKeyJsonValueA = new UserKeyJsonValue();
 
         userKeyJsonValueA.setValue( "{}" );

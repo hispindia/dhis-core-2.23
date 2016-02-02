@@ -37,7 +37,6 @@ import java.util.List;
  */
 public interface UserKeyJsonValueService
 {
-
     /**
      * Retrieves a list of keys from a user
      * @param user the namespace to retrieve keys from

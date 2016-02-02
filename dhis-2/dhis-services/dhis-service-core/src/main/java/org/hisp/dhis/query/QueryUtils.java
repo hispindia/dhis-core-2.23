@@ -43,7 +43,6 @@ import java.util.List;
  */
 public final class QueryUtils
 {
-    @SuppressWarnings( { "rawtypes", "unchecked" } )
     static public <T> T getValue( Class<T> klass, Object objectValue )
     {
         return getValue( klass, null, objectValue );

@@ -47,7 +47,8 @@ public class DefaultUserKeyJsonValueService
         this.userKeyJsonValueStore = userKeyJsonValueStore;
     }
 
-    public UserKeyJsonValueStore getUserKeyJsonValueStore() {
+    public UserKeyJsonValueStore getUserKeyJsonValueStore()
+    {
         return this.userKeyJsonValueStore;
     }
 
@@ -86,5 +87,4 @@ public class DefaultUserKeyJsonValueService
     {
         userKeyJsonValueStore.delete( userKeyJsonValue );
     }
-
 }

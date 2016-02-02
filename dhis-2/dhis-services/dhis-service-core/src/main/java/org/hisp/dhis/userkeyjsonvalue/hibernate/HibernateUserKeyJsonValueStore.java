@@ -45,11 +45,12 @@ public class HibernateUserKeyJsonValueStore
     implements UserKeyJsonValueStore
 {
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> getKeysByUser( User user )
     {
         return (List<String>) getCriteria(
-            Restrictions.eq( "user", user )
-        ).list().stream().map( o -> ((UserKeyJsonValue) o).getKey() ).collect( Collectors.toList());
+            Restrictions.eq( "user", user ) ).list().stream().
+            map( o -> ((UserKeyJsonValue) o).getKey() ).collect( Collectors.toList() );
     }
 
     @Override
@@ -57,16 +58,14 @@ public class HibernateUserKeyJsonValueStore
     {
         return (UserKeyJsonValue) getCriteria(
             Restrictions.eq( "user", user ),
-            Restrictions.eq( "key", key )
-        ).uniqueResult();
+            Restrictions.eq( "key", key ) ).uniqueResult();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<UserKeyJsonValue> getUserKeyJsonValueByUser( User user )
     {
         return getCriteria(
-            Restrictions.eq( "user", user )
-        ).list();
+            Restrictions.eq( "user", user ) ).list();
     }
-
 }
