@@ -39,11 +39,18 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator;
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.schema.SchemaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Default implementation that uses Jackson to serialize/deserialize
@@ -53,14 +60,12 @@ import java.io.OutputStream;
 public class DefaultRenderService
     implements RenderService
 {
+    @Autowired
+    private SchemaService schemaService;
+
     private final ObjectMapper jsonMapper = new ObjectMapper();
 
     private final XmlMapper xmlMapper = new XmlMapper();
-
-    public DefaultRenderService()
-    {
-        configureObjectMappers();
-    }
 
     //--------------------------------------------------------------------------
     // RenderService
@@ -162,6 +167,13 @@ public class DefaultRenderService
         return true;
     }
 
+    @Override
+    public Map<Class<? extends IdentifiableObject>, Collection<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format )
+    {
+        Map<Class<? extends IdentifiableObject>, Collection<? extends IdentifiableObject>> map = new HashMap<>();
+        return map;
+    }
+
     //--------------------------------------------------------------------------
     // Helpers
     //--------------------------------------------------------------------------
@@ -176,6 +188,7 @@ public class DefaultRenderService
         return xmlMapper;
     }
 
+    @PostConstruct
     private void configureObjectMappers()
     {
         ObjectMapper[] objectMappers = new ObjectMapper[]{ jsonMapper, xmlMapper };

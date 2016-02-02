@@ -28,9 +28,13 @@ package org.hisp.dhis.render;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -57,5 +61,16 @@ public interface RenderService
 
     <T> T fromXml( String input, Class<T> klass ) throws IOException;
 
-    boolean isValidJson(String json) throws IOException;
+    boolean isValidJson( String json ) throws IOException;
+
+    /**
+     * Parses metadata stream and automatically finds collections of id object based on root properties.
+     * <p>
+     * i.e. A property called "dataElements" would be tried to parsed as a collection of data elements.
+     *
+     * @param inputStream Stream to read from
+     * @param format      Payload format (JSON and XML is supported)
+     * @return Map of all id object types that were found
+     */
+    Map<Class<? extends IdentifiableObject>, Collection<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format );
 }
