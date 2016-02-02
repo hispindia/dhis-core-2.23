@@ -612,6 +612,11 @@
     <property name="sessionFactory" ref="sessionFactory" />
   </bean>
 
+  <bean id="org.hisp.dhis.userkeyjsonvalue.UserKeyJsonValueStore" class="org.hisp.dhis.userkeyjsonvalue.hibernate.HibernateUserKeyJsonValueStore">
+    <property name="clazz" value="org.hisp.dhis.userkeyjsonvalue.UserKeyJsonValue" />
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+
   <bean id="org.hisp.dhis.fileresource.FileResourceStore" class="org.hisp.dhis.common.hibernate.HibernateIdentifiableObjectStore">
     <property name="clazz" value="org.hisp.dhis.fileresource.FileResource" />
     <property name="sessionFactory" ref="sessionFactory" />
@@ -1294,6 +1299,10 @@
 
   <bean id="org.hisp.dhis.keyjsonvalue.KeyJsonValueService" class="org.hisp.dhis.keyjsonvalue.DefaultKeyJsonValueService">
     <property name="keyJsonValueStore" ref="org.hisp.dhis.keyjsonvalue.KeyJsonValueStore" />
+  </bean>
+
+  <bean id="org.hisp.dhis.userkeyjsonvalue.UserKeyJsonValueService" class="org.hisp.dhis.userkeyjsonvalue.DefaultUserKeyJsonValueService">
+    <property name="userKeyJsonValueStore" ref="org.hisp.dhis.userkeyjsonvalue.UserKeyJsonValueStore" />
   </bean>
 
   <!-- SMS services -->
