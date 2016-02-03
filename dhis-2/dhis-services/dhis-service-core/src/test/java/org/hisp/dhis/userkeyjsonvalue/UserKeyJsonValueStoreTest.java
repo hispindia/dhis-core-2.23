@@ -30,7 +30,7 @@ package org.hisp.dhis.userkeyjsonvalue;
 
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.user.User;
-import org.junit.Ignore;
+import org.hisp.dhis.user.UserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -41,14 +41,22 @@ import static org.junit.Assert.*;
 /**
  * @author Stian Sandvold.
  */
-@Ignore
 public class UserKeyJsonValueStoreTest
     extends DhisSpringTest
 {
     @Autowired
     private UserKeyJsonValueStore userKeyJsonValueStore;
 
-    private User user; //  = userService.getAllUsers().get( 0 );
+    @Autowired
+    private UserService injectUserService;
+
+    private User user;
+
+    @Override
+    public void setUpTest() {
+        this.userService = injectUserService;
+        user = createUserAndInjectSecurityContext( true );
+    }
 
     @Test
     public void testAddUserKeyJsonValue()
@@ -74,11 +82,15 @@ public class UserKeyJsonValueStoreTest
         userKeyJsonValueA.setKey( "test_a" );
         userKeyJsonValueA.setUser( user );
 
+        userKeyJsonValueStore.save(userKeyJsonValueA);
+
         UserKeyJsonValue userKeyJsonValueB = new UserKeyJsonValue();
 
         userKeyJsonValueB.setValue( "{}" );
         userKeyJsonValueB.setKey( "test_b" );
         userKeyJsonValueB.setUser( user );
+
+        userKeyJsonValueStore.save(userKeyJsonValueB);
 
         List<String> list = userKeyJsonValueStore.getKeysByUser( user );
 
@@ -87,7 +99,7 @@ public class UserKeyJsonValueStoreTest
     }
 
     @Test
-    public void testAddUserKeyJsonValuesAndGetUserKEyJsonValuesByUser()
+    public void testAddUserKeyJsonValuesAndGetUserKeyJsonValuesByUser()
     {
         UserKeyJsonValue userKeyJsonValueA = new UserKeyJsonValue();
 
@@ -95,11 +107,15 @@ public class UserKeyJsonValueStoreTest
         userKeyJsonValueA.setKey( "test_a" );
         userKeyJsonValueA.setUser( user );
 
+        userKeyJsonValueStore.save(userKeyJsonValueA);
+
         UserKeyJsonValue userKeyJsonValueB = new UserKeyJsonValue();
 
         userKeyJsonValueB.setValue( "{}" );
         userKeyJsonValueB.setKey( "test_b" );
         userKeyJsonValueB.setUser( user );
+
+        userKeyJsonValueStore.save(userKeyJsonValueB);
 
         List<UserKeyJsonValue> list = userKeyJsonValueStore.getUserKeyJsonValueByUser( user );
 
