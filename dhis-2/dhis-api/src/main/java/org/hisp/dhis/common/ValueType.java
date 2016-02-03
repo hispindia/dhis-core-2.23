@@ -50,6 +50,7 @@ public enum ValueType
     TRUE_ONLY( Boolean.class ),
     DATE( Date.class ),
     DATETIME( Date.class ),
+    TIME( String.class ),
     NUMBER( Double.class ),
     UNIT_INTERVAL( Double.class ),
     PERCENTAGE( Double.class ),
@@ -60,7 +61,7 @@ public enum ValueType
     TRACKER_ASSOCIATE( TrackedEntityInstance.class ),
     USERNAME( String.class ),
     FILE_RESOURCE( String.class ),
-    COORDINATE( String.class);
+    COORDINATE( String.class );
 
     public static final Set<ValueType> INTEGER_TYPES = Sets.newHashSet(
         INTEGER, INTEGER_POSITIVE, INTEGER_NEGATIVE, INTEGER_ZERO_OR_POSITIVE );
@@ -70,13 +71,13 @@ public enum ValueType
 
     public static final Set<ValueType> BOOLEAN_TYPES = Sets.newHashSet(
         BOOLEAN, TRUE_ONLY );
-    
-    public static final Set<ValueType> TEXT_TYPES = Sets.newHashSet( 
-        TEXT, LONG_TEXT, LETTER, COORDINATE );
-    
+
+    public static final Set<ValueType> TEXT_TYPES = Sets.newHashSet(
+        TEXT, LONG_TEXT, LETTER, COORDINATE, TIME );
+
     public static final Set<ValueType> DATE_TYPES = Sets.newHashSet(
         DATE, DATETIME );
-    
+
     private final Class<?> javaClass;
 
     private ValueType()
@@ -103,7 +104,7 @@ public enum ValueType
     {
         return NUMERIC_TYPES.contains( this );
     }
-    
+
     public boolean isBoolean()
     {
         return BOOLEAN_TYPES.contains( this );
@@ -123,9 +124,9 @@ public enum ValueType
     {
         return this == FILE_RESOURCE;
     }
-    
+
     public boolean isCoordinate()
     {
-    	return this == COORDINATE;
+        return this == COORDINATE;
     }
 }

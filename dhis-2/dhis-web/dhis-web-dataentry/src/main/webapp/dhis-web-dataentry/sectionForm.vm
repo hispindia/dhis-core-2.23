@@ -133,6 +133,10 @@
                 <input type="file" style="display: none;">
             </div>
         </td>
+    #elseif( $dataElement.valueType == "TIME" )
+        <td>
+            <input type="time" name="entrytime" id="${dataentryId}" tabindex="${tabIndex}" />
+        </td>
     #else
         #if( $dataElement.optionSet )
           <td><input name="entryoptionset" class="entryoptionset" id="${dataEntryId}" type="text" tabindex="${tabIndex}"#if( $greyedField || !$hasAccess ) disabled="disabled"#end><img class="commentlink" id="${commentId}"></td>

@@ -51,14 +51,23 @@ import java.util.regex.Pattern;
 public class ValidationUtils
 {
     private static final Pattern POINT_PATTERN = Pattern.compile( "\\[(.+),\\s?(.+)\\]" );
+
     private static final Pattern DIGIT_PATTERN = Pattern.compile( ".*\\d.*" );
+
     private static final Pattern UPPERCASE_PATTERN = Pattern.compile( ".*[A-Z].*" );
+
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile( "^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" );
 
+    private static final Pattern TIME_OF_DAY_PATTERN = Pattern.compile( "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$" );
+
     private static final int VALUE_MAX_LENGTH = 50000;
+
     private static final int LONG_MAX = 180;
+
     private static final int LONG_MIN = -180;
+
     private static final int LAT_MAX = 90;
+
     private static final int LAT_MIN = -90;
 
     private static final Set<Character> SQL_VALID_CHARS = Sets.newHashSet(
@@ -135,6 +144,17 @@ public class ValidationUtils
     }
 
     /**
+     * Validates whether a string is valid for the HH:mm time format.
+     *
+     * @param time the time string
+     * @return true if the time string is valid, false otherwise
+     */
+    public static boolean timeIsValid( String time )
+    {
+        return TIME_OF_DAY_PATTERN.matcher( time ).matches();
+    }
+
+    /**
      * Validates whether an URL string is valid.
      *
      * @param url the URL string.
@@ -147,7 +167,7 @@ public class ValidationUtils
 
     /**
      * Validates whether a password is valid. A password must:
-     * <p>
+     * <p/>
      * <ul>
      * <li>Be between 8 and 80 characters long</li>
      * <li>Include at least one digit</li>
@@ -242,7 +262,6 @@ public class ValidationUtils
         return matcher.find() ? matcher.group( 2 ) : null;
     }
 
-
     /**
      * Returns the longitude and latitude from the given coordinate.
      *
@@ -260,9 +279,11 @@ public class ValidationUtils
 
         if ( matcher.find() && matcher.groupCount() == 2 )
         {
-            return new Point2D.Double( Double.parseDouble( matcher.group( 1 ) ), Double.parseDouble( matcher.group( 2 ) ) );
+            return new Point2D.Double( Double.parseDouble( matcher.group( 1 ) ),
+                Double.parseDouble( matcher.group( 2 ) ) );
         }
-        else return null;
+        else
+            return null;
     }
 
     /**
@@ -283,7 +304,7 @@ public class ValidationUtils
      * given data element. Considers the value to be valid if null or empty.
      * Returns a string if the valid is invalid, possible
      * values are:
-     * <p>
+     * <p/>
      * <ul>
      * <li>data_element_or_type_null_or_empty</li>
      * <li>value_length_greater_than_max_length</li>
@@ -408,7 +429,8 @@ public class ValidationUtils
     {
         AggregationType aggregationType = dataElement.getAggregationType();
 
-        return dataElement.getValueType().isNumeric() && MathUtils.isZero( value ) && !dataElement.isZeroIsSignificant() &&
+        return dataElement.getValueType().isNumeric() && MathUtils.isZero( value ) &&
+            !dataElement.isZeroIsSignificant() &&
             !(aggregationType == AggregationType.AVERAGE_SUM_ORG_UNIT || aggregationType == AggregationType.AVERAGE);
     }
 

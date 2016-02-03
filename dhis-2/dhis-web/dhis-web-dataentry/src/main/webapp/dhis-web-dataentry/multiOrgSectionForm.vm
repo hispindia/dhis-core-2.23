@@ -89,6 +89,8 @@
                 </select></td>
                 #elseif( $dataElement.valueType == 'TRUE_ONLY' )
                     <td><input name="entrytrueonly" class="entrytrueonly" id="$dataEntryId" type="checkbox" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>
+                #elseif( $dataElement.valueType == "TIME" )
+                    <td><input type="time" class="entrytime" name="entrytime" id="$dataEntryId" tabindex="$tabIndex"/> </td>
                 #else
                     #if( $dataElement.optionSet )
                         <td><input name="entryoptionset" class="entryoptionset" id="$dataEntryId" type="text" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>
@@ -170,6 +172,8 @@
                     </select></td>
                     #elseif( $dataElement.valueType == 'TRUE_ONLY' )
                         <td><input name="entrytrueonly" class="entrytrueonly" id="$dataEntryId" type="checkbox" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>
+                    #elseif( $dataElement.valueType == "TIME" )
+                        <td><input type="time" class="entrytime" name="entrytime" id="$dataEntryId" tabindex="$tabIndex"/> </td>
                     #else
                         #if( $dataElement.optionSet )
                             <td><input name="entryoptionset" class="entryoptionset" id="$dataEntryId" type="text" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>
@@ -219,6 +223,8 @@
                 </select></td>
                 #elseif( $dataElement.valueType == 'TRUE_ONLY' )
                     <td><input name="entrytrueonly" class="entrytrueonly" id="$dataEntryId" type="checkbox" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>
+                #elseif( $dataElement.valueType == "TIME" )
+                    <td><input type="time" class="entrytime" name="entrytime" id="$dataEntryId" tabindex="$tabIndex"/> </td>
                 #else
                     #if( $dataElement.optionSet )
                         <td><input name="entryoptionset" class="entryoptionset" id="$dataEntryId" type="text" tabindex="$tabIndex"#if( $greyedField || !$hasAccess ) disabled="disabled"#end></td>

@@ -399,6 +399,9 @@ public class DefaultDataEntryFormService
                                     "<input type=\"file\" style=\"display: none;\">" +
                                 "</div>";
                 }
+                else if ( ValueType.TIME == valueType ) {
+                    appendCode += " type=\"time\" name=\"entrytime\" class=\"entrytime\" tabindex=\"" + i++ + "\"" + TAG_CLOSE;
+                }
                 else
                 {
                     appendCode += " type=\"text\" name=\"entryfield\" class=\"entryfield\" tabindex=\"" + i++ + "\"" + TAG_CLOSE;
