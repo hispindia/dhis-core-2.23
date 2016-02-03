@@ -474,7 +474,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                         else if (prStDe.dataElement.valueType === "FILE_RESOURCE") {
                                             newInputField = '<span class="input-group">\n\
                                                             <span ng-if="currentEvent.' + fieldId + '">\n\
-                                                                <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)">{{fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
+                                                                <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)" title="{{fileNames[currentEvent.event][' + fieldId + ']}}" >{{fileNames[currentEvent.event][' + fieldId + '].length > 20 ? fileNames[currentEvent.event][' + fieldId + '].substring(0,20).concat(\'...\') : fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
                                                             </span>\n\
                                                             <span class="input-group-btn">\n\
                                                                 <span class="btn btn-primary btn-file">\n\

@@ -272,7 +272,7 @@
                             <div class="hideInPrint">
                                 <div class="input-group">
                                     <div class="form-control">
-                                        <a href ng-click="downloadFile(currentEvent.event, prStDe.dataElement.id)">{{fileNames[currentEvent.event][prStDe.dataElement.id]}}</a>
+                                        <a href ng-click="downloadFile(currentEvent.event, prStDe.dataElement.id)" title="{{fileNames[currentEvent.event][prStDe.dataElement.id]}}">{{fileNames[currentEvent.event][prStDe.dataElement.id].length > 20 ? fileNames[currentEvent.event][prStDe.dataElement.id].substr(0,20).concat('...') : fileNames[currentEvent.event][prStDe.dataElement.id])}}</a>
                                     </div>
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file" ng-if="currentEvent[prStDe.dataElement.id]" ng-click="deleteFile(currentEvent,prStDe.dataElement.id)">
@@ -611,7 +611,7 @@
                                         <div class="hideInPrint">
                                             <div class="input-group">
                                                 <div class="form-control">
-                                                    <a href ng-click="downloadFile(currentEvent.event, de.dataElement.id)">{{fileNames[currentEvent.event][de.dataElement.id]}}</a>
+                                                    <a href ng-click="downloadFile(currentEvent.event, de.dataElement.id)" title="{{fileNames[currentEvent.event][de.dataElement.id]}}">{{fileNames[currentEvent.event][de.dataElement.id].length > 20 ? fileNames[currentEvent.event][de.dataElement.id].substr(0,20).concat('...') : fileNames[currentEvent.event][de.dataElement.id]}}</a>
                                                 </div>
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file" ng-click="deleteFile(currentEvent,de.dataElement.id)" ng-if="currentEvent[de.dataElement.id]">

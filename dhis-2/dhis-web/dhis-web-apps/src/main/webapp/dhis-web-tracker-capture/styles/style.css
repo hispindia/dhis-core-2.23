@@ -938,11 +938,6 @@ div#searchOuTree h4{
     width: 80px;
 }
 
-.audit-icon-column {
-    width: 30px;
-    align: center;
-}
-
 .underline {
     text-decoration: underline;
 }
@@ -1505,20 +1500,13 @@ a.disable-link-effects:focus {
     display: block;
 }
 
-/*Audit icon specific*/
-.input-with-audit {
-    width:85%;
-    display: inline-block;
-}
-
-.checkbox-with-audit {
-    width:50%;
-    display: inline-block;
-}
-
 .audit-icon {
-    margin-left: 5%;
-    display: inline-block;
+    cursor: pointer;
+    color: #3162C5;
+    margin-left: 5px;
 }
 
-
+.audit-icon-column {
+    width: 20px !important;
+    text-align: center;
+}

@@ -216,7 +216,7 @@
                                 <div class="input-group">
                                     <div class="form-control">
                                         <span ng-if="!currentEvent.event || currentEvent.event ==='SINGLE_EVENT'">{{fileNames[currentEvent.event][eventGridColumn.id]}}</span>
-                                        <a ng-if="currentEvent.event && currentEvent.event !=='SINGLE_EVENT'" href ng-click="downloadFile(currentEvent.event, eventGridColumn.id)">{{fileNames[currentEvent.event][eventGridColumn.id]}}</a>                                        
+                                        <a ng-if="currentEvent.event && currentEvent.event !=='SINGLE_EVENT'" href ng-click="downloadFile(currentEvent.event, eventGridColumn.id)" title="{{fileNames[currentEvent.event][eventGridColumn.id]}}">{{fileNames[currentEvent.event][eventGridColumn.id].length > 20 ? fileNames[currentEvent.event][eventGridColumn.id].substr(0,20).contact('...') : fileNames[currentEvent.event][eventGridColumn.id]}}</a>                                        
                                     </div>
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file" ng-if="currentEvent[eventGridColumn.id]" ng-click="deleteFile(eventGridColumn.id)">
