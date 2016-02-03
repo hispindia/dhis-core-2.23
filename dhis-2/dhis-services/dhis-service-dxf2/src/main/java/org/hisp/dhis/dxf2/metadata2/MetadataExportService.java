@@ -45,5 +45,5 @@ public interface MetadataExportService
 
     void validate( MetadataExportParams params ) throws MetadataExportException;
 
-    MetadataExportParams getParamsFromMap( Map<String, String> parameters );
+    MetadataExportParams getParamsFromMap( Map<String, List<String>> parameters );
 }

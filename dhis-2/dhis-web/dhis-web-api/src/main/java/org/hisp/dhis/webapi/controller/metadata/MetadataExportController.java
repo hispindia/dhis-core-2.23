@@ -31,14 +31,12 @@ package org.hisp.dhis.webapi.controller.metadata;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportParams;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
 import org.hisp.dhis.node.types.RootNode;
+import org.hisp.dhis.webapi.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -50,10 +48,13 @@ public class MetadataExportController
     @Autowired
     private MetadataExportService metadataExportService;
 
+    @Autowired
+    private ContextService contextService;
+
     @RequestMapping( value = "", method = RequestMethod.GET )
-    public @ResponseBody RootNode getMetadata( @RequestParam Map<String, String> rpParameters )
+    public @ResponseBody RootNode getMetadata()
     {
-        MetadataExportParams params = metadataExportService.getParamsFromMap( rpParameters );
+        MetadataExportParams params = metadataExportService.getParamsFromMap( contextService.getParameterValuesMap() );
         return metadataExportService.getMetadataAsNode( params );
     }
 }

@@ -28,6 +28,7 @@ package org.hisp.dhis.webapi.service;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -35,6 +36,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -114,5 +118,19 @@ public class DefaultContextService implements ContextService
         Collections.addAll( parameter, parameterValues );
 
         return parameter;
+    }
+
+    @Override
+    public Map<String, List<String>> getParameterValuesMap()
+    {
+        Map<String, String[]> parameterMap = getRequest().getParameterMap();
+        Map<String, List<String>> map = new HashMap<>();
+
+        for ( String key : parameterMap.keySet() )
+        {
+            map.put( key, Lists.newArrayList( parameterMap.get( key ) ) );
+        }
+
+        return map;
     }
 }

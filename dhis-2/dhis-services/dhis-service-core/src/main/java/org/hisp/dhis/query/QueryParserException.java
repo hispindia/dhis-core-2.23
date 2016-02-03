@@ -31,7 +31,7 @@ package org.hisp.dhis.query;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class QueryParserException extends Exception
+public class QueryParserException extends RuntimeException
 {
     public QueryParserException( String message )
     {
