@@ -52,6 +52,11 @@ public class OrderParams
     {
     }
 
+    public OrderParams( Set<String> order )
+    {
+        this.order = order;
+    }
+
     public void setOrder( Set<String> order )
     {
         this.order = order;

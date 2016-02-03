@@ -98,10 +98,8 @@ public class DefaultMetadataExportService implements MetadataExportService
             }
             else
             {
-                OrderParams orderParams = new OrderParams();
-                orderParams.setOrder( Sets.newHashSet( params.getDefaultOrder() ) );
+                OrderParams orderParams = new OrderParams( Sets.newHashSet( params.getDefaultOrder() ) );
                 query = queryService.getQueryFromUrl( klass, params.getDefaultFilter(), orderParams.getOrders( schemaService.getDynamicSchema( klass ) ) );
-                query.setDefaultOrder();
             }
 
             if ( query.getUser() == null )
@@ -109,6 +107,7 @@ public class DefaultMetadataExportService implements MetadataExportService
                 query.setUser( defaultUser );
             }
 
+            query.setDefaultOrder();
             List<? extends IdentifiableObject> objects = queryService.query( query );
             log.info( "Exported " + objects.size() + " objects of type " + klass.getSimpleName() );
             metadata.put( klass, objects );
@@ -222,9 +221,7 @@ public class DefaultMetadataExportService implements MetadataExportService
 
             if ( classMap.containsKey( "filter" ) && classMap.containsKey( "order" ) )
             {
-                OrderParams orderParams = new OrderParams();
-                orderParams.setOrder( Sets.newHashSet( classMap.get( "order" ) ) );
-
+                OrderParams orderParams = new OrderParams( Sets.newHashSet( classMap.get( "order" ) ) );
                 Query query = queryService.getQueryFromUrl( klass, classMap.get( "filter" ), orderParams.getOrders( schema ) );
                 query.setDefaultOrder();
                 params.addQuery( query );
