@@ -1,6 +1,6 @@
 <div  ng-if='!selectedProgramStage.programStageSections.length'>
     <div ng-include="'views/event-details.html'"></div>
-    <table class="dhis2-list-table-striped">
+    <table class="dhis2-list-table-striped table-with-fixed-layout">
         <thead>
             <tr>
                 <th>
@@ -9,14 +9,15 @@
                 <th>
                     {{'value'| translate}}                    
                 </th>
-                <th class="audit-icon-column hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                 </th>
             </tr>                        
         </thead>
         <tbody>
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
                 <td >
-                    {{eventGridColumn.name}}<span ng-if="eventGridColumn.compulsory" class="required">*</span>
+                    {{eventGridColumn.name}}
+                    <span ng-if="eventGridColumn.compulsory" class="required">*</span>                    
                 </td>
                 <td >
                     <ng-form name="innerForm">
@@ -257,8 +258,11 @@
                         <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                                         
                         </div>
                     </ng-form>
+                    <!--<span class="hideInPrint audit-icon" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                        <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
+                    </span>-->
                 </td>
-                <td class="hideInPrint audit-icon-column" align="center" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                     <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                 </td>
             </tr>        
@@ -281,13 +285,12 @@
             <thead>                        
                 <tr>
                     <th>
-                        {{'data_element'| translate}}                    
+                        {{'data_element'| translate}}                        
                     </th>
                     <th>
                         {{'value'| translate}}                    
                     </th>
-                    <th class="audit-icon-column hideInPrint" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-
+                    <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                     </th>
                 </tr>                        
             </thead>
@@ -295,7 +298,7 @@
                 <tr ng-repeat="de in section.programStageDataElements" ng-if="!hiddenFields[de.dataElement.id]">
                     <td >
                         {{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.name}}                         
-                        <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
+                        <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>                        
                     </td>
                     <td>
                         <ng-form name="innerForm">
@@ -460,8 +463,6 @@
                                         </label>
                                     </span>
                                 </div>
-
-
                                 <div ng-switch-when="DATE">
                                     <input type="text"
                                            placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
@@ -548,8 +549,11 @@
                                 {{warningMessages[de.dataElement.id]}}
                             </div>
                         </ng-form>
+                        <!--<span class="hideInPrint audit-icon" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
+                        </span>-->
                     </td>
-                    <td class="hideInPrint audit-icon-column" align="center" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
+                    <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
                         <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}"  current-event="{{currentEvent.event}}"></d2-audit>
                     </td>
                 </tr>
