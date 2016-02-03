@@ -117,18 +117,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
             }
         }        
     });
-    
-    function checkSkipOffline() {
-        if(dhis2.ec.isOffline && $scope.selectedProgram && $scope.selectedProgram.skipOffline){
-            var dialogOptions = {
-                headerText: 'offline',
-                bodyText: 'program_is_skip_offline'
-            };
-
-            DialogService.showDialog({}, dialogOptions);
-            return;
-        }
-    }
 
     $scope.completeEnrollment = function() {
         $scope.currentEvent.status = !$scope.currentEvent.status;
@@ -174,8 +162,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
         $scope.reverse = false;
         $scope.sortHeader = {};
         $scope.filterText = {};
-        
-        checkSkipOffline();
         
         if( $scope.userAuthority && $scope.userAuthority.canAddOrUpdateEvent &&
                 $scope.selectedProgram && 
@@ -283,9 +269,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     };
         
     //get events for the selected program (and org unit)
-    $scope.loadEvents = function(){   
-        
-        checkSkipOffline();
+    $scope.loadEvents = function(){
         
         $scope.noteExists = false;            
         $scope.dhis2Events = [];
@@ -318,6 +302,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 //$scope.dhis2Events = data.events; 
 
                 if( data.pager ){
+                    data.pager.pageSize = data.pager.pageSize ? data.pager.pageSize : $scope.pager.pageSize;
                     $scope.pager = data.pager;
                     $scope.pager.toolBarDisplay = 5;
 
@@ -575,9 +560,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
         $scope.displayCustomForm = !$scope.displayCustomForm;
     };
     
-    $scope.addEvent = function(addingAnotherEvent){                
-        
-        checkSkipOffline();
+    $scope.addEvent = function(addingAnotherEvent){
         
         //check for form validity
         $scope.outerForm.submitted = true;        
@@ -714,8 +697,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     
     $scope.updateEvent = function(){
         
-        checkSkipOffline();
-        
         //check for form validity
         $scope.outerForm.submitted = true;        
         if( $scope.outerForm.$invalid ){
@@ -776,8 +757,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     
     $scope.updateEventDate = function () {
         
-        checkSkipOffline();
-        
         $scope.updateSuccess = false;
         
         $scope.currentElement = {id: 'eventDate'};
@@ -826,8 +805,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     };
             
     $scope.updateEventDataValue = function(currentEvent, dataElement){
-        
-        checkSkipOffline();
         
         $scope.updateSuccess = false;
         
