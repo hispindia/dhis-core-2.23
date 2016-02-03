@@ -53,7 +53,11 @@ public class MetadataExportParams
 
     private Map<Class<? extends IdentifiableObject>, List<String>> fields = new HashMap<>();
 
-    private static final List<String> defaultFields = Lists.newArrayList( ":owner" );
+    private List<String> defaultFields = Lists.newArrayList( ":owner" );
+
+    private List<String> defaultFilter = new ArrayList<>();
+
+    private List<String> defaultOrder = new ArrayList<>();
 
     public MetadataExportParams()
     {
@@ -117,5 +121,35 @@ public class MetadataExportParams
     {
         List<String> strings = fields.get( klass );
         return strings != null ? strings : defaultFields;
+    }
+
+    public List<String> getDefaultFields()
+    {
+        return defaultFields;
+    }
+
+    public void setDefaultFields( List<String> defaultFields )
+    {
+        this.defaultFields = defaultFields;
+    }
+
+    public List<String> getDefaultFilter()
+    {
+        return defaultFilter;
+    }
+
+    public void setDefaultFilter( List<String> filter )
+    {
+        this.defaultFilter = filter;
+    }
+
+    public List<String> getDefaultOrder()
+    {
+        return defaultOrder;
+    }
+
+    public void setDefaultOrder( List<String> defaultOrder )
+    {
+        this.defaultOrder = defaultOrder;
     }
 }

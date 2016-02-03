@@ -38,7 +38,6 @@ import org.hisp.dhis.node.NodeUtils;
 import org.hisp.dhis.node.types.RootNode;
 import org.hisp.dhis.node.types.SimpleNode;
 import org.hisp.dhis.query.Query;
-import org.hisp.dhis.query.QueryParserException;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
@@ -99,8 +98,10 @@ public class DefaultMetadataExportService implements MetadataExportService
             }
             else
             {
-                Schema schema = schemaService.getDynamicSchema( klass );
-                query = Query.from( schema );
+                OrderParams orderParams = new OrderParams();
+                orderParams.setOrder( Sets.newHashSet( params.getDefaultOrder() ) );
+                query = queryService.getQueryFromUrl( klass, params.getDefaultFilter(), orderParams.getOrders( schemaService.getDynamicSchema( klass ) ) );
+                query.setDefaultOrder();
             }
 
             if ( query.getUser() == null )
@@ -147,6 +148,24 @@ public class DefaultMetadataExportService implements MetadataExportService
         MetadataExportParams params = new MetadataExportParams();
         Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> map = new HashMap<>();
 
+        if ( parameters.containsKey( "fields" ) )
+        {
+            params.setDefaultFields( parameters.get( "fields" ) );
+            parameters.remove( "fields" );
+        }
+
+        if ( parameters.containsKey( "filter" ) )
+        {
+            params.setDefaultFilter( parameters.get( "filter" ) );
+            parameters.remove( "filter" );
+        }
+
+        if ( parameters.containsKey( "order" ) )
+        {
+            params.setDefaultOrder( parameters.get( "order" ) );
+            parameters.remove( "order" );
+        }
+
         for ( String parameterKey : parameters.keySet() )
         {
             String[] parameter = parameterKey.split( ":" );
@@ -170,22 +189,25 @@ public class DefaultMetadataExportService implements MetadataExportService
                 continue;
             }
 
-            if ( "fields".equalsIgnoreCase( parameter[1] ) )
+            if ( parameter.length > 1 )
             {
-                if ( !map.get( klass ).containsKey( "fields" ) ) map.get( klass ).put( "fields", new ArrayList<>() );
-                map.get( klass ).get( "fields" ).addAll( parameters.get( parameterKey ) );
-            }
+                if ( "fields".equalsIgnoreCase( parameter[1] ) )
+                {
+                    if ( !map.get( klass ).containsKey( "fields" ) ) map.get( klass ).put( "fields", new ArrayList<>() );
+                    map.get( klass ).get( "fields" ).addAll( parameters.get( parameterKey ) );
+                }
 
-            if ( "filter".equalsIgnoreCase( parameter[1] ) )
-            {
-                if ( !map.get( klass ).containsKey( "filter" ) ) map.get( klass ).put( "filter", new ArrayList<>() );
-                map.get( klass ).get( "filter" ).addAll( parameters.get( parameterKey ) );
-            }
+                if ( "filter".equalsIgnoreCase( parameter[1] ) )
+                {
+                    if ( !map.get( klass ).containsKey( "filter" ) ) map.get( klass ).put( "filter", new ArrayList<>() );
+                    map.get( klass ).get( "filter" ).addAll( parameters.get( parameterKey ) );
+                }
 
-            if ( "order".equalsIgnoreCase( parameter[1] ) )
-            {
-                if ( !map.get( klass ).containsKey( "order" ) ) map.get( klass ).put( "order", new ArrayList<>() );
-                map.get( klass ).get( "order" ).addAll( parameters.get( parameterKey ) );
+                if ( "order".equalsIgnoreCase( parameter[1] ) )
+                {
+                    if ( !map.get( klass ).containsKey( "order" ) ) map.get( klass ).put( "order", new ArrayList<>() );
+                    map.get( klass ).get( "order" ).addAll( parameters.get( parameterKey ) );
+                }
             }
         }
 
@@ -204,11 +226,13 @@ public class DefaultMetadataExportService implements MetadataExportService
                 orderParams.setOrder( Sets.newHashSet( classMap.get( "order" ) ) );
 
                 Query query = queryService.getQueryFromUrl( klass, classMap.get( "filter" ), orderParams.getOrders( schema ) );
+                query.setDefaultOrder();
                 params.addQuery( query );
             }
             else if ( classMap.containsKey( "filter" ) )
             {
                 Query query = queryService.getQueryFromUrl( klass, classMap.get( "filter" ), new ArrayList<>() );
+                query.setDefaultOrder();
                 params.addQuery( query );
             }
             else if ( classMap.containsKey( "order" ) )
@@ -217,6 +241,7 @@ public class DefaultMetadataExportService implements MetadataExportService
                 orderParams.setOrder( Sets.newHashSet( classMap.get( "order" ) ) );
 
                 Query query = queryService.getQueryFromUrl( klass, new ArrayList<>(), orderParams.getOrders( schema ) );
+                query.setDefaultOrder();
                 params.addQuery( query );
             }
         }
