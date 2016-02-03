@@ -543,8 +543,9 @@ public class Schema implements Ordered, Klass
         return authorityMap.get( type );
     }
 
-    // TODO not exposed right now, should we?
     @Override
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public int getOrder()
     {
         return order;
