@@ -442,11 +442,21 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                 commonInputFieldProperty + '></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "BOOLEAN") {
-                                            newInputField = '<span class="hideInPrint"><label class="radio-inline"><input type="radio" ng-change="saveDatavalue()" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}</label>' +
+                                        	newInputField = '<d2-radio-button ' +
+                                                                        ' dh-required="prStDes.' + fieldId + '.compulsory" ' +
+                                                                        ' dh-disabled="isHidden(prStDes.' + fieldId + '.dataElement.id) || selectedEnrollment.status===\'CANCELLED\' || selectedEnrollment.status===\'COMPLETED\' || currentEvent[uid]==\'uid\' || currentEvent.editingNotAllowed" ' +
+                                                                        ' dh-value="currentEvent.' + fieldId + '" ' +
+                                                                        ' dh-name="foo" ' +
+                                                                        ' dh-current-element="currentElement" ' +
+                                                                        ' dh-event="currentEvent.event" ' +
+                                                                        ' dh-id="prStDes.' + fieldId + '.dataElement.id" ' +
+                                                                        ' dh-click="saveDatavalue(prStDes.' + fieldId + ', currentEvent, value )"' +
+                                                                ' </d2-radio-button>';	
+                                            /*newInputField = '<span class="hideInPrint"><label class="radio-inline"><input type="radio" ng-change="saveDatavalue()" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}</label>' +
                                                 '<label class="radio-inline"><input type="radio" ng-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" ' + commonInputFieldProperty + ' value="true">{{\'yes\'| translate}}</label>' +
                                                 '<label class="radio-inline"><input type="radio" ng-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" ' + commonInputFieldProperty + ' value="false">{{\'no\'| translate}}</label></span>' +
                                                 '<span class="not-for-screen"><label class="radio-inline"><input type="radio" ng-checked="{{\'true\' === currentEvent.' + fieldId + '}}">{{\'yes\'| translate}}</label>' +
-                                                '<label class="radio-inline"><input type="radio" ng-checked="{{\'false\' === currentEvent.' + fieldId + '}}">{{\'no\'| translate}}</label></span>';
+                                                '<label class="radio-inline"><input type="radio" ng-checked="{{\'false\' === currentEvent.' + fieldId + '}}">{{\'no\'| translate}}</label></span>';*/
                                         }
                                         else if (prStDe.dataElement.valueType === "DATE") {
                                             var maxDate = prStDe.allowFutureDate ? '' : 0;
@@ -474,7 +484,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                         else if (prStDe.dataElement.valueType === "FILE_RESOURCE") {
                                             newInputField = '<span class="input-group">\n\
                                                             <span ng-if="currentEvent.' + fieldId + '">\n\
-                                                                <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)" title="{{fileNames[currentEvent.event][' + fieldId + ']}}" >{{fileNames[currentEvent.event][' + fieldId + '].length > 20 ? fileNames[currentEvent.event][' + fieldId + '].substring(0,20).concat(\'...\') : fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
+                                                                <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)" title="fileNames[currentEvent.event][' + fieldId + ']" >{{fileNames[currentEvent.event][' + fieldId + '].length > 20 ? fileNames[currentEvent.event][' + fieldId + '].substring(0,20).concat(\'...\') : fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
                                                             </span>\n\
                                                             <span class="input-group-btn">\n\
                                                                 <span class="btn btn-primary btn-file">\n\

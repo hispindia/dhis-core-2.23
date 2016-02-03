@@ -466,3 +466,50 @@ div#orgUnitTree {
     width: 20px !important;
     text-align: center;
 }
+
+.radio-display-none {
+    display: none;
+}
+
+.fa-stack > .fa.fa-stack-1x.fa-circle.radio-save-success {
+    color: #b9ffb9 !important;
+}
+
+.fa-stack > .fa.fa-stack-1x.fa-circle.radio-save-error {
+    color: #ff8a8a !important;
+}
+
+.fa-stack > .fa.fa-stack-1x.fa-circle.radio-white {
+    color: #FFFFFF !important;
+}
+
+.fa-stack > .radio-default{
+    color: #FFFFFF;
+}
+
+.error-text {
+    color: red;
+}
+
+.warning-text {
+    color: #C7C728;
+}
+
+.custom-radio-group {
+    margin-left: -8px;
+}
+
+.custom-radio-container{
+    display: inline-block;
+}
+
+.custom-radio-text {
+    display: inline-block;
+    margin-left: -5px;
+}
+
+.custom-radio-error{
+    margin-left: 5px;
+    width:100px;
+    text-align: center;
+}

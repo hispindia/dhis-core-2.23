@@ -195,7 +195,7 @@
                         <div ng-switch-when="BOOLEAN">
                             <div class="hideInPrint">
                             <span>
-                                <dhis2-radio-button
+                                <d2-radio-button
                                     dh-required="prStDe.compulsory"
                                     dh-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id] === true"
                                     dh-value="currentEvent[prStDe.dataElement.id]"
@@ -204,7 +204,7 @@
                                     dh-event="currentEvent.event"
                                     dh-id="prStDe.dataElement.id"
                                     dh-click="saveDataValueForRadio(prStDe, currentEvent, value)">
-                                </dhis2-radio-button>
+                                </d2-radio-button>
                               </span>
                             </div>
                             <div class="not-for-screen">
@@ -272,7 +272,7 @@
                             <div class="hideInPrint">
                                 <div class="input-group">
                                     <div class="form-control">
-                                        <a href ng-click="downloadFile(currentEvent.event, prStDe.dataElement.id)" title="{{fileNames[currentEvent.event][prStDe.dataElement.id]}}">{{fileNames[currentEvent.event][prStDe.dataElement.id].length > 20 ? fileNames[currentEvent.event][prStDe.dataElement.id].substr(0,20).concat('...') : fileNames[currentEvent.event][prStDe.dataElement.id])}}</a>
+                                        <a href ng-click="downloadFile(currentEvent.event, prStDe.dataElement.id)" title="{{fileNames[currentEvent.event][prStDe.dataElement.id]}}">{{fileNames[currentEvent.event][prStDe.dataElement.id].length > 20 ? fileNames[currentEvent.event][prStDe.dataElement.id].substring(0,20).concat('...') : fileNames[currentEvent.event][prStDe.dataElement.id]}}</a>
                                     </div>
                                     <span class="input-group-btn">
                                         <span class="btn btn-primary btn-file" ng-if="currentEvent[prStDe.dataElement.id]" ng-click="deleteFile(currentEvent,prStDe.dataElement.id)">
@@ -527,7 +527,7 @@
 
                                     <div ng-switch-when="BOOLEAN">
                                         <div class="hideInPrint">
-                                            <dhis2-radio-button
+                                            <d2-radio-button
                                                 dh-required="prStDes[de.dataElement.id].compulsory"
                                                 dh-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id] === true"
                                                 dh-value="currentEvent[prStDes[de.dataElement.id].dataElement.id]"
@@ -536,7 +536,7 @@
                                                 dh-event="currentEvent.event"
                                                 dh-id="de.dataElement.id"
                                                 dh-click="saveDataValueForRadio(prStDes[de.dataElement.id], currentEvent, value)">
-                                            </dhis2-radio-button>
+                                            </d2-radio-button>
                                         </div>
                                         <div class="not-for-screen">
                                             <label class="radio-inline"><input type="radio" ng-checked="{{currentEvent[prStDes[de.dataElement.id].dataElement.id] === 'true'}}">{{'yes' | translate}}</label>
@@ -611,7 +611,7 @@
                                         <div class="hideInPrint">
                                             <div class="input-group">
                                                 <div class="form-control">
-                                                    <a href ng-click="downloadFile(currentEvent.event, de.dataElement.id)" title="{{fileNames[currentEvent.event][de.dataElement.id]}}">{{fileNames[currentEvent.event][de.dataElement.id].length > 20 ? fileNames[currentEvent.event][de.dataElement.id].substr(0,20).concat('...') : fileNames[currentEvent.event][de.dataElement.id]}}</a>
+                                                    <a href ng-click="downloadFile(currentEvent.event, de.dataElement.id)" title="fileNames[currentEvent.event][de.dataElement.id]">{{fileNames[currentEvent.event][de.dataElement.id].length > 20 ? fileNames[currentEvent.event][de.dataElement.id].substring(0,20).concat('...') : fileNames[currentEvent.event][de.dataElement.id]}}</a>
                                                 </div>
                                                     <span class="input-group-btn">
                                                         <span class="btn btn-primary btn-file" ng-click="deleteFile(currentEvent,de.dataElement.id)" ng-if="currentEvent[de.dataElement.id]">

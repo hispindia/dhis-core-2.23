@@ -383,63 +383,244 @@ var d2Directives = angular.module('d2Directives', [])
 })
 
 .directive('d2Audit', function () {
-        return {
-            restrict: 'E',
-            template: '<span class="hideInPrint audit-icon" title="{{\'audit_history\' | translate}}"><i class="glyphicon glyphicon-user" data-ng-click="showAuditHistory()" ng-if="showAuditIcon()"></i></span>',
-            scope:{
-                dataElementId: '@dataelementId',
-                dataElementName: '@dataelementName',
-                currentEvent:'@',
-                type:'@',
-                selectedTeiId:'@',
-                isAuditIconPresent:'=?'
-            },
-            controller:function($scope, $modal) {
-                if (!$scope.dataElementId) {
-                    return;
+    return {
+        restrict: 'E',
+        template: '<span class="hideInPrint audit-icon" title="{{\'audit_history\' | translate}}"><i class="glyphicon glyphicon-user" data-ng-click="showAuditHistory()" ng-if="showAuditIcon()"></i></span>',
+        scope:{
+            dataElementId: '@dataelementId',
+            dataElementName: '@dataelementName',
+            currentEvent:'@',
+            type:'@',
+            selectedTeiId:'@',
+            isAuditIconPresent:'=?'
+        },
+        controller:function($scope, $modal) {
+            if (!$scope.dataElementId) {
+                return;
+            }
+
+            $scope.showAuditIcon = function() {
+                if ($scope.currentEvent && $scope.currentEvent !== 'SINGLE_EVENT') {
+                    $scope.isAuditIconPresent = true;
+                    return true;
                 }
-
-                $scope.showAuditIcon = function() {
-                    if ($scope.currentEvent && $scope.currentEvent !== 'SINGLE_EVENT') {
-                        $scope.isAuditIconPresent = true;
-                        return true;
-                    }
-                    if ($scope.type === "attribute" && $scope.selectedTeiId) {
-                        $scope.isAuditIconPresent = true;
-                        return true;
-                    }
-                    $scope.isAuditIconPresent = false;
-                    return false;
+                if ($scope.type === "attribute" && $scope.selectedTeiId) {
+                    $scope.isAuditIconPresent = true;
+                    return true;
                 }
+                $scope.isAuditIconPresent = false;
+                return false;
+            }
 
-                $scope.showAuditHistory = function() {
+            $scope.showAuditHistory = function() {
 
-                    $modal.open({
-                        templateUrl: "../dhis-web-commons/angular-forms/audit-history.html",
-                        controller: "AuditHistoryController",
-                        resolve: {
-                            dataElementId: function () {
-                                return $scope.dataElementId;
-                            },
-                            dataElementName: function () {
-                                return $scope.dataElementName;
-                            },
-                            dataType: function() {
-                                return $scope.type;
-                            },
-                            currentEvent: function() {
-                                return $scope.currentEvent;
-                            },
-                            selectedTeiId: function() {
-                                return $scope.selectedTeiId;
-                            }
+                $modal.open({
+                    templateUrl: "../dhis-web-commons/angular-forms/audit-history.html",
+                    controller: "AuditHistoryController",
+                    resolve: {
+                        dataElementId: function () {
+                            return $scope.dataElementId;
+                        },
+                        dataElementName: function () {
+                            return $scope.dataElementName;
+                        },
+                        dataType: function() {
+                            return $scope.type;
+                        },
+                        currentEvent: function() {
+                            return $scope.currentEvent;
+                        },
+                        selectedTeiId: function() {
+                            return $scope.selectedTeiId;
                         }
-                    })
-
-                }
+                    }
+                })
 
             }
-        };
-    });
 
+        }
+    };
+})
 
+.directive('d2RadioButton', function (){  
+    return {
+        restrict: 'E',
+        templateUrl: '../dhis-web-commons/angular-forms/radio-button.html',
+        scope: {
+            required: '=dhRequired',
+            value: '=dhValue',
+            disabled: '=dhDisabled',
+            name: '@dhName',            
+            customOnClick: '&dhClick',
+            currentElement: '=dhCurrentElement',
+            event: '=dhEvent',
+            id: '=dhId'
+        },
+        controller: [
+            '$scope',
+            '$element',
+            '$attrs',
+            '$q',   
+            'CommonUtils',
+            function($scope, $element, $attrs, $q, CommonUtils){
+                
+                $scope.status = "";                
+                $scope.clickedButton = "";
+                
+                $scope.valueClicked = function (buttonValue){
+                                        
+                    $scope.clickedButton = buttonValue;
+                    
+                    var originalValue = $scope.value;
+                    var tempValue = buttonValue;
+                    if($scope.value === buttonValue){
+                        tempValue = "";
+                    }
+                    
+                    if(angular.isDefined($scope.customOnClick)){
+                        var promise = $scope.customOnClick({value: tempValue});
+                        if(angular.isDefined(promise) && angular.isDefined(promise.then)){
+                            promise.then(function(status){
+                                if(angular.isUndefined(status) || status !== "notSaved"){
+                                    $scope.status = "saved";                                    
+                                }
+                                $scope.value = tempValue;                            
+                            }, function(){   
+                                $scope.status = "error";
+                                $scope.value = originalValue;
+                            });
+                        }
+                        else if(angular.isDefined(promise)){
+                            if(promise === false){
+                                $scope.value = originalValue;
+                            }
+                            else {
+                                $scope.value = tempValue;
+                            }
+                        }
+                        else{
+                            $scope.value = tempValue;
+                        }
+                    }
+                    else{
+                        $scope.value = tempValue;
+                    }
+                };
+                
+                $scope.getDisabledValue = function(inValue){                    
+                    return CommonUtils.displayBooleanAsYesNo(inValue);                    
+                };
+                
+                $scope.getDisabledIcon = function(inValue){                    
+                    if(inValue === true || inValue === "true"){
+                        return "fa fa-check";
+                    }
+                    else if(inValue === false || inValue === "false"){
+                        return "fa fa-times";
+                    }
+                    return '';
+                }
+                
+            }],
+        link: function (scope, element, attrs) {
+            
+            scope.radioButtonColor = function(buttonValue){
+                
+                if(scope.value !== ""){
+                    if(scope.status === "saved"){
+                        if(angular.isUndefined(scope.currentElement) || (scope.currentElement.id === scope.id && scope.currentElement.event === scope.event)){
+                            if(scope.clickedButton === buttonValue){
+                                return 'radio-save-success';
+                            }
+                        }                                            
+                    //different solution with text chosen
+                    /*else if(scope.status === "error"){
+                        if(scope.clickedButton === buttonValue){
+                            return 'radio-save-error';
+                        }
+                    }*/
+                    }
+                }                
+                return 'radio-white';
+            };
+            
+            scope.errorStatus = function(){
+                
+                if(scope.status === 'error'){
+                    if(angular.isUndefined(scope.currentElement) || (scope.currentElement.id === scope.id && scope.currentElement.event === scope.event)){
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            scope.radioButtonImage = function(buttonValue){        
+
+                if(angular.isDefined(scope.value)){
+                    if(scope.value === buttonValue && buttonValue === "true"){
+                        return 'fa fa-stack-1x fa-check';                
+                    }            
+                    else if(scope.value === buttonValue && buttonValue === "false"){
+                        return 'fa fa-stack-1x fa-times';
+                    }
+                }
+                return 'fa fa-stack-1x';        
+            };    
+        }
+    };
+})
+
+.directive('dhis2Deselect', function ($document) {
+    return {
+        restrict: 'A',
+        scope: {
+            onDeselected: '&dhOnDeselected',
+            id: '@dhId',
+            preSelected: '=dhPreSelected'                   
+        },
+        controller: [
+            '$scope',
+            '$element',
+            '$attrs',
+            '$q',            
+            function($scope, $element, $attrs, $q){
+                
+                $scope.documentEventListenerSet = false;
+                $scope.elementClicked = false;
+                
+                $element.on('click', function(event) {                    
+                                        
+                    $scope.elementClicked = true;
+                    if($scope.documentEventListenerSet === false){
+                        $document.on('click', $scope.documentClick);
+                        $scope.documentEventListenerSet = true;
+                    }                             
+                });
+                
+                $scope.documentClick = function(event){
+                    
+                    var modalPresent = $(".modal-backdrop").length > 0;
+                    var calendarPresent = $(".calendars-popup").length > 0;
+                    var calendarPresentInEvent = $(event.target).parents(".calendars-popup").length > 0;
+                    
+                    if($scope.elementClicked === false && 
+                        modalPresent === false && 
+                        calendarPresent === false && 
+                        calendarPresentInEvent === false){                        
+                        $scope.onDeselected({id:$scope.id});
+                        $scope.$apply();  
+                        $document.off('click', $scope.documentClick);
+                        $scope.documentEventListenerSet = false;
+                    }
+                    $scope.elementClicked = false;
+                };
+                
+                if(angular.isDefined($scope.preSelected) && $scope.preSelected === true){                    
+                    $document.on('click', $scope.documentClick);
+                    $scope.documentEventListenerSet = true;
+                }
+                
+            }],
+        link: function (scope, element, attrs) {}
+    };
+});
