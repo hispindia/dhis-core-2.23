@@ -255,7 +255,7 @@
                                             name="{{eventRow.event}}{{prStDe.dataElement.id}}"/>
                                 </div>
                                 <div ng-switch-when="BOOLEAN">
-                                    <dhis2-radio-button
+                                    <d2-radio-button
                                         ng-dblclick="$event.stopPropagation();"
                                         title="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name}}"
                                         dh-required="prStDe.compulsory"
@@ -263,7 +263,7 @@
                                         dh-value="eventRow[prStDe.dataElement.id]"
                                         dh-name="{{eventRow.event}}{{prStDe.dataElement.id}}"
                                         dh-click="saveDataValueForRadio(prStDe, eventRow, value)">
-                                    </dhis2-radio-button>
+                                    </d2-radio-button>
                                 </div>
                                 <div ng-switch-when="DATE">
                                     <input type="text"
