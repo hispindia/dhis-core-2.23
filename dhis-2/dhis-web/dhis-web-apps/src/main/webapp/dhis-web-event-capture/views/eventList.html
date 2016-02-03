@@ -395,7 +395,7 @@
                             </td>
                             <!-- visible when comment exisits -->
                             <td ng-repeat="eventGridColumn in eventGridColumns | filter: {show: true}" ng-if="eventGridColumn.id === 'comment'">
-                                <a href ng-click="showNotes(dhis2Event)" title="{{'show_comments'| translate}}" ng-if="dhis2Event.notes"><i class="fa fa-info-circle"></i></a>
+                                <a href ng-click="showNotes(dhis2Event)" title="{{'show_comments'| translate}}" ng-if="dhis2Event.notes.length > 0"><i class="fa fa-info-circle"></i></a>
                             </td>
                             <!-- visible when comment exisits -->
                         </tr>

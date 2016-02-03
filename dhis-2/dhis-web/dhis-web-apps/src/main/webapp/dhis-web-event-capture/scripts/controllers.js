@@ -316,8 +316,8 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 if( angular.isObject( data.events ) ) {
 
                     angular.forEach(data.events,function(event){
-
-                        if(event.notes && !$scope.noteExists){
+                        
+                        if(event.notes && event.notes.length > 0 && !$scope.noteExists){
                             $scope.noteExists = true;
                         }                  
 
