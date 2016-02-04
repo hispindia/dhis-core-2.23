@@ -33,7 +33,7 @@
                 <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
             </td>
             <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
-                <div ng-show="prStDe.allowProvidedElsewhere">
+                <div class="align-center" ng-show="prStDe.allowProvidedElsewhere">
                     <span>
                         <input type="checkbox"
                            class="form-control-checkbox"
@@ -95,7 +95,7 @@
                             <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.name}}" current-event="{{currentEvent.event}}"></d2-audit>
                         </td>
                         <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
-                            <div ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">
+                            <div class="align-center" ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">
                                 <input type="checkbox"
                                        class="form-control-checkbox"
                                        ng-model="currentEvent.providedElsewhere[prStDes[de.dataElement.id].dataElement.id]"
