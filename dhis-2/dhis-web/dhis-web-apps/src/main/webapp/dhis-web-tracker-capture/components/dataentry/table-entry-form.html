@@ -318,14 +318,14 @@
                         <div class="event-table-inactive" ng-if="!tableRowIsEditable(eventRow) || !eventRow.validatedEventDate">
                             <div ng-switch="prStDe.dataElement.valueType">
                                 <div ng-switch-when="BOOLEAN">
-                                    <dhis2-radio-button
+                                    <d2-radio-button
                                         dh-required="prStDe.compulsory"
                                         title="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name}}"
                                         dh-disabled="selectedEnrollment.status !== 'ACTIVE' || eventRow.editingNotAllowed || assignedFields[eventRow.event][de.dataElement.id] === true"
                                         dh-value="eventRow[prStDe.dataElement.id]"
                                         dh-name="{{eventRow.event}}{{prStDe.dataElement.id}}"
                                         dh-click="saveDataValueForRadio(prStDe, eventRow, value)">
-                                    </dhis2-radio-button>
+                                    </d2-radio-button>
                                 </div>
                                 <div ng-switch-when="TRUE_ONLY">
                                     <input type="checkbox"
