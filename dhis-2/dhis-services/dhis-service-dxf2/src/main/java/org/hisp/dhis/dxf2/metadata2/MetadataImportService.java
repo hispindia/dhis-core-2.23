@@ -38,7 +38,7 @@ public interface MetadataImportService
 {
     void importMetadata( MetadataImportParams params );
 
-    void validate( MetadataImportParams params ) throws MetadataImportException;
+    void validate( MetadataImportParams params );
 
     MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
 }

@@ -135,7 +135,7 @@ public class DefaultMetadataExportService implements MetadataExportService
     }
 
     @Override
-    public void validate( MetadataExportParams params ) throws MetadataExportException
+    public void validate( MetadataExportParams params )
     {
 
     }

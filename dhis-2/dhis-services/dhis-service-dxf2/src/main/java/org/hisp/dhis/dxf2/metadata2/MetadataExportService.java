@@ -43,7 +43,7 @@ public interface MetadataExportService
 
     RootNode getMetadataAsNode( MetadataExportParams params );
 
-    void validate( MetadataExportParams params ) throws MetadataExportException;
+    void validate( MetadataExportParams params );
 
     MetadataExportParams getParamsFromMap( Map<String, List<String>> parameters );
 }

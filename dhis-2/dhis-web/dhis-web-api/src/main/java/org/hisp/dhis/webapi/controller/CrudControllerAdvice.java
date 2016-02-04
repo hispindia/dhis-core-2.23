@@ -35,6 +35,8 @@ import org.hisp.dhis.common.MaintenanceModeException;
 import org.hisp.dhis.common.exception.InvalidIdentifierReferenceException;
 import org.hisp.dhis.dataapproval.exceptions.DataApprovalException;
 import org.hisp.dhis.dxf2.common.Status;
+import org.hisp.dhis.dxf2.metadata2.MetadataExportException;
+import org.hisp.dhis.dxf2.metadata2.MetadataImportException;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.query.QueryException;
 import org.hisp.dhis.query.QueryParserException;
@@ -150,5 +152,11 @@ public class CrudControllerAdvice
     public void httpStatusCodeExceptionHandler( HttpStatusCodeException ex, HttpServletResponse response, HttpServletRequest request )
     {
         webMessageService.send( WebMessageUtils.createWebMessage( ex.getMessage(), Status.ERROR, ex.getStatusCode() ), response, request );
+    }
+
+    @ExceptionHandler( { MetadataImportException.class, MetadataExportException.class } )
+    public void metadataImportExportHandler( Exception ex, HttpServletResponse response, HttpServletRequest request )
+    {
+        webMessageService.send( WebMessageUtils.conflict( ex.getMessage() ), response, request );
     }
 }

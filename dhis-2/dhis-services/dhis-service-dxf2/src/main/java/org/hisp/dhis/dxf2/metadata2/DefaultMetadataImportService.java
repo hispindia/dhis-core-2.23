@@ -77,7 +77,7 @@ public class DefaultMetadataImportService implements MetadataImportService
     }
 
     @Override
-    public void validate( MetadataImportParams params ) throws MetadataImportException
+    public void validate( MetadataImportParams params )
     {
 
     }
