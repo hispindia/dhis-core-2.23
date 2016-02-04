@@ -10,7 +10,7 @@
 
   <artifactId>dhis-web-ohie</artifactId>
   <packaging>war</packaging>
-  <name>DHIS 2 OHIE Implementations</name>
+  <name>DHIS OHIE Implementations</name>
 
   <build>
     <finalName>dhis-web-ohie</finalName>

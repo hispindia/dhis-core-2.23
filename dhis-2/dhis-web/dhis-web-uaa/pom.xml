@@ -10,7 +10,7 @@
 
   <artifactId>dhis-web-uaa</artifactId>
   <packaging>war</packaging>
-  <name>User Account and Authentication (UAA) Server</name>
+  <name>DHIS User Account and Authentication (UAA) Server</name>
 
   <build>
     <finalName>dhis-web-uaa</finalName>

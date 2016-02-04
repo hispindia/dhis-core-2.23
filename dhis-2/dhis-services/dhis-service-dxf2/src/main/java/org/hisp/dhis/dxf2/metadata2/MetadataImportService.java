@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,5 +40,5 @@ public interface MetadataImportService
 
     void validate( MetadataImportParams params ) throws MetadataImportException;
 
-    MetadataImportParams getParamsFromMap( Map<String, String> parameters );
+    MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
 }

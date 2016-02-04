@@ -55,6 +55,7 @@ public class MetadataExportController
     public @ResponseBody RootNode getMetadata()
     {
         MetadataExportParams params = metadataExportService.getParamsFromMap( contextService.getParameterValuesMap() );
+        metadataExportService.validate( params );
         return metadataExportService.getMetadataAsNode( params );
     }
 }

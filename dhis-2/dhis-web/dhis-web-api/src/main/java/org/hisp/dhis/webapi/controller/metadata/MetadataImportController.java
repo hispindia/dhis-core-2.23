@@ -28,17 +28,16 @@ package org.hisp.dhis.webapi.controller.metadata;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.dxf2.metadata2.MetadataImportException;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportParams;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportService;
+import org.hisp.dhis.webapi.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -50,9 +49,14 @@ public class MetadataImportController
     @Autowired
     private MetadataImportService metadataImportService;
 
+    @Autowired
+    private ContextService contextService;
+
     @RequestMapping( value = "", method = RequestMethod.POST )
-    public void postMetadata( @RequestParam Map<String, String> rpParameters, HttpServletRequest request ) throws IOException
+    public void postMetadata() throws IOException, MetadataImportException
     {
-        MetadataImportParams params = metadataImportService.getParamsFromMap( rpParameters );
+        MetadataImportParams params = metadataImportService.getParamsFromMap( contextService.getParameterValuesMap() );
+        metadataImportService.validate( params );
+        metadataImportService.importMetadata( params );
     }
 }

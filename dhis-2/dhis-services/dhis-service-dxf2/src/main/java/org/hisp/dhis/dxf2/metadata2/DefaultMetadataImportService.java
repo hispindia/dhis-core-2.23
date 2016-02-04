@@ -83,7 +83,7 @@ public class DefaultMetadataImportService implements MetadataImportService
     }
 
     @Override
-    public MetadataImportParams getParamsFromMap( Map<String, String> parameters )
+    public MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters )
     {
         MetadataImportParams params = new MetadataImportParams();
         return params;
