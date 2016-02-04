@@ -710,7 +710,7 @@ public class DataApprovalController
         User user = currentUserService.getCurrentUser();
         Date date = new Date();
 
-        Set<DataApproval> set = new HashSet<>(); // Avoid duplicates when different datasets have the same workflow
+        Set<DataApproval> set = new HashSet<>(); // Avoid duplicates when different data sets have the same work flow
 
         for ( DataSet dataSet : dataSets )
         {

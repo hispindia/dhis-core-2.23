@@ -69,7 +69,6 @@ public class MetadataExportServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testMetadataExport()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
@@ -100,7 +99,6 @@ public class MetadataExportServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testMetadataExportWithCustomClasses()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
@@ -135,7 +133,6 @@ public class MetadataExportServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testMetadataExportWithCustomQueries()
     {
         DataElementGroup deg1 = createDataElementGroup( 'A' );
