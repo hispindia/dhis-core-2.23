@@ -62,4 +62,14 @@ var trackerCapture = angular.module('trackerCapture',
     $translateProvider.useSanitizeValueStrategy('escaped');
     $translateProvider.useLoader('i18nLoader');
     
-});
+})
+
+.run(function($templateCache, $http){    
+    $http.get('components/dataentry/inner-form.html').then(function(page){        
+        $templateCache.put('components/dataentry/inner-form.html', page.data);
+    });
+    $http.get('components/dataentry/section-inner-form.html').then(function(page){        
+        $templateCache.put('components/dataentry/section-inner-form.html', page.data);
+    });
+})
+;

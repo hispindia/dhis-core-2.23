@@ -472,35 +472,21 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
 /* Factory for fetching OrgUnit */
 .factory('OrgUnitFactory', function($http, SessionStorageService) {    
-    var orgUnit, orgUnitPromise, rootOrgUnitPromise, orgUnitWithGroupsPromise, orgUnitWithParent;
+    var orgUnit, orgUnitPromise, rootOrgUnitPromise,orgUnitTreePromise;
     return {
         get: function(uid){            
             if( orgUnit !== uid ){
-                orgUnitPromise = $http.get( '../api/organisationUnits.json?filter=id:eq:' + uid + '&fields=id,name,children[id,name,children[id,name]]&paging=false' ).then(function(response){
+                orgUnitPromise = $http.get( '../api/organisationUnits.json?filter=id:eq:' + uid + '&fields=id,name,level,children[id,name,level,children[id,name,level]]&paging=false' ).then(function(response){
                     orgUnit = response.data.id;
                     return response.data;
                 });
             }
             return orgUnitPromise;
         },
-        getWithGroups: function(uid){
-            orgUnitWithGroupsPromise = $http.get( '../api/organisationUnits.json?filter=id:eq:' + uid + '&fields=id,name,children[id,name,organisationUnitGroups[shortName],children[id,name, organisationUnitGroups[shortName]],organisationUnitGroups[shortName]]&paging=false' ).then(function(response){
-                orgUnit = response.data.id;
-                return response.data;
-            });
-            return orgUnitWithGroupsPromise;
-        },
-        getWithParents: function(uid){
-            orgUnitWithParent = $http.get( '../api/organisationUnits.json?filter=id:eq:' + uid + '&fields=id,name,parent[id,name,parent[id,name,parent[id,name,parent[id,name]]]&paging=false' ).then(function(response){
-                orgUnit = response.data.id;
-                return response.data;
-            });
-            return orgUnitWithParent;
-        },
         getSearchTreeRoot: function(){
             //var roles = SessionStorageService.get('USER_ROLES');
             if(!rootOrgUnitPromise){
-                var url = '../api/me.json?fields=organisationUnits[id,name,children[id,name,children[id,name]]]&paging=false';
+                var url = '../api/me.json?fields=organisationUnits[id,name,level,children[id,name,level,children[id,name,level]]]&paging=false';
                 /*if( roles && roles.userCredentials && roles.userCredentials.userRoles){
                     var userRoles = roles.userCredentials.userRoles;
                     for(var i=0; i<userRoles.length; i++){
@@ -516,6 +502,13 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 });
             }
             return rootOrgUnitPromise;
+        },
+        getOrgUnits: function(uid,fieldUrl){
+            var url = '../api/organisationUnits.json?filter=id:eq:'+uid+'&'+fieldUrl+'&paging=false';
+            orgUnitTreePromise = $http.get(url).then(function(response){
+              return response.data; 
+            });               
+            return orgUnitTreePromise;
         }
     }; 
 })
@@ -1540,7 +1533,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 .service('TEIGridService', function(OptionSetService, CurrentSelection, DateUtils, $translate, $filter, SessionStorageService){
     
     return {
-        format: function(grid, map, optionSets, invalidTeis){
+        format: function(grid, map, optionSets, invalidTeis, isFollowUp){
             
             var ou = SessionStorageService.get('SELECTED_OU');
             
@@ -1560,7 +1553,6 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             
             var attributes = CurrentSelection.getAttributesById();
             
-            
             angular.forEach(grid.rows, function(row){
                 if(invalidTeis.indexOf(row[0]) === -1 ){
                     var entity = {};
@@ -1573,7 +1565,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     entity.orgUnitName = row[4];
                     entity.type = row[5];
                     entity.inactive = row[6] !== "" ? row[6] : false;
-
+                    entity.followUp = isFollowUp;
+                    
                     for(var i=7; i<row.length; i++){
                         if(row[i] && row[i] !== ''){
                             isEmpty = false;
@@ -1788,20 +1781,20 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             }
     
             if(dhis2Event.status === 'COMPLETED'){
-                return 'alert-success';//'stage-completed';
+                return 'custom-tracker-complete';//'stage-completed';
             }
             else if(dhis2Event.status === 'SKIPPED'){
                 return 'alert-default'; //'stage-skipped';
             }
             else{                
                 if(dhis2Event.eventDate){
-                    return 'alert-info'; //'stage-executed';
+                    return 'alert-warning'; //'stage-executed';
                 }
                 else{
                     if(moment(eventDate, calendarSetting.momentFormat).isAfter(dhis2Event.dueDate)){
                         return 'alert-danger';//'stage-overdue';
                     }                
-                    return 'alert-warning';//'stage-on-time';
+                    return 'alert-success';//'stage-on-time';
                 }               
             }            
         },

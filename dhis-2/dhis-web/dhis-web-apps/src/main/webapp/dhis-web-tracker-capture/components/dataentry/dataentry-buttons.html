@@ -7,7 +7,7 @@
        ng-if="currentEvent.eventDate && (currentEvent.status === 'SCHEDULE' || currentEvent.status === 'ACTIVE' || currentEvent.status === 'VISITED')">{{'complete'| translate}}</a>
     <a href ng-click="completeIncompleteEvent(null, outerForm)" 
        class="btn btn-warning"
-       ng-disabled="currentEvent.enrollmentStatus !== 'ACTIVE' || currentEvent.editingNotAllowed && currentEvent.status !== 'COMPLETED' || currentEvent.orgUnit !== selectedOrgUnit.id"
+       ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed && currentEvent.status !== 'COMPLETED' || currentEvent.orgUnit !== selectedOrgUnit.id"
        ng-if="currentEvent.eventDate && currentEvent.status === 'COMPLETED'">{{'incomplete'| translate}}</a>    
     <a href ng-click="skipUnskipEvent()" 
        class="btn btn-warning" 

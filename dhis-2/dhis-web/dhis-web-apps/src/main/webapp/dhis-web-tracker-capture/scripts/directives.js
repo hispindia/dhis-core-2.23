@@ -19,6 +19,48 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
         }
     };
 })
+.directive('heightChangeSource', function ($window) {
+    return {
+        link: function (scope, element, attrs) {
+            element.css("width","100%");
+            var w = angular.element($window);
+            scope.getWindowDimensions = function () {
+                return {
+                    'h': w.height(),
+                    'w': w.width()
+                };
+            };
+            scope.$watch(function(){
+                if(element.height()!== scope._height){
+                    scope._height = element.height();
+                }
+            });
+            scope.$watch(scope.getWindowDimensions, function (newValue, oldValue) {
+                if(scope._height !== element.height()){
+                    scope._height = element.height();
+                    console.log("heightChangeSourceb");
+                }
+
+            }, true);
+            
+            w.bind('resize', function () {
+                scope.$apply();
+            });
+        }
+    };
+})
+.directive('heightChangeTarget', function () {
+    return {
+        link: function (scope, element, attrs) {
+            scope.$watch('_height', function (newValue, oldValue) {
+                if(newValue && newValue !== oldValue){
+                    element.css('padding-top',newValue);     
+                }
+
+            }, true);
+        }
+    };
+})
 
 .directive('eventstatusInTable', function (){
     return {
@@ -41,7 +83,8 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             actions: '=',
             allEvents: '=',
             formData: '=',
-            buttonsEnabled: '&'
+            buttonsEnabled: '&',
+            deleteActionExtended: '='
         },
         controller: [
             '$scope',
@@ -92,11 +135,17 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 };
                 
                 $scope.deleteAction = function(){
+                    
                     if(angular.isDefined($scope.deleteActionCustom)){
                         $scope.deleteActionCustom();
                     }
                     else {
-                        $scope.deleteActionDefault();
+                        var promise = $scope.deleteActionDefault();
+                        if(angular.isDefined($scope.deleteActionExtended)){
+                            promise.then(function(){
+                                $scope.deleteActionExtended();
+                            });
+                        }                        
                     }
 
                 };
@@ -120,6 +169,47 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                     else {
                         $scope.notesModal();
                     }                                       
+                };
+                
+                $scope.showNoteExistsIcon = true;
+                if(angular.isDefined($scope.applicableButtons)){
+                    $scope.showNoteExistsIcon = false;
+                    for(i = 0; i < $scope.applicableButtons.length; i++){
+                        if($scope.applicableButtons[i] === NOTE){
+                            $scope.showNoteExistsIcon = true;
+                            break;
+                        }
+                    }
+                }
+                
+                $scope.notesSummary = function(){
+                    var summary = "";
+                    angular.forEach($scope.event.notes, function(note){                        
+                        if(summary !== ""){
+                            summary += "<br/>";
+                        }
+                        
+                        if(note.value.length > 30){
+                            //find index of space
+                            var noteSubstring = note.value.substr(0, 30);
+                            var lastSpace = noteSubstring.lastIndexOf(" ");
+                            if(lastSpace !== -1){
+                                noteSubstring = noteSubstring.substr(0, lastSpace + 1);
+                            }                            
+                            
+                            summary += "- " + noteSubstring + "...";
+                        }
+                        else {
+                            summary += "- " + note.value;
+                        }
+                    });
+                    
+                    var summaryHeader = $translate.instant('notes');
+                    summaryHeader += ":<br/>";
+                    
+                    var summaryFooter = "<br/>(" + $translate.instant('click_to_edit_view_complete_notes') + ")";
+                    summary = "<p align='left'>" + summaryHeader + summary + summaryFooter + "</p>";
+                    return summary;
                 };
                 
                 $scope.eventTableOptions = {};    
@@ -334,7 +424,7 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
                 
                 $scope.deleteActionDefault = function() {
 
-                    DHIS2EventFactory.delete($scope.event).then(function (data) {
+                    return DHIS2EventFactory.delete($scope.event).then(function (data) {
                         
                         var foundIndex = -1;
                         //find index
@@ -418,4 +508,24 @@ var trackerCaptureDirectives = angular.module('trackerCaptureDirectives', [])
             }
         ]
     };
-});
+})
+.directive('dhis2CompiledInclude', [
+  '$templateCache',
+  function($templateCache) {
+    return {
+      restrict: 'A',
+      priority: 400, // Same as ng-include
+      compile: function(element, attrs){        
+        var templateName = attrs.dhis2CompiledInclude;
+        if(!templateName){
+          throw new Error('ngInline: expected template name');
+        }
+        var template = $templateCache.get(templateName);
+     	  if(angular.isUndefined(template)){
+          throw new Error('ngInline: unknown template ' + templateName);
+        }
+        element.html(template);
+      }
+    };
+  }
+]);

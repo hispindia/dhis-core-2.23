@@ -133,10 +133,6 @@ trackerCapture.controller('EventCreationController',
         //suggest stage
         suggestStage();        
     }
-        
-    if(angular.isDefined(orgUnit) && angular.isDefined(orgUnit.id)){
-        orgPath.push(orgUnit.id);
-    }    
     
     
     $scope.$watch('model.selectedStage', function(){       
@@ -233,114 +229,79 @@ trackerCapture.controller('EventCreationController',
     };
     
     
-    function initOrgUnits(uid){
-        $scope.orgUnitsLoading =true;
+    if(angular.isDefined(orgUnit) && angular.isDefined(orgUnit.id) && $scope.isReferralEvent){
+        $scope.orgUnitsLoading = true;
         $timeout(function(){
-            OrgUnitFactory.getWithParents(uid).then(function(ou){
-                if(ou.organisationUnits && ou.organisationUnits[0] && ou.organisationUnits[0].parent){
-                    orgPath.push(ou.organisationUnits[0].parent.id);
-                    var parent = ou.organisationUnits[0].parent;
-                    var lastId = ou.organisationUnits[0].id;
-                    while(parent){
-                        orgPath.push(parent.id);
-                        lastId = parent.id;
-                        parent = parent.parent;
-                    }
-                    initOrgUnits(lastId);
-                }else{
-                    OrgUnitFactory.getSearchTreeRoot().then(function(response) {
-                        $scope.orgUnits = response.organisationUnits;
-                        angular.forEach($scope.orgUnits, function(ou){
-                            ou.show = true;
-                            angular.forEach(ou.children, function(o){
-                                o.hasChildren = o.children && o.children.length > 0 ? true : false;
-                                initExpand(o);
-                            });
-                        });
-                    });
-                }
-            });
-        },150);
-        
-    };
-    
-    function initExpand(orgUnit){
-        if(orgPath.indexOf(orgUnit.id)>-1){
-            if(orgUnit.hasChildren){
-                //Get children for the selected orgUnit
-                OrgUnitFactory.get(orgUnit.id).then(function(ou) {     
-                    orgUnit.show = true;
-                    orgUnit.hasChildren = false;
-                    orgUnit.children = ou.organisationUnits[0].children;
-                    angular.forEach(orgUnit.children, function(ou){            
-                        ou.hasChildren = ou.children && ou.children.length > 0 ? true : false;
-                        initExpand(ou);
-                    });    
-                });
-            }else{
-                setDefaultOrgUnit();
-            }
-        }
-    };
-    
-    var defaultOrgUnitGroup = 'hrc';
-    function setDefaultOrgUnit(){
-        if(orgPath && orgPath.length>1){
-            OrgUnitFactory.getWithGroups(orgPath[1]).then(function(ou){
-                if(ou.organisationUnits && ou.organisationUnits[0]){
-                    var o = ou.organisationUnits[0];
-                    angular.forEach(o.children, function(oo){
-                        angular.forEach(oo.organisationUnitGroups, function(oug){
-                            var shortNameLC = oug.shortName.toLowerCase();
-                            if(shortNameLC === defaultOrgUnitGroup){
-                                $scope.setSelectedSearchingOrgUnit(oo);
+            OrgUnitFactory.get(orgUnit.id).then(function(data){
+                if(data && data.organisationUnits && data.organisationUnits.length >0){
+                    orgUnit = data.organisationUnits[0];
+                    var url = generateFieldsUrl();
+                    OrgUnitFactory.getOrgUnits(orgUnit.id,url).then(function(data){
+                        if(data && data.organisationUnits && data.organisationUnits.length >0){
+                            $scope.orgWithParents = data.organisationUnits[0];
+                            var org = data.organisationUnits[0];
+                            var orgUnitsById ={};
+                            orgUnitsById[org.id] = org;
+                            while(org.parent){
+                                org.parent.childrenLoaded = true;
+                                orgUnitsById[org.parent.id] = org.parent;
+                                org.parent.show = true;
+                                for(var i=0;i<org.parent.children.length;i++){
+                                    angular.forEach(org.parent.children[i].children, function(child){
+                                       if(!orgUnitsById[child.id]){
+                                            orgUnitsById[child.id] =child; 
+                                       }
+                                    });
+                                    if(org.parent.children[i].id===org.id){
+                                        org.parent.children[i] = org;
+                                        i= org.parent.children.length;
+                                    }else{
+                                        orgUnitsById[org.parent.children[i].id] = org.parent.children[i];
+                                    }
+                                }
+                                org = org.parent;
                             }
-                        });
+                            $scope.orgUnits = [org];
+                        }
+                        $scope.orgUnitsLoading = false;
                     });
-
                 }
-                $scope.orgUnitsLoading = false;
-            });   
-        }else{
-            $scope.orgUnitsLoading = false;
-        }
-    };
-   
-    if($scope.isReferralEvent){
-        initOrgUnits(orgPath[0]);
+
+                
+            });
+            
+        },350);
     }
-           
-    $scope.expandCollapse = function(orgUnit) {
-        if( orgUnit.hasChildren ){            
-            //Get children for the selected orgUnit
-            OrgUnitFactory.get(orgUnit.id).then(function(ou) {                
-                orgUnit.show = !orgUnit.show;
-                orgUnit.hasChildren = false;
-                orgUnit.children = ou.organisationUnits[0].children;                
-                angular.forEach(orgUnit.children, function(ou){                    
-                    ou.hasChildren = ou.children && ou.children.length > 0 ? true : false;
-                });                
-            });           
+    
+    function generateFieldsUrl(){
+        var fieldUrl = "fields=id,name,organisationUnitGroups[shortName]";
+        var parentStartDefault = ",parent[id,name,children[id,name,organisationUnitGroups[shortName],children[id,name,organisationUnitGroups[shortName]]]";
+        var parentEndDefault = "]";
+        if(orgUnit.level && orgUnit.level > 1){
+            var parentStart = parentStartDefault;
+            var parentEnd = parentEndDefault;
+            for(var i =0; i< orgUnit.level-2;i++){
+                parentStart+= parentStartDefault;
+                parentEnd +=parentStartDefault;
+            }
+            fieldUrl += parentStart;
+            fieldUrl += parentEnd;
         }
-        else{
-            orgUnit.show = !orgUnit.show;   
-        }
-    };
+        return fieldUrl;
+    }
     
 
-    /*if($scope.isReferralEvent){
-        OrgUnitFactory.getSearchTreeRoot().then(function(response) {
-            $scope.orgUnits = response.organisationUnits;
-            angular.forEach($scope.orgUnits, function(ou){
-                ou.show = true;
-                angular.forEach(ou.children, function(o){
-                    o.hasChildren = o.children && o.children.length > 0 ? true : false;
-                });
+    $scope.expandCollapse = function(orgUnit) {
+        orgUnit.show = !orgUnit.show;
+        if(!orgUnit.childrenLoaded){
+            OrgUnitFactory.get(orgUnit.id).then(function(data){
+                orgUnit.children = data.organisationUnits[0].children;
+                orgUnit.childrenLoaded = true;
+                
             });
-        });
-    }*/
+        }
+    };
     //end referral logic
-    
     $scope.cancel = function () {
         $modalInstance.close();
     };

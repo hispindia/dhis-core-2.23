@@ -20,15 +20,16 @@
             
             <!-- operations on selected enrollment begins -->
             <div class="row equal-height-columns">
-                <div class="col-sm-8">                
+                <div ng-class="!showEnrollmentDiv && hasOtherPrograms ? 'col-sm-8' : 'col-sm-12'">                
                     <div class="title small-vertical-spacing">
-                        {{'selected_program'| translate}}
-
+                        <span ng-if="hasOtherPrograms">
+                            {{'selected_program'| translate}}                           
+                        </span>
                         <span class="nav-pills" ng-show="selectedProgram && currentEnrollment && currentEnrollment !== selectedEnrollment">
                             | <a href ng-click="loadEnrollmentDetails(currentEnrollment)" title="{{'current'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [showEnrollmentDiv]">{{'current'| translate}}</span></a>
                         </span>
                         <span class="nav-pills" ng-show="selectedProgram && !currentEnrollment && !selectedTei.inactive">
-                                | <a href ng-click="showNewEnrollment()" title="{{'add_new'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [showEnrollmentDiv]">{{'add_new'| translate}}</span></a>
+                            <span ng-show="selectedProgram && currentEnrollment && currentEnrollment !== selectedEnrollment">|</span> <a href ng-click="showNewEnrollment()" title="{{'add_new'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget-link'} [showEnrollmentDiv]">{{'add_new'| translate}}</span></a>
                         </span>
                         <span class="nav-pills" ng-show="hasEnrollmentHistory">
                             | <a href ng-click="showEnrollmentHistory()" title="{{'history'| translate}}"><span ng-class="{true: 'widget-link-active', false: 'widget - link'} [showEnrollmentHistoryDiv]">{{'history'| translate}}</span></a>
@@ -132,7 +133,8 @@
                     </div>
                     
                 </div>
-                <div class="col-sm-4 border-left" ng-if="!showEnrollmentDiv">
+                
+                <div class="col-sm-4 border-left" ng-if="!showEnrollmentDiv && hasOtherPrograms">
                     <div class="title small-vertical-spacing">{{'other_programs'| translate}}</div>
                     <div class="vertical-spacing">
                         <div ng-if="activeEnrollments.length > 0">

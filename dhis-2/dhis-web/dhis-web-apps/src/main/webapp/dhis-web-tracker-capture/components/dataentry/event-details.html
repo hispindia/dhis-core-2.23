@@ -1,5 +1,5 @@
 <!-- event dates/scheduling begin -->
-<div class="row" ng-if="(displayCustomForm !== 'TABLE') && !currentStage.periodType">
+<div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE' && !currentStage.periodType">
 
     <div ng-class="{true: 'col-md-12', false: 'col-md-6'} [currentStage.hideDueDate]">
         {{currentEvent.excecutionDateLabel}}

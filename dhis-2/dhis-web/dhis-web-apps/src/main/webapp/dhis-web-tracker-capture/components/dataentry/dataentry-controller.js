@@ -43,7 +43,6 @@ trackerCapture.controller('DataEntryController',
     $scope.schedulingEnabled = false;
     $scope.eventPeriods = [];
     $scope.currentPeriod = [];
-    $scope.filterEvents = true;
     $scope.showEventsAsTables = false;
     //variable is set while looping through the program stages later.
     $scope.stagesCanBeShownAsTable = false;
@@ -57,8 +56,25 @@ trackerCapture.controller('DataEntryController',
     $scope.xVisitScheduleDataElement = false;
     $scope.reSortStageEvents = true;
     $scope.eventsLoaded = false;
-
+    $scope.dashBoardWidgetFirstRun = true;
+    $scope.showSelf = true;
     
+    var eventLockEnabled = false;
+    var eventLockHours = 8; //Number of hours before event is locked after completing.
+
+    $scope.useMainMenu = false;
+    $scope.mainMenuStages = [];
+    $scope.useBottomLine = false; 
+    
+    //hideTopLineEventsForFormTypes is only used with main menu
+    $scope.hideTopLineEventsForFormTypes = {TABLE: true, COMPARE: true};
+    
+    $scope.visibleWidgetsInMainMenu = {enrollment: true, dataentry: true, close_file: true};    
+    $rootScope.$broadcast('DataEntryMainMenuVisibilitySet', {visible: $scope.useMainMenu, visibleItems: $scope.visibleWidgetsInMainMenu});
+    
+
+    var modalCompleteIncompleteActions = { complete: 'complete', completeAndExit: 'completeandexit', completeEnrollment: 'completeenrollment', edit: 'edit'};
+
     //Labels
     $scope.dataElementLabel = $translate.instant('data_element');
     $scope.valueLabel = $translate.instant('value');
@@ -79,18 +95,36 @@ trackerCapture.controller('DataEntryController',
     $scope.invalidDate = false;
 
     //note
-    $scope.note = {};
-
-    //event color legend
-    $scope.eventColors = [
-        {color: 'alert-success ', description: 'completed'},
-        {color: 'alert-info ', description: 'executed'},
-        {color: 'alert-warning ', description: 'ontime'},
-        {color: 'alert-danger ', description: 'overdue'},
-        {color: 'alert-default ', description: 'skipped'}
+    $scope.note = {};    
+    
+    $scope.eventStyles = [
+        {color: 'custom-tracker-complete', description: 'completed', showInStageLegend: true, showInEventLegend: true},
+        {color: 'alert-warning', description: 'executed', showInStageLegend: true, showInEventLegend: true},        
+        {color: 'alert-success', description: 'ontime', showInStageLegend: true, showInEventLegend: true},
+        {color: 'alert-danger', description: 'overdue', showInStageLegend: true, showInEventLegend: true},        
+        {color: 'alert-default', description: 'skipped', showInStageLegend: false, showInEventLegend: true},
+        {color: '', description: 'empty', showInStageLegend: true, showInEventLegend: false}
     ];
-    $scope.showEventColors = false;
-
+    $scope.showLegend = false;
+    
+    $scope.filterLegend = function(){
+        if($scope.mainMenuStageSelected()){
+            return {showInEventLegend: true};
+        }
+        else {
+            return {showInStageLegend: true};
+        }
+    }
+    
+    $scope.getLegendText = function(description){
+        var useInStage = true;
+        if($scope.mainMenuStageSelected()){
+            useInStage = false;            
+        }
+        return $scope.getDescriptionTextForDescription(description, $scope.descriptionTypes.full, useInStage);
+    };
+    
+    
     //listen for new events created
     $scope.$on('eventcreated', function (event, args) {
         //TODO: Sort this out:
@@ -98,7 +132,7 @@ trackerCapture.controller('DataEntryController',
     });
     
     $scope.$on('teiupdated', function(event, args){
-        var selections = CurrentSelection.get();
+        var selections = CurrentSelection.get();        
         $scope.selectedTei = selections.tei;
         $scope.executeRules();
     });
@@ -109,19 +143,22 @@ trackerCapture.controller('DataEntryController',
             processRuleEffect(args.event);            
         }
     });
-
+    $scope.useReferral = false;
     $scope.showReferral = false;
     //Check if user is allowed to make referrals
-    var roles = SessionStorageService.get('USER_ROLES');
-    if( roles && roles.userCredentials && roles.userCredentials.userRoles){
-        var userRoles = roles.userCredentials.userRoles;
-        for(var i=0; i<userRoles.length; i++){
-            if(userRoles[i].authorities.indexOf('ALL') !== -1 || userRoles[i].authorities.indexOf('F_TRACKED_ENTITY_INSTANCE_SEARCH_IN_ALL_ORGUNITS') !== -1 ){
-              $scope.showReferral = true;
-              i=userRoles.length;
-            }
-        } 
+    if($scope.useReferral){
+        var roles = SessionStorageService.get('USER_ROLES');
+        if( roles && roles.userCredentials && roles.userCredentials.userRoles){
+            var userRoles = roles.userCredentials.userRoles;
+            for(var i=0; i<userRoles.length; i++){
+                if(userRoles[i].authorities.indexOf('ALL') !== -1 || userRoles[i].authorities.indexOf('F_TRACKED_ENTITY_INSTANCE_SEARCH_IN_ALL_ORGUNITS') !== -1 ){
+                  $scope.showReferral = true;
+                  i=userRoles.length;
+                }
+            } 
+        }
     }
+
     $scope.model= {};
             
     $scope.print = function(divName){
@@ -149,7 +186,7 @@ trackerCapture.controller('DataEntryController',
         //Establish which event was affected:
         var affectedEvent = $scope.currentEvent;
         //In most cases the updated effects apply to the current event. In case the affected event is not the current event, fetch the correct event to affect:
-        if(event === 'registration') return;
+        if(event === 'registration' || event === 'dataEntryInit') return;
 
         if (event !== affectedEvent.event) {
             angular.forEach($scope.currentStageEvents, function (searchedEvent) {
@@ -166,87 +203,276 @@ trackerCapture.controller('DataEntryController',
         $scope.hiddenFields[event] = [];
         
         angular.forEach($rootScope.ruleeffects[event], function (effect) {
-            if (effect.dataElement) {
-                //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
-                if (effect.action === "HIDEFIELD") {                    
-                    if (effect.dataElement) {
-                        
-                        if (effect.ineffect && affectedEvent[effect.dataElement.id]) {
-                            //If a field is going to be hidden, but contains a value, we need to take action;
-                            if (effect.content) {
-                                //TODO: Alerts is going to be replaced with a proper display mecanism.
-                                alert(effect.content);
-                            }
-                            else {
-                                //TODO: Alerts is going to be replaced with a proper display mecanism.
-                                alert($scope.prStDes[effect.dataElement.id].dataElement.formName + "Was blanked out and hidden by your last action");
-                            }
+            //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
+            if (effect.action === "HIDEFIELD") {                    
+                if (effect.dataElement) {
 
-                            //Blank out the value:
-                            affectedEvent[effect.dataElement.id] = "";
-                            $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
+                    if (effect.ineffect && affectedEvent[effect.dataElement.id]) {
+                        //If a field is going to be hidden, but contains a value, we need to take action;
+                        if (effect.content) {
+                            //TODO: Alerts is going to be replaced with a proper display mecanism.
+                            alert(effect.content);
+                        }
+                        else {
+                            //TODO: Alerts is going to be replaced with a proper display mecanism.
+                            alert($scope.prStDes[effect.dataElement.id].dataElement.formName + "Was blanked out and hidden by your last action");
                         }
 
-                        if(effect.ineffect) {
-                            $scope.hiddenFields[event][effect.dataElement.id] = true;
-                        } 
-                        else if( !$scope.hiddenFields[event][effect.dataElement.id]) {
-                            $scope.hiddenFields[event][effect.dataElement.id] = false;
-                        }
-
-                    }
-                    else {
-                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have a dataelement defined");
-                    }
-                } else if (effect.action === "SHOWERROR") {
-                    if (effect.ineffect) {
-                        
-                        if(effect.dataElement) {                           
-                            var message = effect.content;
-                            $scope.errorMessages[event][effect.dataElement.id] = message;
-                            $scope.errorMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.name) + ": " + message);
-                        }
-                        else
-                        {
-                            $scope.errorMessages.push(message);
-                        }
-                    }
-                    else {
-                        
-                    }
-                } else if (effect.action === "SHOWWARNING") {
-                    if (effect.ineffect) {
-                        if(effect.dataElement) {
-                            var message = effect.content;
-                            $scope.warningMessages[event][effect.dataElement.id] = message;
-                            $scope.warningMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.name) + ": " + message);
-                        } else {
-                            $scope.warningMessages[event].push(message);
-                        }
-                    }
-                } else if (effect.action === "HIDESECTION"){                    
-                    if(effect.programStageSection){
-                        if(effect.ineffect){
-                            $scope.hiddenSections[event][effect.programStageSection] = true;
-                        } else{
-                            $scope.hiddenSections[event][effect.programStageSection] = false;
-                        }
-                    }
-                    else {
-                        $log.warn("ProgramRuleAction " + effect.id + " is of type HIDESECTION, bot does not have a section defined");
-                    }
-                } else if (effect.action === "ASSIGN") {
-                    if(effect.ineffect && effect.dataElement) {
-                        //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
                         //Blank out the value:
-                        var processedValue = $filter('trimquotes')(effect.data);
-                        affectedEvent[effect.dataElement.id] = processedValue;
-                        $scope.assignedFields[event][effect.dataElement.id] = true;
+                        affectedEvent[effect.dataElement.id] = "";
                         $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                     }
+
+                    if(effect.ineffect) {
+                        $scope.hiddenFields[event][effect.dataElement.id] = true;
+                    } 
+                    else if( !$scope.hiddenFields[event][effect.dataElement.id]) {
+                        $scope.hiddenFields[event][effect.dataElement.id] = false;
+                    }
+
+                }
+                else {
+                    $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have a dataelement defined");
+                }
+            } else if (effect.action === "SHOWERROR") {
+                if (effect.ineffect) {
+
+                    if(effect.dataElement) {                           
+                        var message = effect.content;
+                        $scope.errorMessages[event][effect.dataElement.id] = message;
+                        $scope.errorMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.name) + ": " + message);
+                    }
+                    else
+                    {
+                        $scope.errorMessages.push(message);
+                    }
+                }
+                else {
+
+                }
+            } else if (effect.action === "SHOWWARNING") {
+                if (effect.ineffect) {
+                    if(effect.dataElement) {
+                        var message = effect.content;
+                        $scope.warningMessages[event][effect.dataElement.id] = message;
+                        $scope.warningMessages[event].push($translate.instant($scope.prStDes[effect.dataElement.id].dataElement.name) + ": " + message);
+                    } else {
+                        $scope.warningMessages[event].push(message);
+                    }
+                }
+            } else if (effect.action === "HIDESECTION"){                    
+                if(effect.programStageSection){
+                    if(effect.ineffect){
+                        $scope.hiddenSections[event][effect.programStageSection] = true;
+                    } else{
+                        $scope.hiddenSections[event][effect.programStageSection] = false;
+                    }
+                }
+                else {
+                    $log.warn("ProgramRuleAction " + effect.id + " is of type HIDESECTION, bot does not have a section defined");
+                }
+            } else if (effect.action === "ASSIGN") {
+                if(effect.ineffect && effect.dataElement) {
+                    //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
+                    //Blank out the value:
+                    var processedValue = $filter('trimquotes')(effect.data);
+                    affectedEvent[effect.dataElement.id] = processedValue;
+                    $scope.assignedFields[event][effect.dataElement.id] = true;
+                    $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true)
                 }
             }
         });
+    };
+    
+    $scope.mainMenuStageSelected = function(){
+        if(angular.isDefined($scope.selectedMainMenuStage) && !angular.equals({}, $scope.selectedMainMenuStage)){
+            return true;
+        }
+        return false;
+    };
+    
+    $scope.buildMainMenuStages = function(){
+        $scope.mainMenuStages = [];
+        angular.forEach($scope.programStages, function(stage){
+            if((angular.isUndefined($scope.neverShowItems) || angular.isUndefined($scope.neverShowItems[stage.id]) || $scope.neverShowItems[stage.id] === false) &&
+               (angular.isUndefined($scope.headerCombineStages) || angular.isUndefined($scope.headerCombineStages[stage.id]))){
+                    $scope.mainMenuStages.push(stage);                    
+               }
+        });
+    };
+    
+    $scope.openStageFromMenu = function(stage){    
+        
+        $scope.deSelectCurrentEvent();        
+        $scope.selectedMainMenuStage = stage;
+        var timelineFilter = stage.id;
+        
+        if(angular.isDefined($scope.headerCombineStages)){
+            for(var key in $scope.headerCombineStages){
+                if(key === stage.id){
+                    timelineFilter += "," + $scope.headerCombineStages[key];
+                }
+                else if($scope.headerCombineStages[key] === stage.id){
+                    timelineFilter += "," + key;
+                }
+            }
+        }
+        
+        $scope.openStageEventFromMenu(stage, timelineFilter);
+        
+        $rootScope.$broadcast('DataEntryMainMenuItemSelected');
+        
+        $rootScope.$broadcast('DataEntryMainMenuVisibilitySet', {visible: false});
+    };
+    
+    $scope.$on('DashboardBackClicked', function(event){
+        $scope.backToMainMenu();
+    });
+    
+    
+    $scope.backToMainMenu = function(){
+        $scope.selectedMainMenuStage = {};
+        $scope.deSelectCurrentEvent();
+        $rootScope.$broadcast('DataEntryMainMenuVisibilitySet', {visible: true, visibleItems: $scope.visibleWidgetsInMainMenu});
+    };
+    
+    $scope.bottomLineItems = {};
+    $scope.neverShowItems = {};
+    $scope.topLineStageFilter = {};
+    $scope.headerStages = [];
+    $scope.headerCombineStages = {};
+    
+    $scope.getHeaderStages = function(){
+        angular.forEach($scope.programStages, function(stage){
+            if((angular.isUndefined($scope.bottomLineItems) || angular.isUndefined($scope.bottomLineItems[stage.id]) || $scope.bottomLineItems[stage.id] === false) && 
+               (angular.isUndefined($scope.neverShowItems) || angular.isUndefined($scope.neverShowItems[stage.id]) || $scope.neverShowItems[stage.id] === false) &&
+               (angular.isUndefined($scope.headerCombineStages) || angular.isUndefined($scope.headerCombineStages[stage.id]))){
+                    $scope.headerStages.push(stage);                    
+               }
+        });
+    };
+    
+    $scope.headerStagesWithoutCurrent = function(){        
+        if($scope.headerStages.length > 0){
+            if(angular.isDefined($scope.selectedMainMenuStage)){                
+                var withoutCurrent = [];
+                var currentStage = $scope.selectedMainMenuStage;
+                if(angular.isDefined($scope.headerCombineStages) && $scope.headerCombineStages[$scope.selectedMainMenuStage.id]){                    
+                    currentStage = $scope.stagesById[$scope.headerCombineStages[$scope.selectedMainMenuStage.id]];
+                }
+                
+                angular.forEach($scope.headerStages, function(headerStage){
+                    if(headerStage.id !== currentStage.id){
+                        withoutCurrent.push(headerStage);
+                    }
+                });
+                return withoutCurrent;
+            }
+            else {
+                return $scope.headerStages;
+            }
+        }        
+    };
+    
+    $scope.headerCurrentStageName = function(){
+        
+        var name = "";
+        if($scope.selectedMainMenuStage && angular.isDefined($scope.selectedMainMenuStage.name)){
+            name = $scope.selectedMainMenuStage.name;
+            if(angular.isDefined($scope.headerCombineStages) && $scope.headerCombineStages[$scope.selectedMainMenuStage.id]){
+                var stageWithName = $scope.stagesById[$scope.headerCombineStages[$scope.selectedMainMenuStage.id]];
+                if(angular.isDefined(stageWithName) && angular.isObject(stageWithName)){
+                    name = stageWithName.name;
+                }
+            }
+        }        
+        return name;
+    };
+    
+    $scope.displayEventInTopLine = function(item) {
+        if($scope.neverShowItems[item.id]) {
+            return false;
+        }
+        if($scope.bottomLineItems[item.id]) {
+            return false;
+        }
+        return true;
+    };
+    
+    $scope.displayEventInBottomLine = function(item) {
+        if($scope.neverShowItems[item.id]) {
+            return false;
+        }
+        if($scope.bottomLineItems[item.id]) {
+            return true;
+        }
+        return false;
+    };
+    
+    function topLineEventsIsFiltered(){               
+        if((angular.isDefined($scope.neverShowItems) && !angular.equals({},$scope.neverShowItems)) ||
+           (angular.isDefined($scope.bottomLineItems) && !angular.equals({}, $scope.bottomLineItems)) ||
+           (angular.isDefined($scope.topLineStageFilter) && !angular.equals({}, $scope.topLineStageFilter))){
+            return true;
+        }
+        return false;
+    }
+    
+    $scope.topLineEvents = [];
+    function getTopLineEvents(allEvents){              
+        if(!topLineEventsIsFiltered()){
+            $scope.topLineEvents = $scope.allEventsSorted;
+            return $scope.topLineEvents;
+        }        
+        else {
+            $scope.topLineEvents = [];
+            
+            if(angular.isDefined($scope.topLineStageFilter) && !angular.equals({}, $scope.topLineStageFilter)){
+                
+                var filterStages = [];
+                for(var key in $scope.topLineStageFilter){
+                    filterStages.push($scope.stagesById[key]);
+                }
+                filterStages.sort(function(a,b){
+                    return a.sortOrder - b.sortOrder;
+                });
+                
+                angular.forEach(filterStages, function(filterStage){
+                    var stageEvents = $scope.eventsByStage[filterStage.id];                    
+                    $scope.topLineEvents = $scope.topLineEvents.concat(stageEvents);                    
+                });            
+            }
+            else {
+                var hiddenStages = [];
+                if(angular.isDefined($scope.neverShowItems) && angular.isDefined($scope.bottomLineItems)){
+                    hiddenStages = angular.extend({}, $scope.neverShowItems, $scope.bottomLineItems);
+                }
+                else if(angular.isDefined($scope.neverShowItems)){
+                    hiddenStages = $scope.neverShowItems;
+                }
+                else if(angular.isDefined($scope.bottomLineItems)){
+                    hiddenStages = $scope.bottomLineItems;
+                }
+
+                angular.forEach($scope.allEventsSorted, function(event){
+                    if(!hiddenStages[event.programStage]){
+                        $scope.topLineEvents.push(event);
+                    }                
+                });
+            }
+            
+            return $scope.topLineEvents;
+        }        
+    }
+    
+    $scope.getTopLineEventsPage = function(){
+        
+        if($scope.allEventsSorted && $scope.allEventsSorted.length > 0){            
+            var topLineEvents = getTopLineEvents($scope.allEventsSorted);            
+            $scope.getEventPageForEvent($scope.currentEvent);
+            return topLineEvents.slice($scope.eventPagingStart, $scope.eventPagingEnd);
+        }
+        return [];
     };
     
     //check if field is hidden
@@ -302,6 +528,9 @@ trackerCapture.controller('DataEntryController',
         $scope.currentStage = null;
         $scope.currentStageEvents = null;
         $scope.totalEvents = 0;
+        $scope.eventsLoaded = false;
+        $scope.stageStyleLabels = [];
+        $scope.eventStyleLabels = [];
 
         $scope.allowEventCreation = false;
         $scope.repeatableStages = [];
@@ -314,10 +543,21 @@ trackerCapture.controller('DataEntryController',
         $scope.allowProvidedElsewhereExists = [];
         
         var selections = CurrentSelection.get();
-        $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');        
+        $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
         $scope.selectedEntity = selections.tei;
         $scope.selectedProgram = selections.pr;
         $scope.selectedEnrollment = selections.selectedEnrollment;        
+        
+        $scope.showSelf = true;
+        if(angular.isUndefined($scope.selectedEnrollment) || $scope.selectedEnrollment === null || ($scope.dashBoardWidgetFirstRun && $scope.selectedEnrollment.status === "COMPLETED")){
+            //onOpenEnrollment
+            $scope.showSelf = false;
+        }
+        
+        $rootScope.$broadcast('BeforeOpenEnrollment', $scope.showSelf);
+        $scope.dashBoardWidgetFirstRun = false;
+
+        
         $scope.optionSets = selections.optionSets;
 
         $scope.stagesById = [];
@@ -325,6 +565,7 @@ trackerCapture.controller('DataEntryController',
             ProgramStageFactory.getByProgram($scope.selectedProgram).then(function (stages) {
                 
                 $scope.programStages = stages;
+                
                 angular.forEach(stages, function (stage) {
                     if (stage.openAfterEnrollment) {
                         $scope.currentStage = stage;
@@ -351,30 +592,67 @@ trackerCapture.controller('DataEntryController',
                     $scope.currentStage = $scope.programStages[0];
                 }
                 
+                if($scope.useMainMenu){
+                    $scope.buildMainMenuStages();
+                }
+                
                 $scope.setDisplayTypeForStages();
+                $scope.getHeaderStages();
                 
                 TrackerRulesFactory.getRules($scope.selectedProgram.id).then(function(rules){                    
                     $scope.allProgramRules = rules;
-                    $scope.getEvents();
-                    $scope.getEventPageForEvent($scope.currentEvent);
-                    $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent });
+                    $scope.getEvents();                    
+                    broadcastDataEntryControllerData();
+                    executeRulesOnInit();
                 });           
             });
         }
     });
-
+    
+    function executeRulesOnInit(){
+        var flag = {debug: true, verbose: true};        
+        TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'dataEntryInit', null, null, $scope.selectedTei, $scope.selectedEnrollment, flag);
+    }
+    
+    
+    
+    $scope.openEventExternal = function(event){
+        if($scope.useMainMenu){
+            var stage = $scope.stagesById[event.programStage];
+            $scope.openStageFromMenu(stage);
+        }else{
+            $scope.showDataEntry(event, true);
+        }
+    };
+    
+    $scope.deleteScheduleAndOverdueEvents = function(){
+        var promises = [];
+        for(var i = 0; i < $scope.programStages.length; i++ ) {
+            for(var e = 0; e < $scope.eventsByStage[$scope.programStages[i].id].length; e++) {
+                if($scope.eventsByStage[$scope.programStages[i].id][e].status ==='SCHEDULE' || $scope.eventsByStage[$scope.programStages[i].id][e].status ==='OVERDUE'){
+                    promises.push(DHIS2EventFactory.delete($scope.eventsByStage[$scope.programStages[i].id][e]));
+                }
+            }
+        }
+        
+        return $q.all(promises);
+    };
+    
+    function broadcastDataEntryControllerData(){
+        $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent, openEvent: $scope.openEventExternal, deleteScheduleOverDueEvents: $scope.deleteScheduleAndOverdueEvents, executeRules: $scope.executeRules });
+    }
     $scope.getEvents = function () {
 
         $scope.allEventsSorted = [];
-        var events = CurrentSelection.getSelectedTeiEvents();
+        var events = CurrentSelection.getSelectedTeiEvents();        
         events = $filter('filter')(events, {program: $scope.selectedProgram.id});
         if (angular.isObject(events)) {
             angular.forEach(events, function (dhis2Event) {
-                var multiSelectsFound = [];
                 if (dhis2Event.enrollment === $scope.selectedEnrollment.enrollment && dhis2Event.orgUnit) {
                     if (dhis2Event.notes) {
                         dhis2Event.notes = orderByFilter(dhis2Event.notes, '-storedDate');
                         angular.forEach(dhis2Event.notes, function (note) {
+                            note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
                             note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
                         });
                     }
@@ -385,7 +663,7 @@ trackerCapture.controller('DataEntryController',
                         dhis2Event.dueDate = DateUtils.formatFromApiToUser(dhis2Event.dueDate);
                         dhis2Event.sortingDate = dhis2Event.dueDate;
 
-                        if (dhis2Event.eventDate) {
+                        if (dhis2Event.eventDate) {                            
                             dhis2Event.eventDate = DateUtils.formatFromApiToUser(dhis2Event.eventDate);
                             dhis2Event.sortingDate = dhis2Event.eventDate;                            
                         }
@@ -395,23 +673,7 @@ trackerCapture.controller('DataEntryController',
                         dhis2Event.statusColor = EventUtils.getEventStatusColor(dhis2Event);
                         dhis2Event = EventUtils.processEvent(dhis2Event, eventStage, $scope.optionSets, $scope.prStDes);
                         $scope.eventsByStage[dhis2Event.programStage].push(dhis2Event);
-                        angular.forEach($scope.programStages, function(programStage) {
-                            if(dhis2Event.programStage === programStage.id) {
-                                angular.forEach(programStage.programStageDataElements, function(dataElement) {
-                                    if(dataElement.dataElement.dataElementGroups && dataElement.dataElement.dataElementGroups.length > 0){
-                                        angular.forEach(dataElement.dataElement.dataElementGroups, function(dataElementGroup){
-                                            if(multiSelectsFound.indexOf(dataElementGroup.id)< 0) {
-                                                dhis2Event[dataElementGroup.id] = {selections:[]};
-                                                multiSelectsFound.push(dataElementGroup.id);
-                                            }
-                                            if(dhis2Event[dataElement.dataElement.id]){
-                                            dhis2Event[dataElementGroup.id].selections.push(dataElement.dataElement);       
-                                            }
-                                        });
-                                    } 
-                                });
-                            }
-                        });
+                        
                         if ($scope.currentStage && $scope.currentStage.id === dhis2Event.programStage) {
                             $scope.currentEvent = dhis2Event;
                         }
@@ -440,7 +702,7 @@ trackerCapture.controller('DataEntryController',
 
     $scope.stageCanBeShownAsTable = function (stage) {
         if (stage.programStageDataElements 
-                && stage.programStageDataElements.length < $scope.tableMaxNumberOfDataElements
+                && stage.programStageDataElements.length <= $scope.tableMaxNumberOfDataElements
                 && stage.repeatable) {
             return true;
         }
@@ -475,8 +737,27 @@ trackerCapture.controller('DataEntryController',
             stage.displayEventsInTable = $scope.showEventsAsTables;
         }
     };
-
-    $scope.stageNeedsEvent = function (stage) {
+    
+    $scope.stageNeedsEventErrors = {enrollment: 1, complete: 2, scheduleDisabled: 3, scheduledFound: 4, notRepeatable: 5};
+    
+    $scope.stageNeedsEventOfType = function (stage, type, completeRequired, errorResponseContainer) {
+        
+        if(type === $scope.eventCreationActions.schedule || type === $scope.eventCreationActions.referral){
+            if(stage.hideDueDate === true){
+                if(angular.isDefined(errorResponseContainer)){
+                    errorResponseContainer.errorCode = $scope.stageNeedsEventErrors.scheduleDisabled;
+                }                
+                return false;
+            }
+        }
+        
+        return $scope.stageNeedsEvent(stage, completeRequired, errorResponseContainer);
+    };
+    
+    $scope.stageNeedsEvent = function (stage, completeRequired, errorResponseContainer) {
+        
+        var calculatedCompleteRequired = (angular.isDefined(completeRequired) && completeRequired) || (angular.isDefined(stage.onlyOneIncompleteEvent) && stage.onlyOneIncompleteEvent);
+        
         if($scope.selectedEnrollment && $scope.selectedEnrollment.status === 'ACTIVE'){
             if(!stage){
                 if(!$scope.allEventsSorted || $scope.allEventsSorted.length === 0){
@@ -504,17 +785,38 @@ trackerCapture.controller('DataEntryController',
             if ($scope.eventsByStage[stage.id].length === 0) {
                 return true;
             }
-
+            
             if (stage.repeatable) {
                 for (var j = 0; j < $scope.eventsByStage[stage.id].length; j++) {
-                    if (!$scope.eventsByStage[stage.id][j].eventDate && $scope.eventsByStage[stage.id][j].status !== 'SKIPPED') {
+                    if(angular.isDefined(calculatedCompleteRequired) && calculatedCompleteRequired === true){
+                        var foundEvent = $scope.eventsByStage[stage.id][j];
+                        if(foundEvent.status !== $scope.EVENTSTATUSCOMPLETELABEL && foundEvent.status !== $scope.EVENTSTATUSSKIPPEDLABEL){
+                            if(angular.isDefined(errorResponseContainer)){
+                                errorResponseContainer.errorCode = $scope.stageNeedsEventErrors.complete;
+                            }
+                            return false;
+                        }                            
+                    }
+                    else if (!$scope.eventsByStage[stage.id][j].eventDate && $scope.eventsByStage[stage.id][j].status !== 'SKIPPED') {
+                        if(angular.isDefined(errorResponseContainer)){
+                            errorResponseContainer.errorCode = $scope.stageNeedsEventErrors.scheduledFound;
+                        }
                         return false;
                     }
                 }
                 return true;
             }
+            else{
+                if(angular.isDefined(errorResponseContainer)){
+                    errorResponseContainer.errorCode = $scope.stageNeedsEventErrors.notRepeatable;
+                }
+                return false;
+            }
         }
-
+        
+        if(angular.isDefined(errorResponseContainer)){
+            errorResponseContainer.errorCode = $scope.stageNeedsEventErrors.enrollment;
+        }
         return false;
     };
     
@@ -526,9 +828,40 @@ trackerCapture.controller('DataEntryController',
         return false;
     };
     
-    $scope.neverShowStageTasksInTopLine = {};   
+    $scope.getTopLineColumnStyle = function(colNr){
+        if($scope.useMainMenu && ($scope.topLineEvents.length === 0 || $scope.hideTopLineEventsForFormTypes[$scope.displayCustomForm])){
+            if(colNr === 1){
+                return 'col-xs-12';
+            }
+            else {
+                return '';
+            }
+        }
+        else if($scope.showStageTasks){
+            if(colNr === 1){
+                return 'col-xs-6 col-sm-9';
+            }
+            else {
+                return 'col-xs-6 col-sm-3';
+            }
+        }
+        else {
+            if(colNr === 1){
+                return 'col-xs-10 col-sm-11';
+            }
+            else {
+                return 'col-xs-2 col-sm-1';
+            }
+        }        
+    };
+    
+    $scope.stagesNotShowingInStageTasks = angular.copy($scope.neverShowItems);  
+    for(var key in $scope.bottomLineItems){
+        $scope.stagesNotShowingInStageTasks[key] = $scope.bottomLineItems[key];
+    };    
+    
     $scope.displayStageTasksInTopLine = function(stage) {
-        if($scope.neverShowStageTasksInTopLine[stage.id]){
+        if($scope.stagesNotShowingInStageTasks[stage.id]){
             return false;
         }   
         
@@ -540,29 +873,113 @@ trackerCapture.controller('DataEntryController',
         $scope.showStageTasks = !$scope.showStageTasks;
     };
     
-    $scope.addNewEvent = function(newEvent) {
+    $scope.addNewEvent = function(newEvent,setProgramStage) {
         //Have to make sure the event is preprocessed - this does not happen unless "Dashboardwidgets" is invoked.
         newEvent = EventUtils.processEvent(newEvent, $scope.stagesById[newEvent.programStage], $scope.optionSets, $scope.prStDes);
-
+        if(setProgramStage) $scope.currentStage = $scope.stagesById[newEvent.programStage];
         $scope.eventsByStage[newEvent.programStage].push(newEvent);
-        
         sortEventsByStage('ADD', newEvent);
+        broadcastDataEntryControllerData();
     };
+    
+    function getApplicableStagesForStageTasks(){
+        
+        if(angular.isUndefined($scope.stagesNotShowingInStageTasks)){
+            return $scope.programStages;
+        }
+        else {
+            var applicableStages = [];
+            angular.forEach($scope.programStages, function(stage){
+                if(angular.isUndefined($scope.stagesNotShowingInStageTasks[stage.id])){
+                    applicableStages.push(stage);
+                }
+            });
+            return applicableStages;
+        }
+    }
+    
+    $scope.stageErrorInEventLayout = [];
+    $scope.showCreateEventIfStageNeedsEvent = function(stage, eventCreationAction, requireStageEventsToBeCompleted, showModalOnNoEventsNeeded){
 
+        
+        showModalOnNoEventsNeeded = angular.isDefined(showModalOnNoEventsNeeded) && showModalOnNoEventsNeeded === true ? true : false;
+        var errorResponseContainer = {};
+        
+        if($scope.stageNeedsEventOfType(stage, eventCreationAction, requireStageEventsToBeCompleted, errorResponseContainer)){
+            if(!showModalOnNoEventsNeeded){
+                $scope.stageErrorInEventLayout[stage.id] = "";
+            }            
+            $scope.showCreateEvent(stage, eventCreationAction);
+        }
+        else {
+            if(showModalOnNoEventsNeeded){
+                var errorMessage = "";
+                if(angular.isDefined(errorResponseContainer.errorCode)){
+
+                    switch(errorResponseContainer.errorCode){
+                        case $scope.stageNeedsEventErrors.enrollment:
+                            errorMessage = $translate.instant('enrollment_is_not_active');
+                            break;
+                        case $scope.stageNeedsEventErrors.complete:
+                            errorMessage = $translate.instant('please_complete_all_events');
+                            break;                    
+                        case $scope.stageNeedsEventErrors.scheduleDisabled:
+                            errorMessage = $translate.instant('scheduling_disabled_for_programstage');
+                            break;
+                        case $scope.stageNeedsEventErrors.scheduledFound:
+                            errorMessage = $translate.instant('event_already_scheduled');
+                            break;                    
+                        case $scope.stageNeedsEventErrors.notRepeatable:
+                            errorMessage = $translate.instant('programstage_multiple_events_disabled');
+                            break;
+                        default:
+                            break;                    
+                    }
+                }
+                var dialogOptions = {
+                    headerText: $translate.instant('event_cant_be_created'),
+                    bodyText: errorMessage
+                };
+                    
+                DialogService.showDialog({}, dialogOptions);
+            }
+            else {
+                $scope.stageErrorInEventLayout[stage.id] = eventCreationAction;
+            }
+        }
+    };
+    
     $scope.showCreateEvent = function (stage, eventCreationAction, suggestedStage) {        
         
         var availableStages = [];
         if(!stage){
-            if(!$scope.allEventsSorted || $scope.allEventsSorted.length === 0){                               
-                availableStages = $scope.programStages;
+            
+            //get applicable events
+            var allApplicableEvents = [];
+            if(!$scope.allEventsSorted || $scope.allEventsSorted.length === 0){
+                
+            }
+            else if(angular.isUndefined($scope.stagesNotShowingInStageTasks)){
+                allApplicableEvents = $scope.allEventsSorted.slice();
+            }
+            else {
+                angular.forEach($scope.allEventsSorted, function(event){
+                    if(angular.isUndefined($scope.stagesNotShowingInStageTasks[event.programStage])){
+                        allApplicableEvents.push(event);
+                    }
+                }); 
+            }         
+            
+            var applicableStages = getApplicableStagesForStageTasks();           
+            
+            if(allApplicableEvents.length === 0 && applicableStages.length > 0){                               
+                availableStages = applicableStages;
             }
             else{
-                angular.forEach($scope.programStages, function(stage){
-                    if(eventCreationAction !== $scope.eventCreationActions.schedule || stage.hideDueDate !== true){
-                        if($scope.stageNeedsEvent(stage)){
-                            availableStages.push(stage);
-                        }
-                    }                    
+                angular.forEach(applicableStages, function(stage){
+                    if($scope.stageNeedsEvent(stage)){
+                        availableStages.push(stage);
+                    }
                 });
             }           
             if(availableStages.length === 0) {
@@ -577,7 +994,7 @@ trackerCapture.controller('DataEntryController',
             }
         }
         var autoCreate = stage && stage.displayEventsInTable ? stage.displayEventsInTable : false;
-        EventCreationService.showModal($scope.eventsByStage, stage, availableStages, $scope.programStages, $scope.selectedEntity, $scope.selectedProgram, $scope.selectedOrgUnit, $scope.selectedEnrollment, autoCreate, eventCreationAction, $scope.allEventsSorted,suggestedStage)
+        EventCreationService.showModal($scope.eventsByStage, stage, availableStages, $scope.programStages, $scope.selectedEntity, $scope.selectedProgram, $scope.selectedOrgUnit, $scope.selectedEnrollment, autoCreate, eventCreationAction, allApplicableEvents,suggestedStage)
                 .then(function (eventContainer) {
                     if(angular.isDefined(eventContainer)){                
                         var ev = eventContainer.ev;
@@ -599,17 +1016,12 @@ trackerCapture.controller('DataEntryController',
                                 newEvent.coordinate = {};
                             }
 
-                            //get stage from created event
-                            $scope.currentStage = $scope.stagesById[dummyEvent.programStage];
 
-                            $scope.addNewEvent(newEvent);
-
+                            $scope.addNewEvent(newEvent, true);
+                            
                             $scope.currentEvent = null;
                             $scope.showDataEntry(newEvent, true);
 
-
-                            //show page with event in event-layout
-                            $scope.getEventPageForEvent(newEvent);
                         }
                     }
                 }, function () {
@@ -620,10 +1032,7 @@ trackerCapture.controller('DataEntryController',
         if (event) {
             if ($scope.currentEvent && !suppressToggling && $scope.currentEvent.event === event.event) {
                 //clicked on the same stage, do toggling
-                $scope.currentStage = null;
-                $scope.currentEvent = null;
-                $scope.currentElement = {id: '', saved: false};
-                $scope.showDataEntryDiv = !$scope.showDataEntryDiv;
+                $scope.deSelectCurrentEvent();
             }
             else {
                 $scope.currentElement = {};                
@@ -644,6 +1053,7 @@ trackerCapture.controller('DataEntryController',
 
                 if ($scope.currentEvent.notes) {
                     angular.forEach($scope.currentEvent.notes, function (note) {
+                        note.displayDate = DateUtils.formatFromApiToUser(note.storedDate);
                         note.storedDate = DateUtils.formatToHrsMins(note.storedDate);
                     });
 
@@ -655,6 +1065,13 @@ trackerCapture.controller('DataEntryController',
                 $scope.getDataEntryForm();
             }
         }
+    };
+    
+    $scope.deSelectCurrentEvent = function(){
+        $scope.currentStage = null;
+        $scope.currentEvent = null;
+        $scope.currentElement = {id: '', saved: false};
+        $scope.showDataEntryDiv = !$scope.showDataEntryDiv;
     };
     
     $scope.tableRowIsEditable = function(eventRow){
@@ -784,30 +1201,9 @@ trackerCapture.controller('DataEntryController',
         $scope.currentFileNames = $scope.fileNames[$scope.currentEvent.event] ? $scope.fileNames[$scope.currentEvent.event] : [];
         $scope.currentStage = $scope.stagesById[$scope.currentEvent.programStage];
         $scope.currentStageEvents = $scope.eventsByStage[$scope.currentEvent.programStage];
-        if(!$scope.currentStage.multiSelectGroups) {
-            $scope.currentStage.multiSelectGroups = {};
-        }
 
         for(var i = $scope.currentStage.programStageDataElements.length-1;i >=0;i--) {
             var s = $scope.currentStage.programStageDataElements[i].dataElement;
-            
-            //If the datatype is a boolean, and there is a list of dataElementGropus, put the boolean into the group:
-            var s = $scope.currentStage.programStageDataElements[i].dataElement;
-            if($scope.currentStage.programStageDataElements[i].dataElement.dataElementGroups
-                    && $scope.currentStage.programStageDataElements[i].dataElement.valueType === "TRUE_ONLY") {
-                angular.forEach($scope.currentStage.programStageDataElements[i].dataElement.dataElementGroups, function(dataElementGroup) {
-                    //if the element it grouped, we only add a prStDe for the group element:
-                    if( !$scope.currentStage.multiSelectGroups[dataElementGroup.id] ) {
-                        $scope.currentStage.multiSelectGroups[dataElementGroup.id] = 
-                            {dataElement:{valueType:'MULTI_SELECT_GROUP',name:dataElementGroup.name,id:dataElementGroup.id},
-                             dataElements: []};
-                        $scope.currentStage.programStageDataElements.push($scope.currentStage.multiSelectGroups[dataElementGroup.id]);
-                    }
-                    
-                    $scope.currentStage.multiSelectGroups[dataElementGroup.id].dataElements.push($scope.currentStage.programStageDataElements[i]);
-                    $scope.currentStage.programStageDataElements.splice(i,1);
-                });
-            }
         }
         
 
@@ -817,8 +1213,8 @@ trackerCapture.controller('DataEntryController',
         
         $scope.setDisplayTypeForStage($scope.currentStage);
         
-        $scope.customForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);
-        $scope.displayCustomForm = "DEFAULT";
+        $scope.customForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);        
+        
         if ($scope.customForm) {
             $scope.displayCustomForm = "CUSTOM";
         }
@@ -830,10 +1226,15 @@ trackerCapture.controller('DataEntryController',
                 }            
             }
             $scope.displayCustomForm = "TABLE";
+            
+        }
+        else {
+            $scope.displayCustomForm = "DEFAULT";
         }
 
-        $scope.currentEventOriginal = angular.copy($scope.currentEvent);
 
+        $scope.currentEventOriginal = angular.copy($scope.currentEvent);
+        
         $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
 
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
@@ -876,54 +1277,6 @@ trackerCapture.controller('DataEntryController',
 
         
         return def.promise;
-    };
-    
-    $scope.saveMultiSelectState = function (prStDe, eventToSave, currentElement, value) {
-        //Called when a new option is added or removed from a multiselect list
-        $scope.updateSuccess = false;
-
-        $scope.currentElement = {id: currentElement.dataElement.id, event: eventToSave.event, saved: false};
-        
-        value = CommonUtils.formatDataValue(eventToSave.event, value, prStDe.dataElement, $scope.optionSets, 'API');
-        var dataValue = {
-            dataElement: prStDe.dataElement.id,
-            value: value,
-            providedElsewhere: false
-        };
-        
-        var ev = {event: eventToSave.event,
-            orgUnit: eventToSave.orgUnit,
-            program: eventToSave.program,
-            programStage: eventToSave.programStage,
-            status: eventToSave.status,
-            trackedEntityInstance: eventToSave.trackedEntityInstance,
-            dataValues: [
-                dataValue
-            ]
-        };
-        DHIS2EventFactory.updateForSingleValue(ev).then(function (response) {
-
-            $scope.currentElement.saved = true;
-            if(value){
-                $scope.currentEvent[dataValue.dataElement] = dataValue;                
-            }else{
-                $scope.currentEvent[dataValue.dataElement] = null;
-            }
-            $scope.currentEventOriginal = angular.copy($scope.currentEvent);
-            $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
-            //Run rules on updated data:
-            $scope.executeRules();
-        });
-    };
-    
-    $scope.initMultiSelect = function (eventRow) {
-        if(!eventRow.multiSelectGroupSelection) {
-            eventRow.multiSelectGroupSelection = {selections:[]};
-        }
-    };
-    
-    $scope.degub = function(item) {
-        var i = item;
     };
     
     $scope.saveDataValueForEvent = function (prStDe, field, eventToSave, backgroundUpdate) {
@@ -984,7 +1337,7 @@ trackerCapture.controller('DataEntryController',
                     $scope.currentElement.pending = false;
                     $scope.currentElement.failed = false;
                 }
-
+                
                 $scope.currentEventOriginal = angular.copy($scope.currentEvent);
 
                 $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
@@ -1039,11 +1392,11 @@ trackerCapture.controller('DataEntryController',
         }
     };
 
-    $scope.saveEventDate = function () {        
-        $scope.saveEventDateForEvent($scope.currentEvent);        
+    $scope.saveEventDate = function (reOrder) {        
+        $scope.saveEventDateForEvent($scope.currentEvent, reOrder);        
     };
 
-    $scope.saveEventDateForEvent = function (eventToSave) {
+    $scope.saveEventDateForEvent = function (eventToSave, reOrder) {
         $scope.eventDateSaved = false;
         if (angular.isUndefined(eventToSave.eventDate) || eventToSave.eventDate === '') {
             $scope.invalidDate = eventToSave.event;
@@ -1077,18 +1430,18 @@ trackerCapture.controller('DataEntryController',
         
         DHIS2EventFactory.updateForEventDate(e).then(function (data) {
             eventToSave.sortingDate = eventToSave.eventDate;
+            
             $scope.invalidDate = false;
+            $scope.validatedDateSetForEvent = {date: eventToSave.eventDate, event: eventToSave};
+            
             $scope.eventDateSaved = eventToSave.event;
             eventToSave.statusColor = EventUtils.getEventStatusColor(eventToSave); 
             
-            if(angular.isUndefined($scope.currentStage.displayEventsInTable) || $scope.currentStage.displayEventsInTable === false){
+            if(angular.isUndefined($scope.currentStage.displayEventsInTable) || $scope.currentStage.displayEventsInTable === false || (angular.isDefined(reOrder) && reOrder === true)){
                 sortEventsByStage('UPDATE');
             } 
-            
-            $scope.validatedDateSetForEvent = {date: eventToSave.eventDate, event: eventToSave};
             $scope.currentElement = {id: "eventDate", event: eventToSave.event, saved: true};
             $scope.executeRules();
-            $scope.getEventPageForEvent($scope.currentEvent);
         }, function(error){
             
         });
@@ -1141,7 +1494,6 @@ trackerCapture.controller('DataEntryController',
             $scope.currentEvent.statusColor = EventUtils.getEventStatusColor($scope.currentEvent);
             $scope.schedulingEnabled = !$scope.schedulingEnabled;
             sortEventsByStage('UPDATE');
-            $scope.getEventPageForEvent($scope.currentEvent);
         });        
         
     };
@@ -1195,10 +1547,10 @@ trackerCapture.controller('DataEntryController',
         var newNote = {value: $scope.note.value};
             
         if (angular.isUndefined($scope.currentEvent.notes)) {
-            $scope.currentEvent.notes = [{value: newNote.value, storedDate: today, storedBy: storedBy}];
+            $scope.currentEvent.notes = [{value: newNote.value, storedDate: today, displayDate: today, storedBy: storedBy}];
         }
         else {
-            $scope.currentEvent.notes.splice(0, 0, {value: newNote.value, storedDate: today, storedBy: storedBy});
+            $scope.currentEvent.notes.splice(0, 0, {value: newNote.value, storedDate: today, displayDate: today, storedBy: storedBy});
         }
 
         var e = {event: $scope.currentEvent.event,
@@ -1266,6 +1618,7 @@ trackerCapture.controller('DataEntryController',
                                                 
                         newNote = {value: $scope.note};
                         var date = DateUtils.formatToHrsMins(new Date());
+                        var today = DateUtils.getToday();
 
                         var e = {event: $scope.currentEvent.event,
                                 program: $scope.currentEvent.program,
@@ -1277,11 +1630,11 @@ trackerCapture.controller('DataEntryController',
                         DHIS2EventFactory.updateForNote(e).then(function (data) {
                             if (angular.isUndefined($scope.modalOptions.bodyList) || $scope.modalOptions.bodyList.length === 0) {
                                 $scope.modalOptions.bodyList = [{value1: date, value2: newNote.value}];
-                                $scope.modalOptions.currentEvent.notes = [{storedDate: date, value: newNote.value}];
+                                $scope.modalOptions.currentEvent.notes = [{storedDate: date,displayDate: today, value: newNote.value}];
                             }
                             else {
                                 $scope.modalOptions.bodyList.splice(0, 0, {value1: date, value2: newNote.value});
-                                $scope.modalOptions.currentEvent.notes.splice(0,0,{storedDate: date, value: newNote.value});
+                                $scope.modalOptions.currentEvent.notes.splice(0,0,{storedDate: date,displayDate: today, value: newNote.value});
                             }
                                 $scope.note = $scope.textAreaValues["note"] = "";
                             });
@@ -1355,19 +1708,30 @@ trackerCapture.controller('DataEntryController',
         $scope.infiniteScroll.currentOptions += $scope.infiniteScroll.optionsToAdd;
     };
 
-    var completeEnrollment = function () {
-        var modalOptions = {
-            closeButtonText: 'cancel',
-            actionButtonText: 'complete',
-            headerText: 'complete_enrollment',
-            bodyText: 'would_you_like_to_complete_enrollment'
-        };
 
-        ModalService.showModal({}, modalOptions).then(function (result) {
+
+    var completeEnrollmentAllowed = function(ignoreEventId){
+        for(var i = 0; i < $scope.programStages.length; i++ ) {
+            for(var e = 0; e < $scope.eventsByStage[$scope.programStages[i].id].length; e++) {
+                if($scope.eventsByStage[$scope.programStages[i].id][e].status ==='ACTIVE' && $scope.eventsByStage[$scope.programStages[i].id][e].event !== ignoreEventId){
+                    return false;
+                }
+            }
+        }
+        return true;
+    };
+    
+    
+    var completeEnrollment = function () {
+        $scope.deleteScheduleAndOverdueEvents().then(function(result){
             EnrollmentService.completeIncomplete($scope.selectedEnrollment, 'completed').then(function (data) {
                 $scope.selectedEnrollment.status = 'COMPLETED';
+                selection.load();
+                $location.path('/').search({program: $scope.selectedProgramId});
             });
         });
+
+
     };
     
     $scope.makeDhis2EventToUpdate = function(){
@@ -1395,29 +1759,30 @@ trackerCapture.controller('DataEntryController',
     };
     
     $scope.completeIncompleteEvent = function (inTableView, outerForm) {
-            
+          
         var modalOptions;
+        
         var modalDefaults = {};
         var dhis2Event = $scope.makeDhis2EventToUpdate();        
         
         if ($scope.currentEvent.status === 'COMPLETED') {//activiate event
             modalOptions = {
                 closeButtonText: 'cancel',
-                actionButtonText: 'edit',
                 headerText: 'edit',
                 bodyText: 'are_you_sure_to_incomplete_event'
             };
             dhis2Event.status = 'ACTIVE';
         }
-        else {//complete event
-                if(angular.isUndefined(inTableView) || inTableView === false){
-                    if(!outerForm){
-                        outerForm = $scope.outerForm;
-                    }
-                    outerForm.$setSubmitted();
-                    if(outerForm.$invalid){
-                        return;
-                    }
+        else {//complete event            
+            if(angular.isUndefined(inTableView) || inTableView === false || inTableView === null){
+                
+                if(!outerForm){
+                    outerForm = $scope.outerForm;
+                }
+                outerForm.$setSubmitted();
+                if(outerForm.$invalid){
+                    return;
+                }
             }
             
             if(angular.isDefined($scope.errorMessages[$scope.currentEvent.event]) && $scope.errorMessages[$scope.currentEvent.event].length > 0) {
@@ -1436,30 +1801,64 @@ trackerCapture.controller('DataEntryController',
             {
                 modalOptions = {
                     closeButtonText: 'cancel',
-                    actionButtonText: 'complete',
-                    secondActionButtonText: 'complete_and_exit',
                     headerText: 'complete',
                     bodyText: 'are_you_sure_to_complete_event'
                 };
+                modalOptions.actionButtons =[{ text: 'complete', action: modalCompleteIncompleteActions.complete, class: 'btn btn-primary'}];
+                
+
+                modalOptions.actionButtons.push({text: 'complete_and_exit', action: modalCompleteIncompleteActions.completeAndExit, class: 'btn btn-primary'});
+                
+                
+                if($scope.currentStage.remindCompleted){
+                    modalOptions.bodyText = 'are_you_sure_to_complete_event_and_enrollment';                    
+                    modalOptions.actionButtons.push({text: 'complete_event_and_enrollment', action: modalCompleteIncompleteActions.completeEnrollment, class: 'btn btn-primary'});
+                }
+                
                 modalDefaults.templateUrl = 'components/dataentry/modal-complete-event.html';
                 dhis2Event.status = 'COMPLETED';
             }
-        }        
-
-        ModalService.showModal(modalDefaults, modalOptions).then(function (result) {
-            var backToDashboard = false;
-            if(result === 'ok-exit'){
-                backToDashboard = true;
+        }
+        ModalService.showModal(modalDefaults, modalOptions).then(function (modalResult) {
+            if(modalResult===modalCompleteIncompleteActions.completeEnrollment){
+                if(!completeEnrollmentAllowed(dhis2Event.event)){
+                    modalOptions = {
+                        actionButtonText: 'OK',
+                        headerText: 'complete_enrollment_failed',
+                        bodyText: 'complete_active_events_before_completing_enrollment'
+                    };
+                    ModalService.showModal({},modalOptions);
+                }else{
+                    modalOptions = {
+                        closeButtonText: 'cancel',
+                        actionButtonText: 'complete',
+                        headerText: 'complete_enrollment',
+                        bodyText: 'are_you_sure_to_complete_enrollment_delete_schedule'
+                    };
+                    ModalService.showModal({},modalOptions).then(function(){
+                        $scope.executeCompleteIncompleteEvent(dhis2Event,modalResult);
+                    });
+                }
+            }else{
+                $scope.executeCompleteIncompleteEvent(dhis2Event,modalResult);               
             }
-            $scope.executeCompleteIncompleteEvent(dhis2Event,backToDashboard);
         });           
     };
     
-    $scope.executeCompleteIncompleteEvent = function(dhis2Event, backToDashboard){
-            
+    $scope.executeCompleteIncompleteEvent = function(dhis2Event, modalResult){
+        var modalOptions = {};
+        if(eventLockEnabled && eventIsLocked(dhis2Event)){
+            modalOptions = {
+                actionButtonText: 'OK',
+                headerText: 'Event locked',
+                bodyText: 'event is locked. Contact system administrator to reopen'
+            };
+            return ModalService.showModal({},modalOptions);
+        }
+        
         return DHIS2EventFactory.update(dhis2Event).then(function (data) {
 
-            if(backToDashboard){
+            if(modalResult === modalCompleteIncompleteActions.completeAndExit){
                 selection.load();
                 $location.path('/').search({program: $scope.selectedProgramId}); 
             }else{
@@ -1484,8 +1883,8 @@ trackerCapture.controller('DataEntryController',
                 
                 if ($scope.currentEvent.status === 'COMPLETED') {
 
-                    if ($scope.currentStage.remindCompleted) {
-                        completeEnrollment($scope.currentStage);
+                    if (modalResult === modalCompleteIncompleteActions.completeEnrollment) {
+                        completeEnrollment();
                     }
                     else {
                         if ($scope.currentStage.allowGenerateNextVisit) {
@@ -1509,16 +1908,29 @@ trackerCapture.controller('DataEntryController',
                         }
                     }
 
-                    if($scope.displayCustomForm !== "TABLE") {
+                    if($scope.displayCustomForm !== "TABLE" && $scope.displayCustomForm !== "COMPARE") {
                         //Close the event when the event is completed, to make it 
                         //more clear that the completion went through.
                         $scope.showDataEntry($scope.currentEvent, false);
                     }
                 }
             }
+            broadcastDataEntryControllerData();
         });
     };
 
+    function eventIsLocked(){
+        if($scope.currentEvent.status === 'COMPLETED'){
+            var now = moment();
+            var completedDate = moment($scope.currentEvent.completedDate);
+            var diff= now.diff(completedDate, 'hours');
+            if(now.diff(completedDate, 'hours') > eventLockHours){
+                return true;
+            }
+        }
+        return false;
+    }
+    
     $scope.skipUnskipEvent = function () {
         var modalOptions;
         var dhis2Event = $scope.makeDhis2EventToUpdate();
@@ -1592,7 +2004,7 @@ trackerCapture.controller('DataEntryController',
             $scope.executeDeleteEvent();
         });
     };
-    
+        
     $scope.executeDeleteEvent = function(){
         
         return DHIS2EventFactory.delete($scope.currentEvent).then(function (data) {
@@ -1629,9 +2041,16 @@ trackerCapture.controller('DataEntryController',
                 if($scope.displayCustomForm === "TABLE"){
                     $scope.currentEvent = {};                
                 }
-                else {
-                    $scope.currentEvent = null;
+                else if($scope.displayCustomForm === "COMPARE"){
+                    $scope.openStagesEvent([$scope.currentStage.id], function(){
+                        $scope.openEmptyStage($scope.currentStage.id);
+                        }); 
                 }
+                else {
+                    $scope.deSelectCurrentEvent();                    
+                }
+                
+                broadcastDataEntryControllerData();
                 
             }, function(error){   
                 
@@ -1647,14 +2066,16 @@ trackerCapture.controller('DataEntryController',
     };
 
     $scope.toggleLegend = function () {
-        $scope.showEventColors = !$scope.showEventColors;
+        $scope.showLegend = !$scope.showLegend;
     };
 
-    $scope.getEventStyle = function (ev) {
-        var style = EventUtils.getEventStatusColor(ev);
+    $scope.getEventStyle = function (ev, skipCurrentEventStyle) {
 
-        if ($scope.currentEvent && $scope.currentEvent.event === ev.event) {
-            style = style + ' ' + ' current-stage';
+        var style = EventUtils.getEventStatusColor(ev);
+        $scope.eventStyleLabels[ev.event] = $scope.getDescriptionTextForEventStyle(style, $scope.descriptionTypes.label, false);
+        
+        if ($scope.currentEvent && $scope.currentEvent.event === ev.event && (angular.isUndefined(skipCurrentEventStyle) || skipCurrentEventStyle === false)) {
+            style = style + ' ' + ' current-event';
         }
         return style;
     };
@@ -1688,10 +2109,14 @@ trackerCapture.controller('DataEntryController',
             //angular.copy and reverse did not work - this messed up databinding.
             angular.forEach(sortedEvents, function(sortedEvent) {
                 $scope.eventsByStageDesc[key].splice(0,0,sortedEvent);
-            });            
+            });          
+            
+            if(angular.isDefined($scope.currentStage) && $scope.currentStage !== null && $scope.currentStage.id === stage.id){
+                $scope.currentStageEvents = sortedEvents;
+            }
             return sortedEvents;
         }        
-    }
+    };
 
     var sortEventsByStage = function (operation, newEvent) {
 
@@ -1829,14 +2254,15 @@ trackerCapture.controller('DataEntryController',
             $scope.eventPagingEnd -= $scope.eventPageSize;
         }
         
-        $scope.showDataEntry($scope.allEventsSorted[$scope.eventPagingStart], false);
+        $scope.showDataEntry($scope.topLineEvents[$scope.eventPagingStart], false);
     };   
     
     $scope.getEventPageForEvent = function(event){
-        if(angular.isDefined(event) && angular.isObject(event)){
+        if(angular.isDefined(event) && angular.isObject(event) && angular.isDefined($scope.topLineEvents)){
+            
             var index = -1;
-            for(i = 0; i < $scope.allEventsSorted.length; i++){
-                if(event.event === $scope.allEventsSorted[i].event){
+            for(i = 0; i < $scope.topLineEvents.length; i++){
+                if(event.event === $scope.topLineEvents[i].event){
                     index = i;
                     break;
                 }
@@ -1856,7 +2282,14 @@ trackerCapture.controller('DataEntryController',
             $scope.currentEvent = {};            
             sortStageEvents($scope.currentStage);
             $scope.currentStageEvents = $scope.eventsByStage[$scope.currentStage.id];
-        }        
+        }
+    };
+    
+    $scope.abortDeselect = function(){
+        if(!$scope.currentStage.displayEventsInTable){
+            return true;
+        }
+        return false;
     };
     
     $scope.showCompleteErrorMessageInModal = function(message, fieldName, isWarning){
@@ -1872,6 +2305,532 @@ trackerCapture.controller('DataEntryController',
                 DialogService.showDialog({}, dialogOptions);        
     };
     
+    //for compare-mode
+    $scope.compareModeColDefs = {header: 1, otherEvent: 2, currentEvent: 3, otherEvents: 4, providedElsewhere: 5};
+    $scope.getCompareModeColSize = function(colId){                
+        
+        var otherEventsCnt = $scope.otherStageEvents.length;                
+        
+        switch(colId){
+            case $scope.compareModeColDefs.header:
+                if(otherEventsCnt > 4){
+                    if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
+                        return 'col-xs-1';
+                    }
+                    return 'col-xs-2';
+                }
+                else if(otherEventsCnt === 4){
+                    if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
+                        return 'col-xs-1';
+                    }
+                    return 'col-xs-2';
+                }
+                else if(otherEventsCnt >= 2){
+                    return 'col-xs-3';
+                }
+                else if(otherEventsCnt === 1) {
+                    return 'col-xs-4';
+                }
+                else {
+                    return 'col-xs-5';
+                }
+                break;
+            case $scope.compareModeColDefs.otherEvent: 
+                if(otherEventsCnt > 4){
+                    return '';
+                }
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-3';
+                }
+                else if(otherEventsCnt === 3){
+                    return 'col-xs-4';
+                }
+                else if(otherEventsCnt === 2){
+                    return 'col-xs-6';
+                }
+                else if(otherEventsCnt === 1){
+                    return 'col-xs-12';
+                }
+                else{
+                    return '';
+                }                
+                break;
+            case $scope.compareModeColDefs.currentEvent:
+                if(otherEventsCnt > 4){
+                    return 'col-xs-2';
+                }
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-2';
+                }
+                else if(otherEventsCnt >= 2){
+                    if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
+                        return 'col-xs-2';
+                    }
+                    return 'col-xs-3';
+                }
+                else if(otherEventsCnt === 1){
+                    if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
+                        return 'col-xs-3';
+                    }
+                    return 'col-xs-4';
+                }
+                else{
+                    if($scope.allowProvidedElsewhereExists[$scope.currentStage.id]){
+                        return 'col-xs-6';
+                    }
+                    return 'col-xs-7';
+                }
+                break;
+            case $scope.compareModeColDefs.otherEvents:
+                if(otherEventsCnt > 4){
+                    return 'col-xs-8';
+                }
+                else if(otherEventsCnt === 4){
+                    return 'col-xs-8';
+                }
+                else if(otherEventsCnt >= 2){
+                    return 'col-xs-6';
+                }
+                else if(otherEventsCnt === 1){
+                    return 'col-xs-4';
+                }
+                else {
+                    return '';
+                }
+                break;
+            case $scope.compareModeColDefs.providedElsewhere:
+                return 'col-xs-1';
+                break;
+        }
+    };
+    
+    $scope.maxCompareItemsInCompareView = 4;
+    $scope.setOtherStageEvents = function(){
+        
+        $scope.otherStageEventIndexes = [];
+        $scope.otherStageEvents = [];
+        $scope.stageEventsExcludedSkipped = [];
+        
+        if(angular.isUndefined($scope.currentStageEvents) || $scope.currentStageEvents.length <= 1){
+            return;
+        }        
+        else {            
+            
+            angular.forEach($scope.currentStageEvents, function(event){
+                if(event.status !== $scope.EVENTSTATUSSKIPPEDLABEL || event.event === $scope.currentEvent.event){
+                        $scope.stageEventsExcludedSkipped.push(event);
+                }
+            });
+            
+            
+            var indexOfCurrent = -1;
+            for(i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
+                var stageEvent = $scope.stageEventsExcludedSkipped[i];
+                if(stageEvent.event === $scope.currentEvent.event){
+                    indexOfCurrent = i;
+                    break;
+                }                    
+            }            
+
+            for(j = 0; j < $scope.maxCompareItemsInCompareView; j++){
+                var position = indexOfCurrent - 1 - j;
+                if(position < 0){
+                    break;
+                }
+                
+                var relative = - j - 1;
+                $scope.otherStageEventIndexes.unshift({relative: relative, position: position});
+            }
+
+            angular.forEach($scope.otherStageEventIndexes, function(indexContainer){
+                $scope.otherStageEvents.push($scope.stageEventsExcludedSkipped[indexContainer.position]);
+            });                        
+        }
+    };
+    
+    $scope.navigateOtherStageEvents = function(direction){
+        
+        angular.forEach($scope.otherStageEventIndexes, function(indexContainer){
+            var change;
+            if(direction < 0){
+                change = -1;
+                if(indexContainer.relative - 1 === 0){
+                    change = -2;
+                }                
+            }
+            else{
+                change = 1;
+                if(indexContainer.relative + 1 === 0){
+                    change = 2;
+                }                
+            }
+            
+            indexContainer.relative += change;
+            indexContainer.position += change;
+        });
+        
+        $scope.otherStageEvents = [];
+        angular.forEach($scope.otherStageEventIndexes, function(indexContainer){
+            $scope.otherStageEvents.push($scope.stageEventsExcludedSkipped[indexContainer.position]);
+        });
+    };
+    
+    $scope.readyCompareDisplayForm = function(){    
+        
+        $scope.setOtherStageEvents();
+
+        if($scope.displayCustomForm !== "COMPARE"){
+            $scope.displayCustomForm = "COMPARE";
+        }                 
+    };
+    
+    $scope.$watch("displayCustomForm", function(newValue, oldValue){        
+        if(newValue === "COMPARE"){
+            $scope.readyCompareDisplayForm();
+        }
+    });
+    
+    $scope.buttonType = {back: 1, forward: 2};
+    $scope.showOtherEventsNavigationButtonInCompareForm = function(type){        
+        if(type === $scope.buttonType.back){
+            if($scope.otherStageEventIndexes.length > 0){
+                var firstEventPosition = $scope.otherStageEventIndexes[0].position;
+                if(firstEventPosition > 0){
+                    return true;
+                }
+            }
+            return false;
+        }
+        else{
+            if($scope.otherStageEventIndexes.length > 0){
+                var lastEventRelativePosition = $scope.otherStageEventIndexes[$scope.otherStageEventIndexes.length - 1].relative;
+                if(lastEventRelativePosition < -1){
+                    return true;
+                }
+            }
+            return false;
+        }
+    };
+    
+    $scope.currentStageEventNumber = function(){
+        for(i = 0; i < $scope.stageEventsExcludedSkipped.length; i++){
+            if($scope.currentEvent.event === $scope.stageEventsExcludedSkipped[i].event){
+                return i+1;
+            }
+        }
+        return;
+    };
+    
+    $scope.getStageStyle = function(stage){
+        
+       var eventToFetch = $scope.getEventForStage(stage);
+        
+        if(eventToFetch >= 0){
+            var stageStyle = $scope.getEventStyle($scope.eventsByStage[stage.id][eventToFetch]);
+            if($scope.currentStage && $scope.currentStage.id === stage.id){
+                stageStyle += " current-stage";
+            }
+            return stageStyle;
+        }
+        else {
+            return '';
+        }
+    };
+    
+    $scope.getMainMenuItemStyle = function(stage){
+        
+        if($scope.eventsLoaded){                
+            $scope.stageStyleLabels[stage.id] = "";
+            var stages = [stage.id];
+        
+            if(angular.isDefined($scope.headerCombineStages)){
+                for(var key in $scope.headerCombineStages){
+                    if(key === stage.id){
+                        stages.push($scope.headerCombineStages[key]);
+                    }
+                    else if($scope.headerCombineStages[key] === stage.id){
+                        stages.push(key);
+                    }
+                }
+            }
+
+            var event = $scope.getEventForStages(stages);
+
+            if(angular.isDefined(event)){
+                var style = $scope.getEventStyle(event, true);
+                $scope.stageStyleLabels[stage.id] = $scope.getDescriptionTextForEventStyle(style, $scope.descriptionTypes.label, true);
+                return style;
+            }
+        }
+        
+        return '';                      
+    };
+    
+    $scope.descriptionTypes = {full: 1, label: 2};
+    $scope.getDescriptionTextForEventStyle = function(style, descriptionType, useInStage){
+        
+        if(angular.isDefined(style) && style !== ""){
+            var eventStyles = $filter('filter')($scope.eventStyles, {color: style},true);
+            if(angular.isDefined(eventStyles) && eventStyles.length === 1){            
+                 return $scope.getDescriptionTextForDescription(eventStyles[0].description, descriptionType, useInStage);
+            }
+        }        
+        return "";
+    };
+    
+    $scope.getDescriptionTextForDescription = function(description, descriptionType, useInStage){
+        
+        var translateText = "";
+            
+        if(useInStage){
+            translateText = "stage_";
+        }
+        translateText += description;
+
+        if(descriptionType === $scope.descriptionTypes.label){
+            translateText += "_label";                
+        }            
+        return $translate.instant(translateText);        
+    };
+    
+    $scope.getStageStyleLabel = function(stage){
+        if($scope.stageStyleLabels[stage.id]){
+            return "(" + $scope.stageStyleLabels[stage.id] + ")";
+        }
+        return "(" + $translate.instant("stage_empty_label") + ")";
+    };
+    
+    $scope.getEventStyleLabel = function(event){
+        if($scope.eventStyleLabels[event.event]){
+            return "(" + $scope.eventStyleLabels[event.event] + ")";
+        }
+        return '';
+    };
+    
+    $scope.getEventForStage = function(stage){
+        //get first incomplete not skipped. If none, get latest nok skipped         
+        var lastComplete = -1;
+        var firstOpen = -1;  
+        
+        if(angular.isDefined($scope.eventsByStage[stage.id]) && $scope.eventsByStage[stage.id].length > 0){
+            var stageEvents = $scope.eventsByStage[stage.id];
+            for(i = 0; i < stageEvents.length; i++){
+                var itiratedEvent = stageEvents[i];
+                if(itiratedEvent.status !== $scope.EVENTSTATUSSKIPPEDLABEL && itiratedEvent.status !== $scope.EVENTSTATUSCOMPLETELABEL){
+                    firstOpen = i;
+                    break;
+                }
+                else if(itiratedEvent.status === $scope.EVENTSTATUSCOMPLETELABEL){
+                    lastComplete = i;
+                }
+            }
+        }
+        
+        var eventToFetch = -1;
+        if(firstOpen >= 0){
+            eventToFetch = firstOpen;
+        }
+        else if(lastComplete >= 0){
+            eventToFetch = lastComplete;
+        }
+        return eventToFetch;
+    };
+    
+    $scope.getEventForStages = function(stagesInputArray){
+        var stages = [];
+        if(angular.isString(stagesInputArray[0])){
+            //getstages
+            angular.forEach(stagesInputArray, function(stageString){
+                stages.push($scope.stagesById[stageString]);
+            });
+        }
+        else{
+            stages = stagesInputArray;
+        }
+        
+        stages.sort(function(a,b){
+            return a.sortOrder - b.sortOrder;
+        });
+        
+        var eventsForStages = [];
+        angular.forEach(stages, function(stage){
+            eventsForStages = eventsForStages.concat($scope.eventsByStage[stage.id]);
+        });
+        
+        return $scope.getEventFromEventCollection(eventsForStages);
+    };
+    
+    $scope.getEventFromEventCollection = function(eventCollection){
+        //get first incomplete not skipped. If none, get latest nok skipped         
+        var lastComplete = -1;
+        var firstOpen = -1;  
+        
+        var stageEvents = eventCollection;
+        for(i = 0; i < stageEvents.length; i++){
+            var itiratedEvent = stageEvents[i];
+            if(itiratedEvent.status !== $scope.EVENTSTATUSSKIPPEDLABEL && itiratedEvent.status !== $scope.EVENTSTATUSCOMPLETELABEL){
+                firstOpen = i;
+                break;
+            }
+            else if(itiratedEvent.status === $scope.EVENTSTATUSCOMPLETELABEL){
+                lastComplete = i;
+            }
+        }
+        
+        
+        var eventToFetch = -1;
+        if(firstOpen >= 0){
+            eventToFetch = firstOpen;
+        }
+        else if(lastComplete >= 0){
+            eventToFetch = lastComplete;
+        }
+        
+        if(eventToFetch !== -1){
+            return stageEvents[eventToFetch];
+        }
+        return; 
+    };
+    
+    $scope.openStageFormFromEventLayout = function(stage){                
+        
+        if($scope.currentStage && $scope.currentStage.id === stage.id){
+            $scope.deSelectCurrentEvent();
+        }
+        else {
+            $scope.openStageEvent(stage, function(){
+                if($scope.stageOpenInEventLayout === stage.id){
+                    $scope.stageOpenInEventLayout = "";
+                }
+                else {
+                    $scope.stageOpenInEventLayout = stage.id;
+                 }
+            });
+        }
+    };
+    
+    $scope.openStageEventFromMenu = function(stage, timelineFilter){
+        
+        var stages = [stage.id];
+        //set timeLineFilter if present
+        if(angular.isDefined(timelineFilter)){
+            var timelineFilterArr = timelineFilter.split(",");
+            $scope.topLineStageFilter = {};
+            angular.forEach(timelineFilterArr, function(filter){
+                $scope.topLineStageFilter[filter] = true;
+                if(stage.id !== filter){
+                    stages.push(filter);
+                }
+            });
+        }
+        
+        $scope.openStagesEvent(stages, function(){
+            $scope.openEmptyStage(stage);
+        });        
+    };
+    
+    $scope.openStagesEvent = function(stages, noEventFoundFunc){
+        var event = $scope.getEventForStages(stages);
+        
+        if(angular.isDefined(event)){ 
+            $scope.getEventFromStageSelection(event);            
+        }
+        else {
+            noEventFoundFunc();
+        }
+    };
+    
+    $scope.openStageEvent = function(stage, noEventFoundFunc){
+        
+        var latest = $scope.getEventForStage(stage);
+        
+        if(latest >= 0){
+            $scope.getEventFromStageSelection($scope.eventsByStage[stage.id][latest]);
+        }
+        else {
+            noEventFoundFunc();
+        }
+    };
+    
+    $scope.getEventFromStageSelection = function(event){
+        
+        $scope.showDataEntryForEvent(event);
+        
+        if(angular.isDefined($scope.currentStage) && $scope.currentStage !== null && angular.isDefined($scope.currentStage.displayEventsInTable) && $scope.currentStage.displayEventsInTable === true){
+            $scope.currentEvent = {};
+        }
+    };
+    
+    $scope.openEmptyStage = function(stage){
+        $scope.deSelectCurrentEvent();
+        $scope.currentStage = stage;        
+    };
+    
+    $scope.getStageEventCnt = function(stage){                
+        
+        var cnt = -1;
+        
+        if($scope.eventsLoaded){            
+            cnt = 0;
+            if(angular.isDefined($scope.eventsByStage[stage.id])){
+                cnt = $scope.eventsByStage[stage.id].length;
+            }
+
+            if(angular.isDefined($scope.headerCombineStages)){
+                for(var key in $scope.headerCombineStages){
+                    if(stage.id === key){
+                        if(angular.isDefined($scope.eventsByStage[$scope.headerCombineStages[key]])){
+                            cnt += $scope.eventsByStage[$scope.headerCombineStages[key]].length;
+                        }
+                    }
+                    else if(stage.id === $scope.headerCombineStages[key]){
+                        if(angular.isDefined($scope.eventsByStage[key])){
+                            cnt += $scope.eventsByStage[key].length;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return cnt > -1 ? cnt : "";        
+    };
+    
+    $scope.$watch("currentEvent", function(newValue, oldValue){
+        if(angular.isDefined(newValue)){
+            $scope.stageOpenInEventLayout = "";            
+        }
+    });
+    
+    $scope.getValueTitleCompareForm = function(event){
+	return event.eventDate;
+    };
+    
+    $scope.getGestAgeForANCEventContainer = function(event){
+        return '';
+    };
+    
+    $scope.getStageErrorMessageInEventLayout = function(stage){
+        if(angular.isDefined($scope.stageErrorInEventLayout[stage.id])){
+            switch($scope.stageErrorInEventLayout[stage.id]){
+                case $scope.eventCreationActions.add:                    
+                    return $translate.instant('please_complete_all_results_before_add');
+                    break;
+                case $scope.eventCreationActions.schedule:
+                    return $translate.instant('please_complete_all_results_before_schedule');
+                    break;
+                case $scope.eventCreationActions.referral:
+                    return $translate.instant('please_complete_all_results_before_referral');
+                    break;                
+            }
+        }
+    };
+    
+    $scope.resetStageErrorInEventLayout = function(){
+        if(angular.isDefined($scope.stageErrorInEventLayout[$scope.currentEvent.programStage]) && $scope.stageErrorInEventLayout[$scope.currentEvent.programStage] !== ""){
+                    $scope.stageErrorInEventLayout[$scope.currentEvent.programStage] = "";
+                }
+    };
+
     $scope.downloadFile = function(eventUid, dataElementUid, e) {
         eventUid = eventUid ? eventUid : $scope.currentEvent.event ? $scope.currentEvent.event : null;        
         if( !eventUid || !dataElementUid){
@@ -1963,7 +2922,7 @@ trackerCapture.controller('DataEntryController',
     $scope.eventTableOptions[DELETE] = {text: "Delete", tooltip: 'Delete', icon: "<span class='glyphicon glyphicon-floppy-remove'></span>", value: DELETE, onClick: $scope.deleteEvent, sort: 2};
     $scope.eventTableOptions[SKIP] = {text: "Skip", tooltip: 'Skip', icon: "<span class='glyphicon glyphicon-step-forward'></span>", value: SKIP, onClick: $scope.skipUnskipEvent, sort: 3};
     $scope.eventTableOptions[UNSKIP] = {text: "Schedule back", tooltip: 'Schedule back', icon: "<span class='glyphicon glyphicon-step-backward'></span>", value: UNSKIP, onClick: $scope.skipUnskipEvent, sort: 4};
-    //$scope.eventTableOptions[NOTE] = {text: "Notes", tooltip: 'Show notes', icon: "<span class='glyphicon glyphicon-list-alt'></span>", value: NOTE, onClick: $scope.notesModal, sort: 5};
+    //$scope.eventTableOptions[NOTE] = {text: "Notes", tooltip: 'Show notes', icon: "<span class='glyphicon glyphicon-list-alt'></span>", value: NOTE, onClick: $scope.notesModal, sort: 5};    
     
     $scope.eventRow.validatedEventDate = $scope.eventRow.eventDate;
     updateEventTableOptions();

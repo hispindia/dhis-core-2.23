@@ -1,28 +1,65 @@
 <div class="row">
-    <div ng-class="{'col-sm-9': showStageTasks, 'col-xs-6': showStageTasks, 'col-sm-11': !showStageTasks, 'col-xs-10': !showStageTasks}">
-        <div ng-repeat="dhis2Event in allEventsSorted.slice(eventPagingStart, eventPagingEnd)">            
+    <div ng-class="getTopLineColumnStyle(1)">
+        <div ng-if="!useMainMenu || (useMainMenu && !hideTopLineEventsForFormTypes[displayCustomForm])" ng-repeat="dhis2Event in getTopLineEventsPage()">            
             <div class="event-container" ng-click="getEventPage('BACKWARD')" ng-if="$index === 0 && eventPagingStart > 0">
-                &nbsp;<br/>
                 {{'previous'| translate}}
             </div>
-            <div class="event-container" title="[{{'org_unit' | translate}}: {{dhis2Event.orgUnitName}}, {{'program_stage' | translate}}: {{dhis2Event.name}}]" ng-class="getEventStyle(dhis2Event)" ng-click="showDataEntry(dhis2Event, false)">                
-                {{dhis2Event.sortingDate}}<br/>
-                {{dhis2Event.orgUnitName.length > 15 ? dhis2Event.orgUnitName.substring(0,15).concat('...') : dhis2Event.orgUnitName}}<br/>
-                {{dhis2Event.name.length > 15 ? dhis2Event.name.substring(0,15).concat('...') : dhis2Event.name}}                
-            </div>
-            <div class="arrow-container" ng-if="$index + 1 < eventPageSize && $index + 1 + eventPagingStart < allEventsSorted.length">
-                <i class="fa fa-arrow-right"></i>
-            </div>
-            <div class="event-container" ng-click="getEventPage('FORWARD')" ng-if="$index + 1 === eventPageSize && eventPagingEnd < allEventsSorted.length">
-                &nbsp;<br/>
+            <div style="float: left">
+                <div class="event-container" title="[{{'org_unit' | translate}}: {{dhis2Event.orgUnitName}}, {{'program_stage' | translate}}: {{dhis2Event.name}}]" ng-class="getEventStyle(dhis2Event)" ng-click="showDataEntry(dhis2Event, false)">                
+                    <div class="event-container-item">
+                        {{dhis2Event.sortingDate}}
+                        <br/>
+                    {{dhis2Event.orgUnitName.length > 15 ? dhis2Event.orgUnitName.substring(0,15).concat('...') : dhis2Event.orgUnitName}}<br/>
+                    {{dhis2Event.name.length > 15 ? dhis2Event.name.substring(0,15).concat('...') : dhis2Event.name}}
+                    </div>
+                    <div class="event-container-footer">{{getEventStyleLabel(dhis2Event)}}</div>
+                </div>
+                <div style="float: right" class="arrow-container" ng-if="$index + 1 < eventPageSize && $index + 1 + eventPagingStart < topLineEvents.length">
+                    <i class="fa fa-arrow-right"></i>
+                </div>
+            </div>            
+            <div class="event-container event-container-navigation" ng-click="getEventPage('FORWARD')" ng-if="$index + 1 === eventPageSize && eventPagingEnd < topLineEvents.length">
                 {{'next'| translate}}
             </div>
         </div>
-        <div ng-if="allEventsSorted.length < 1">
-            <div class="alert alert-warning">{{'no_events_exist'| translate}}</div> 
+        <div ng-if="(topLineEvents.length < 1 || (useMainMenu && hideTopLineEventsForFormTypes[displayCustomForm])) && eventsLoaded">
+            <div ng-if="!useMainMenu">
+                <div class="alert alert-warning">{{'no_events_exist'| translate}}</div>
+            </div>
+            <div ng-if="useMainMenu" class="container-fluid">
+                <div class="row">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-6" style="text-align: center">
+                        <div class="badge-container" style='display:inline-block'>
+                            <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.add, false, true) : showCreateEvent(null, eventCreationActions.add)" title="{{'add_new'| translate}}">
+                                <span class="stage-tasks-badge-big" ng-class="{'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.add)}">                                     
+                                    <span><i class="fa fa-plus vertical-center"></i></span>                
+                                </span>
+                            </a>                
+                        </div>
+                        <div class="badge-container" style='display:inline-block'>
+                            <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.schedule, false, true) : showCreateEvent(null, eventCreationActions.schedule)" title="{{'schedule_new'| translate}}">
+                                <span class="stage-tasks-badge-big" ng-class="{'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.schedule)}">                                     
+                                    <span><i class="fa fa-calendar vertical-center"></i></span>                
+                                </span>
+                            </a>                
+                        </div>            
+                        <div class="badge-container" style='display:inline-block'>
+                            <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral' | translate}}">
+                                <span class="stage-tasks-badge-big" ng-class="{'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)}">                                     
+                                            <span><i class="fa fa-share vertical-center"></i></span>                
+                                </span>
+                            </a>                
+                        </div>
+                    </div>  
+                    <div class="col-md-3" style="text-align: center">
+                    </div> 
+                </div>
+            </div>
         </div>
     </div>
-    <div ng-class="{'col-sm-3': showStageTasks, 'col-xs-6': showStageTasks, 'col-sm-1': !showStageTasks, 'col-xs-2': !showStageTasks}">
+    <div ng-class="getTopLineColumnStyle(2)">
         <div ng-if="showStageTasks && eventsLoaded" class="panel panel-info">
             <div class="panel-heading">{{'new_event' | translate}}
                 <span class="pull-right">
@@ -41,22 +78,21 @@
                                 <a href title="{{'create_new_event'| translate}}" ng-click="showCreateEvent(stage,eventCreationActions.add)" style="vertical-align:middle">
                                     {{'add'|translate}}
                                 </a>
+
+                                <span ng-if="!stage.hideDueDate">
+                                    |
+                                    <a href title="{{'schedule_new_event'| translate}}" ng-click="showCreateEvent(stage,eventCreationActions.schedule)" style="vertical-align:middle">
+                                        {{'schedule'|translate}}
+                                    </a>
+                                </span>
+                                <span ng-if="useReferral && showReferral && !stage.hideDueDate">
+                                    |
+                                    <a href title="{{'make_referral' | translate}}" ng-click="showCreateEvent(stage, eventCreationActions.referral)" style="vertical-align: middle">
+                                        {{'referral'|translate}}
+                                    </a>
+                                </span>
                             </span>
-                            <span ng-if="!stage.hideDueDate">
-                                |
-                                <a href title="{{'schedule_new_event'| translate}}" ng-click="showCreateEvent(stage,eventCreationActions.schedule)" style="vertical-align:middle">
-                                    {{'schedule'|translate}}
-                                </a>                                
-                            </span>
-                            <!-- hides referral in trunk
-                            <span>                                
-                                |
-                                <a href title="{{'make_referral' | translate}}" ng-click="showCreateEvent(stage, eventCreationActions.referral)" style="vertical-align: middle" ng-if="showReferral">
-                                    {{'referral'|translate}}
-                                </a>
-                                
-                            </span>
-                            -->
+
                         </div>
                     </div>
                 </div>
@@ -64,38 +100,37 @@
             </div>
         </div>       
         <div ng-if="!showStageTasks" class="pull-right">
-            <div>
+            <div ng-if="!useMainMenu">
                 <a href ng-click="toggleShowStageTasks()" title="{{'show_new_event_menu' | translate}}">
-                    <span class="badge stage-tasks-badge">                                     
+                    <span class="stage-tasks-badge stage-tasks-badge-back">                                     
                         <span><i class="fa fa-chevron-left vertical-center"></i></span>                
                     </span>
                 </a>
+            </div> 
+            <div ng-if="!useMainMenu || (useMainMenu && topLineEvents.length > 0 && !hideTopLineEventsForFormTypes[displayCustomForm])">
+                <div>
+                    <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.add, false, true) : showCreateEvent(null, eventCreationActions.add)" title="{{'add_new'| translate}}">
+                        <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.add)} : ''">                                     
+                            <span><i class="fa fa-plus vertical-center"></i></span>                
+                        </span>
+                    </a>                
+                </div>
+                <div>
+                    <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.schedule, false, true) : showCreateEvent(null, eventCreationActions.schedule)" title="{{'schedule_new'| translate}}">
+                        <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.schedule)} : ''">                                     
+                            <span><i class="fa fa-calendar vertical-center"></i></span>                
+                        </span>
+                    </a>                
+                </div>            
+                <div ng-if="useReferral && showReferral">
+                    <a href class="disable-link-effects" ng-click="useMainMenu ? showCreateEventIfStageNeedsEvent(selectedMainMenuStage, eventCreationActions.referral, false, true) : showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral' | translate}}">
+                        <span class="stage-tasks-badge" ng-class="useMainMenu ? {'stage-tasks-badge-disabled': !stageNeedsEventOfType(selectedMainMenuStage, eventCreationActions.referral)} : ''">                                     
+                                    <span><i class="fa fa-share vertical-center"></i></span>                
+                        </span>
+                    </a>                
+                </div>
             </div>
-            <div>
-                <a href class="disable-link-effects" ng-click="showCreateEvent(null, eventCreationActions.add)" title="{{'add_new_event'| translate}}">
-                    <span class="badge stage-tasks-badge">                                     
-                        <span><i class="fa fa-plus vertical-center"></i></span>                
-                    </span>
-                </a>                
-            </div>
-            <div>
-                <a href class="disable-link-effects" ng-click="showCreateEvent(null, eventCreationActions.schedule)" title="{{'schedule_new_event'| translate}}">
-                    <span class="badge stage-tasks-badge">                                     
-                        <span><i class="fa fa-clock-o vertical-center"></i></span>                
-                    </span>
-                </a>                
-            </div>
-            <!-- hides referral in trunk
-            <div>
-                <a href class="disable-link-effects" ng-click="showCreateEvent(null, eventCreationActions.referral)" title="{{'make_referral' | translate}}">
-                    <span class="badge stage-tasks-badge">                                     
-                                <span><i class="fa fa-hospital-o vertical-center"></i></span>                
-                    </span>
-                </a>                
-            </div>                 
-            -->
         </div>
     </div>    
 </div>
 
-<hr>

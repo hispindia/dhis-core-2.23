@@ -576,7 +576,8 @@ var d2Directives = angular.module('d2Directives', [])
         scope: {
             onDeselected: '&dhOnDeselected',
             id: '@dhId',
-            preSelected: '=dhPreSelected'                   
+            preSelected: '=dhPreSelected',
+            abortDeselect: '&dhAbortDeselect'
         },
         controller: [
             '$scope',
@@ -598,12 +599,13 @@ var d2Directives = angular.module('d2Directives', [])
                 });
                 
                 $scope.documentClick = function(event){
-                    
                     var modalPresent = $(".modal-backdrop").length > 0;
                     var calendarPresent = $(".calendars-popup").length > 0;
                     var calendarPresentInEvent = $(event.target).parents(".calendars-popup").length > 0;
-                    
-                    if($scope.elementClicked === false && 
+                    if($scope.abortDeselect()){
+                        $document.off('click', $scope.documentClick);
+                        $scope.documentEventListenerSet = false;
+                    }else if($scope.elementClicked === false && 
                         modalPresent === false && 
                         calendarPresent === false && 
                         calendarPresentInEvent === false){                        

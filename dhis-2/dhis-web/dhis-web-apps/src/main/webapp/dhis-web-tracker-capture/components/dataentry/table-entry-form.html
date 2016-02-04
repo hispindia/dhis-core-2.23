@@ -59,16 +59,16 @@
     <div ng-show="currentStageEvents && currentStageEvents.length > 0">
         <table class="table-borderless table-striped event-table-custom">
             <thead>
-                <tr class="">
-                    <th class="">
-                        <!--{{currentEvent.excecutionDateLabel}}-->
-                        DOB/Ab
+                <tr class="">                
+                    <th class="">                        
+                        {{currentStage.excecutionDateLabel}}
                     </th>
                     <th class="" ng-repeat="prStDe in currentStage.programStageDataElements">
                         {{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name}}
-                        <a ng-if="prStDes[prStDe.dataElement.id].dataElement.description" Title="{{prStDes[prStDe.dataElement.id].dataElement.description}}" ng-init="showHelpText[prStDe.dataElement.id] = false;" ng-click="showHelpText[prStDe.dataElement.id] = !showHelpText[prStDe.dataElement.id]">
+                        <span ng-if="prStDe.compulsory" class="required">*</span>
+                        <a href ng-if="prStDe.dataElement.description" Title="{{prStDe.dataElement.description}}" ng-init="showHelpText[prStDe.dataElement.id] = false;" ng-click="showHelpText[prStDe.dataElement.id] = !showHelpText[prStDe.dataElement.id]">
                             <span class="glyphicon glyphicon-info-sign" ></span>
-                            <span ng-show="showHelpText[prStDe.dataElement.id]" ><br>{{prStDes[prStDe.dataElement.id].dataElement.description}}</span>
+                            <span ng-show="showHelpText[prStDe.dataElement.id]" ><br>{{prStDe.dataElement.description}}</span>
                         </a>
                     </th>
                     <th class="" style="text-align: right">Status</th>
@@ -81,7 +81,7 @@
                 ng-click="eventRowClicked(eventRow)"
                 ng-dblclick="eventRowDblClicked(eventRow);"
                 ng-form="eventRowForm{{eventRow.event}}"
-                dhis2-deselect dh-on-deselected="deselectCurrent(id)" dh-id="{{eventRow.event}}" dh-pre-selected="currentEvent === eventRow">
+                dhis2-deselect dh-on-deselected="deselectCurrent(id)" dh-id="{{eventRow.event}}" dh-pre-selected="currentEvent === eventRow" dh-abort-deselect="abortDeselect()">
                 <td class="" ng-class="{'current-event-td': currentEvent === eventRow}">
                     <div ng-if="tableRowIsEditable(eventRow)">
                         <input type="text"
@@ -93,7 +93,7 @@
                                ng-disabled="eventRow.status === 'SKIPPED' || eventRow.enrollmentStatus !== 'ACTIVE' || eventRow.editingNotAllowed "
                                ng-required="true"
                                ng-dblclick="$event.stopPropagation();"
-                               title="DOB/Ab"
+                               title="{{currentStage.excecutionDateLabel}}"
                                blur-or-change="saveEventDateForEvent(eventRow)"/>
                     </div>
                     <div class="event-table-inactive" ng-if="!tableRowIsEditable(eventRow)">
@@ -292,29 +292,6 @@
                                            ng-disabled="selectedEnrollment.status !== 'ACTIVE' || eventRow.editingNotAllowed || assignedFields[eventRow.event][prStDe.dataElement.id] "
                                            ng-change="saveDatavalue(prStDe, $eval('eventRowForm' + eventRow.event + '.' + eventRow.event + prStDe.dataElement.id))"
                                            name="{{eventRow.event}}{{prStDe.dataElement.id}}"/>
-                                </div>
-                                <div ng-switch-when="MULTI_SELECT_GROUP">
-                                    <ui-select  ng-model="eventRow[prStDe.dataElement.id].selections"
-                                                id="multiSelectGroup"
-                                                ng-init="initMultiSelect(eventRow)"
-                                                theme="select2"
-                                                ng-required={{prStDe.compulsory}}
-                                                title="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name}}"
-                                                ng-dblclick="$event.stopPropagation();"
-                                                ng-disabled="selectedEnrollment.status !== 'ACTIVE' || eventRow.editingNotAllowed"
-                                                name="{{eventRow.event}}{{prStDe.dataElement.id}}"
-                                                multiple
-                                                on-remove="saveMultiSelectState($item,eventRow,prStDe,false)"
-                                                on-select="saveMultiSelectState($item,eventRow,prStDe,true)"
-                                                style="width:100%; overflow:visible">
-                                        <ui-select-match allow-clear="true" ng-class={{getInputNotifcationClass(prStDe.dataElement.id,false)}}  class="form-control-ui-select"  placeholder="{{'select_or_search' | translate}}" >{{$item.dataElement.formName ? $item.dataElement.formName : $item.dataElement.name }}</ui-select-match>
-                                        <ui-select-choices repeat="prStDe.dataElement as prStDe in currentStage.multiSelectGroups[prStDe.dataElement.id].dataElements | filter: $select.search | limitTo:maxOptionSize">
-                                            <span ng-bind-html="prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.name | highlight: $select.search"></span>
-                                        </ui-select-choices>
-                                        <!--<ui-select-choices  repeat="option.nameo.name as option in optionsTest | filter: $select.search | limitTo:maxOptionSize">
-                                          <span ng-bind-html="option.nameo.name | highlight: $select.search"></span>
-                                        </ui-select-choices>-->
-                                    </ui-select>
                                 </div>
                                 <div ng-switch-default>
                                     <input type="text"

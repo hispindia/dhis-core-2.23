@@ -45,7 +45,10 @@ POSSIBILITY OF SUCH DAMAGE.
           </ul>                                                                
         </div>
     </div>
-    <div class="pull-right" ng-show="event!=chosenEvent || !buttonsEnabled()">
+    <div class="pull-right" ng-show="event!=chosenEvent || !buttonsEnabled()">        
+        <span ng-if="showNoteExistsIcon && event.notes && event.notes.length > 0">            
+            <span class='glyphicon glyphicon-list-alt cursor-pointer' ng-click="showNotes()" tooltip-html-unsafe="{{notesSummary()}}"></span>
+        </span>
         <span class="badge event-table-options-badge" ng-class="getEventStyle(event)">
             <span ng-show="event.status == EVENTSTATUSCOMPLETELABEL" class="glyphicon glyphicon-ok event-table-options-glypicon"></span>
             <span ng-show="event.status != EVENTSTATUSCOMPLETELABEL" class="glyphicon glyphicon-remove event-table-options-glypicon"></span>          

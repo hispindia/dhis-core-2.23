@@ -9,10 +9,11 @@ trackerCapture.controller('RuleBoundController',
     $scope.dashboardReady = false;
     $scope.widget = $scope.$parent.$parent.biggerWidget ? $scope.$parent.$parent.biggerWidget
     : $scope.$parent.$parent.smallerWidget ? $scope.$parent.$parent.smallerWidget : null;
-    $scope.widgetTitle = $scope.widget.title;    
+    $scope.widgetTitle = $scope.widget ? $scope.widget.title : null;    
     $scope.emptyFeedbackListLabel = $translate.instant('no_feedback_exist');
     $scope.emptyIndicatorListLabel = $translate.instant('no_indicators_exist');
     
+    $scope.lastEventUpdated = null;
     $scope.widgetTitleLabel = $translate.instant($scope.widgetTitle);
     
     $scope.displayTextEffects = {};
@@ -24,6 +25,12 @@ trackerCapture.controller('RuleBoundController',
     $scope.$on('ruleeffectsupdated', function(event, args) {
         var textInEffect = false;
         var keyDataInEffect = false;
+        
+        if($scope.lastEventUpdated !== args.event) {
+            $scope.displayTextEffects = {};
+            $scope.displayKeyDataEffects = {};
+            $scope.lastEventUpdated = args.event;
+        }
         
         //Bind non-bound rule effects, if any.
         angular.forEach($rootScope.ruleeffects[args.event], function(effect) {
@@ -41,7 +48,7 @@ trackerCapture.controller('RuleBoundController',
                         textInEffect = true;
                     }
                 }
-                else if(effect.action === "DISPLAYKEYVALUEPAIR") {
+                else if(effect.action === "DISPLAYKEYVALUEPAIR") {                    
                     //this action is display text. Make sure the displaytext is
                     //added to the local list of displayed texts
                     if(!angular.isObject($scope.displayTextEffects[effect.id])){

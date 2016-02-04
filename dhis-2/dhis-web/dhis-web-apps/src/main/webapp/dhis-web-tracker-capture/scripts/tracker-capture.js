@@ -312,12 +312,12 @@ function getAllPrograms( ids )
     };
 }
 
+
 function getOptionSetsForDataElements( programs, programIds )
 {
     if( !programs ){
         return;
     }
-
     var mainDef = $.Deferred();
     var mainPromise = mainDef.promise();
 

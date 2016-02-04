@@ -292,7 +292,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 }
                 if(val && obj.optionSetValue && obj.optionSet && obj.optionSet.id && optionSets[obj.optionSet.id].options  ){
                     if(destination === 'USER'){
-                        val = OptionSetService.getName(optionSets[obj.optionSet.id].options, val);
+                        val = OptionSetService.getName(optionSets[obj.optionSet.id].options, String(val));
                     }
                     else{
                         val = OptionSetService.getCode(optionSets[obj.optionSet.id].options, val);
@@ -1707,7 +1707,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
             var valArray = [];
             if(effect.data) {
                 valArray = effect.data.split(',');
-                var dataValues = [];
+            	var newEventDataValues = [];
                 angular.forEach(valArray, function(value) {
                     var valParts = value.split(':');
                     if(valParts && valParts.length >= 1) {
@@ -1720,18 +1720,20 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                         var processedValue = VariableService.processValue(valVal, valueType);
                         processedValue = $filter('trimquotes')(processedValue);
-                        dataValues.push({dataElement:valId,value:processedValue});
-                        dataValues[valId] = processedValue;
+                    	newEventDataValues.push({dataElement:valId,value:processedValue});
+                    	newEventDataValues[valId] = processedValue;
                     }
                 });
 
                 var valuesAlreadyExists = false;
                 angular.forEach(currentEvents, function(currentEvent) {
                     var misMatch = false;
-                    angular.forEach(dataValues, function(value) {
-                        if(currentEvent[value.dataElement] !== dataValues[value.dataElement]) {
-                            misMatch = true;
-                        }
+                    angular.forEach(newEventDataValues, function(value) {
+                        angular.forEach(currentEvent.dataValues, function(currentDataValue) {
+                            if(currentDataValue.dataElement === value.dataElement && currentDataValue.value != newEventDataValues[value.dataElement]) {
+                                misMatch = true;
+                            }
+                        });
                     });
                     if(!misMatch) {
                         //if no mismatches on this point, the exact same event already exists, and we dont create it.
@@ -1752,7 +1754,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                         dueDate: dueDate,
                         eventDate: eventDate,
                         notes: [],
-                        dataValues: dataValues,
+                    	dataValues: newEventDataValues,
                         status: 'ACTIVE',
                         event: dhis2.util.uid()
                     };
@@ -1893,10 +1895,10 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //In case the rule is of type CREATEEVENT, run event creation:
                                 if($rootScope.ruleeffects[ruleEffectKey][action.id].action === "CREATEEVENT" && $rootScope.ruleeffects[ruleEffectKey][action.id].ineffect){
-                                    if(evs && evs.byStage && evs.byStage[$rootScope.ruleeffects[ruleEffectKey]] && evs.byStage[$rootScope.ruleeffects[ruleEffectKey][action.id]])
-                                    {
-                                        if(evs.byStage[$rootScope.ruleeffects[ruleEffectKey][action.id].programStage]) {
-                                            eventsCreated += performCreateEventAction($rootScope.ruleeffects[ruleEffectKey][action.id], selectedEntity, selectedEnrollment, evs.byStage[$rootScope.ruleeffects[ruleEffectKey][action.id].programStage.id]);
+                                    if(evs && evs.byStage){
+                                        if($rootScope.ruleeffects[ruleEffectKey][action.id].programStage) {
+                                            var createdNow = performCreateEventAction($rootScope.ruleeffects[ruleEffectKey][action.id], selectedEntity, selectedEnrollment, evs.byStage[$rootScope.ruleeffects[ruleEffectKey][action.id].programStage.id]);
+                                            eventsCreated += createdNow;
                                         } else {
                                             $log.warn("No programstage defined for CREATEEVENT action: " + action.id);
                                         }

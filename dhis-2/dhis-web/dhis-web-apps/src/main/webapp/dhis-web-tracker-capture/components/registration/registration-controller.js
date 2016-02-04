@@ -24,7 +24,6 @@ trackerCapture.controller('RegistrationController',
                 ModalService) {
     
     $scope.maxOptionSize = 30;
-    
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
     $scope.customForm = null;    
@@ -166,11 +165,16 @@ trackerCapture.controller('RegistrationController',
     };
     
     var notifyRegistrtaionCompletion = function(destination, teiId){
-        goToDashboard( destination ? destination : 'DASHBOARD', teiId );
+        if($scope.registrationMode === 'ENROLLMENT'){
+            broadcastTeiEnrolled();
+        }else{
+            goToDashboard( destination ? destination : 'DASHBOARD', teiId );  
+        }
+         
+
     };
     
     var performRegistration = function(destination){
-        
         RegistrationService.registerOrUpdate($scope.tei, $scope.optionSets, $scope.attributesById).then(function(registrationResponse){
             var reg = registrationResponse.response ? registrationResponse.response : {};            
             if(reg.reference && reg.status === 'SUCCESS'){                
@@ -182,6 +186,7 @@ trackerCapture.controller('RegistrationController',
                 }
                 else{
                     if( $scope.selectedProgram ){
+                        
                         //enroll TEI
                         var enrollment = {};
                         enrollment.trackedEntityInstance = $scope.tei.trackedEntityInstance;
@@ -195,7 +200,7 @@ trackerCapture.controller('RegistrationController',
                             var en = enrollmentResponse.response && enrollmentResponse.response.importSummaries && enrollmentResponse.response.importSummaries[0] ? enrollmentResponse.response.importSummaries[0] : {};
                             if(en.reference && en.status === 'SUCCESS'){                                
                                 enrollment.enrollment = en.reference;
-                                $scope.selectedEnrollment = enrollment;                                                                
+                                $scope.selectedEnrollment = enrollment;
                                 var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment);
                                 if(dhis2Events.events.length > 0){
                                     DHIS2EventFactory.create(dhis2Events).then(function(){
@@ -203,7 +208,7 @@ trackerCapture.controller('RegistrationController',
                                     });
                                 }else{
                                     notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
-                                }                                
+                                } 
                             }
                             else{
                                 //enrollment has failed
@@ -233,8 +238,11 @@ trackerCapture.controller('RegistrationController',
         
     };
     
-    $scope.registerEntity = function(destination){        
-
+    function broadcastTeiEnrolled(){
+        $rootScope.$broadcast('teienrolled', {});
+    }
+    
+    $scope.registerEntity = function(destination){
         //check for form validity
         $scope.outerForm.submitted = true;        
         if( $scope.outerForm.$invalid ){
@@ -262,7 +270,6 @@ trackerCapture.controller('RegistrationController',
         }        
         performRegistration(destination);
     }; 
-   
     
     var processRuleEffect = function(){        
         $scope.warningMessages = [];        
@@ -321,7 +328,7 @@ trackerCapture.controller('RegistrationController',
         });
     };
     
-    $scope.executeRules = function () {   
+    $scope.executeRules = function () {
         var flag = {debug: true, verbose: false};
         
         //repopulate attributes with updated values

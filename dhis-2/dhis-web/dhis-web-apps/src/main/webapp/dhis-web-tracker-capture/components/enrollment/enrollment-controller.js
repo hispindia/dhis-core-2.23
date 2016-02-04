@@ -11,6 +11,7 @@ trackerCapture.controller('EnrollmentController',
                 CurrentSelection,
                 OrgUnitService,
                 EnrollmentService,
+                $route,
                 DialogService,
                 ModalService) {
     
@@ -37,20 +38,19 @@ trackerCapture.controller('EnrollmentController',
         $scope.selectedProgram = selections.pr;
         $scope.optionSets = selections.optionSets;
         $scope.programs = selections.prs;
+        $scope.hasOtherPrograms = $scope.programs.length >1 ? true : false;
         var selectedEnrollment = selections.selectedEnrollment;
         $scope.enrollments = selections.enrollments;
         $scope.programExists = args.programExists;
         $scope.programNames = selections.prNames;
         $scope.programStageNames = selections.prStNames;
         $scope.attributesById = CurrentSelection.getAttributesById();
-        
         $scope.activeEnrollments =  [];
         angular.forEach(selections.enrollments, function(en){
             if(en.status === "ACTIVE" && $scope.selectedProgram && $scope.selectedProgram.id !== en.program){
                 $scope.activeEnrollments.push(en);                           
             }
         });
-        
         if($scope.selectedProgram){
             
             $scope.stagesById = [];        
@@ -69,7 +69,6 @@ trackerCapture.controller('EnrollmentController',
                 else{
                     enrollment.orgUnitName = $scope.selectedOrgUnit.name;
                 }
-                
                 if(enrollment.program === $scope.selectedProgram.id ){
                     if(enrollment.status === 'ACTIVE'){
                         selectedEnrollment = enrollment;
@@ -81,13 +80,13 @@ trackerCapture.controller('EnrollmentController',
                     }
                 }
             });
-            
-            if(selectedEnrollment){
+            if(selectedEnrollment && selectedEnrollment.status === 'ACTIVE'){
                 $scope.selectedEnrollment = selectedEnrollment;
                 $scope.loadEnrollmentDetails(selectedEnrollment);
             }
             else{
                 $scope.selectedEnrollment = null;
+                $scope.showEnrollmentHistoryDiv = true;
                 $scope.broadCastSelections('dashboardWidgets');
             }
         }
@@ -95,7 +94,10 @@ trackerCapture.controller('EnrollmentController',
             $scope.broadCastSelections('dashboardWidgets');
         }        
     });
-    
+    $scope.$on('teienrolled', function(event,args){
+        $route.reload();
+ 
+    });
     $scope.loadEnrollmentDetails = function(enrollment){
         $scope.showEnrollmentHistoryDiv = false;
         $scope.selectedEnrollment = enrollment;
@@ -106,7 +108,6 @@ trackerCapture.controller('EnrollmentController',
     };
         
     $scope.showNewEnrollment = function(){
-        
         $scope.showEnrollmentDiv = !$scope.showEnrollmentDiv;
         
         $timeout(function() { 
@@ -199,6 +200,7 @@ trackerCapture.controller('EnrollmentController',
             headerText: $scope.selectedEnrollment.status === 'ACTIVE' ? 'complete_enrollment' : 'incomplete_enrollment',
             bodyText: $scope.selectedEnrollment.status === 'ACTIVE' ? 'are_you_sure_to_complete_enrollment' : 'are_you_sure_to_incomplete_enrollment'
         };
+        
 
         ModalService.showModal({}, modalOptions).then(function(result){            
             
