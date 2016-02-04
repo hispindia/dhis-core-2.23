@@ -30,7 +30,6 @@ package org.hisp.dhis.dxf2.metadata2;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.query.Order;
 import org.hisp.dhis.query.Query;
 
 import java.util.ArrayList;
@@ -48,8 +47,6 @@ public class MetadataExportParams
     private Set<Class<? extends IdentifiableObject>> classes = new HashSet<>();
 
     private Map<Class<? extends IdentifiableObject>, Query> queries = new HashMap<>();
-
-    private Map<Class<? extends IdentifiableObject>, List<Order>> orders = new HashMap<>();
 
     private Map<Class<? extends IdentifiableObject>, List<String>> fields = new HashMap<>();
 
@@ -94,19 +91,6 @@ public class MetadataExportParams
     public Query getQuery( Class<? extends IdentifiableObject> klass )
     {
         return queries.get( klass );
-    }
-
-    public MetadataExportParams addOrder( Class<? extends IdentifiableObject> klass, Order order )
-    {
-        if ( !orders.containsKey( klass ) ) orders.put( klass, new ArrayList<>() );
-
-        orders.get( klass ).add( order );
-        return this;
-    }
-
-    public Map<Class<? extends IdentifiableObject>, List<Order>> getOrders()
-    {
-        return orders;
     }
 
     public MetadataExportParams addFields( Class<? extends IdentifiableObject> klass, List<String> classFields )
