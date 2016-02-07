@@ -156,11 +156,12 @@ public class DimensionController
     }
 
     @RequestMapping( value = "/dataSet/{uid}", method = RequestMethod.GET )
-    public String getDimensionsForDataSet( @PathVariable String uid,
+    public @ResponseBody RootNode getDimensionsForDataSet( @PathVariable String uid,
         @RequestParam( value = "links", defaultValue = "true", required = false ) Boolean links,
         Model model, HttpServletResponse response ) throws WebMessageException
     {
         WebMetadata metadata = new WebMetadata();
+        List<String> fields = Lists.newArrayList( contextService.getParameterValues( "fields" ) );
 
         DataSet dataSet = identifiableObjectManager.get( DataSet.class, uid );
 
@@ -185,13 +186,14 @@ public class DimensionController
             metadata.getDimensions().add( dimensionService.getDimensionalObjectCopy( dim.getUid(), true ) );
         }
 
-        model.addAttribute( "model", metadata );
-
         if ( links )
         {
             linkService.generateLinks( metadata, false );
         }
 
-        return "dimensions";
+        RootNode rootNode = NodeUtils.createMetadata();
+        rootNode.addChild( fieldFilterService.filter( getEntityClass(), metadata.getDimensions(), fields ) );
+
+        return rootNode;
     }
 }
