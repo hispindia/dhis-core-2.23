@@ -28,16 +28,26 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.preheat.PreheatIdentifier;
+import org.hisp.dhis.preheat.PreheatMode;
+import org.hisp.dhis.preheat.PreheatParams;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 public class ObjectBundleParams
 {
-    private ObjectBundleMode objectBundleMode;
+    private ObjectBundleMode objectBundleMode = ObjectBundleMode.VALIDATE;
 
-    private PreheatIdentifier preheatIdentifier;
+    private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
+
+    private PreheatMode preheatMode = PreheatMode.REFERENCE;
+
+    private List<? extends IdentifiableObject> objects = new ArrayList<>();
 
     public ObjectBundleParams()
     {
@@ -63,5 +73,34 @@ public class ObjectBundleParams
     {
         this.preheatIdentifier = preheatIdentifier;
         return this;
+    }
+
+    public PreheatMode getPreheatMode()
+    {
+        return preheatMode;
+    }
+
+    public void setPreheatMode( PreheatMode preheatMode )
+    {
+        this.preheatMode = preheatMode;
+    }
+
+    public List<? extends IdentifiableObject> getObjects()
+    {
+        return objects;
+    }
+
+    public void setObjects( List<? extends IdentifiableObject> objects )
+    {
+        this.objects = objects;
+    }
+
+    public PreheatParams getPreheatParams()
+    {
+        PreheatParams params = new PreheatParams();
+        params.setPreheatIdentifier( preheatIdentifier );
+        params.setPreheatMode( preheatMode );
+
+        return params;
     }
 }

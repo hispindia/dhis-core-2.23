@@ -106,12 +106,6 @@ public class Preheat
 
         Map<String, IdentifiableObject> identifierMap = map.get( identifier ).get( object.getClass() );
         String key = identifier.getIdentifier( object );
-
-        if ( identifierMap.containsKey( key ) )
-        {
-            throw new PreheatException( "Duplicate key " + key + " for class " + object.getClass().getName() + "." );
-        }
-
         identifierMap.put( key, object );
 
         return this;

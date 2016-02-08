@@ -28,15 +28,18 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.render.RenderService;
+import org.hisp.dhis.user.User;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -46,6 +49,9 @@ public class ObjectBundleServiceTest
 {
     @Autowired
     private ObjectBundleService objectBundleService;
+
+    @Autowired
+    private IdentifiableObjectManager manager;
 
     @Autowired
     private RenderService _renderService;
@@ -66,9 +72,32 @@ public class ObjectBundleServiceTest
     }
 
     @Test
+    public void testCreateDoesPreheating()
+    {
+        DataElementGroup dataElementGroup = fromJson( "dxf2/degAUidRef.json", DataElementGroup.class );
+        defaultSetup();
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjects( Lists.newArrayList( dataElementGroup ) );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+
+        assertNotNull( bundle );
+        assertFalse( bundle.getPreheat().isEmpty() );
+        assertFalse( bundle.getPreheat().isEmpty( PreheatIdentifier.UID ) );
+        assertFalse( bundle.getPreheat().isEmpty( PreheatIdentifier.UID, DataElement.class ) );
+        assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElement.class, "deabcdefghA" ) );
+        assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElement.class, "deabcdefghB" ) );
+        assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElement.class, "deabcdefghC" ) );
+        assertFalse( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElement.class, "deabcdefghD" ) );
+    }
+
+    @Test
     public void testObjectBundleShouldAddToObjectAndPreheat()
     {
         ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+
         ObjectBundle bundle = objectBundleService.create( params );
 
         DataElementGroup dataElementGroup = fromJson( "dxf2/degAUidRef.json", DataElementGroup.class );
@@ -76,5 +105,21 @@ public class ObjectBundleServiceTest
 
         assertTrue( bundle.getObjects().get( DataElementGroup.class ).contains( dataElementGroup ) );
         assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElementGroup.class, dataElementGroup.getUid() ) );
+    }
+
+    private void defaultSetup()
+    {
+        DataElement de1 = createDataElement( 'A' );
+        DataElement de2 = createDataElement( 'B' );
+        DataElement de3 = createDataElement( 'C' );
+        DataElement de4 = createDataElement( 'D' );
+
+        manager.save( de1 );
+        manager.save( de2 );
+        manager.save( de3 );
+        manager.save( de4 );
+
+        User user = createUser( 'A' );
+        manager.save( user );
     }
 }

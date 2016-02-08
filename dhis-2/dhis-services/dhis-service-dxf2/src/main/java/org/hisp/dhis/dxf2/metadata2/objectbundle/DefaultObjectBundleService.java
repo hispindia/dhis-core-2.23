@@ -28,7 +28,14 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.preheat.PreheatMode;
+import org.hisp.dhis.preheat.PreheatParams;
+import org.hisp.dhis.preheat.PreheatService;
+import org.hisp.dhis.schema.SchemaService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -36,10 +43,27 @@ import org.springframework.stereotype.Component;
 @Component
 public class DefaultObjectBundleService implements ObjectBundleService
 {
+    @Autowired
+    private SchemaService schemaService;
+
+    @Autowired
+    private PreheatService preheatService;
+
     @Override
     public ObjectBundle create( ObjectBundleParams params )
     {
         ObjectBundle bundle = new ObjectBundle();
+        bundle.addObjects( params.getObjects() );
+
+        PreheatParams preheatParams = params.getPreheatParams();
+
+        if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
+        {
+            preheatParams.setReferences( preheatService.collectReferences( new ArrayList<>( params.getObjects() ) ) );
+        }
+
+        bundle.setPreheat( preheatService.preheat( preheatParams ) );
+
         return bundle;
     }
 
