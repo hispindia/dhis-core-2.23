@@ -283,7 +283,6 @@ public class HibernateOrganisationUnitStore
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public void updatePaths()
     {
         getQuery( "from OrganisationUnit ou where ou.path is null or ou.hierarchyLevel is null" ).list();

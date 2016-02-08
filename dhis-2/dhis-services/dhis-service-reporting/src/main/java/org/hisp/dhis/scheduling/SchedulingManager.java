@@ -52,9 +52,12 @@ public interface SchedulingManager
     void scheduleTasks();
     
     /**
-     * Schedules the given tasks.
+     * Schedules the given tasks. The task map will replace the currently scheduled
+     * tasks.
      * 
-     * @param cronKeyMap a mapping of cron expressions and task keys.
+     * @param cronKeyMap a mapping of cron expressions and list of task keys. A
+     * task key refers to a bean identifier in the application context. The bean
+     * must implement Runnable in order to be scheduled for execution.
      */
     void scheduleTasks( ListMap<String, String> cronKeyMap );
     
@@ -70,7 +73,7 @@ public interface SchedulingManager
     ListMap<String, String> getCronKeyMap();
     
     /**
-     * Gets all keys currenty scheduled for any task.
+     * Gets all keys currently scheduled for any task.
      */
     Set<String> getScheduledKeys();
     
