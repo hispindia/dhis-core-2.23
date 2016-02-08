@@ -456,10 +456,14 @@ div#orgUnitTree {
     width: 35%
 }
 
+.select2-width {
+    width: 90%;
+}
+
 .audit-icon {
     cursor: pointer;
     color: #3162C5;
-    margin-left: 5px;
+    margin-left: 2px;
 }
 
 .audit-icon-column {

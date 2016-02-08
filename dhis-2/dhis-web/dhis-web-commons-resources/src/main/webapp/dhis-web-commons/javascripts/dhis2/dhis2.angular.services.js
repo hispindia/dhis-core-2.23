@@ -418,7 +418,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     //check if dataelement has optionset
                                     if (prStDe.dataElement.optionSetValue) {
                                         var optionSetId = prStDe.dataElement.optionSet.id;
-                                        newInputField = '<span class="hideInPrint"><ui-select ng-style="{\'width\' : inputObj.isAuditIconPresent ? \'90%\' : \'100%\' }" theme="select2" ' + commonInputFieldProperty + ' on-select="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" >' +
+                                        newInputField = '<span class="hideInPrint"><ui-select style="width: 90%;" theme="select2" ' + commonInputFieldProperty + ' on-select="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" >' +
                                             '<ui-select-match ng-class="getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)" allow-clear="true" placeholder="' + $translate.instant('select_or_search') + '">{{$select.selected.name || $select.selected}}</ui-select-match>' +
                                             '<ui-select-choices ' +
                                             ' repeat="option.name as option in optionSets.' + optionSetId + '.options | filter: $select.search | limitTo:maxOptionSize">' +
@@ -451,12 +451,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                         ' dh-event="currentEvent.event" ' +
                                                                         ' dh-id="prStDes.' + fieldId + '.dataElement.id" ' +
                                                                         ' dh-click="saveDatavalue(prStDes.' + fieldId + ', currentEvent, value )"' +
-                                                                ' </d2-radio-button>';	
-                                            /*newInputField = '<span class="hideInPrint"><label class="radio-inline"><input type="radio" ng-change="saveDatavalue()" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}</label>' +
-                                                '<label class="radio-inline"><input type="radio" ng-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" ' + commonInputFieldProperty + ' value="true">{{\'yes\'| translate}}</label>' +
-                                                '<label class="radio-inline"><input type="radio" ng-change="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')" ' + commonInputFieldProperty + ' value="false">{{\'no\'| translate}}</label></span>' +
-                                                '<span class="not-for-screen"><label class="radio-inline"><input type="radio" ng-checked="{{\'true\' === currentEvent.' + fieldId + '}}">{{\'yes\'| translate}}</label>' +
-                                                '<label class="radio-inline"><input type="radio" ng-checked="{{\'false\' === currentEvent.' + fieldId + '}}">{{\'no\'| translate}}</label></span>';*/
+                                                                ' </d2-radio-button>';
                                         }
                                         else if (prStDe.dataElement.valueType === "DATE") {
                                             var maxDate = prStDe.allowFutureDate ? '' : 0;
