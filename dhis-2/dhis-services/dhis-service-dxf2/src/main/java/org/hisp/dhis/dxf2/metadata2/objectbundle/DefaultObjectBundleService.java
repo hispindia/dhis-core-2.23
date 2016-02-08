@@ -35,8 +35,6 @@ import org.hisp.dhis.schema.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
@@ -59,7 +57,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
         {
-            preheatParams.setReferences( preheatService.collectReferences( new ArrayList<>( params.getObjects() ) ) );
+            preheatParams.setReferences( preheatService.collectReferences( params.getObjects() ) );
         }
 
         bundle.setPreheat( preheatService.preheat( preheatParams ) );
