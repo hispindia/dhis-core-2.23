@@ -541,6 +541,7 @@ trackerCapture.controller('DataEntryController',
         $scope.prStDes = [];
         $scope.allProgramRules = [];
         $scope.allowProvidedElsewhereExists = [];
+        $scope.optionsReady = false;
         
         var selections = CurrentSelection.get();
         $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
@@ -599,12 +600,23 @@ trackerCapture.controller('DataEntryController',
                 $scope.setDisplayTypeForStages();
                 $scope.getHeaderStages();
                 
+                $scope.selectedCategories = [];
+                if($scope.selectedProgram.categoryCombo && 
+                        !$scope.selectedProgram.categoryCombo.isDefault &&
+                        $scope.selectedProgram.categoryCombo.categories){
+                    $scope.selectedCategories = $scope.selectedProgram.categoryCombo.categories;                    
+                }
+                else{
+                    $scope.optionsReady = true;
+                }
+                
                 TrackerRulesFactory.getRules($scope.selectedProgram.id).then(function(rules){                    
                     $scope.allProgramRules = rules;
                     $scope.getEvents();                    
                     broadcastDataEntryControllerData();
                     executeRulesOnInit();
-                });           
+                });    
+                
             });
         }
     });
