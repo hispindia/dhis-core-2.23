@@ -28,9 +28,91 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.preheat.Preheat;
+import org.hisp.dhis.preheat.PreheatIdentifier;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 public class ObjectBundle
 {
+    private ObjectBundleMode objectBundleMode = ObjectBundleMode.COMMIT;
+
+    private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
+
+    private Preheat preheat = new Preheat();
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
+
+    public ObjectBundle()
+    {
+    }
+
+    public ObjectBundleMode getObjectBundleMode()
+    {
+        return objectBundleMode;
+    }
+
+    public void setObjectBundleMode( ObjectBundleMode objectBundleMode )
+    {
+        this.objectBundleMode = objectBundleMode;
+    }
+
+    public PreheatIdentifier getPreheatIdentifier()
+    {
+        return preheatIdentifier;
+    }
+
+    public void setPreheatIdentifier( PreheatIdentifier preheatIdentifier )
+    {
+        this.preheatIdentifier = preheatIdentifier;
+    }
+
+    public Preheat getPreheat()
+    {
+        return preheat;
+    }
+
+    public void setPreheat( Preheat preheat )
+    {
+        this.preheat = preheat;
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> void addObject( T object )
+    {
+        if ( object == null )
+        {
+            return;
+        }
+
+        if ( !objects.containsKey( object.getClass() ) )
+        {
+            objects.put( object.getClass(), new ArrayList<>() );
+        }
+
+        objects.get( object.getClass() ).add( object );
+        preheat.put( preheatIdentifier, object );
+    }
+
+    public <T extends IdentifiableObject> void addObjects( List<T> objects )
+    {
+        objects.forEach( this::addObject );
+    }
+
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
+    {
+        return objects;
+    }
+
+    public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    {
+        this.objects = objects;
+    }
 }

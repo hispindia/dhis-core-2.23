@@ -28,12 +28,16 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.preheat.PreheatIdentifier;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 public class ObjectBundleParams
 {
     private ObjectBundleMode objectBundleMode;
+
+    private PreheatIdentifier preheatIdentifier;
 
     public ObjectBundleParams()
     {
@@ -47,6 +51,17 @@ public class ObjectBundleParams
     public ObjectBundleParams setObjectBundleMode( ObjectBundleMode objectBundleMode )
     {
         this.objectBundleMode = objectBundleMode;
+        return this;
+    }
+
+    public PreheatIdentifier getPreheatIdentifier()
+    {
+        return preheatIdentifier;
+    }
+
+    public ObjectBundleParams setPreheatIdentifier( PreheatIdentifier preheatIdentifier )
+    {
+        this.preheatIdentifier = preheatIdentifier;
         return this;
     }
 }

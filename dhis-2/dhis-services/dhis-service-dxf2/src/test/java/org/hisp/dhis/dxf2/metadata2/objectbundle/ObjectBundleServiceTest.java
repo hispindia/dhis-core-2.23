@@ -29,10 +29,14 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  */
 
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.preheat.PreheatIdentifier;
+import org.hisp.dhis.render.RenderService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -43,6 +47,15 @@ public class ObjectBundleServiceTest
     @Autowired
     private ObjectBundleService objectBundleService;
 
+    @Autowired
+    private RenderService _renderService;
+
+    @Override
+    protected void setUpTest() throws Exception
+    {
+        renderService = _renderService;
+    }
+
     @Test
     public void testCreateObjectBundle()
     {
@@ -50,5 +63,18 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
 
         assertNotNull( bundle );
+    }
+
+    @Test
+    public void testObjectBundleShouldAddToObjectAndPreheat()
+    {
+        ObjectBundleParams params = new ObjectBundleParams();
+        ObjectBundle bundle = objectBundleService.create( params );
+
+        DataElementGroup dataElementGroup = fromJson( "dxf2/degAUidRef.json", DataElementGroup.class );
+        bundle.addObject( dataElementGroup );
+
+        assertTrue( bundle.getObjects().get( DataElementGroup.class ).contains( dataElementGroup ) );
+        assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElementGroup.class, dataElementGroup.getUid() ) );
     }
 }

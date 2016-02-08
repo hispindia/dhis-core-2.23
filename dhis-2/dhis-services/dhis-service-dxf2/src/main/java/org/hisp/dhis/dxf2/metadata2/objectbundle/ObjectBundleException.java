@@ -31,27 +31,11 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface ObjectBundleService
+public class ObjectBundleException
+    extends RuntimeException
 {
-    /**
-     * Creates and prepares object bundle.
-     *
-     * @param params Params object for this bundle.
-     * @return Configured ObjectBundle instance
-     */
-    ObjectBundle create( ObjectBundleParams params );
-
-    /**
-     * Validate object bundle
-     *
-     * @param bundle Bundle to validate
-     */
-    void validate( ObjectBundle bundle );
-
-    /**
-     * Commits objects from bundle into persistence store if bundle mode COMMIT is enabled.
-     *
-     * @param bundle ObjectBundle to commit.
-     */
-    void commit( ObjectBundle bundle );
+    public ObjectBundleException( String message )
+    {
+        super( message );
+    }
 }

@@ -44,6 +44,12 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
+    public void validate( ObjectBundle bundle )
+    {
+
+    }
+
+    @Override
     public void commit( ObjectBundle bundle )
     {
 
