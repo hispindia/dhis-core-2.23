@@ -1,5 +1,5 @@
 CACHE MANIFEST
-# 2.19
+# 2.23
 
 NETWORK:
 *
@@ -110,6 +110,8 @@ styles/style.css
 ../dhis-web-commons/angular-forms/custom-form.html
 ../dhis-web-commons/angular-forms/map.html
 ../dhis-web-commons/angular-forms/error-messages.html
+../dhis-web-commons/angular-forms/audit-history.html
+../dhis-web-commons/angular-forms/radio-button.html
 
 
 views/column-modal.html
