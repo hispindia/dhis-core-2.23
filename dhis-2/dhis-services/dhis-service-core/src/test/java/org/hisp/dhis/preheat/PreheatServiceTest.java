@@ -292,7 +292,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatAllMetadataUID()
     {
         DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
@@ -336,7 +335,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceUID()
     {
         DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
@@ -388,7 +386,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceCODE()
     {
         DataElementGroup dataElementGroup = new DataElementGroup( "DataElementGroupA" );
@@ -441,7 +438,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceWithScanUID()
     {
         DataElementGroup dataElementGroup = fromJson( "preheat/degAUidRef.json", DataElementGroup.class );
@@ -467,7 +463,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceWithScanCODE()
     {
         DataElementGroup dataElementGroup = fromJson( "preheat/degACodeRef.json", DataElementGroup.class );
@@ -494,7 +489,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceConnectUID()
     {
         DataElementGroup dataElementGroup = fromJson( "preheat/degAUidRef.json", DataElementGroup.class );
@@ -523,7 +517,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceConnectCODE()
     {
         DataElementGroup dataElementGroup = fromJson( "preheat/degACodeRef.json", DataElementGroup.class );
@@ -553,7 +546,6 @@ public class PreheatServiceTest
     }
 
     @Test
-    @SuppressWarnings( "unchecked" )
     public void testPreheatReferenceConnectAUTO()
     {
         DataElementGroup dataElementGroup = fromJson( "preheat/degAAutoRef.json", DataElementGroup.class );
