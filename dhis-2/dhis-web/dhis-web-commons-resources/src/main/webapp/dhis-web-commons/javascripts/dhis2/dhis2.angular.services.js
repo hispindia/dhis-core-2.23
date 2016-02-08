@@ -1300,6 +1300,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     {name:"d2:round",parameters:1},
                     {name:"d2:hasValue",parameters:1},
                     {name:"d2:lastEventDate",parameters:1},
+                    {name:"d2:validatePattern",parameters:2},
                     {name:"d2:addControlDigits",parameters:1},
                     {name:"d2:checkControlDigits",parameters:1}];
                 var continueLooping = true;
@@ -1571,6 +1572,21 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, valueFound);
+                                successfulExecution = true;
+                            }
+                            else if(dhisFunction.name === "d2:validatePattern") {
+                                var inputToValidate = parameters[0].toString();
+                                var pattern = parameters[1];
+                                var regEx = new RegExp(pattern,'g');
+                                var match = inputToValidate.match(regEx);
+                                
+                                var matchFound = false;
+                                if(match !== null && inputToValidate === match[0]) {
+                                    matchFound = true;
+                                }
+
+                                //Replace the end evaluation of the dhis function:
+                                expression = expression.replace(callToThisFunction, matchFound);
                                 successfulExecution = true;
                             }
                             else if(dhisFunction.name === "d2:addControlDigits") {
