@@ -130,7 +130,7 @@ public class DefaultDataApprovalService
         {
             DataApprovalStatus status = statusMap.get( daKey( da ) );
 
-            if ( da.getDataApprovalLevel() == null ) // Determine the approval level
+            if ( status != null && da.getDataApprovalLevel() == null ) // Determine the approval level
             {
                 if ( status.getState().isApproved() ) // If approved already, approve at next level up (lower level number)
                 {
@@ -470,16 +470,16 @@ public class DefaultDataApprovalService
         {
             List<DataApproval> dataApprovals = listMap.get( key );
             
-            DataApproval da0 = dataApprovals.get( 0 );
+            DataApproval da = dataApprovals.get( 0 );
 
-            List<DataApprovalStatus> statuses = dataApprovalStore.getDataApprovals( da0.getWorkflow(),
-                da0.getPeriod(), da0.getOrganisationUnit(), null, getCategoryOptionCombos( dataApprovals ) );
+            List<DataApprovalStatus> statuses = dataApprovalStore.getDataApprovals( da.getWorkflow(),
+                da.getPeriod(), da.getOrganisationUnit(), null, getCategoryOptionCombos( dataApprovals ) );
 
             for ( DataApprovalStatus status : statuses )
             {
-                status.setPermissions( evaluator.getPermissions( status, da0.getOrganisationUnit(), da0.getWorkflow() ) );
+                status.setPermissions( evaluator.getPermissions( status, da.getOrganisationUnit(), da.getWorkflow() ) );
 
-                statusMap.put( daKey( da0 ), status );
+                statusMap.put( daKey( da ), status );
             }
         }
 
@@ -511,7 +511,7 @@ public class DefaultDataApprovalService
      * Approval status with these three values in common can be fetched in
      * one call for many values of attributeOptionCombo.
      */
-    private String statusKey ( DataApproval approval )
+    private String statusKey( DataApproval approval )
     {
         return approval == null ? null : approval.getOrganisationUnit().getId() +
             IdentifiableObjectUtils.SEPARATOR + approval.getPeriod().getId() +
