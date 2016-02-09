@@ -31,7 +31,8 @@ package org.hisp.dhis.preheat;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class PreheatException extends RuntimeException
+public class PreheatException
+    extends RuntimeException
 {
     public PreheatException( String message )
     {

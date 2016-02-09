@@ -51,7 +51,7 @@ public interface PreheatService
      *
      * @param params PreheatParams
      */
-    void validate( PreheatParams params ) throws PreheatException;
+    void validate( PreheatParams params );
 
     /**
      * Scan object and collect all references (both id object and collections with id objects).
