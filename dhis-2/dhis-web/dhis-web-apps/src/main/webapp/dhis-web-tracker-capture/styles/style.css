@@ -416,6 +416,10 @@ input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spi
     margin: 0;
 }
 
+input[type=text],input[type=password],input[type=email],textarea {
+    padding: 5px 2px !important;
+}
+
 .big-button {
     padding-left: 40px;
     padding-right: 40px;
@@ -1307,7 +1311,7 @@ input, button, select, textarea {
 }
 
 .select2-container .select2-choice {
-    padding: 8px 6px !important;
+    padding: 6px 2px !important;
     color: #555 !important;
 }
 
