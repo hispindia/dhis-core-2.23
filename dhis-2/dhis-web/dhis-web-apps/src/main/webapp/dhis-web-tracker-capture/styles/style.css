@@ -1920,3 +1920,8 @@ a.disable-link-effects:focus {
     width: 20px !important;
     text-align: center;
 }
+
+.row-with-go-button {
+    margin-top: 46%;
+    margin-left: 1%;
+}

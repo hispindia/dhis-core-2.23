@@ -3,7 +3,8 @@ trackerCapture.controller('UpcomingEventsController',
                 $modal,
                 $location,
                 $translate,
-                DateUtils,                
+                $location,
+                DateUtils,
                 Paginator,
                 EventReportService,
                 TEIGridService,
@@ -253,6 +254,37 @@ trackerCapture.controller('UpcomingEventsController',
     $scope.generateReportData = function(){
         return TEIGridService.getData($scope.upcomingEvents, $scope.gridColumns);
     };
+
+
+    $scope.dates=[ {"name":$translate.instant('events_today'), "numOfDays":1},
+                     {"name":$translate.instant('events_in_one_week'), "numOfDays":7},
+                     {"name":$translate.instant('events_in_two_weeks'), "numOfDays":14},
+                     {"name":$translate.instant('events_in_one_month'), "numOfDays":30},
+                     {"name":$translate.instant('choose_the_dates')}
+    ];
+
+    $scope.selectedDate = $scope.dates[0];
+
+    $scope.datePicker = {"visible":false};
+
+    $scope.$watch('selectedDate',function() {
+        var numOfDays = $scope.selectedDate.numOfDays;
+        $scope.report.startDate = $scope.today;
+        if ($scope.selectedDate) {
+            if (numOfDays) {
+                $scope.datePicker.visible = false;
+                if (numOfDays === 1) {
+                    $scope.report.endDate = $scope.today;
+                } else {
+                    $scope.report.endDate = DateUtils.getDateAfterOffsetDays(numOfDays);
+                }
+            } else {
+                $scope.datePicker.visible = true;
+            }
+        }
+    });
+
+
     
     $scope.generateReportHeader = function(){
         return TEIGridService.getHeader($scope.gridColumns);

@@ -57,9 +57,9 @@
                         <td>
                             <select ng-model="selectedProgram"
                                     class="form-control"
-                                    ng-options="program as program.name for program in programs | orderBy: 'name'" 
-                                    ng-disabled="programs.length < 1">
-                                <option value="">{{programs.length > 0 ? 'please_select_a_program' : 'no_program_exists'| translate}}</option>
+                                    ng-options="program as program.name for program in programs | orderBy: 'name'"
+                                    ng-disabled="programs.length < 1" ng-selected="programs.length === 1">
+                                <option ng-if="programs.length !== 1" value="">{{programs.length > 1 ? 'please_select_a_program' : 'no_program_exists'| translate}}</option>
                             </select>
                         </td>
                     </tr>
@@ -81,10 +81,40 @@
                             </label>                                
                         </td>
                     </tr>
+                    <tr>
+                        <td>
+                            {{'date'| translate}}
+                        </td>
+                        <td>
+                            <select ng-model="selectedDate" class="form-control"
+                                    ng-options="date as date.name for date in dates | orderBy: 'numOfDays'">
+                            </select>
+                        </td>
+                    </tr>
                 </table>
             </div>
+
+            <div class="col-md-5 trim" ng-if="!datePicker.visible">
+                <div class="row row-with-go-button">
+                    <button type="button" class="btn btn-primary" ng-click="generateReport()" ng-disabled="!selectedProgram">{{'go'| translate}}</button>
+                    <button type="button"
+                        class="btn btn-success small-horizonal-spacing"
+                        ng-if="upcomingEvents.length > 0"
+                        onclick="javascript:window.print()">
+                    {{'print'| translate}}
+                    </button>
+                    <button type="button"
+                        class="btn btn-info small-horizonal-spacing"
+                        ng-if="upcomingEvents.length > 0"
+                        ng-csv="generateReportData()"
+                        csv-header="generateReportHeader()"
+                        filename="upcomingEvents.csv">
+                    {{'excel_export'| translate}}
+                    </button>
+                </div>
+            </div>
         </div>
-        <div class="row">
+        <div class="row" ng-if="datePicker.visible">
             <div class="col-sm-8 col-md-6">
                 <table class="table-borderless">
                     <tr>
@@ -114,7 +144,7 @@
                         onclick="javascript:window.print()">
                     {{'print'| translate}}
                 </button>
-                <button type="button" 
+                <button type="button"
                         class="btn btn-info small-horizonal-spacing"
                         ng-if="upcomingEvents.length > 0"
                         ng-csv="generateReportData()"
