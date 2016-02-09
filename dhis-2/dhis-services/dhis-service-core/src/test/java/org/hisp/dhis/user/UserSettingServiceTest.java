@@ -29,6 +29,7 @@ package org.hisp.dhis.user;
  */
 
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.setting.SettingKey;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -64,8 +65,8 @@ public class UserSettingServiceTest
     @Test
     public void testSaveGetDeleteUserSetting()
     {
-        assertEquals( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
-        assertEquals( UserSettingKey.STYLE.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.STYLE, userA ) );
+        assertEquals( SettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
+        assertEquals( SettingKey.STYLE.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.STYLE, userA ) );
         
         userSettingService.saveUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, "shortName", "usernameA" );
         userSettingService.saveUserSetting( UserSettingKey.STYLE, "blue", "usernameA" );
@@ -75,13 +76,13 @@ public class UserSettingServiceTest
         
         userSettingService.deleteUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA );
 
-        assertEquals( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
+        assertEquals( SettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
         assertEquals( "blue", userSettingService.getUserSetting( UserSettingKey.STYLE, userA ) );
 
         userSettingService.deleteUserSetting( UserSettingKey.STYLE, userA );
 
-        assertEquals( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
-        assertEquals( UserSettingKey.STYLE.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.STYLE, userA ) );
+        assertEquals( SettingKey.ANALYSIS_DISPLAY_PROPERTY.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.ANALYSIS_DISPLAY_PROPERTY, userA ) );
+        assertEquals( SettingKey.STYLE.getDefaultValue(), userSettingService.getUserSetting( UserSettingKey.STYLE, userA ) );
     }
 
     @Test

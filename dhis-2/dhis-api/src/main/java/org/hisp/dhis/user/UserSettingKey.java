@@ -28,11 +28,11 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.commons.lang3.LocaleUtils;
+
 import java.io.Serializable;
 import java.util.Locale;
 import java.util.Optional;
-
-import org.apache.commons.lang3.LocaleUtils;
 
 /**
  * @author Lars Helge Overland
@@ -40,20 +40,18 @@ import org.apache.commons.lang3.LocaleUtils;
 public enum UserSettingKey
 {
     STYLE( "keyStyle" ),
-    MESSAGE_EMAIL_NOTIFICATION( "keyMessageEmailNotification", Boolean.FALSE, Boolean.class ),
-    MESSAGE_SMS_NOTIFICATION( "keyMessageSmsNotification", Boolean.FALSE, Boolean.class ),
+    MESSAGE_EMAIL_NOTIFICATION( "keyMessageEmailNotification", Boolean.class ),
+    MESSAGE_SMS_NOTIFICATION( "keyMessageSmsNotification", Boolean.class ),
     UI_LOCALE( "keyUiLocale", Locale.class ),
     DB_LOCALE( "keyDbLocale", Locale.class ),
-    ANALYSIS_DISPLAY_PROPERTY( "keyAnalysisDisplayProperty", "name", String.class ),
+    ANALYSIS_DISPLAY_PROPERTY( "keyAnalysisDisplayProperty", String.class ),
     CURRENT_DOMAIN_TYPE( "keyCurrentDomainType" ),
-    AUTO_SAVE_CASE_ENTRY_FORM( "keyAutoSaveCaseEntryForm", Boolean.FALSE, Boolean.class ),
-    AUTO_SAVE_TRACKED_ENTITY_REGISTRATION_ENTRY_FORM( "keyAutoSavetTrackedEntityForm", Boolean.FALSE, Boolean.class ),
-    AUTO_SAVE_DATA_ENTRY_FORM( "keyAutoSaveDataEntryForm", Boolean.FALSE, Boolean.class ),
+    AUTO_SAVE_CASE_ENTRY_FORM( "keyAutoSaveCaseEntryForm", Boolean.class ),
+    AUTO_SAVE_TRACKED_ENTITY_REGISTRATION_ENTRY_FORM( "keyAutoSavetTrackedEntityForm", Boolean.class ),
+    AUTO_SAVE_DATA_ENTRY_FORM( "keyAutoSaveDataEntryForm", Boolean.class ),
     TRACKER_DASHBOARD_LAYOUT( "keyTrackerDashboardLayout" );
     
     private final String name;
-    
-    private final Serializable defaultValue;
     
     private final Class<?> clazz;
 
@@ -64,21 +62,12 @@ public enum UserSettingKey
     private UserSettingKey( String name )
     {
         this.name = name;
-        this.defaultValue = null;
         this.clazz = String.class;
     }
     
     private UserSettingKey( String name, Class<?> clazz )
     {
         this.name = name;
-        this.defaultValue = null;
-        this.clazz = clazz;
-    }
-    
-    private UserSettingKey( String name, Serializable defaultValue, Class<?> clazz )
-    {
-        this.name = name;
-        this.defaultValue = defaultValue;
         this.clazz = clazz;
     }
 
@@ -129,11 +118,6 @@ public enum UserSettingKey
         
         return value;
     }
-    
-    public boolean hasDefaultValue()
-    {
-        return defaultValue != null;
-    }
 
     // -------------------------------------------------------------------------
     // Getters
@@ -142,11 +126,6 @@ public enum UserSettingKey
     public String getName()
     {
         return name;
-    }
-
-    public Serializable getDefaultValue()
-    {
-        return defaultValue;
     }
 
     public Class<?> getClazz()

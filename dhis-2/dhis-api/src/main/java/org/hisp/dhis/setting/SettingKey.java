@@ -28,22 +28,32 @@ package org.hisp.dhis.setting;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.commons.lang3.LocaleUtils;
+import org.hisp.dhis.common.ListMap;
+import org.hisp.dhis.configuration.Configuration;
+import org.hisp.dhis.sms.config.SmsConfiguration;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.apache.commons.lang3.LocaleUtils;
-import org.hisp.dhis.common.ListMap;
-import org.hisp.dhis.configuration.Configuration;
-import org.hisp.dhis.sms.config.SmsConfiguration;
-
 /**
  * @author Lars Helge Overland
  */
 public enum SettingKey
 {
+    MESSAGE_EMAIL_NOTIFICATION( "keyMessageEmailNotification", Boolean.FALSE, Boolean.class ),
+    MESSAGE_SMS_NOTIFICATION( "keyMessageSmsNotification", Boolean.FALSE, Boolean.class ),
+    UI_LOCALE( "keyUiLocale", Locale.class ),
+    DB_LOCALE( "keyDbLocale", Locale.class ),
+    ANALYSIS_DISPLAY_PROPERTY( "keyAnalysisDisplayProperty", "name", String.class ),
+    CURRENT_DOMAIN_TYPE( "keyCurrentDomainType" ),
+    AUTO_SAVE_CASE_ENTRY_FORM( "keyAutoSaveCaseEntryForm", Boolean.FALSE, Boolean.class ),
+    AUTO_SAVE_TRACKED_ENTITY_REGISTRATION_ENTRY_FORM( "keyAutoSavetTrackedEntityForm", Boolean.FALSE, Boolean.class ),
+    AUTO_SAVE_DATA_ENTRY_FORM( "keyAutoSaveDataEntryForm", Boolean.FALSE, Boolean.class ),
+    TRACKER_DASHBOARD_LAYOUT( "keyTrackerDashboardLayout" ),
     APPLICATION_TITLE( "applicationTitle", "DHIS 2", String.class ), 
     APPLICATION_INTRO( "keyApplicationIntro" ),
     APPLICATION_NOTIFICATION( "keyApplicationNotification" ),
@@ -111,7 +121,7 @@ public enum SettingKey
     DATE_FORMAT( "keyDateFormat", "yyyy-MM-dd", String.class ),
     APP_STORE_URL( "appStoreUrl", "https://www.dhis2.org/appstore", String.class ),
     APP_STORE_INDEX_URL( "appStoreIndexUrl", "https://s3-eu-west-1.amazonaws.com/dhis2-appstore/appstore.json", String.class ),
-    STYLE( "currentStyle", "light_blue/light_blue.css", String.class ),
+    STYLE( "keyStyle", "light_blue/light_blue.css", String.class ),
     REMOTE_INSTANCE_URL( "keyRemoteInstanceUrl", "", String.class ),
     REMOTE_INSTANCE_USERNAME( "keyRemoteInstanceUsername", "", String.class ),
     REMOTE_INSTANCE_PASSWORD( "keyRemoteInstancePassword", "", String.class, true );

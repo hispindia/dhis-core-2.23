@@ -28,18 +28,23 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Sets;
+import org.hisp.dhis.common.DimensionalObject;
+import org.hisp.dhis.setting.SettingKey;
+import org.hisp.dhis.setting.SystemSettingManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-
-import org.hisp.dhis.common.DimensionalObject;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import java.util.stream.Collectors;
 
 /**
  * @author Torgeir Lorange Ostby
@@ -56,15 +61,26 @@ public class DefaultUserSettingService
         .initialCapacity( 200 )
         .maximumSize( 10000 )
         .build();
-    
+
+    private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
+        SettingKey.values() ).stream().collect( Collectors.toMap( SettingKey::getName, s -> s ) );
+
     private String getCacheKey( String settingName, String username )
     {
         return settingName + DimensionalObject.ITEM_SEP + username;
     }
-    
+
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
+
+    @Autowired
+    private SystemSettingManager systemSettingManager;
+
+    public void setSystemSettingManager( SystemSettingManager systemSettingManager )
+    {
+        this.systemSettingManager = systemSettingManager;
+    }
 
     private CurrentUserService currentUserService;
 
@@ -95,9 +111,9 @@ public class DefaultUserSettingService
     public void saveUserSetting( UserSettingKey key, Serializable value, String username )
     {
         UserCredentials credentials = userService.getUserCredentialsByUsername( username );
-        
+
         if ( credentials != null )
-        {        
+        {
             saveUserSetting( key, value, credentials.getUserInfo() );
         }
     }
@@ -106,10 +122,10 @@ public class DefaultUserSettingService
     public void saveUserSetting( UserSettingKey key, Serializable value )
     {
         User currentUser = currentUserService.getCurrentUser();
-        
+
         saveUserSetting( key, value, currentUser );
     }
-    
+
     @Override
     public void saveUserSetting( UserSettingKey key, Serializable value, User user )
     {
@@ -119,7 +135,7 @@ public class DefaultUserSettingService
         }
 
         SETTING_CACHE.invalidate( getCacheKey( key.getName(), user.getUsername() ) );
-        
+
         UserSetting userSetting = userSettingStore.getUserSetting( user, key.getName() );
 
         if ( userSetting == null )
@@ -140,10 +156,10 @@ public class DefaultUserSettingService
     public void deleteUserSetting( UserSetting userSetting )
     {
         SETTING_CACHE.invalidate( getCacheKey( userSetting.getName(), userSetting.getUser().getUsername() ) );
-        
+
         userSettingStore.deleteUserSetting( userSetting );
     }
-    
+
     @Override
     public void deleteUserSetting( UserSettingKey key )
     {
@@ -152,19 +168,19 @@ public class DefaultUserSettingService
         if ( currentUser != null )
         {
             UserSetting setting = userSettingStore.getUserSetting( currentUser, key.getName() );
-            
+
             if ( setting != null )
             {
                 deleteUserSetting( setting );
             }
         }
     }
-    
+
     @Override
     public void deleteUserSetting( UserSettingKey key, User user )
     {
         UserSetting setting = userSettingStore.getUserSetting( user, key.getName() );
-        
+
         if ( setting != null )
         {
             deleteUserSetting( setting );
@@ -189,14 +205,24 @@ public class DefaultUserSettingService
         {
             return Optional.empty();
         }
-        
-        String username = user.isPresent() ? user.get().getUsername() : currentUserService.getCurrentUsername();
 
         try
         {
+            String username = user.isPresent() ? user.get().getUsername() : currentUserService.getCurrentUsername();
             String cacheKey = getCacheKey( key.getName(), username );
-            
-            return SETTING_CACHE.get( cacheKey, () -> getUserSettingOptional( key, username ) );
+            Optional<Serializable> result = SETTING_CACHE
+                .get( cacheKey, () -> getUserSettingOptional( key, username ) );
+
+            if ( !result.isPresent() && NAME_SETTING_KEY_MAP.containsKey( key.getName() ) )
+            {
+                return Optional
+                    .ofNullable( systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( key.getName() ) ) );
+            }
+            else
+            {
+                return result;
+            }
+
         }
         catch ( ExecutionException ignored )
         {
@@ -210,14 +236,16 @@ public class DefaultUserSettingService
 
         if ( userCredentials == null )
         {
-            return Optional.ofNullable( key.getDefaultValue() );
+            return Optional.empty();
         }
-        
+
         UserSetting setting = userSettingStore.getUserSetting( userCredentials.getUserInfo(), key.getName() );
-        
-        return setting != null && setting.hasValue() ? Optional.of( setting.getValue() ) : Optional.ofNullable( key.getDefaultValue() );
+
+        return setting != null && setting.hasValue() ?
+            Optional.of( setting.getValue() ) :
+            Optional.empty();
     }
-    
+
     @Override
     public List<UserSetting> getAllUserSettings()
     {
@@ -225,7 +253,7 @@ public class DefaultUserSettingService
 
         return getUserSettings( currentUser );
     }
-        
+
     @Override
     public List<UserSetting> getUserSettings( User user )
     {
@@ -234,7 +262,15 @@ public class DefaultUserSettingService
             return new ArrayList<>();
         }
 
-        return userSettingStore.getAllUserSettings( user );
+        List<UserSetting> list = userSettingStore.getAllUserSettings( user );
+
+        return list.stream().map( userSetting -> {
+            if ( userSetting.getValue() == null )
+                return new UserSetting( userSetting.getUser(), userSetting.getName(),
+                    systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( userSetting.getName() ) ) );
+            else
+                return userSetting;
+        } ).collect( Collectors.toList() );
     }
 
     @Override
