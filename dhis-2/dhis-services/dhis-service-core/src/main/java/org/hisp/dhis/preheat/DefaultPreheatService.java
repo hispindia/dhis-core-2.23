@@ -41,6 +41,7 @@ import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -217,6 +218,53 @@ public class DefaultPreheatService implements PreheatService
         } );
 
         return map;
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> List<MissingReference> checkReferences( T object, Preheat preheat, PreheatIdentifier identifier )
+    {
+        List<MissingReference> missingReferences = new ArrayList<>();
+
+        if ( object == null )
+        {
+            return missingReferences;
+        }
+
+        Schema schema = schemaService.getDynamicSchema( object.getClass() );
+        schema.getProperties().stream()
+            .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
+            .forEach( p -> {
+                if ( !p.isCollection() )
+                {
+                    T refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+                    T ref = preheat.get( identifier, refObject );
+
+                    if ( ref == null && refObject != null )
+                    {
+                        missingReferences.add( new MissingReference( identifier, identifier.getIdentifier( refObject ), p ) );
+                    }
+                }
+                else
+                {
+                    Collection<T> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                    Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+
+                    for ( IdentifiableObject refObject : refObjects )
+                    {
+                        T ref = preheat.get( identifier, (T) refObject );
+
+                        if ( ref == null && refObject != null )
+                        {
+                            missingReferences.add( new MissingReference( identifier, identifier.getIdentifier( refObject ), p ) );
+                        }
+                    }
+
+                    ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
+                }
+            } );
+
+        return missingReferences;
     }
 
     @Override
