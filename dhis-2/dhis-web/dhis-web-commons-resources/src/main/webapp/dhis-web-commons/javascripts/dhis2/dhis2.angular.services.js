@@ -601,15 +601,15 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             '</span>';
                                     }
                                     else if (att.valueType === "BOOLEAN") {
-                                        newInputField = '<label class="radio-inline"><span><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="">{{\'no_value\'| translate}}' +
-                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
-                                            '</span></label>' +
-                                            '<label class="radio-inline"><span><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="true">{{\'yes\'| translate}}' +
-                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}}></d2-audit>'+
-                                            '</span></label>' +
-                                            '<label class="radio-inline"><input type="radio" ng-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' + commonInputFieldProperty + ' value="false">{{\'no\'| translate}}' +
-                                            '<d2-audit class="hideInPrint" dataelement-id="'+att.id+'" dataelement-name="'+att.name+'" data-type="attribute" selected-tei-id={{selectedTei.trackedEntityInstance}} ></d2-audit>'+
-                                            '</span></label>';
+                                    	newInputField = '<d2-radio-button ' +
+                                                                ' dh-required=" ' + (att.mandatory || att.unique) + '" ' +
+                                                                ' dh-disabled="editingDisabled || isHidden(attributesById.' + attId + '.id) || ' + isTrackerAssociate + '"' +
+                                                                ' dh-value="selectedTei.' + attId + '" ' +
+                                                                ' dh-name="foo" ' +
+                                                                ' dh-current-element="currentElement" ' +
+                                                                ' dh-event="currentEvent.event" ' +
+                                                                ' dh-id="' + attId + '" ' +
+                                                        ' </d2-radio-button>';
                                     }
                                     else if (att.valueType === "DATE") {
                                         newInputField = '<span ng-controller="InputController"><input  type="text" ng-class="{\'input-with-audit\':inputObj.isAuditIconPresent}"' +

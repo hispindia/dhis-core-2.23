@@ -63,7 +63,16 @@
                                ng-required="attribute.mandatory || attribute.unique"/>
                     </span>
                     <span ng-switch-when="BOOLEAN" class="form-control">
-                        <label class="radio-inline">
+                        <d2-radio-button
+                            dh-required="attribute.mandatory || attribute.unique"
+                            dh-disabled="editingDisabled"
+                            dh-value="selectedTei[attribute.id]"
+                            dh-name="foo"
+                            dh-current-element="currentElement"
+                            dh-event="currentEvent.event"
+                            dh-id="attribute.id">
+                        </d2-radio-button>
+                        <!--<label class="radio-inline">
                             <input  type="radio"
                                     ng-model="selectedTei[attribute.id]"
                                     d2-attribute-validator 
@@ -102,7 +111,7 @@
                                     ng-required="attribute.mandatory || attribute.unique" 
                                     value="false"> 
                             {{'no'| translate}}
-                        </label>
+                        </label>-->
                     </span>                    
                     <span ng-switch-when="NUMBER">
                         <input type="number"

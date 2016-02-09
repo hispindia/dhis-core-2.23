@@ -6,7 +6,6 @@ trackerCapture.controller('DataEntryController',
                 $modal,
                 $filter,
                 $log,
-                $http,
                 $timeout,
                 $translate,
                 $window,
@@ -114,7 +113,7 @@ trackerCapture.controller('DataEntryController',
         else {
             return {showInStageLegend: true};
         }
-    }
+    };
     
     $scope.getLegendText = function(description){
         var useInStage = true;
@@ -278,7 +277,7 @@ trackerCapture.controller('DataEntryController',
                     var processedValue = $filter('trimquotes')(effect.data);
                     affectedEvent[effect.dataElement.id] = processedValue;
                     $scope.assignedFields[event][effect.dataElement.id] = true;
-                    $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true)
+                    $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
                 }
             }
         });
