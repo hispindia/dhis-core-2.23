@@ -85,6 +85,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
     @Override
     public void commit( ObjectBundle bundle )
     {
-
+        if ( ObjectBundleMode.VALIDATE == bundle.getObjectBundleMode() )
+        {
+            return; // skip if validate only
+        }
     }
 }
