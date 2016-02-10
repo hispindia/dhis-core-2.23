@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -29,79 +29,37 @@ package org.hisp.dhis.preheat;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.google.common.base.Objects;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.schema.Property;
+import org.hisp.dhis.preheat.InvalidReference;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "missingReference", namespace = DxfNamespaces.DXF_2_0 )
-public class MissingReference
+@JacksonXmlRootElement( localName = "objectBundleValidation", namespace = DxfNamespaces.DXF_2_0 )
+public class ObjectBundleValidation
 {
-    private PreheatIdentifier identifier;
+    private List<InvalidReference> missingReferences = new ArrayList<>();
 
-    private String value;
-
-    private Property property;
-
-    public MissingReference( PreheatIdentifier identifier, String value, Property property )
+    public ObjectBundleValidation()
     {
-        this.identifier = identifier;
-        this.value = value;
-        this.property = property;
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public PreheatIdentifier getIdentifier()
+    @JacksonXmlElementWrapper( localName = "missingReferences", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( localName = "missingReference", namespace = DxfNamespaces.DXF_2_0 )
+    public List<InvalidReference> getMissingReferences()
     {
-        return identifier;
+        return missingReferences;
     }
 
-    public void setIdentifier( PreheatIdentifier identifier )
+    public void setMissingReferences( List<InvalidReference> missingReferences )
     {
-        this.identifier = identifier;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public String getValue()
-    {
-        return value;
-    }
-
-    public void setValue( String value )
-    {
-        this.value = value;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public String getPropertyName()
-    {
-        return property.getName() + " (collection: " + property.isCollection() + ")";
-    }
-
-    public Property getProperty()
-    {
-        return property;
-    }
-
-    public void setProperty( Property property )
-    {
-        this.property = property;
-    }
-
-    @Override
-    public String toString()
-    {
-        return Objects.toStringHelper( this )
-            .add( "identifier", identifier )
-            .add( "value", value )
-            .add( "propertyName", getPropertyName() )
-            .toString();
+        this.missingReferences = missingReferences;
     }
 }

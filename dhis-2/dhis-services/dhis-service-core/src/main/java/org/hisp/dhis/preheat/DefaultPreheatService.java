@@ -41,7 +41,6 @@ import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -222,13 +221,13 @@ public class DefaultPreheatService implements PreheatService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> List<MissingReference> checkReferences( T object, Preheat preheat, PreheatIdentifier identifier )
+    public <T extends IdentifiableObject> PreheatValidation checkReferences( T object, Preheat preheat, PreheatIdentifier identifier )
     {
-        List<MissingReference> missingReferences = new ArrayList<>();
+        PreheatValidation preheatValidation = new PreheatValidation();
 
         if ( object == null )
         {
-            return missingReferences;
+            return preheatValidation;
         }
 
         Schema schema = schemaService.getDynamicSchema( object.getClass() );
@@ -242,7 +241,7 @@ public class DefaultPreheatService implements PreheatService
 
                     if ( ref == null && refObject != null )
                     {
-                        missingReferences.add( new MissingReference( identifier, identifier.getIdentifier( refObject ), p ) );
+                        preheatValidation.addInvalidReference( identifier, refObject, p );
                     }
                 }
                 else
@@ -256,7 +255,7 @@ public class DefaultPreheatService implements PreheatService
 
                         if ( ref == null && refObject != null )
                         {
-                            missingReferences.add( new MissingReference( identifier, identifier.getIdentifier( refObject ), p ) );
+                            preheatValidation.addInvalidReference( identifier, refObject, p );
                         }
                     }
 
@@ -264,7 +263,7 @@ public class DefaultPreheatService implements PreheatService
                 }
             } );
 
-        return missingReferences;
+        return preheatValidation;
     }
 
     @Override

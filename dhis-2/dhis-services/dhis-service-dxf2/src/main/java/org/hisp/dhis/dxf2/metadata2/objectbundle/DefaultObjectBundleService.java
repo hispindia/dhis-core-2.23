@@ -66,9 +66,10 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
-    public void validate( ObjectBundle bundle )
+    public ObjectBundleValidation validate( ObjectBundle bundle )
     {
-
+        ObjectBundleValidation objectBundleValidation = new ObjectBundleValidation();
+        return objectBundleValidation;
     }
 
     @Override

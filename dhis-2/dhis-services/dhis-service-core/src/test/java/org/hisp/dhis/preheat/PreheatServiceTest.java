@@ -500,11 +500,11 @@ public class PreheatServiceTest
 
         preheatService.validate( params );
         Preheat preheat = preheatService.preheat( params );
-        List<MissingReference> missingReferences = preheatService.checkReferences( dataElementGroup, preheat, PreheatIdentifier.UID );
-        assertEquals( 3, missingReferences.size() );
-        assertEquals( PreheatIdentifier.UID, missingReferences.get( 0 ).getIdentifier() );
-        assertEquals( PreheatIdentifier.UID, missingReferences.get( 1 ).getIdentifier() );
-        assertEquals( PreheatIdentifier.UID, missingReferences.get( 2 ).getIdentifier() );
+        List<InvalidReference> invalidReferences = preheatService.checkReferences( dataElementGroup, preheat, PreheatIdentifier.UID ).getInvalidReferences();
+        assertEquals( 3, invalidReferences.size() );
+        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 0 ).getIdentifier() );
+        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 1 ).getIdentifier() );
+        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 2 ).getIdentifier() );
     }
 
     @Test

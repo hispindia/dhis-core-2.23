@@ -77,7 +77,7 @@ public interface PreheatService
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */
-    <T extends IdentifiableObject> List<MissingReference> checkReferences( T object, Preheat preheat, PreheatIdentifier identifier );
+    <T extends IdentifiableObject> PreheatValidation checkReferences( T object, Preheat preheat, PreheatIdentifier identifier );
 
     /**
      * Connects id object references on a given object using a given identifier + a preheated Preheat cache.

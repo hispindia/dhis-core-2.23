@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2.objectbundle;
+package org.hisp.dhis.preheat;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,30 +28,67 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.base.MoreObjects;
+import org.hisp.dhis.common.DxfNamespaces;
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.schema.Property;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface ObjectBundleService
+@JacksonXmlRootElement( localName = "invalidReference", namespace = DxfNamespaces.DXF_2_0 )
+public class InvalidReference
 {
-    /**
-     * Creates and prepares object bundle.
-     *
-     * @param params Params object for this bundle.
-     * @return Configured ObjectBundle instance
-     */
-    ObjectBundle create( ObjectBundleParams params );
+    private PreheatIdentifier identifier;
 
-    /**
-     * Validate object bundle
-     *
-     * @param bundle Bundle to validate
-     */
-    ObjectBundleValidation validate( ObjectBundle bundle );
+    private IdentifiableObject refObject;
 
-    /**
-     * Commits objects from bundle into persistence store if bundle mode COMMIT is enabled.
-     *
-     * @param bundle ObjectBundle to commit.
-     */
-    void commit( ObjectBundle bundle );
+    private Property property;
+
+    public InvalidReference( PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
+    {
+        this.identifier = identifier;
+        this.refObject = refObject;
+        this.property = property;
+    }
+
+    public PreheatIdentifier getIdentifier()
+    {
+        return identifier;
+    }
+
+    public void setIdentifier( PreheatIdentifier identifier )
+    {
+        this.identifier = identifier;
+    }
+
+    public IdentifiableObject getRefObject()
+    {
+        return refObject;
+    }
+
+    public void setRefObject( IdentifiableObject refObject )
+    {
+        this.refObject = refObject;
+    }
+
+    public Property getProperty()
+    {
+        return property;
+    }
+
+    public void setProperty( Property property )
+    {
+        this.property = property;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "identifier", identifier )
+            .add( "refObject", refObject )
+            .toString();
+    }
 }

@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2.objectbundle;
+package org.hisp.dhis.preheat;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,30 +28,30 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.schema.Property;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface ObjectBundleService
+public class PreheatValidation
 {
-    /**
-     * Creates and prepares object bundle.
-     *
-     * @param params Params object for this bundle.
-     * @return Configured ObjectBundle instance
-     */
-    ObjectBundle create( ObjectBundleParams params );
+    private List<InvalidReference> invalidReferences = new ArrayList<>();
 
-    /**
-     * Validate object bundle
-     *
-     * @param bundle Bundle to validate
-     */
-    ObjectBundleValidation validate( ObjectBundle bundle );
+    public PreheatValidation()
+    {
+    }
 
-    /**
-     * Commits objects from bundle into persistence store if bundle mode COMMIT is enabled.
-     *
-     * @param bundle ObjectBundle to commit.
-     */
-    void commit( ObjectBundle bundle );
+    public void addInvalidReference( PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
+    {
+        invalidReferences.add( new InvalidReference( identifier, refObject, property ) );
+    }
+
+    public List<InvalidReference> getInvalidReferences()
+    {
+        return invalidReferences;
+    }
 }
