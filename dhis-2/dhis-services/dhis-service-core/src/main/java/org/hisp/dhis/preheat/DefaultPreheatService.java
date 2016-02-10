@@ -279,7 +279,7 @@ public class DefaultPreheatService implements PreheatService
 
                     if ( ref == null && refObject != null )
                     {
-                        preheatValidation.addInvalidReference( identifier, refObject, p );
+                        preheatValidation.addInvalidReference( object, identifier, refObject, p );
                     }
                 }
                 else
@@ -293,7 +293,7 @@ public class DefaultPreheatService implements PreheatService
 
                         if ( ref == null && refObject != null )
                         {
-                            preheatValidation.addInvalidReference( identifier, refObject, p );
+                            preheatValidation.addInvalidReference( object, identifier, refObject, p );
                         }
                     }
 

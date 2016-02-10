@@ -40,17 +40,30 @@ import org.hisp.dhis.schema.Property;
 @JacksonXmlRootElement( localName = "invalidReference", namespace = DxfNamespaces.DXF_2_0 )
 public class InvalidReference
 {
+    private String name;
+
     private PreheatIdentifier identifier;
 
     private IdentifiableObject refObject;
 
     private Property property;
 
-    public InvalidReference( PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
+    public InvalidReference( String name, PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
     {
+        this.name = name;
         this.identifier = identifier;
         this.refObject = refObject;
         this.property = property;
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName( String name )
+    {
+        this.name = name;
     }
 
     public PreheatIdentifier getIdentifier()

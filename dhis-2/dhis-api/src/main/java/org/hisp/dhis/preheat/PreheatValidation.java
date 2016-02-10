@@ -30,6 +30,7 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.schema.Property;
 
 import java.util.ArrayList;
@@ -46,9 +47,9 @@ public class PreheatValidation
     {
     }
 
-    public void addInvalidReference( PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
+    public void addInvalidReference( Object object, PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
     {
-        invalidReferences.add( new InvalidReference( identifier, refObject, property ) );
+        invalidReferences.add( new InvalidReference( IdentifiableObjectUtils.getDisplayName( object ), identifier, refObject, property ) );
     }
 
     public List<InvalidReference> getInvalidReferences()
