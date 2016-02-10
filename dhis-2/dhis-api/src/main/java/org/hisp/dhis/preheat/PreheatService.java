@@ -63,12 +63,20 @@ public interface PreheatService
     Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Object object );
 
     /**
+     * Scan object and collect all references (both id object and collections with id objects).
+     *
+     * @param objects Object to scan
+     * @return Maps classes to collections of identifiers
+     */
+    Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Collection<IdentifiableObject> objects );
+
+    /**
      * Scan objects and collect all references (both id object and collections with id objects).
      *
      * @param objects Objects to scan
      * @return Maps classes to collections of identifiers
      */
-    Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Collection<?> objects );
+    Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects );
 
     /**
      * Checks but does not connect any references, returns check report

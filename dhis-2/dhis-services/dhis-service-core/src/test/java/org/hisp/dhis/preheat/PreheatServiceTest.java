@@ -28,6 +28,7 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObject;
@@ -178,7 +179,7 @@ public class PreheatServiceTest
         deg2.addDataElement( de3 );
 
         Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
-            Sets.newHashSet( deg1, deg2 ) ).get( PreheatIdentifier.UID );
+            Lists.newArrayList( deg1, deg2 ) ).get( PreheatIdentifier.UID );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertEquals( 3, references.get( DataElement.class ).size() );
@@ -236,7 +237,7 @@ public class PreheatServiceTest
         deg2.addDataElement( de3 );
 
         Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
-            Sets.newHashSet( deg1, deg2 ) ).get( PreheatIdentifier.CODE );
+            Lists.newArrayList( deg1, deg2 ) ).get( PreheatIdentifier.CODE );
 
         assertTrue( references.containsKey( DataElement.class ) );
         assertEquals( 3, references.get( DataElement.class ).size() );

@@ -49,7 +49,7 @@ public class ObjectBundleParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public ObjectBundleParams()
     {
@@ -87,26 +87,14 @@ public class ObjectBundleParams
         this.preheatMode = preheatMode;
     }
 
-    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjectMap()
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
     {
-        return objectMap;
-    }
-
-    public List<IdentifiableObject> getObjects()
-    {
-        List<IdentifiableObject> objects = new ArrayList<>();
-
-        for ( Class<? extends IdentifiableObject> klass : objectMap.keySet() )
-        {
-            objects.addAll( objectMap.get( klass ) );
-        }
-
         return objects;
     }
 
-    public void setObjectMap( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap )
+    public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
-        this.objectMap = objectMap;
+        this.objects = objects;
     }
 
     public void addObject( Class<? extends IdentifiableObject> klass, IdentifiableObject object )
@@ -116,12 +104,12 @@ public class ObjectBundleParams
             return;
         }
 
-        if ( !objectMap.containsKey( klass ) )
+        if ( !objects.containsKey( klass ) )
         {
-            objectMap.put( klass, new ArrayList<>() );
+            objects.put( klass, new ArrayList<>() );
         }
 
-        objectMap.get( klass ).add( object );
+        objects.get( klass ).add( object );
     }
 
     public void addObject( IdentifiableObject object )
@@ -131,12 +119,12 @@ public class ObjectBundleParams
             return;
         }
 
-        if ( !objectMap.containsKey( object.getClass() ) )
+        if ( !objects.containsKey( object.getClass() ) )
         {
-            objectMap.put( object.getClass(), new ArrayList<>() );
+            objects.put( object.getClass(), new ArrayList<>() );
         }
 
-        objectMap.get( object.getClass() ).add( object );
+        objects.get( object.getClass() ).add( object );
     }
 
     public PreheatParams getPreheatParams()

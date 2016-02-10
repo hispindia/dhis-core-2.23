@@ -53,7 +53,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundle create( ObjectBundleParams params )
     {
         ObjectBundle bundle = new ObjectBundle();
-        bundle.putObjects( params.getObjectMap() );
+        bundle.putObjects( params.getObjects() );
 
         PreheatParams preheatParams = params.getPreheatParams();
 

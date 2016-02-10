@@ -38,7 +38,6 @@ import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -117,7 +116,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    @Ignore
     public void testPreheatValidations() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
@@ -125,12 +123,11 @@ public class ObjectBundleServiceTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
-        params.setObjectMap( metadata );
+        params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-
-        // assertFalse( validate.getPreheatValidations().isEmpty() );
+        assertFalse( validate.getPreheatValidations().isEmpty() );
     }
 
     private void defaultSetup()
