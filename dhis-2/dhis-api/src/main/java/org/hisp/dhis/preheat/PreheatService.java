@@ -80,12 +80,11 @@ public interface PreheatService
 
     /**
      * Checks but does not connect any references, returns check report
-     *
-     * @param objects    Object to check
+     *  @param objects    Object to check
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */
-    Map<String, PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+    List<PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
 
     /**
      * Checks but does not connect any references, returns check report

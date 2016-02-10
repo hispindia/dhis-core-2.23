@@ -28,6 +28,7 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.schema.Property;
 
@@ -53,5 +54,14 @@ public class PreheatValidation
     public List<InvalidReference> getInvalidReferences()
     {
         return invalidReferences;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "invalidReferences", invalidReferences )
+            .toString();
     }
 }

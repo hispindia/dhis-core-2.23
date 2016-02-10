@@ -32,6 +32,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.preheat.PreheatValidation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,18 +40,18 @@ import java.util.Map;
  */
 public class ObjectBundleValidation
 {
-    private Map<Class<? extends IdentifiableObject>, Map<String, PreheatValidation>> preheatValidations = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, List<PreheatValidation>> preheatValidations = new HashMap<>();
 
     public ObjectBundleValidation()
     {
     }
 
-    public void addInvalidReferences( Class<? extends IdentifiableObject> klass, Map<String, PreheatValidation> preheatValidations )
+    public void addInvalidReferences( Class<? extends IdentifiableObject> klass, List<PreheatValidation> preheatValidations )
     {
         this.preheatValidations.put( klass, preheatValidations );
     }
 
-    public Map<Class<? extends IdentifiableObject>, Map<String, PreheatValidation>> getPreheatValidations()
+    public Map<Class<? extends IdentifiableObject>, List<PreheatValidation>> getPreheatValidations()
     {
         return preheatValidations;
     }

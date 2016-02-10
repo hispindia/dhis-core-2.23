@@ -41,6 +41,7 @@ import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -249,12 +250,12 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public Map<String, PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public List<PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
-        Map<String, PreheatValidation> preheatValidationMap = new HashMap<>();
-        objects.forEach( o -> preheatValidationMap.put( identifier.getIdentifier( o ), checkReferences( o, preheat, identifier ) ) );
+        List<PreheatValidation> preheatValidations = new ArrayList<>();
+        objects.forEach( object -> preheatValidations.add( checkReferences( object, preheat, identifier ) ) );
 
-        return preheatValidationMap;
+        return preheatValidations;
     }
 
     @Override
