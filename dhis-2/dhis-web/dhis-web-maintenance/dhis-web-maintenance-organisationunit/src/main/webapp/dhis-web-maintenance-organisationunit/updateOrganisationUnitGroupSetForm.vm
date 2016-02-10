@@ -84,7 +84,7 @@
   "prefix": "oug",
   "i18n_available": "available_groups",
   "i18n_selected": "selected_groups",
-  "objectMap": $selectedGroups
+  "objects": $selectedGroups
 })
 
 <p>

@@ -504,7 +504,7 @@ jQuery.each(attributes, function(i, item) {
       </td>
       <td>
         <select id="${args.prefix}Selected" name="${args.prefix}Selected" multiple="multiple" style="height: 200px; width: 100%;">
-        #foreach ( $object in $args.objectMap )
+        #foreach ( $object in $args.objects )
         <option value="$object.uid">$encoder.htmlEncode( $object.displayName )</option>
         #end
         </select>

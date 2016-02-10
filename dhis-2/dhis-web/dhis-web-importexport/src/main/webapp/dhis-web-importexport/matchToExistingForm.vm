@@ -192,7 +192,7 @@
 	<tr>
 		<td colspan="2">
 			<select multiple id="existingObjects" name="existingObjects" style="width:100%; height:220px">
-				#foreach( $object in $objectMap )
+				#foreach( $object in $objects )
 					<option value="$object.id">$object.name</option>
 				#end
 			</select>

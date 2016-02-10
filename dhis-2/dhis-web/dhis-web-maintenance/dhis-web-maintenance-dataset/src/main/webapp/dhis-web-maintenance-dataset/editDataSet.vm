@@ -242,14 +242,14 @@
     "prefix": "de",
     "i18n_available": "available_data_elements",
     "i18n_selected": "selected_data_elements",
-    "objectMap": $dataElements
+    "objects": $dataElements
 })
 
 #jqSelected({
     "prefix": "in",
     "i18n_available": "available_indicators",
     "i18n_selected": "selected_indicators",
-    "objectMap": $indicators
+    "objects": $indicators
 })
 
 <table>
