@@ -146,15 +146,15 @@ public class DefaultPreheatService implements PreheatService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Object object )
+    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( IdentifiableObject object )
     {
-        if ( !IdentifiableObject.class.isInstance( object ) )
+        if ( object == null )
         {
             return new HashMap<>();
         }
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> map = new HashMap<>();
-        map.put( (Class<? extends IdentifiableObject>) object.getClass(), Lists.<IdentifiableObject>newArrayList( (IdentifiableObject) object ) );
+        map.put( object.getClass(), Lists.newArrayList( (IdentifiableObject) object ) );
 
         return collectReferences( map );
     }
