@@ -65,13 +65,21 @@ public class DataElementCategoryCombo
     private List<DataElementCategory> categories = new ArrayList<>();
 
     /**
-     * A set of category option combos. Use getSortedOptionCombos() to get a
-     * sorted list of category option combos.
+     * A set of category option combinations. Use getSortedOptionCombos() to get a
+     * sorted list of category option combinations.
      */
     private Set<DataElementCategoryOptionCombo> optionCombos = new HashSet<>();
 
+    /**
+     * Type of data dimension. Category combinations of type DISAGGREGATION can
+     * be linked to data elements, whereas type ATTRIBUTE can be linked to data
+     * sets.
+     */
     private DataDimensionType dataDimensionType;
 
+    /**
+     * Indicates whether to skip total values for the categories in reports.
+     */
     private boolean skipTotal;
 
     // -------------------------------------------------------------------------
