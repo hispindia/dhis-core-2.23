@@ -1056,7 +1056,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             var allValues = [];
                             angular.forEach(evs.byStage[programStageId], function(event) {
                                 if(event[dataElementId] !== null) {
-                                    if(angular.isDefined(event[dataElementId])){
+                                    if(angular.isDefined(event[dataElementId])
+                                            && event[dataElementId] !== ""){
                                         allValues.push(event[dataElementId]);
                                         valueFound = true;
                                         variables = pushVariable(variables, programVariable.name, event[dataElementId],allValues, allDes[dataElementId].dataElement.valueType, valueFound, '#', event.eventDate);
@@ -1073,7 +1074,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                         var allValues = [];
                         angular.forEach(evs.all, function(event) {
                             if(angular.isDefined(event[dataElementId])
-                                && event[dataElementId] !== null ){
+                                && event[dataElementId] !== null 
+                                && event[dataElementId] !== ""){
                                 allValues.push(event[dataElementId]);
                                 valueFound = true;
                                 variables = pushVariable(variables, programVariable.name, event[dataElementId], allValues, allDes[dataElementId].dataElement.valueType, valueFound, '#', event.eventDate);
@@ -1082,7 +1084,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     }
                     else if(programVariable.programRuleVariableSourceType === "DATAELEMENT_CURRENT_EVENT" && evs){
                         if(angular.isDefined(executingEvent[dataElementId])
-                            && executingEvent[dataElementId] !== null ){
+                            && executingEvent[dataElementId] !== null 
+                            && executingEvent[dataElementId] !== ""){
                             valueFound = true;
                             variables = pushVariable(variables, programVariable.name, executingEvent[dataElementId], null, allDes[dataElementId].dataElement.valueType, valueFound, '#', executingEvent.eventDate );
                         }
@@ -1098,7 +1101,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 //Store the values as we iterate through the stages
                                 //If the event[i] is not the current event, it is older(previous). Store the previous value if it exists
                                 if(!currentEventPassed && evs.all[i] !== executingEvent &&
-                                    angular.isDefined(evs.all[i][dataElementId])) {
+                                    angular.isDefined(evs.all[i][dataElementId])
+                                    && evs.all[i][dataElementId] !== "") {
                                     previousvalue = evs.all[i][dataElementId];
                                     previousEventDate = evs.all[i].eventDate;
                                     allValues.push(previousvalue);
@@ -1118,7 +1122,9 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     else if(programVariable.programRuleVariableSourceType === "TEI_ATTRIBUTE"){
                         angular.forEach(selectedEntity.attributes , function(attribute) {
                             if(!valueFound) {
-                                if(attribute.attribute === trackedEntityAttributeId) {
+                                if(attribute.attribute === trackedEntityAttributeId
+                                        && angular.isDefined(attribute.value)
+                                        && attribute.value !== "") {
                                     valueFound = true;
                                     //In registration, the attribute type is found in .type, while in data entry the same data is found in .valueType.
                                     //Handling here, but planning refactor in registration so it will always be .valueType
