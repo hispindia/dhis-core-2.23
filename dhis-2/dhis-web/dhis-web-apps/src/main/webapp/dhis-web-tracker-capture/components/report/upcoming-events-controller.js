@@ -284,7 +284,10 @@ trackerCapture.controller('UpcomingEventsController',
         }
     });
 
-
+    $scope.hideDatePicker = function(){
+        $scope.datePicker.visible = !$scope.datePicker.visible;
+        $scope.selectedDate = $scope.dates[0];
+    };
     
     $scope.generateReportHeader = function(){
         return TEIGridService.getHeader($scope.gridColumns);
