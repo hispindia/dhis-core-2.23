@@ -72,5 +72,5 @@ public interface RenderService
      * @param format      Payload format (only JSON is supported)
      * @return Map of all id object types that were found
      */
-    Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format ) throws IOException;
+    Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format ) throws IOException;
 }

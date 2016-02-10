@@ -34,7 +34,9 @@ import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -47,7 +49,7 @@ public class ObjectBundleParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private List<? extends IdentifiableObject> objects = new ArrayList<>();
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap = new HashMap<>();
 
     public ObjectBundleParams()
     {
@@ -85,14 +87,56 @@ public class ObjectBundleParams
         this.preheatMode = preheatMode;
     }
 
-    public List<? extends IdentifiableObject> getObjects()
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjectMap()
     {
+        return objectMap;
+    }
+
+    public List<IdentifiableObject> getObjects()
+    {
+        List<IdentifiableObject> objects = new ArrayList<>();
+
+        for ( Class<? extends IdentifiableObject> klass : objectMap.keySet() )
+        {
+            objects.addAll( objectMap.get( klass ) );
+        }
+
         return objects;
     }
 
-    public void setObjects( List<? extends IdentifiableObject> objects )
+    public void setObjectMap( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap )
     {
-        this.objects = objects;
+        this.objectMap = objectMap;
+    }
+
+    public void addObject( Class<? extends IdentifiableObject> klass, IdentifiableObject object )
+    {
+        if ( object == null )
+        {
+            return;
+        }
+
+        if ( !objectMap.containsKey( klass ) )
+        {
+            objectMap.put( klass, new ArrayList<>() );
+        }
+
+        objectMap.get( klass ).add( object );
+    }
+
+    public void addObject( IdentifiableObject object )
+    {
+        if ( object == null )
+        {
+            return;
+        }
+
+        if ( !objectMap.containsKey( object.getClass() ) )
+        {
+            objectMap.put( object.getClass(), new ArrayList<>() );
+        }
+
+        objectMap.get( object.getClass() ).add( object );
     }
 
     public PreheatParams getPreheatParams()

@@ -28,7 +28,7 @@
   "prefix": "tea",
   "i18n_available": "availableAttribute",
   "i18n_selected": "selectedAttribute",
-  "objects": $attributeGroup.attributes
+  "objectMap": $attributeGroup.attributes
 })
 
 <table>

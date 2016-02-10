@@ -220,8 +220,16 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> PreheatValidation checkReferences( T object, Preheat preheat, PreheatIdentifier identifier )
+    public Map<String, PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    {
+        Map<String, PreheatValidation> preheatValidationMap = new HashMap<>();
+        objects.forEach( o -> preheatValidationMap.put( identifier.getIdentifier( o ), checkReferences( o, preheat, identifier ) ) );
+
+        return preheatValidationMap;
+    }
+
+    @Override
+    public PreheatValidation checkReferences( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         PreheatValidation preheatValidation = new PreheatValidation();
 
@@ -236,8 +244,8 @@ public class DefaultPreheatService implements PreheatService
             .forEach( p -> {
                 if ( !p.isCollection() )
                 {
-                    T refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-                    T ref = preheat.get( identifier, refObject );
+                    IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+                    IdentifiableObject ref = preheat.get( identifier, refObject );
 
                     if ( ref == null && refObject != null )
                     {
@@ -246,12 +254,12 @@ public class DefaultPreheatService implements PreheatService
                 }
                 else
                 {
-                    Collection<T> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                    Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     for ( IdentifiableObject refObject : refObjects )
                     {
-                        T ref = preheat.get( identifier, (T) refObject );
+                        IdentifiableObject ref = preheat.get( identifier, refObject );
 
                         if ( ref == null && refObject != null )
                         {

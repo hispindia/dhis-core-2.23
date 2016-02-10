@@ -177,9 +177,9 @@ public class DefaultRenderService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format ) throws IOException
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> fromMetadata( InputStream inputStream, RenderFormat format ) throws IOException
     {
-        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> map = new HashMap<>();
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> map = new HashMap<>();
 
         ObjectMapper mapper;
 

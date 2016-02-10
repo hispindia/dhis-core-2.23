@@ -28,9 +28,11 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
+import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -51,7 +53,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundle create( ObjectBundleParams params )
     {
         ObjectBundle bundle = new ObjectBundle();
-        bundle.addObjects( params.getObjects() );
+        bundle.putObjects( params.getObjectMap() );
 
         PreheatParams preheatParams = params.getPreheatParams();
 
@@ -69,6 +71,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundleValidation validate( ObjectBundle bundle )
     {
         ObjectBundleValidation objectBundleValidation = new ObjectBundleValidation();
+
+        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        {
+            Schema schema = schemaService.getDynamicSchema( klass );
+            objectBundleValidation.addInvalidReferences( klass, preheatService.checkReferences(
+                bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+        }
+
         return objectBundleValidation;
     }
 

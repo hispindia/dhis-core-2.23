@@ -6,79 +6,79 @@
     </tr>
     <tr>
         <td>$i18n.getString( "data_elements" )</td>
-        <td>$objects.getValue( "DATAELEMENT" )</td>
+        <td>$objectMap.getValue( "DATAELEMENT" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "data_element_groups" )</td>
-        <td>$objects.getValue( "DATAELEMENTGROUP" )</td>
+        <td>$objectMap.getValue( "DATAELEMENTGROUP" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "indicator_types" )</td>
-        <td>$objects.getValue( "INDICATORTYPE" )</td>
+        <td>$objectMap.getValue( "INDICATORTYPE" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "indicators" )</td>
-        <td>$objects.getValue( "INDICATOR" )</td>
+        <td>$objectMap.getValue( "INDICATOR" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "indicator_groups" )</td>
-        <td>$objects.getValue( "INDICATORGROUP" )</td>
+        <td>$objectMap.getValue( "INDICATORGROUP" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "data_sets" )</td>
-        <td>$objects.getValue( "DATASET" )</td>
+        <td>$objectMap.getValue( "DATASET" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "organisation_units" )</td>
-        <td>$objects.getValue( "ORGANISATIONUNIT" )</td>
+        <td>$objectMap.getValue( "ORGANISATIONUNIT" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "organisation_unit_groups" )</td>
-        <td>$objects.getValue( "ORGANISATIONUNITGROUP" )</td>
+        <td>$objectMap.getValue( "ORGANISATIONUNITGROUP" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "validation_rules" )</td>
-        <td>$objects.getValue( "VALIDATIONRULE" )</td>
+        <td>$objectMap.getValue( "VALIDATIONRULE" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "periods" )</td>
-        <td>$objects.getValue( "PERIOD" )</td>
+        <td>$objectMap.getValue( "PERIOD" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "users" )</td>
-        <td>$objects.getValue( "USER" )</td>
+        <td>$objectMap.getValue( "USER" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "user_groups" )</td>
-        <td>$objects.getValue( "USERGROUP" )</td>
+        <td>$objectMap.getValue( "USERGROUP" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "pivot_tables" )</td>
-        <td>$objects.getValue( "REPORTTABLE" )</td>
+        <td>$objectMap.getValue( "REPORTTABLE" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "charts" )</td>
-        <td>$objects.getValue( "CHART" )</td>
+        <td>$objectMap.getValue( "CHART" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "maps" )</td>
-        <td>$objects.getValue( "MAP" )</td>
+        <td>$objectMap.getValue( "MAP" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "dashboards" )</td>
-        <td>$objects.getValue( "DASHBOARD" )</td>
+        <td>$objectMap.getValue( "DASHBOARD" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "data_values" )</td>
-        <td>$objects.getValue( "DATAVALUE" )</td>
+        <td>$objectMap.getValue( "DATAVALUE" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "programs" )</td>
-        <td>$objects.getValue( "PROGRAM" )</td>
+        <td>$objectMap.getValue( "PROGRAM" )</td>
     </tr>
     <tr>
         <td>$i18n.getString( "events" )</td>
-        <td>$objects.getValue( "PROGRAMSTAGEINSTANCE" )</td>
+        <td>$objectMap.getValue( "PROGRAMSTAGEINSTANCE" )</td>
     </tr>
     <tr>
     	<td colspan="2" style="height:15px"></td>

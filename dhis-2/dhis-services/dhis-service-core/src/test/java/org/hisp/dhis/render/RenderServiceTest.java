@@ -55,7 +55,7 @@ public class RenderServiceTest
     @Test
     public void testParseJsonMetadata() throws IOException
     {
-        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> map = renderService.fromMetadata(
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> map = renderService.fromMetadata(
             new ClassPathResource( "render/metadata.json" ).getInputStream(), RenderFormat.JSON );
 
         assertTrue( map.containsKey( DataElement.class ) );
@@ -72,7 +72,7 @@ public class RenderServiceTest
     @Ignore // ignoring since Jackson can't handle parsing of XML as trees
     public void testParseXmlMetadata() throws IOException
     {
-        Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> map = renderService.fromMetadata(
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> map = renderService.fromMetadata(
             new ClassPathResource( "render/metadata.xml" ).getInputStream(), RenderFormat.XML );
 
         assertTrue( map.containsKey( DataElement.class ) );

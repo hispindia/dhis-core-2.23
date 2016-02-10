@@ -106,6 +106,19 @@ public class ObjectBundle
         objects.forEach( this::addObject );
     }
 
+    public void putObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    {
+        for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
+        {
+            if ( !this.objects.containsKey( klass ) )
+            {
+                this.objects.put( klass, new ArrayList<>() );
+            }
+
+            this.objects.get( klass ).addAll( objects.get( klass ) );
+        }
+    }
+
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
     {
         return objects;

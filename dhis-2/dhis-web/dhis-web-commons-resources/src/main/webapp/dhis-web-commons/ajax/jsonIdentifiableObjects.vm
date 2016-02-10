@@ -1,6 +1,6 @@
-#set( $size = $objects.size() )
+#set( $size = $objectMap.size() )
 { "objects": [
-#foreach( $object in $objects )
+#foreach( $object in $objectMap )
   {
     "id": "$!{object.id}",
     "uid": "$!{object.uid}",

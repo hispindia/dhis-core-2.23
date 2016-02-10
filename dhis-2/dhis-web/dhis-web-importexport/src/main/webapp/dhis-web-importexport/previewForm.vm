@@ -73,7 +73,7 @@
 		<td colspan="4" style="height:10px"></td>
 	</tr>	
 	<tr>
-		<th colspan="4">$i18n.getString( "objects" )</th>
+		<th colspan="4">$i18n.getString( "objectMap" )</th>
 	</tr>
 	<tr>
 		<td colspan="4">

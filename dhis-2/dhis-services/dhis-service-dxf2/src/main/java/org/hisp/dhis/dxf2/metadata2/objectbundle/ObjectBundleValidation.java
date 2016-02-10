@@ -28,38 +28,30 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.preheat.InvalidReference;
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.preheat.PreheatValidation;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "objectBundleValidation", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectBundleValidation
 {
-    private List<InvalidReference> missingReferences = new ArrayList<>();
+    private Map<Class<? extends IdentifiableObject>, Map<String, PreheatValidation>> preheatValidations = new HashMap<>();
 
     public ObjectBundleValidation()
     {
     }
 
-    @JsonProperty
-    @JacksonXmlElementWrapper( localName = "missingReferences", namespace = DxfNamespaces.DXF_2_0 )
-    @JacksonXmlProperty( localName = "missingReference", namespace = DxfNamespaces.DXF_2_0 )
-    public List<InvalidReference> getMissingReferences()
+    public void addInvalidReferences( Class<? extends IdentifiableObject> klass, Map<String, PreheatValidation> preheatValidations )
     {
-        return missingReferences;
+        this.preheatValidations.put( klass, preheatValidations );
     }
 
-    public void setMissingReferences( List<InvalidReference> missingReferences )
+    public Map<Class<? extends IdentifiableObject>, Map<String, PreheatValidation>> getPreheatValidations()
     {
-        this.missingReferences = missingReferences;
+        return preheatValidations;
     }
 }
