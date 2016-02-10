@@ -221,6 +221,16 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 var calendarSetting = CalendarService.getSetting();
                 dateValue = moment(dateValue, 'YYYY-MM-DD')._d;
                 return $filter('date')(dateValue, calendarSetting.keyDateFormat);
+            },
+            getDateAfterOffsetDays: function (offSetDays) {
+                var date = new Date();
+                date.setDate(date.getDate()+offSetDays);
+                var calendarSetting = CalendarService.getSetting();
+                var tdy = $.calendars.instance(calendarSetting.keyCalendar).fromJSDate(date);
+                var dateAfterOffset = moment(tdy._year + '-' + tdy._month + '-' + tdy._day, 'YYYY-MM-DD')._d;
+                dateAfterOffset = Date.parse(dateAfterOffset);
+                dateAfterOffset = $filter('date')(dateAfterOffset, calendarSetting.keyDateFormat);
+                return dateAfterOffset;
             }
         };
     })
