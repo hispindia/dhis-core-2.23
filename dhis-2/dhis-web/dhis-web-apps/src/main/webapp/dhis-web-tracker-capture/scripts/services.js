@@ -243,7 +243,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 })
 
 /* Factory to fetch programs */
-.factory('ProgramFactory', function($q, $rootScope, SessionStorageService, TCStorageService) { 
+.factory('ProgramFactory', function($q, $rootScope, SessionStorageService, TCStorageService, orderByFilter) { 
     
     var userHasValidRole = function(program, userRoles){
         
@@ -304,6 +304,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                         }
                     });
                     
+                    programs = orderByFilter(programs, '-name').reverse();
+                    
                     if(programs.length === 0){
                         selectedProgram = null;
                     }
@@ -323,6 +325,10 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                 selectedProgram = null;
                             }
                         }
+                    }
+                                        
+                    if(!selectedProgram && programs.legth > 0){
+                        selectedProgram = programs[0];
                     }
                     
                     $rootScope.$apply(function(){
@@ -360,6 +366,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                         }
                     });
                     
+                    programs = orderByFilter(programs, '-name').reverse();
+                    
                     if(programs.length === 0){
                         selectedProgram = null;
                     }
@@ -379,6 +387,10 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                 selectedProgram = null;
                             }
                         }
+                    }
+                                        
+                    if(!selectedProgram || angular.isUndefined(selectedProgram) && programs.legth > 0){
+                        selectedProgram = programs[0];
                     }
                     
                     $rootScope.$apply(function(){
