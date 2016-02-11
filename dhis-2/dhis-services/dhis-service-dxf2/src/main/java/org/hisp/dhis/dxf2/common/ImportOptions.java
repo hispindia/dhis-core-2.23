@@ -30,7 +30,7 @@ package org.hisp.dhis.dxf2.common;
 
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdSchemes;
-import org.hisp.dhis.common.MergeStrategy;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.importexport.ImportStrategy;
 
 /**
@@ -54,7 +54,7 @@ public class ImportOptions
 
     private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
 
-    private MergeStrategy mergeStrategy = MergeStrategy.MERGE_IF_NOT_NULL;
+    private MergeMode mergeStrategy = MergeMode.MERGE_IF_NOT_NULL;
 
     private boolean skipExistingCheck;
 
@@ -118,12 +118,12 @@ public class ImportOptions
         return importStrategy != null ? importStrategy : ImportStrategy.NEW_AND_UPDATES;
     }
 
-    public MergeStrategy getMergeStrategy()
+    public MergeMode getMergeStrategy()
     {
         return mergeStrategy;
     }
 
-    public void setMergeStrategy( MergeStrategy mergeStrategy )
+    public void setMergeStrategy( MergeMode mergeStrategy )
     {
         this.mergeStrategy = mergeStrategy;
     }

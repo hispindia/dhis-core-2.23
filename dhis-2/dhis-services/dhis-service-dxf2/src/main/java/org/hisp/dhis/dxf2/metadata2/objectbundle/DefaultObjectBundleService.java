@@ -33,7 +33,6 @@ import org.hisp.dhis.dxf2.schema.SchemaValidator;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
-import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -48,9 +47,6 @@ import java.util.List;
 public class DefaultObjectBundleService implements ObjectBundleService
 {
     @Autowired
-    private SchemaService schemaService;
-
-    @Autowired
     private PreheatService preheatService;
 
     @Autowired
@@ -59,7 +55,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     @Override
     public ObjectBundle create( ObjectBundleParams params )
     {
-        ObjectBundle bundle = new ObjectBundle();
+        ObjectBundle bundle = new ObjectBundle( params );
         bundle.putObjects( params.getObjects() );
 
         PreheatParams preheatParams = params.getPreheatParams();

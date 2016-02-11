@@ -39,7 +39,7 @@ import org.hisp.dhis.cache.HibernateCacheManager;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.common.MergeStrategy;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.common.Pager;
 import org.hisp.dhis.common.PagerUtils;
 import org.hisp.dhis.dxf2.common.ImportOptions;
@@ -314,7 +314,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( ImportStrategy.UPDATE );
-        importOptions.setMergeStrategy( MergeStrategy.MERGE );
+        importOptions.setMergeStrategy( MergeMode.MERGE );
 
         ImportTypeSummary importTypeSummary = importService.importObject( currentUserService.getCurrentUser().getUid(), persistedObject, importOptions );
 
@@ -389,7 +389,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( ImportStrategy.UPDATE );
-        importOptions.setMergeStrategy( MergeStrategy.MERGE );
+        importOptions.setMergeStrategy( MergeMode.MERGE );
         ImportTypeSummary importTypeSummary = importService.importObject( currentUserService.getCurrentUser().getUid(), persistedObject, importOptions );
 
         webMessageService.send( WebMessageUtils.importTypeSummary( importTypeSummary ), response, request );

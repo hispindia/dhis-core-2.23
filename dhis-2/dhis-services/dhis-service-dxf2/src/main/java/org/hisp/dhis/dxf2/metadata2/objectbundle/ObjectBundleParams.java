@@ -29,6 +29,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -48,6 +49,8 @@ public class ObjectBundleParams
     private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
+
+    private MergeMode mergeMode = MergeMode.MERGE;
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
@@ -85,6 +88,16 @@ public class ObjectBundleParams
     public void setPreheatMode( PreheatMode preheatMode )
     {
         this.preheatMode = preheatMode;
+    }
+
+    public MergeMode getMergeMode()
+    {
+        return mergeMode;
+    }
+
+    public void setMergeMode( MergeMode mergeMode )
+    {
+        this.mergeMode = mergeMode;
     }
 
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()

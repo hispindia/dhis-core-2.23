@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
@@ -223,6 +224,22 @@ public class ObjectBundleServiceTest
 
         assertFalse( validate.getValidationViolations().isEmpty() );
         assertEquals( 2, validate.getValidationViolations().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testPreheatValidationsIncludingMerge() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate3.json" ).getInputStream(), RenderFormat.JSON );
+        defaultSetup();
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setMergeMode( MergeMode.REPLACE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
     }
 
     private void defaultSetup()

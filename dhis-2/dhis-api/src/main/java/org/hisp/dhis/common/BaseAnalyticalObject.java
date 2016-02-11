@@ -834,7 +834,7 @@ public abstract class BaseAnalyticalObject
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeStrategy strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode strategy )
     {
         super.mergeWith( other, strategy );
 

@@ -573,7 +573,7 @@ public class BaseIdentifiableObject
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeStrategy strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode strategy )
     {
         Validate.notNull( other );
 

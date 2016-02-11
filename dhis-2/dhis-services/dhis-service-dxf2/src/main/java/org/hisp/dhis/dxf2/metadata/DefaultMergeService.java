@@ -28,7 +28,7 @@ package org.hisp.dhis.dxf2.metadata;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.common.MergeStrategy;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
@@ -47,7 +47,7 @@ public class DefaultMergeService implements MergeService
 
     @Override
     @SuppressWarnings( { "rawtypes", "unchecked" } )
-    public <T> void merge( T source, T target, MergeStrategy mergeStrategy )
+    public <T> void merge( T source, T target, MergeMode mergeStrategy )
     {
         if ( source == null || target == null )
         {
