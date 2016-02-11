@@ -29,13 +29,17 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.dxf2.schema.SchemaValidator;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
+import org.hisp.dhis.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -48,6 +52,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Autowired
     private PreheatService preheatService;
+
+    @Autowired
+    private SchemaValidator schemaValidator;
 
     @Override
     public ObjectBundle create( ObjectBundleParams params )
@@ -74,9 +81,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
         {
-            Schema schema = schemaService.getDynamicSchema( klass );
             objectBundleValidation.addInvalidReferences( klass, preheatService.checkReferences(
                 bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+
+            for ( IdentifiableObject object : bundle.getObjects().get( klass ) )
+            {
+                List<ValidationViolation> validationViolations = schemaValidator.validate( object );
+            }
         }
 
         return objectBundleValidation;
