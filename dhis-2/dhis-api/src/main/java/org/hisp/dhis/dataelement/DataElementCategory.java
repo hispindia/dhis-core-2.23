@@ -251,19 +251,19 @@ public class DataElementCategory
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             DataElementCategory category = (DataElementCategory) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 dataDimensionType = category.getDataDimensionType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 dataDimensionType = category.getDataDimensionType() == null ? dataDimensionType : category.getDataDimensionType();
             }

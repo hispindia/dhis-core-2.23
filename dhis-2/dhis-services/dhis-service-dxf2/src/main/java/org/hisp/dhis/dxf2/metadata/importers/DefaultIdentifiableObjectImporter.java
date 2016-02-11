@@ -454,13 +454,13 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
         if ( !options.isSharing() )
         {
             User persistedObjectUser = persistedObject.getUser();
-            persistedObject.mergeWith( object, options.getMergeStrategy() );
+            persistedObject.mergeWith( object, options.getMergeMode() );
             // mergeService.merge( persistedObject, object, options.getMergeStrategy() );
             persistedObject.setUser( persistedObjectUser );
         }
         else
         {
-            persistedObject.mergeWith( object, options.getMergeStrategy() );
+            persistedObject.mergeWith( object, options.getMergeMode() );
             // mergeService.merge( persistedObject, object, options.getMergeStrategy() );
             persistedObject.mergeSharingWith( object );
         }
@@ -486,7 +486,7 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
                     userService.encodeAndSetPassword( userCredentials, userCredentials.getPassword() );
                 }
 
-                ((User) persistedObject).getUserCredentials().mergeWith( userCredentials, options.getMergeStrategy() );
+                ((User) persistedObject).getUserCredentials().mergeWith( userCredentials, options.getMergeMode() );
                 // mergeService.merge( ((User) persistedObject).getUserCredentials(), userCredentials, options.getMergeStrategy() );
                 reattachFields( ((User) persistedObject).getUserCredentials(), fieldsUserCredentials, user );
                 reattachCollectionFields( ((User) persistedObject).getUserCredentials(), collectionFieldsUserCredentials, user );

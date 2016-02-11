@@ -121,19 +121,19 @@ public class LegendSet
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             LegendSet legendSet = (LegendSet) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 symbolizer = legendSet.getSymbolizer();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 symbolizer = legendSet.getSymbolizer() == null ? symbolizer : legendSet.getSymbolizer();
             }

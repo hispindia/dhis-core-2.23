@@ -662,9 +662,9 @@ public class DataElement
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -672,7 +672,7 @@ public class DataElement
 
             zeroIsSignificant = dataElement.isZeroIsSignificant();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 formName = dataElement.getFormName();
                 domainType = dataElement.getDomainType();
@@ -682,7 +682,7 @@ public class DataElement
                 optionSet = dataElement.getOptionSet();
                 commentOptionSet = dataElement.getCommentOptionSet();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 formName = dataElement.getFormName() == null ? formName : dataElement.getFormName();
                 domainType = dataElement.getDomainType() == null ? domainType : dataElement.getDomainType();

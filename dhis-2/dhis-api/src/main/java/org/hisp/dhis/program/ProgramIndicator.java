@@ -229,15 +229,15 @@ public class ProgramIndicator
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ProgramIndicator programIndicator = (ProgramIndicator) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 program = programIndicator.getProgram();
                 expression = programIndicator.getExpression();
@@ -245,7 +245,7 @@ public class ProgramIndicator
                 decimals = programIndicator.getDecimals();
                 displayInForm = programIndicator.getDisplayInForm();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 program = programIndicator.getProgram() == null ? program : programIndicator.getProgram();
                 expression = programIndicator.getExpression() == null ? expression : programIndicator.getExpression();

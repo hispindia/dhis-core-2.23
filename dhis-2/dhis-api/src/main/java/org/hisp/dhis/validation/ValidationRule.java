@@ -435,21 +435,21 @@ public class ValidationRule
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ValidationRule validationRule = (ValidationRule) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = validationRule.getDescription();
                 operator = validationRule.getOperator();
                 periodType = validationRule.getPeriodType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = validationRule.getDescription() == null ? description : validationRule.getDescription();
                 operator = validationRule.getOperator() == null ? operator : validationRule.getOperator();

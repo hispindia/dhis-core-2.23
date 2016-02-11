@@ -121,7 +121,7 @@ public class Program
     private Program relatedProgram;
 
     private Boolean dataEntryMethod = false;
-    
+
     private TrackedEntity trackedEntity;
 
     private DataEntryForm dataEntryForm;
@@ -141,7 +141,7 @@ public class Program
      * The approval workflow (if any) for this program.
      */
     private DataApprovalWorkflow workflow;
-    
+
     private Boolean displayFrontPageList = false;
 
     // -------------------------------------------------------------------------
@@ -681,7 +681,7 @@ public class Program
     {
         this.skipOffline = skipOffline;
     }
-    
+
     @JsonProperty
     @JsonView( { DetailedView.class, ExportView.class } )
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
@@ -696,9 +696,9 @@ public class Program
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -706,7 +706,7 @@ public class Program
 
             version = program.getVersion();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = program.getDescription();
                 enrollmentDateLabel = program.getEnrollmentDateLabel();
@@ -724,7 +724,7 @@ public class Program
                 dataEntryMethod = program.getDataEntryMethod();
                 trackedEntity = program.getTrackedEntity();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = program.getDescription() == null ? description : program.getDescription();
                 enrollmentDateLabel = program.getEnrollmentDateLabel() == null ? enrollmentDateLabel : program.getEnrollmentDateLabel();
@@ -766,5 +766,5 @@ public class Program
             instanceReminders.clear();
             instanceReminders.addAll( program.getInstanceReminders() );
         }
-    }    
+    }
 }

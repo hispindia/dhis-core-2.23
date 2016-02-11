@@ -321,9 +321,9 @@ public class Indicator
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -331,7 +331,7 @@ public class Indicator
 
             annualized = indicator.isAnnualized();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 denominator = indicator.getDenominator();
                 denominatorDescription = indicator.getDenominatorDescription();
@@ -341,7 +341,7 @@ public class Indicator
                 explodedDenominator = indicator.getExplodedDenominator();
                 indicatorType = indicator.getIndicatorType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 denominator = indicator.getDenominator() == null ? denominator : indicator.getDenominator();
                 denominatorDescription = indicator.getDenominatorDescription() == null ? denominatorDescription : indicator.getDenominatorDescription();

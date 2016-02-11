@@ -140,22 +140,22 @@ public class ProgramValidation
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ProgramValidation programValidation = (ProgramValidation) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 leftSide = programValidation.getLeftSide();
                 operator = programValidation.getOperator();
                 rightSide = programValidation.getRightSide();
                 program = programValidation.getProgram();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 leftSide = programValidation.getLeftSide() == null ? leftSide : programValidation.getLeftSide();
                 rightSide = programValidation.getRightSide() == null ? rightSide : programValidation.getRightSide();

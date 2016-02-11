@@ -250,20 +250,20 @@ public class DataElementCategoryOption
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             DataElementCategoryOption categoryOption = (DataElementCategoryOption) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 startDate = categoryOption.getStartDate();
                 endDate = categoryOption.getEndDate();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 startDate = categoryOption.getStartDate() == null ? startDate : categoryOption.getStartDate();
                 endDate = categoryOption.getEndDate() == null ? endDate : categoryOption.getEndDate();

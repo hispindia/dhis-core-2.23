@@ -493,7 +493,6 @@ public class Attribute
     }
 
 
-
     public List<Class<? extends IdentifiableObject>> getSupportedClasses()
     {
         List<Class<? extends IdentifiableObject>> klasses = new ArrayList<>();
@@ -522,9 +521,9 @@ public class Attribute
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -551,12 +550,12 @@ public class Attribute
             optionSetAttribute = attribute.isOptionSetAttribute();
             mandatory = attribute.isMandatory();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 valueType = attribute.getValueType();
                 sortOrder = attribute.getSortOrder();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 valueType = attribute.getValueType() == null ? valueType : attribute.getValueType();
                 sortOrder = attribute.getSortOrder() == null ? sortOrder : attribute.getSortOrder();

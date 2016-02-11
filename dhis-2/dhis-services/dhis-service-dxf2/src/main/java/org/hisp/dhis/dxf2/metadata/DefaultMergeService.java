@@ -47,7 +47,7 @@ public class DefaultMergeService implements MergeService
 
     @Override
     @SuppressWarnings( { "rawtypes", "unchecked" } )
-    public <T> void merge( T source, T target, MergeMode mergeStrategy )
+    public <T> void merge( T source, T target, MergeMode mergeMode )
     {
         if ( source == null || target == null )
         {
@@ -82,11 +82,11 @@ public class DefaultMergeService implements MergeService
             {
                 Object sourceObject = ReflectionUtils.invokeMethod( source, property.getGetterMethod() );
 
-                if ( mergeStrategy.isReplace() )
+                if ( mergeMode.isReplace() )
                 {
                     ReflectionUtils.invokeMethod( target, property.getSetterMethod(), sourceObject );
                 }
-                else if ( mergeStrategy.isMerge() && sourceObject != null )
+                else if ( mergeMode.isMerge() && sourceObject != null )
                 {
                     ReflectionUtils.invokeMethod( target, property.getSetterMethod(), sourceObject );
                 }

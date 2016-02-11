@@ -128,9 +128,9 @@ public class Document
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -138,12 +138,12 @@ public class Document
 
             external = document.isExternal();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 url = document.getUrl();
                 contentType = document.getContentType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 url = document.getUrl() == null ? url : document.getUrl();
                 contentType = document.getContentType() == null ? contentType : document.getContentType();

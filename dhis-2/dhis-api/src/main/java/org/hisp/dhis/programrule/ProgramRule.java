@@ -194,15 +194,15 @@ public class ProgramRule
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ProgramRule programRule = (ProgramRule) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = programRule.getDescription();
                 priority = programRule.getPriority();
@@ -210,7 +210,7 @@ public class ProgramRule
                 program = programRule.getProgram();
                 programStage = programRule.getProgramStage();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = programRule.getDescription() == null ? description : programRule.getDescription();
                 priority = programRule.getPriority() == null ? priority : programRule.getPriority();

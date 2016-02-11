@@ -257,20 +257,20 @@ public class DataElementGroupSet
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mode );
 
         if ( other.getClass().isInstance( this ) )
         {
             DataElementGroupSet dataElementGroupSet = (DataElementGroupSet) other;
 
-            if ( strategy.isReplace() )
+            if ( mode.isReplace() )
             {
                 description = dataElementGroupSet.getDescription();
                 compulsory = dataElementGroupSet.isCompulsory();
             }
-            else if ( strategy.isMerge() )
+            else if ( mode.isMerge() )
             {
                 description = dataElementGroupSet.getDescription() == null ? description : dataElementGroupSet.getDescription();
                 compulsory = dataElementGroupSet.isCompulsory() == null ? compulsory : dataElementGroupSet.isCompulsory();

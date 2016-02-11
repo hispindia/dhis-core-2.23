@@ -229,20 +229,20 @@ public class IndicatorGroupSet
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             IndicatorGroupSet indicatorGroupSet = (IndicatorGroupSet) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 compulsory = indicatorGroupSet.isCompulsory();
                 description = indicatorGroupSet.getDescription();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 compulsory = indicatorGroupSet.isCompulsory() == null ? compulsory : indicatorGroupSet.isCompulsory();
                 description = indicatorGroupSet.getDescription() == null ? description : indicatorGroupSet.getDescription();

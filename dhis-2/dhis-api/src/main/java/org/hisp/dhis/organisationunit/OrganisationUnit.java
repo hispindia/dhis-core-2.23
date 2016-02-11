@@ -1153,15 +1153,15 @@ public class OrganisationUnit
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             OrganisationUnit organisationUnit = (OrganisationUnit) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 openingDate = organisationUnit.getOpeningDate();
                 closedDate = organisationUnit.getClosedDate();
@@ -1175,7 +1175,7 @@ public class OrganisationUnit
                 phoneNumber = organisationUnit.getPhoneNumber();
                 parent = organisationUnit.getParent();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 openingDate = organisationUnit.getOpeningDate() == null ? openingDate : organisationUnit.getOpeningDate();
                 closedDate = organisationUnit.getClosedDate() == null ? closedDate : organisationUnit.getClosedDate();

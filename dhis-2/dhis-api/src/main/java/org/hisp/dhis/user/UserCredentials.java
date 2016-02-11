@@ -762,9 +762,9 @@ public class UserCredentials
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -780,13 +780,13 @@ public class UserCredentials
             selfRegistered = userCredentials.isSelfRegistered();
             disabled = userCredentials.isDisabled();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 openId = userCredentials.getOpenId();
                 ldapId = userCredentials.getLdapId();
                 userInfo = userCredentials.getUserInfo();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 openId = userCredentials.getOpenId() == null ? openId : userCredentials.getOpenId();
                 ldapId = userCredentials.getLdapId() == null ? ldapId : userCredentials.getLdapId();

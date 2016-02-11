@@ -622,15 +622,15 @@ public class User
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             User user = (User) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 surname = user.getSurname();
                 firstName = user.getFirstName();
@@ -648,7 +648,7 @@ public class User
                 lastCheckedInterpretations = user.getLastCheckedInterpretations();
                 userCredentials = user.getUserCredentials();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 surname = user.getSurname() == null ? surname : user.getSurname();
                 firstName = user.getFirstName() == null ? firstName : user.getFirstName();

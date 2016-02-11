@@ -112,19 +112,19 @@ public class TrackedEntityAttributeGroup
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             TrackedEntityAttributeGroup trackedEntityAttributeGroup = (TrackedEntityAttributeGroup) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = trackedEntityAttributeGroup.getDescription();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = trackedEntityAttributeGroup.getDescription() == null ? description : trackedEntityAttributeGroup.getDescription();
             }

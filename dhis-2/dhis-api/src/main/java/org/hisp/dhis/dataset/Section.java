@@ -267,20 +267,20 @@ public class Section
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             Section section = (Section) other;
             sortOrder = section.getSortOrder();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 dataSet = section.getDataSet();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 dataSet = section.getDataSet() == null ? dataSet : section.getDataSet();
             }

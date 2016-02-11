@@ -171,19 +171,19 @@ public class ValidationRuleGroup
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ValidationRuleGroup validationRuleGroup = (ValidationRuleGroup) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = validationRuleGroup.getDescription();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = validationRuleGroup.getDescription() == null ? description : validationRuleGroup.getDescription();
             }

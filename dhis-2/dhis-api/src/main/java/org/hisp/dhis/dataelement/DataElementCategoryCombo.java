@@ -331,9 +331,9 @@ public class DataElementCategoryCombo
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -341,11 +341,11 @@ public class DataElementCategoryCombo
 
             skipTotal = categoryCombo.isSkipTotal();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 dataDimensionType = categoryCombo.getDataDimensionType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 dataDimensionType = categoryCombo.getDataDimensionType() == null ? dataDimensionType : categoryCombo.getDataDimensionType();
             }

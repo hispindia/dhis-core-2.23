@@ -751,9 +751,9 @@ public class DataSet
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -770,13 +770,13 @@ public class DataSet
             validCompleteOnly = dataSet.isValidCompleteOnly();
             version = dataSet.getVersion();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 periodType = dataSet.getPeriodType();
                 dataEntryForm = dataSet.getDataEntryForm();
                 notificationRecipients = dataSet.getNotificationRecipients();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 periodType = dataSet.getPeriodType() == null ? periodType : dataSet.getPeriodType();
                 dataEntryForm = dataSet.getDataEntryForm() == null ? dataEntryForm : dataSet.getDataEntryForm();

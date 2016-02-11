@@ -509,7 +509,7 @@ public class UserController
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( ImportStrategy.CREATE );
-        importOptions.setMergeStrategy( MergeMode.MERGE );
+        importOptions.setMergeMode( MergeMode.MERGE );
         ImportTypeSummary importTypeSummary = importService.importObject( currentUserService.getCurrentUser().getUid(), user, importOptions );
 
         if ( importTypeSummary.isStatus( ImportStatus.SUCCESS ) && importTypeSummary.getImportCount().getImported() == 1 )

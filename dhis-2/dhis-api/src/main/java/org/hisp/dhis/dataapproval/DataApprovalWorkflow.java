@@ -157,19 +157,19 @@ public class DataApprovalWorkflow
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             DataApprovalWorkflow dataApprovalWorkflow = (DataApprovalWorkflow) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 periodType = dataApprovalWorkflow.getPeriodType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 periodType = dataApprovalWorkflow.getPeriodType() == null ? periodType : dataApprovalWorkflow.getPeriodType();
             }

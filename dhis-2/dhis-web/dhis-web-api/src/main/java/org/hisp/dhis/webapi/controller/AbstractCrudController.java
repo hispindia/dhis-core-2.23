@@ -314,7 +314,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( ImportStrategy.UPDATE );
-        importOptions.setMergeStrategy( MergeMode.MERGE );
+        importOptions.setMergeMode( MergeMode.MERGE );
 
         ImportTypeSummary importTypeSummary = importService.importObject( currentUserService.getCurrentUser().getUid(), persistedObject, importOptions );
 
@@ -389,7 +389,7 @@ public abstract class AbstractCrudController<T extends IdentifiableObject>
 
         ImportOptions importOptions = new ImportOptions();
         importOptions.setStrategy( ImportStrategy.UPDATE );
-        importOptions.setMergeStrategy( MergeMode.MERGE );
+        importOptions.setMergeMode( MergeMode.MERGE );
         ImportTypeSummary importTypeSummary = importService.importObject( currentUserService.getCurrentUser().getUid(), persistedObject, importOptions );
 
         webMessageService.send( WebMessageUtils.importTypeSummary( importTypeSummary ), response, request );

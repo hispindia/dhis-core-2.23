@@ -402,15 +402,15 @@ public class EventChart
     // -------------------------------------------------------------------------
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             EventChart chart = (EventChart) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 dataElementValueDimension = chart.getDataElementValueDimension();
                 attributeValueDimension = chart.getAttributeValueDimension();
@@ -420,7 +420,7 @@ public class EventChart
                 endDate = chart.getEndDate();
                 outputType = chart.getOutputType();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 dataElementValueDimension = chart.getDataElementValueDimension() == null ? dataElementValueDimension : chart.getDataElementValueDimension();
                 attributeValueDimension = chart.getAttributeValueDimension() == null ? attributeValueDimension : chart.getAttributeValueDimension();

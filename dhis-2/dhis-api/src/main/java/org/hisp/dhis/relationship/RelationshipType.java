@@ -115,20 +115,20 @@ public class RelationshipType
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             RelationshipType relationshipType = (RelationshipType) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 aIsToB = relationshipType.getaIsToB();
                 bIsToA = relationshipType.getbIsToA();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 aIsToB = relationshipType.getaIsToB() == null ? aIsToB : relationshipType.getaIsToB();
                 bIsToA = relationshipType.getbIsToA() == null ? bIsToA : relationshipType.getbIsToA();

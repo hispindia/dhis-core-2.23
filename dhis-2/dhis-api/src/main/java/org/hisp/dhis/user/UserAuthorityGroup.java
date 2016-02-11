@@ -243,19 +243,19 @@ public class UserAuthorityGroup
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             UserAuthorityGroup userAuthorityGroup = (UserAuthorityGroup) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = userAuthorityGroup.getDescription();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = userAuthorityGroup.getDescription() == null ? description : userAuthorityGroup.getDescription();
             }

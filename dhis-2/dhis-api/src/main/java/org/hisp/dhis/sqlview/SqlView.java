@@ -293,22 +293,22 @@ public class SqlView
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             SqlView sqlView = (SqlView) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = sqlView.getDescription();
                 sqlQuery = sqlView.getSqlQuery();
                 type = sqlView.getType();
                 cacheStrategy = sqlView.getCacheStrategy();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = sqlView.getDescription() == null ? description : sqlView.getDescription();
                 sqlQuery = sqlView.getSqlQuery() == null ? sqlQuery : sqlView.getSqlQuery();

@@ -194,22 +194,22 @@ public class ProgramRuleVariable
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             ProgramRuleVariable programRuleVariable = (ProgramRuleVariable) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 this.sourceType = programRuleVariable.getSourceType();
                 this.attribute = programRuleVariable.getAttribute();
                 this.dataElement = programRuleVariable.getDataElement();
                 this.programStage = programRuleVariable.getProgramStage();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 this.sourceType = programRuleVariable.getSourceType() == null ? sourceType : programRuleVariable.getSourceType();
                 this.attribute = programRuleVariable.getAttribute() == null ? attribute : programRuleVariable.getAttribute();

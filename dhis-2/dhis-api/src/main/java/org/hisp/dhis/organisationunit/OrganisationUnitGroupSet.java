@@ -241,9 +241,9 @@ public class OrganisationUnitGroupSet
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
@@ -251,11 +251,11 @@ public class OrganisationUnitGroupSet
 
             compulsory = organisationUnitGroupSet.isCompulsory();
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 description = organisationUnitGroupSet.getDescription();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 description = organisationUnitGroupSet.getDescription() == null ? description : organisationUnitGroupSet.getDescription();
             }

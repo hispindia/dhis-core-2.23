@@ -462,15 +462,15 @@ public class MapView
     }
 
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             MapView mapView = (MapView) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 layer = mapView.getLayer();
                 method = mapView.getMethod();
@@ -490,7 +490,7 @@ public class MapView
                 labelFontStyle = mapView.getLabelFontStyle();
                 labelFontColor = mapView.getLabelFontColor();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 layer = mapView.getLayer() == null ? layer : mapView.getLayer();
                 method = mapView.getMethod() == null ? method : mapView.getMethod();

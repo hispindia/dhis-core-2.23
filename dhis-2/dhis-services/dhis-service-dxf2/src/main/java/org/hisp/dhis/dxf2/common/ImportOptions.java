@@ -54,7 +54,7 @@ public class ImportOptions
 
     private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
 
-    private MergeMode mergeStrategy = MergeMode.MERGE_IF_NOT_NULL;
+    private MergeMode mergeMode = MergeMode.MERGE_IF_NOT_NULL;
 
     private boolean skipExistingCheck;
 
@@ -118,14 +118,14 @@ public class ImportOptions
         return importStrategy != null ? importStrategy : ImportStrategy.NEW_AND_UPDATES;
     }
 
-    public MergeMode getMergeStrategy()
+    public MergeMode getMergeMode()
     {
-        return mergeStrategy;
+        return mergeMode;
     }
 
-    public void setMergeStrategy( MergeMode mergeStrategy )
+    public void setMergeMode( MergeMode mergeMode )
     {
-        this.mergeStrategy = mergeStrategy;
+        this.mergeMode = mergeMode;
     }
 
     public boolean isSkipExistingCheck()

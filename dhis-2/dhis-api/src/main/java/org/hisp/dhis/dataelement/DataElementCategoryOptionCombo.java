@@ -379,19 +379,19 @@ public class DataElementCategoryOptionCombo
     }
     
     @Override
-    public void mergeWith( IdentifiableObject other, MergeMode strategy )
+    public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
-        super.mergeWith( other, strategy );
+        super.mergeWith( other, mergeMode );
 
         if ( other.getClass().isInstance( this ) )
         {
             DataElementCategoryOptionCombo categoryOptionCombo = (DataElementCategoryOptionCombo) other;
 
-            if ( strategy.isReplace() )
+            if ( mergeMode.isReplace() )
             {
                 categoryCombo = categoryOptionCombo.getCategoryCombo();
             }
-            else if ( strategy.isMerge() )
+            else if ( mergeMode.isMerge() )
             {
                 categoryCombo = categoryOptionCombo.getCategoryCombo() == null ? categoryCombo : categoryOptionCombo.getCategoryCombo();
             }
