@@ -159,6 +159,55 @@ public class ObjectBundleServiceTest
         }
     }
 
+    @Test
+    public void testPreheatValidationsWithCatCombo() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate1.json" ).getInputStream(), RenderFormat.JSON );
+
+        DataElementCategoryCombo categoryCombo = manager.getByName( DataElementCategoryCombo.class, "default" );
+        categoryCombo.setUid( "p0KPaWEg3cf" );
+        manager.update( categoryCombo );
+
+        OptionSet optionSet = new OptionSet( "OptionSet: pQYCiuosBnZ" );
+        optionSet.setAutoFields();
+        optionSet.setUid( "pQYCiuosBnZ" );
+        manager.save( optionSet );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertFalse( validate.getPreheatValidations().isEmpty() );
+        List<PreheatValidation> dataElementValidations = validate.getPreheatValidations().get( DataElement.class );
+        assertFalse( dataElementValidations.isEmpty() );
+
+        for ( PreheatValidation preheatValidation : dataElementValidations )
+        {
+            assertFalse( preheatValidation.getInvalidReferences().isEmpty() );
+
+            for ( InvalidReference invalidReference : preheatValidation.getInvalidReferences() )
+            {
+                assertEquals( PreheatIdentifier.UID, invalidReference.getIdentifier() );
+
+                if ( DataElementCategoryCombo.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertFalse( true );
+                }
+                else if ( User.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertEquals( "GOLswS44mh8", invalidReference.getRefObject().getUid() );
+                }
+                else if ( OptionSet.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertFalse( true );
+                }
+            }
+        }
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
