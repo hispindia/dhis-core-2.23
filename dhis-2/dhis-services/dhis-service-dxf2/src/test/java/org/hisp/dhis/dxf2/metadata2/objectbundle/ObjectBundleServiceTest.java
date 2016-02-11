@@ -32,9 +32,13 @@ import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.option.OptionSet;
+import org.hisp.dhis.preheat.InvalidReference;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
+import org.hisp.dhis.preheat.PreheatValidation;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
@@ -119,7 +123,7 @@ public class ObjectBundleServiceTest
     public void testPreheatValidations() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/metadata_preheat1.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/de_validate1.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
@@ -128,6 +132,31 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
         assertFalse( validate.getPreheatValidations().isEmpty() );
+        List<PreheatValidation> dataElementValidations = validate.getPreheatValidations().get( DataElement.class );
+        assertFalse( dataElementValidations.isEmpty() );
+
+        for ( PreheatValidation preheatValidation : dataElementValidations )
+        {
+            assertFalse( preheatValidation.getInvalidReferences().isEmpty() );
+
+            for ( InvalidReference invalidReference : preheatValidation.getInvalidReferences() )
+            {
+                assertEquals( PreheatIdentifier.UID, invalidReference.getIdentifier() );
+
+                if ( DataElementCategoryCombo.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertEquals( "p0KPaWEg3cf", invalidReference.getRefObject().getUid() );
+                }
+                else if ( User.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertEquals( "GOLswS44mh8", invalidReference.getRefObject().getUid() );
+                }
+                else if ( OptionSet.class.isInstance( invalidReference.getRefObject() ) )
+                {
+                    assertEquals( "pQYCiuosBnZ", invalidReference.getRefObject().getUid() );
+                }
+            }
+        }
     }
 
     private void defaultSetup()

@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.preheat.PreheatValidation;
 
@@ -54,5 +55,13 @@ public class ObjectBundleValidation
     public Map<Class<? extends IdentifiableObject>, List<PreheatValidation>> getPreheatValidations()
     {
         return preheatValidations;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "preheatValidations", preheatValidations )
+            .toString();
     }
 }
