@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
 
 /**
@@ -98,13 +99,13 @@ public class ValidationViolation
         this.value = value;
     }
 
-    @Override public String toString()
+    @Override
+    public String toString()
     {
-        final StringBuilder sb = new StringBuilder( "ValidationViolation{" );
-        sb.append( "property='" ).append( property ).append( '\'' );
-        sb.append( ", message='" ).append( message ).append( '\'' );
-        sb.append( ", value=" ).append( value );
-        sb.append( '}' );
-        return sb.toString();
+        return MoreObjects.toStringHelper( this )
+            .add( "property", property )
+            .add( "message", message )
+            .add( "value", value )
+            .toString();
     }
 }

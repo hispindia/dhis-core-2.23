@@ -33,12 +33,12 @@ import org.hisp.dhis.dxf2.schema.SchemaValidator;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
-import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -84,10 +84,19 @@ public class DefaultObjectBundleService implements ObjectBundleService
             objectBundleValidation.addInvalidReferences( klass, preheatService.checkReferences(
                 bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
 
+            List<List<ValidationViolation>> validationViolations = new ArrayList<>();
+
             for ( IdentifiableObject object : bundle.getObjects().get( klass ) )
             {
-                List<ValidationViolation> validationViolations = schemaValidator.validate( object );
+                List<ValidationViolation> validate = schemaValidator.validate( object );
+
+                if ( !validate.isEmpty() )
+                {
+                    validationViolations.add( validate );
+                }
             }
+
+            objectBundleValidation.addValidationViolation( klass, validationViolations );
         }
 
         return objectBundleValidation;

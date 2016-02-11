@@ -208,6 +208,23 @@ public class ObjectBundleServiceTest
         }
     }
 
+    @Test
+    public void testPreheatValidationsInvalidObjects() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate2.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertFalse( validate.getValidationViolations().isEmpty() );
+        assertEquals( 2, validate.getValidationViolations().get( DataElement.class ).size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
