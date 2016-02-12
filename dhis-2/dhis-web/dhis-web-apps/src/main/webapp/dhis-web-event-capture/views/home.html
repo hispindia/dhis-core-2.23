@@ -41,8 +41,8 @@
                         {{registeringUnitLabel}}
                     </div>
                     <div class="col-sm-8">
-                        <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.name"
-                               value="{{selectedOrgUnit.name|| pleaseSelectLabel}}" disabled="">
+                        <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.displayName"
+                               value="{{selectedOrgUnit.displayName|| pleaseSelectLabel}}" disabled="">
                     </div>
                 </div>
                 <div class="row small-vertical-spacing">
@@ -54,7 +54,7 @@
                                 class="form-control"
                                 name="programId" 
                                 ng-model="selectedProgram" 
-                                ng-options="program as program.name for program in programs | orderBy: 'name'" 
+                                ng-options="program as program.displayName for program in programs | orderBy: 'name'" 
                                 ng-change="getProgramDetails()"
                                 ng-disabled="eventRegistration || editingEventInFull || editingEventInGrid">
                             <option value="">{{pleaseSelectLabel}}</option>
@@ -63,13 +63,13 @@
                 </div>
                 <div class="row small-vertical-spacing" ng-if="selectedProgram" ng-repeat="category in selectedCategories">
                     <div class="col-sm-4">
-                        {{category.name}}
+                        {{category.displayName}}
                     </div>
                     <div class="col-sm-8">
                         <select class="form-control"
                                 name="option"                             
                                 ng-model="category.selectedOption"
-                                ng-options="option as option.name for option in category.categoryOptions"
+                                ng-options="option as option.displayName for option in category.categoryOptions"
                                 ng-change="getCategoryOptions()">
                             <option value="">{{pleaseSelectLabel}}</option>
                         </select>
@@ -84,7 +84,7 @@
                                 name="section"                             
                                 ng-model="selectedSection.id">
                             <option value="ALL">{{'show_all'| translate}}</option>
-                            <option ng-if="!hiddenSections[section.id]" ng-repeat="section in selectedProgramStage.programStageSections" value={{section.id}}>{{section.name}}</option>
+                            <option ng-if="!hiddenSections[section.id]" ng-repeat="section in selectedProgramStage.programStageSections" value={{section.id}}>{{section.displayName}}</option>
                         </select>
                     </div>
                 </div>
