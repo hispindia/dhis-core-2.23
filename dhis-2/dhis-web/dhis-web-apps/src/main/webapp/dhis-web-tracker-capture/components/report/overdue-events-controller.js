@@ -116,7 +116,7 @@ trackerCapture.controller('OverdueEventsController',
 
                         overdueEvent.dueDate = DateUtils.formatFromApiToUser(row.dueDate);
                         overdueEvent.event = row.event;
-                        overdueEvent.eventName = $scope.programStages[row.programStage].name;
+                        overdueEvent.eventName = $scope.programStages[row.programStage].displayName;
                         overdueEvent.orgUnitName = row.orgUnitName;                    
                         overdueEvent.followup = row.followup;
                         overdueEvent.program = row.program;

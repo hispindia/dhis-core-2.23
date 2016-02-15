@@ -1,7 +1,7 @@
 <div class="modal-header page">
-    <h3 ng-if="isNewEvent">{{'add'| translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.name}}</span></h3>
-    <h3 ng-if="isScheduleEvent && !isReferralEvent">{{'schedule'| translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.name}}</span></h3>
-    <h3 ng-if="isReferralEvent">{{'referral' | translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.name}}</span></h3>
+    <h3 ng-if="isNewEvent">{{'add'| translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.displayName}}</span></h3>
+    <h3 ng-if="isScheduleEvent && !isReferralEvent">{{'schedule'| translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.displayName}}</span></h3>
+    <h3 ng-if="isReferralEvent">{{'referral' | translate}}<span ng-if="model.selectedStage"> - {{model.selectedStage.displayName}}</span></h3>
 </div>
 <div class="modal-body page">    
     <form name="eventCreationForm" class="form-horizontal" role="form" novalidate>
@@ -14,7 +14,7 @@
                     <div class="col-sm-9">
                         <select class="form-control-program" 
                                 ng-model="model.selectedStage"                                
-                                ng-options="stage.name for stage in stages">                    
+                                ng-options="stage.displayName for stage in stages">                    
                         </select>
                     </div>                
                 </div>         
@@ -62,7 +62,7 @@
                         <span ng-init="initTest(orgUnit)">
                             <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="orgUnit.show && orgUnit.children.length > 0"><i class="fa fa-minus-square-o"></i></span>
                             <span class="org-unit-tree-button" ng-click="expandCollapse(orgUnit)" ng-show="(!orgUnit.show && orgUnit.children.length > 0) || (!orgUnit.show && orgUnit.hasChildren)"><i class="fa fa-plus-square-o"></i></span>
-                            <span class="org-unit-tree-button" ng-click="setSelectedSearchingOrgUnit(orgUnit)" ng-class="{'selected-org-unit' : orgUnit.id === selectedSearchingOrgUnit.id}">{{orgUnit.name}}</span>
+                            <span class="org-unit-tree-button" ng-click="setSelectedSearchingOrgUnit(orgUnit)" ng-class="{'selected-org-unit' : orgUnit.id === selectedSearchingOrgUnit.id}">{{orgUnit.displayName}}</span>
                             <ul class="tree" id="tree" ng-show="orgUnit.show">
                                 <li ng-repeat="orgUnit in orgUnit.children | orderBy:'name'" ng-include="'orgUnitTree.html'"></li>
                             </ul>

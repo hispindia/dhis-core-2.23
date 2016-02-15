@@ -102,7 +102,7 @@ trackerCapture.controller('ProgramSummaryController',
                 angular.forEach(data.eventRows, function(ev){
                     if(ev.trackedEntityInstance){
                         ev.name = $scope.stagesById[ev.programStage].name;
-                        ev.programName = $scope.selectedProgram.name;
+                        ev.programName = $scope.selectedProgram.displayName;
                         ev.statusColor = EventUtils.getEventStatusColor(ev); 
                         ev.eventDate = DateUtils.formatFromApiToUser(ev.eventDate);
 

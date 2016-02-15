@@ -47,7 +47,7 @@
                     <tr>
                         <td>{{'org_unit' | translate}}</td>
                         <td>
-                            <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.name" value="{{selectedOrgUnit.name || 'please_select'| translate}}" ng-disabled="true">                                                                                        
+                            <input type="text" class="form-control" selected-org-unit ng-model="selectedOrgUnit.displayName" value="{{selectedOrgUnit.displayName || 'please_select'| translate}}" ng-disabled="true">                                                                                        
                         </td>
                     </tr>
                     <tr>
@@ -57,7 +57,7 @@
                         <td>
                             <select ng-model="selectedProgram"
                                     class="form-control"
-                                    ng-options="program as program.name for program in programs | orderBy: 'name'"
+                                    ng-options="program as program.displayName for program in programs | orderBy: 'name'"
                                     ng-disabled="programs.length < 1" ng-selected="programs.length === 1">
                                 <option ng-if="programs.length !== 1" value="">{{programs.length > 1 ? 'please_select_a_program' : 'no_program_exists'| translate}}</option>
                             </select>
@@ -184,7 +184,7 @@
                                     <!-- sort icon begins -->
                                     <span ng-click="sortGrid(gridColumn)">
                                         <span ng-class="{true: 'red'} [sortColumn.id === gridColumn.id]"><i class="fa fa-sort hideInPrint"></i></span>
-                                        {{gridColumn.name}}
+                                        {{gridColumn.displayName}}
                                     </span>
                                     <!-- sort icon ends -->
 

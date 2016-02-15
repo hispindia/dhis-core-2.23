@@ -42,6 +42,8 @@ trackerCapture.controller('EnrollmentController',
         $scope.enrollments = selections.enrollments;
         $scope.programExists = args.programExists;
         $scope.programNames = selections.prNames;
+        
+        console.log('the names:  ', $scope.programNames);
         $scope.programStageNames = selections.prStNames;
         $scope.attributesById = CurrentSelection.getAttributesById();
         $scope.activeEnrollments =  [];
@@ -108,7 +110,7 @@ trackerCapture.controller('EnrollmentController',
             $scope.showEnrollmentHistoryDiv = false;
             
             //load new enrollment details
-            $scope.selectedEnrollment = {orgUnitName: $scope.selectedOrgUnit.name};            
+            $scope.selectedEnrollment = {orgUnitName: $scope.selectedOrgUnit.displayName};            
             $scope.loadEnrollmentDetails($scope.selectedEnrollment);
             
             $timeout(function() { 
