@@ -110,6 +110,23 @@
         
             </div>            
         </div>
+        <div ng-if="selectedProgram" ng-repeat="category in selectedCategories">
+            <div class="form-group">
+                <div class="col-sm-11">
+                    <label class="col-sm-3 control-label">{{category.displayName}}</label>
+                    <div class="col-sm-9">
+                        <select class="form-control"
+                                name="option"
+                                ng-model="category.selectedOption"
+                                ng-options="option as option.displayName for option in category.categoryOptions"
+                                ng-change="getCategoryOptions()">
+                            <option value="" ng-selected="selectDefault.selected">{{pleaseSelectLabel}}</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </form>  
 </div>
 <div class="modal-footer page">        

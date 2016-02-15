@@ -1911,7 +1911,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
 .service('EventCreationService', function($modal){
             
-        this.showModal = function(eventsByStage, stage, availableStages,programStages,selectedEntity,selectedProgram,selectedOrgUnit,selectedEnrollment, autoCreate, eventCreationAction,allEventsSorted, suggestedStage){
+        this.showModal = function(eventsByStage, stage, availableStages,programStages,selectedEntity,selectedProgram,selectedOrgUnit,selectedEnrollment, autoCreate, eventCreationAction,allEventsSorted, suggestedStage, selectedCategories){
             var modalInstance = $modal.open({
                 templateUrl: 'components/dataentry/new-event.html',
                 controller: 'EventCreationController',
@@ -1951,7 +1951,10 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     },
                     suggestedStage: function(){
                         return suggestedStage;
-                    }
+                    },
+                	selectedCategories: function () {
+                    	return selectedCategories;
+	                }
                 }
             }).result;
             return modalInstance;
