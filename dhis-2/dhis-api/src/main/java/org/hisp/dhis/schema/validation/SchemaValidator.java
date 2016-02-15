@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.webmessage.responses;
+package org.hisp.dhis.schema.validation;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,39 +28,29 @@ package org.hisp.dhis.dxf2.webmessage.responses;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.schema.validation.ValidationViolation;
-import org.hisp.dhis.dxf2.webmessage.AbstractWebMessageResponse;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class ValidationViolationsWebMessageResponse
-    extends AbstractWebMessageResponse
+public interface SchemaValidator
 {
-    private List<ValidationViolation> validationViolations = new ArrayList<>();
+    /**
+     * Validate object against its schema, the object is required to be non-null and have a schema associated with it.
+     *
+     * @param object    Object to validate
+     * @param persisted Only include persisted properties
+     * @return WebMessage containing validation response
+     */
+    List<ValidationViolation> validate( Object object, boolean persisted );
 
-    public ValidationViolationsWebMessageResponse( List<ValidationViolation> validationViolations )
-    {
-        this.validationViolations = validationViolations;
-    }
-
-    @JsonProperty
-    @JacksonXmlElementWrapper( localName = "validationViolations", namespace = DxfNamespaces.DXF_2_0, useWrapping = false )
-    @JacksonXmlProperty( localName = "validationViolation", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ValidationViolation> getValidationViolations()
-    {
-        return validationViolations;
-    }
-
-    public void setValidationViolations( List<ValidationViolation> validationViolations )
-    {
-        this.validationViolations = validationViolations;
-    }
+    /**
+     * Validate object against its schema, the object is required to be non-null and have a schema associated with it.
+     * <p>
+     * Only persisted values will be checked.
+     *
+     * @param object Object to validate
+     * @return WebMessage containing validation response
+     */
+    List<ValidationViolation> validate( Object object );
 }

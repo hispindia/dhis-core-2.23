@@ -58,7 +58,7 @@ import org.hisp.dhis.dxf2.metadata.Importer;
 import org.hisp.dhis.dxf2.metadata.ObjectBridge;
 import org.hisp.dhis.dxf2.metadata.handlers.ObjectHandler;
 import org.hisp.dhis.dxf2.metadata.handlers.ObjectHandlerUtils;
-import org.hisp.dhis.dxf2.schema.SchemaValidator;
+import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.eventchart.EventChart;
 import org.hisp.dhis.eventreport.EventReport;
 import org.hisp.dhis.expression.Expression;
@@ -80,7 +80,7 @@ import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.validation.ValidationRule;
-import org.hisp.dhis.validation.ValidationViolation;
+import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.lang.reflect.Field;

@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.schema;
+package org.hisp.dhis.schema.validation;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,31 +28,44 @@ package org.hisp.dhis.dxf2.schema;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.validation.ValidationViolation;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import org.hisp.dhis.common.DxfNamespaces;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Temporary wrapper for ValidationViolation
+ *
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface SchemaValidator
+@JacksonXmlRootElement( localName = "validationViolations", namespace = DxfNamespaces.DXF_2_0 )
+public class ValidationViolations
 {
-    /**
-     * Validate object against its schema, the object is required to be non-null and have a schema associated with it.
-     *
-     * @param object    Object to validate
-     * @param persisted Only include persisted properties
-     * @return WebMessage containing validation response
-     */
-    List<ValidationViolation> validate( Object object, boolean persisted );
+    private List<ValidationViolation> validationViolations = new ArrayList<>();
 
-    /**
-     * Validate object against its schema, the object is required to be non-null and have a schema associated with it.
-     *
-     * Only persisted values will be checked.
-     *
-     * @param object Object to validate
-     * @return WebMessage containing validation response
-     */
-    List<ValidationViolation> validate( Object object );
+    public ValidationViolations()
+    {
+    }
+
+    public ValidationViolations( List<ValidationViolation> validationViolations )
+    {
+        this.validationViolations = validationViolations;
+    }
+
+    @JsonProperty
+    @JacksonXmlElementWrapper( localName = "validationViolations", namespace = DxfNamespaces.DXF_2_0, useWrapping = false )
+    @JacksonXmlProperty( localName = "validationViolation", namespace = DxfNamespaces.DXF_2_0 )
+    public List<ValidationViolation> getValidationViolations()
+    {
+        return validationViolations;
+    }
+
+    public void setValidationViolations( List<ValidationViolation> validationViolations )
+    {
+        this.validationViolations = validationViolations;
+    }
 }

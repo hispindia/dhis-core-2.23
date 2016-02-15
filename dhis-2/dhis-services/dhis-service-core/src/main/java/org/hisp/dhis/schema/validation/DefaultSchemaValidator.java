@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.schema;
+package org.hisp.dhis.schema.validation;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -35,7 +35,6 @@ import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.system.util.ValidationUtils;
-import org.hisp.dhis.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
