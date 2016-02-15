@@ -57,7 +57,7 @@
                         <td>
                             <select ng-model="selectedProgram"
                                     class="form-control"
-                                    ng-options="program as program.displayName for program in programs | orderBy: 'name'"
+                                    ng-options="program as program.displayName for program in programs | orderBy: 'displayName'"
                                     ng-disabled="programs.length < 1" ng-selected="programs.length === 1">
                                 <option ng-if="programs.length !== 1" value="">{{programs.length > 1 ? 'please_select_a_program' : 'no_program_exists'| translate}}</option>
                             </select>

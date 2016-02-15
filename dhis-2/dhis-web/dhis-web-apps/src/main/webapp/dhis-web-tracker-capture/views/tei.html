@@ -5,7 +5,7 @@
             <button class="btn btn-default select-dropdown-caret" type="button" data-toggle="dropdown" title="Test"><i class="fa fa-caret-down"></i></button>
             <ul id="selectDropDown" class="dropdown-menu dropdown-menu-right">
                 <li ng-repeat="filter in eventsTodayFilters | orderBy: 'name'">
-                    <a href ng-click="fetchTeisEventsToday(filter)">{{filter.displayName}}</a>
+                    <a href ng-click="fetchTeisEventsToday(filter)">{{filter.name}}</a>
                 </li>
             </ul>
         </div>
