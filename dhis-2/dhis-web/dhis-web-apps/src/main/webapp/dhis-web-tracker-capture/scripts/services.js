@@ -304,7 +304,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                         }
                     });
                     
-                    programs = orderByFilter(programs, '-name').reverse();
+                    programs = orderByFilter(programs, '-displayName').reverse();
                     
                     if(programs.length === 0){
                         selectedProgram = null;
@@ -326,8 +326,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                             }
                         }
                     }
-                                        
-                    if(!selectedProgram && programs.legth > 0){
+                        
+                    if(!selectedProgram || angular.isUndefined(selectedProgram) && programs.legth > 0){
                         selectedProgram = programs[0];
                     }
                     

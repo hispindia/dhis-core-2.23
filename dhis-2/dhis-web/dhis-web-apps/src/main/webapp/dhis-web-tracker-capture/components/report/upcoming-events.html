@@ -54,13 +54,14 @@
                         <td>
                             {{'program'| translate}}
                         </td>
-                        <td>
-                            <select ng-model="selectedProgram"
-                                    class="form-control"
-                                    ng-options="program as program.displayName for program in programs | orderBy: 'displayName'"
-                                    ng-disabled="programs.length < 1" ng-selected="programs.length === 1">
-                                <option ng-if="programs.length !== 1" value="">{{programs.length > 1 ? 'please_select_a_program' : 'no_program_exists'| translate}}</option>
-                            </select>
+                        <td>                          
+                            <ui-select ng-model="model.selectedProgram" 
+                                    theme="select2" style="width:100%;">
+                                <ui-select-match allow-clear="true" class="form-control-ui-select" placeholder="{{'select_or_search' | translate}}">{{$select.selected.displayName  || $select.selected}}</ui-select-match>
+                                <ui-select-choices  repeat="program in programs | filter: $select.search | limitTo:maxOptionSize">
+                                    <span ng-bind-html="program.displayName | highlight: $select.search"></span>
+                                </ui-select-choices>
+                            </ui-select>
                         </td>
                     </tr>
                     <tr>
@@ -127,7 +128,7 @@
                 </table>                
             </div>
             <div class="col-md-6 trim">
-                <button type="button" class="btn btn-primary" ng-click="generateReport()" ng-disabled="!selectedProgram">{{'go'| translate}}</button>
+                <button type="button" class="btn btn-primary" ng-click="generateReport()" ng-disabled="!model.selectedProgram">{{'go'| translate}}</button>
                 <button type="button"
                         class="btn btn-success small-horizonal-spacing"
                         ng-if="upcomingEvents.length > 0"
@@ -150,7 +151,7 @@
                 <div class="alert alert-warning">{{'no_program_exists_report'| translate}}</div> 
             </div>
         </div>
-        <div class="row" ng-if="programs.length > 0 && !selectedProgram">        
+        <div class="row" ng-if="programs.length > 0 && !model.selectedProgram">        
             <div class="col-sm-8 col-md-6 vertical-spacing">
                 <div class="alert alert-warning">{{'please_select_program_report'| translate}}</div> 
             </div>
