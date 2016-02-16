@@ -223,8 +223,8 @@ public class DefaultPreheatService implements PreheatService
                             String uid = identifiableObject.getUid();
                             String code = identifiableObject.getCode();
 
-                            if ( uid != null ) uidMap.get( klass ).add( uid );
-                            if ( code != null ) codeMap.get( klass ).add( code );
+                            if ( !StringUtils.isEmpty( uid ) ) uidMap.get( klass ).add( uid );
+                            if ( !StringUtils.isEmpty( code ) ) codeMap.get( klass ).add( code );
                         }
                     }
                     else
@@ -241,8 +241,8 @@ public class DefaultPreheatService implements PreheatService
                             String uid = identifiableObject.getUid();
                             String code = identifiableObject.getCode();
 
-                            if ( uid != null ) uidMap.get( klass ).add( uid );
-                            if ( code != null ) codeMap.get( klass ).add( code );
+                            if ( !StringUtils.isEmpty( uid ) ) uidMap.get( klass ).add( uid );
+                            if ( !StringUtils.isEmpty( code ) ) codeMap.get( klass ).add( code );
                         }
                     }
 
