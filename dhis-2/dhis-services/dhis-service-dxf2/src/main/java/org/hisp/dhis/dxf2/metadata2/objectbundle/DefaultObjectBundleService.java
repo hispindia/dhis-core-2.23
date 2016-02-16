@@ -29,15 +29,17 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.schema.validation.SchemaValidator;
+import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
+import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -77,7 +79,24 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
         {
-            objectBundleValidation.addInvalidReferences( klass, preheatService.checkReferences(
+            if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
+            {
+                Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
+
+                while ( iterator.hasNext() )
+                {
+                    IdentifiableObject identifiableObject = iterator.next();
+                    IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+
+                    if ( object == null )
+                    {
+                        objectBundleValidation.addInvalidObject( klass, new InvalidObject( identifiableObject, bundle.getPreheatIdentifier() ) );
+                        iterator.remove();
+                    }
+                }
+            }
+
+            objectBundleValidation.addPreheatValidations( klass, preheatService.checkReferences(
                 bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
 
             List<List<ValidationViolation>> validationViolations = new ArrayList<>();

@@ -28,39 +28,70 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.common.IdentifiableObject;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.base.MoreObjects;
+import org.hisp.dhis.common.DxfNamespaces;
+import org.hisp.dhis.common.IdentifiableObjectUtils;
+import org.springframework.util.Assert;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum PreheatIdentifier
+@JacksonXmlRootElement( localName = "invalidObject", namespace = DxfNamespaces.DXF_2_0 )
+public class InvalidObject
 {
-    /**
-     * Preheat using UID identifiers.
-     */
-    UID,
+    private String name;
 
-    /**
-     * Preheat using CODE identifiers.
-     */
-    CODE,
+    private PreheatIdentifier identifier;
 
-    /**
-     * Find first non-null identifier in order: UID, CODE
-     */
-    AUTO;
+    private Object object;
 
-    @SuppressWarnings("incomplete-switch")
-    public <T extends IdentifiableObject> String getIdentifier( T object )
+    public InvalidObject( Object object, PreheatIdentifier identifier )
     {
-        switch ( this )
-        {
-            case UID:
-                return object.getUid();
-            case CODE:
-                return object.getCode();
-        }
+        Assert.notNull( object );
+        Assert.notNull( identifier );
 
-        throw new RuntimeException( "Unhandled identifier type." );
+        this.object = object;
+        this.identifier = identifier;
+        this.name = IdentifiableObjectUtils.getDisplayName( object );
+    }
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName( String name )
+    {
+        this.name = name;
+    }
+
+    public PreheatIdentifier getIdentifier()
+    {
+        return identifier;
+    }
+
+    public void setIdentifier( PreheatIdentifier identifier )
+    {
+        this.identifier = identifier;
+    }
+
+    public Object getObject()
+    {
+        return object;
+    }
+
+    public void setObject( Object object )
+    {
+        this.object = object;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "name", name )
+            .add( "identifier", identifier )
+            .toString();
     }
 }

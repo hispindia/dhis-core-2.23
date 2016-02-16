@@ -35,6 +35,7 @@ import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.preheat.InvalidReference;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -224,6 +225,120 @@ public class ObjectBundleServiceTest
 
         assertFalse( validate.getValidationViolations().isEmpty() );
         assertEquals( 2, validate.getValidationViolations().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testUpdateRequiresValidReferencesUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate4.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.UID );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testUpdateRequiresValidReferencesCODE() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate5.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.CODE );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testUpdateRequiresValidReferencesAUTO() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate6.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.AUTO );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testDeleteRequiresValidReferencesUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate4.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.UID );
+        params.setImportMode( ImportStrategy.DELETE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testDeleteRequiresValidReferencesCODE() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate5.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.CODE );
+        params.setImportMode( ImportStrategy.DELETE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
+    public void testDeleteRequiresValidReferencesAUTO() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate6.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.AUTO );
+        params.setImportMode( ImportStrategy.DELETE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 3, validate.getInvalidObjects().get( DataElement.class ).size() );
     }
 
     @Test
