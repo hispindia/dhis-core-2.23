@@ -40,6 +40,7 @@ import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -200,8 +201,11 @@ public class DefaultPreheatService implements PreheatService
 
             List<IdentifiableObject> identifiableObjects = objects.get( objectClass );
 
+            if ( !uidMap.containsKey( objectClass ) ) uidMap.put( objectClass, new HashSet<>() );
+            if ( !codeMap.containsKey( objectClass ) ) codeMap.put( objectClass, new HashSet<>() );
+
             properties.forEach( p -> {
-                for ( Object object : identifiableObjects )
+                for ( IdentifiableObject object : identifiableObjects )
                 {
                     if ( !p.isCollection() )
                     {
@@ -241,9 +245,11 @@ public class DefaultPreheatService implements PreheatService
                             if ( code != null ) codeMap.get( klass ).add( code );
                         }
                     }
+
+                    if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
+                    if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
                 }
             } );
-
         }
 
         return map;

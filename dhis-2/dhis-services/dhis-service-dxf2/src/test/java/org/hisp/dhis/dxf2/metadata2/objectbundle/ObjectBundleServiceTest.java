@@ -247,6 +247,27 @@ public class ObjectBundleServiceTest
     }
 
     @Test
+    public void testUpdateWithPersistedObjectsRequiresValidReferencesUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate7.json" ).getInputStream(), RenderFormat.JSON );
+        defaultSetup();
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setPreheatIdentifier( PreheatIdentifier.UID );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertTrue( validate.getInvalidObjects().containsKey( DataElement.class ) );
+        assertEquals( 1, validate.getInvalidObjects().get( DataElement.class ).size() );
+        assertEquals( 2, bundle.getObjects().get( DataElement.class ).size() );
+    }
+
+    @Test
     public void testUpdateRequiresValidReferencesCODE() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
