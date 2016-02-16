@@ -365,7 +365,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
                 $scope.doSearch = true;
 
                 if(!$scope.sortColumn.id){                                      
-                    $scope.sortGrid({id: 'created', name: 'registration_date', valueType: 'date', displayInListNoProgram: false, showFilter: false, show: false});
+                    $scope.sortGrid({id: 'created', displayName: 'registration_date', valueType: 'date', displayInListNoProgram: false, showFilter: false, show: false});
                 }
             });         
             
