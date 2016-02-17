@@ -379,10 +379,10 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    public void testDeletes1() throws IOException
+    public void testSimpleDataElementDeleteUID() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/de_deletes1.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/de_simple_delete_uid.json" ).getInputStream(), RenderFormat.JSON );
         defaultSetup();
 
         ObjectBundleParams params = new ObjectBundleParams();
@@ -397,6 +397,28 @@ public class ObjectBundleServiceTest
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         assertEquals( 1, dataElements.size() );
         assertEquals( "deabcdefghB", dataElements.get( 0 ).getUid() );
+    }
+
+    @Test
+    public void testSimpleDataElementDeleteCODE() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_simple_delete_code.json" ).getInputStream(), RenderFormat.JSON );
+        defaultSetup();
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setPreheatIdentifier( PreheatIdentifier.CODE );
+        params.setImportMode( ImportStrategy.DELETE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        assertEquals( 1, dataElements.size() );
+        assertEquals( "DataElementCodeD", dataElements.get( 0 ).getCode() );
     }
 
     private void defaultSetup()
