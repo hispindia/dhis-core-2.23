@@ -4,20 +4,22 @@
             <div class="event-container" ng-click="getEventPage('BACKWARD')" ng-if="$index === 0 && eventPagingStart > 0">
                 {{'previous'| translate}}
             </div>
-            <div style="float: left">
-                <div class="event-container" title="[{{'org_unit' | translate}}: {{dhis2Event.orgUnitName}}, {{'program_stage' | translate}}: {{dhis2Event.name}}]" ng-class="getEventStyle(dhis2Event)" ng-click="showDataEntry(dhis2Event, false)">                
-                    <div class="event-container-item">
-                        {{dhis2Event.sortingDate}}
-                        <br/>
-                    {{dhis2Event.orgUnitName.length > 15 ? dhis2Event.orgUnitName.substring(0,15).concat('...') : dhis2Event.orgUnitName}}<br/>
-                    {{dhis2Event.name.length > 15 ? dhis2Event.name.substring(0,15).concat('...') : dhis2Event.name}}
-                    </div>
-                    <div class="event-container-footer">{{getEventStyleLabel(dhis2Event)}}</div>
+
+            <div class="event-container" title="[{{'org_unit' | translate}}: {{dhis2Event.orgUnitName}}, {{'program_stage' | translate}}: {{dhis2Event.name}}]" ng-class="getEventStyle(dhis2Event)" ng-click="showDataEntry(dhis2Event, false)">                
+                <div class="event-container-item">
+                    {{dhis2Event.sortingDate}}
                 </div>
-                <div style="float: right" class="arrow-container" ng-if="$index + 1 < eventPageSize && $index + 1 + eventPagingStart < topLineEvents.length">
-                    <i class="fa fa-arrow-right"></i>
+                <div class="event-container-item">
+                    {{dhis2Event.orgUnitName}}
                 </div>
-            </div>            
+                <div class="event-container-item">
+                    {{dhis2Event.name}}
+                </div>
+                <div class="event-container-footer">{{getEventStyleLabel(dhis2Event)}}</div>
+            </div>
+            <div class="arrow-container" ng-if="$index + 1 < eventPageSize && $index + 1 + eventPagingStart < topLineEvents.length">
+                <i class="fa fa-arrow-right"></i>
+            </div>       
             <div class="event-container event-container-navigation" ng-click="getEventPage('FORWARD')" ng-if="$index + 1 === eventPageSize && eventPagingEnd < topLineEvents.length">
                 {{'next'| translate}}
             </div>
@@ -133,4 +135,3 @@
         </div>
     </div>    
 </div>
-
