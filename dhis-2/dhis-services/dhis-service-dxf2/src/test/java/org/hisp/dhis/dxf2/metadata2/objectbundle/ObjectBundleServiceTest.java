@@ -378,6 +378,27 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
     }
 
+    @Test
+    public void testDeletes1() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_deletes1.json" ).getInputStream(), RenderFormat.JSON );
+        defaultSetup();
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.DELETE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        assertEquals( 1, dataElements.size() );
+        assertEquals( "deabcdefghB", dataElements.get( 0 ).getUid() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );

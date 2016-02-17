@@ -34,6 +34,7 @@ import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
+import org.hisp.dhis.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,8 @@ import java.util.Map;
  */
 public class ObjectBundle
 {
+    private final User user;
+
     private final ObjectBundleMode objectBundleMode;
 
     private final PreheatIdentifier preheatIdentifier;
@@ -55,17 +58,25 @@ public class ObjectBundle
 
     private final MergeMode mergeMode;
 
+    private ObjectBundleStatus objectBundleStatus = ObjectBundleStatus.CREATED;
+
     private Preheat preheat = new Preheat();
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public ObjectBundle( ObjectBundleParams params )
     {
+        this.user = params.getUser();
         this.objectBundleMode = params.getObjectBundleMode();
         this.preheatIdentifier = params.getPreheatIdentifier();
         this.importMode = params.getImportMode();
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();
+    }
+
+    public User getUser()
+    {
+        return user;
     }
 
     public ObjectBundleMode getObjectBundleMode()
@@ -91,6 +102,16 @@ public class ObjectBundle
     public MergeMode getMergeMode()
     {
         return mergeMode;
+    }
+
+    public ObjectBundleStatus getObjectBundleStatus()
+    {
+        return objectBundleStatus;
+    }
+
+    public void setObjectBundleStatus( ObjectBundleStatus objectBundleStatus )
+    {
+        this.objectBundleStatus = objectBundleStatus;
     }
 
     public Preheat getPreheat()

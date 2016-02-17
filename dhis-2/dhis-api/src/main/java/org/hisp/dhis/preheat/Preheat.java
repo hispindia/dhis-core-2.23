@@ -30,8 +30,10 @@ package org.hisp.dhis.preheat;
 
 import org.hisp.dhis.common.IdentifiableObject;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -54,6 +56,24 @@ public class Preheat
         }
 
         return (T) map.get( identifier ).get( klass ).get( key );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> List<T> getAll( PreheatIdentifier identifier, List<T> keys )
+    {
+        List<T> objects = new ArrayList<>();
+
+        for ( T key : keys )
+        {
+            IdentifiableObject identifiableObject = get( identifier, key );
+
+            if ( identifiableObject != null )
+            {
+                objects.add( (T) identifiableObject );
+            }
+        }
+
+        return objects;
     }
 
     public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, T object )

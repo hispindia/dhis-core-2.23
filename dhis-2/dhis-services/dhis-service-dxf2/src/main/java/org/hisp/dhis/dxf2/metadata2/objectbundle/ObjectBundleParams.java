@@ -34,6 +34,7 @@ import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
+import org.hisp.dhis.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,8 @@ import java.util.Map;
  */
 public class ObjectBundleParams
 {
+    private User user;
+
     private ObjectBundleMode objectBundleMode = ObjectBundleMode.VALIDATE;
 
     private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
@@ -59,6 +62,17 @@ public class ObjectBundleParams
 
     public ObjectBundleParams()
     {
+
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser( User user )
+    {
+        this.user = user;
     }
 
     public ObjectBundleMode getObjectBundleMode()

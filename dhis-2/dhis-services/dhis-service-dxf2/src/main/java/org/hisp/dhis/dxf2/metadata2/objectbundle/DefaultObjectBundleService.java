@@ -28,13 +28,19 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.schema.validation.ValidationViolation;
+import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,17 +54,30 @@ import java.util.List;
 @Component
 public class DefaultObjectBundleService implements ObjectBundleService
 {
+    private static final Log log = LogFactory.getLog( DefaultObjectBundleService.class );
+
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @Autowired
     private PreheatService preheatService;
 
     @Autowired
     private SchemaValidator schemaValidator;
 
+    @Autowired
+    private SessionFactory sessionFactory;
+
     @Override
     public ObjectBundle create( ObjectBundleParams params )
     {
         ObjectBundle bundle = new ObjectBundle( params );
         bundle.putObjects( params.getObjects() );
+
+        if ( params.getUser() == null )
+        {
+            params.setUser( currentUserService.getCurrentUser() );
+        }
 
         PreheatParams preheatParams = params.getPreheatParams();
 
@@ -114,6 +133,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
             objectBundleValidation.addValidationViolation( klass, validationViolations );
         }
 
+        bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );
+
         return objectBundleValidation;
     }
 
@@ -123,6 +144,79 @@ public class DefaultObjectBundleService implements ObjectBundleService
         if ( ObjectBundleMode.VALIDATE == bundle.getObjectBundleMode() )
         {
             return; // skip if validate only
+        }
+
+        Session session = sessionFactory.getCurrentSession();
+
+        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        {
+            List<IdentifiableObject> objects = bundle.getObjects().get( klass );
+
+            if ( objects.isEmpty() )
+            {
+                continue;
+            }
+
+            switch ( bundle.getImportMode() )
+            {
+                case CREATE_AND_UPDATE:
+                case NEW_AND_UPDATES:
+                {
+                    handleCreatesAndUpdates( session, objects, bundle );
+                    break;
+                }
+                case CREATE:
+                case NEW:
+                {
+                    handleCreates( session, objects, bundle );
+                    break;
+                }
+                case UPDATE:
+                case UPDATES:
+                {
+                    handleUpdates( session, objects, bundle );
+                    break;
+                }
+                case DELETE:
+                case DELETES:
+                {
+                    handleDeletes( session, objects, bundle );
+                    break;
+                }
+            }
+        }
+
+        bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
+    }
+
+    private void handleCreatesAndUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+
+    }
+
+    private void handleCreates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+
+    }
+
+    private void handleUpdates( Session klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+
+    }
+
+    private void handleDeletes( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+        List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );
+
+        for ( IdentifiableObject object : persistedObjects )
+        {
+            session.delete( object );
+
+            if ( log.isDebugEnabled() )
+            {
+                String msg = "Deleted object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                log.debug( msg );
+            }
         }
     }
 }
