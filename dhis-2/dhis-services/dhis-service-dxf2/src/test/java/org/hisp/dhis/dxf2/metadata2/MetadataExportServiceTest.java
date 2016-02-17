@@ -172,7 +172,7 @@ public class MetadataExportServiceTest
         Map<Class<? extends IdentifiableObject>, List<? extends IdentifiableObject>> metadata = metadataExportService.getMetadata( params );
 
         assertFalse( metadata.containsKey( User.class ) );
-        assertTrue( metadata.containsKey( DataElementGroup.class ) );
+        assertFalse( metadata.containsKey( DataElementGroup.class ) );
         assertTrue( metadata.containsKey( DataElement.class ) );
 
         assertEquals( 2, metadata.get( DataElement.class ).size() );
