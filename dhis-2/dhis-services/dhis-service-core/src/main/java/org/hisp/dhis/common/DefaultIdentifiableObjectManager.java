@@ -36,6 +36,9 @@ import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.NameableObject.NameableProperty;
 import org.hisp.dhis.common.comparator.IdentifiableObjectNameComparator;
 import org.hisp.dhis.common.exception.InvalidIdentifierReferenceException;
+import org.hisp.dhis.dataelement.DataElementCategory;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
+import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.user.UserCredentials;
@@ -383,10 +386,10 @@ public class DefaultIdentifiableObjectManager
 
         return (List<T>) store.getByUid( uids );
     }
-    
+
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> List<T> getByCode(Class<T> clazz, Collection<String> codes) 
+    public <T extends IdentifiableObject> List<T> getByCode( Class<T> clazz, Collection<String> codes )
     {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( clazz );
 
@@ -1069,6 +1072,17 @@ public class DefaultIdentifiableObjectManager
     {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( klass );
         return store != null && store.isAttributeValueUnique( object, attribute, value );
+    }
+
+    @Override
+    public Map<Class<? extends IdentifiableObject>, IdentifiableObject> getDefaults()
+    {
+        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = new HashMap<>();
+        defaults.put( DataElementCategory.class, getByName( DataElementCategory.class, "default" ) );
+        defaults.put( DataElementCategoryCombo.class, getByName( DataElementCategoryCombo.class, "default" ) );
+        defaults.put( DataElementCategoryOption.class, getByName( DataElementCategoryOption.class, "default" ) );
+
+        return defaults;
     }
 
     //--------------------------------------------------------------------------

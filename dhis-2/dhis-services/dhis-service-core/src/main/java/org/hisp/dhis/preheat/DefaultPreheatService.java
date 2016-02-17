@@ -30,6 +30,7 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -63,11 +64,15 @@ public class DefaultPreheatService implements PreheatService
     @Autowired
     private QueryService queryService;
 
+    @Autowired
+    private IdentifiableObjectManager manager;
+
     @Override
     @SuppressWarnings( "unchecked" )
     public Preheat preheat( PreheatParams params )
     {
         Preheat preheat = new Preheat();
+        preheat.setDefaults( manager.getDefaults() );
 
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {

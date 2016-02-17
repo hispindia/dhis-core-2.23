@@ -34,6 +34,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
+import org.hisp.dhis.dataelement.DataElementCategory;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
+import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -196,10 +199,20 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleCreates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        for ( IdentifiableObject object : objects )
+        {
+            preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( object );
 
+            if ( log.isDebugEnabled() )
+            {
+                String msg = "Created object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                log.debug( msg );
+            }
+        }
     }
 
-    private void handleUpdates( Session klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
 
     }

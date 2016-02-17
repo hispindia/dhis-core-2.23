@@ -35,8 +35,10 @@ import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.OptionSet;
+import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.preheat.InvalidReference;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -44,6 +46,7 @@ import org.hisp.dhis.preheat.PreheatValidation;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -419,6 +422,31 @@ public class ObjectBundleServiceTest
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         assertEquals( 1, dataElements.size() );
         assertEquals( "DataElementCodeD", dataElements.get( 0 ).getCode() );
+    }
+
+    @Test
+    @Ignore
+    public void testCreateSimpleMetadataUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/simple_metadata1.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( dataSets.isEmpty() );
     }
 
     private void defaultSetup()
