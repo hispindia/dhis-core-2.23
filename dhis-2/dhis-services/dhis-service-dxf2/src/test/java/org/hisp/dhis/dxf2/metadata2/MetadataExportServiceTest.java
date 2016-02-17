@@ -176,6 +176,5 @@ public class MetadataExportServiceTest
         assertTrue( metadata.containsKey( DataElement.class ) );
 
         assertEquals( 2, metadata.get( DataElement.class ).size() );
-        assertEquals( 0, metadata.get( DataElementGroup.class ).size() );
     }
 }
