@@ -163,7 +163,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
-            System.err.println( "klass: " + klass );
             List<IdentifiableObject> objects = bundle.getObjects().get( klass );
 
             if ( objects.isEmpty() )
