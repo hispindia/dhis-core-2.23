@@ -47,10 +47,13 @@ import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -97,6 +100,52 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         bundle.setPreheat( preheatService.preheat( preheatParams ) );
+
+        if ( !(bundle.getImportMode().isCreate() || bundle.getImportMode().isCreateAndUpdate()) )
+        {
+            return bundle;
+        }
+
+        // add preheat placeholders for objects that will be created
+        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        {
+            Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> map = bundle.getPreheat().getMap();
+
+            if ( !map.containsKey( PreheatIdentifier.UID ) )
+            {
+                map.put( PreheatIdentifier.UID, new HashMap<>() );
+            }
+
+            if ( !map.get( PreheatIdentifier.UID ).containsKey( klass ) )
+            {
+                map.get( PreheatIdentifier.UID ).put( klass, new HashMap<>() );
+            }
+
+            if ( !map.containsKey( PreheatIdentifier.CODE ) )
+            {
+                map.put( PreheatIdentifier.CODE, new HashMap<>() );
+            }
+
+            if ( !map.get( PreheatIdentifier.CODE ).containsKey( klass ) )
+            {
+                map.get( PreheatIdentifier.CODE ).put( klass, new HashMap<>() );
+            }
+
+            for ( IdentifiableObject identifiableObject : bundle.getObjects().get( klass ) )
+            {
+                if ( Preheat.isDefault( identifiableObject ) ) continue;
+
+                if ( !StringUtils.isEmpty( identifiableObject.getUid() ) )
+                {
+                    map.get( PreheatIdentifier.UID ).get( klass ).put( identifiableObject.getUid(), identifiableObject );
+                }
+
+                if ( !StringUtils.isEmpty( identifiableObject.getCode() ) )
+                {
+                    map.get( PreheatIdentifier.CODE ).get( klass ).put( identifiableObject.getCode(), identifiableObject );
+                }
+            }
+        }
 
         return bundle;
     }

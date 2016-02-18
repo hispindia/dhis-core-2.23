@@ -288,27 +288,33 @@ public class DefaultPreheatService implements PreheatService
                     IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
                     IdentifiableObject ref = preheat.get( identifier, refObject );
 
-                    if ( ref == null && refObject != null )
+                    if ( ref == null && refObject != null && !Preheat.isDefault( refObject ) )
                     {
                         preheatValidation.addInvalidReference( object, identifier, refObject, p );
                     }
                 }
                 else
                 {
-                    // Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                    Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     for ( IdentifiableObject refObject : refObjects )
                     {
+                        if ( Preheat.isDefault( refObject ) ) continue;
+
                         IdentifiableObject ref = preheat.get( identifier, refObject );
 
                         if ( ref == null && refObject != null )
                         {
                             preheatValidation.addInvalidReference( object, identifier, refObject, p );
                         }
+                        else
+                        {
+                            objects.add( refObject );
+                        }
                     }
 
-                    // ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
+                    ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
 
@@ -346,8 +352,6 @@ public class DefaultPreheatService implements PreheatService
                 {
                     Collection<T> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-
-                    System.err.println( "refObjects: " + refObjects );
 
                     for ( IdentifiableObject refObject : refObjects )
                     {
