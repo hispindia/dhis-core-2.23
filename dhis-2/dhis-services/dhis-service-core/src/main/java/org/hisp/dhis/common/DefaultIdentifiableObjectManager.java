@@ -39,6 +39,7 @@ import org.hisp.dhis.common.exception.InvalidIdentifierReferenceException;
 import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
+import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.user.UserCredentials;
@@ -1081,6 +1082,7 @@ public class DefaultIdentifiableObjectManager
         defaults.put( DataElementCategory.class, getByName( DataElementCategory.class, "default" ) );
         defaults.put( DataElementCategoryCombo.class, getByName( DataElementCategoryCombo.class, "default" ) );
         defaults.put( DataElementCategoryOption.class, getByName( DataElementCategoryOption.class, "default" ) );
+        defaults.put( DataElementCategoryOptionCombo.class, getByName( DataElementCategoryOptionCombo.class, "default" ) );
 
         return defaults;
     }
