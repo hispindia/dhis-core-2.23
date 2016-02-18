@@ -33,10 +33,8 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
-import org.hisp.dhis.dataelement.DataElementCategory;
-import org.hisp.dhis.dataelement.DataElementCategoryCombo;
-import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -70,6 +68,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Autowired
     private SessionFactory sessionFactory;
+
+    @Autowired
+    private IdentifiableObjectManager manager;
 
     @Override
     public ObjectBundle create( ObjectBundleParams params )
@@ -223,7 +224,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( IdentifiableObject object : persistedObjects )
         {
-            session.delete( object );
+            manager.delete( object, bundle.getUser() );
 
             if ( log.isDebugEnabled() )
             {

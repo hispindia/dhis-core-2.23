@@ -42,6 +42,8 @@ import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
+import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,6 +87,9 @@ public class DefaultIdentifiableObjectManager
     @Autowired
     private OrganisationUnitService organisationUnitService;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     private Map<Class<? extends IdentifiableObject>, GenericIdentifiableObjectStore<? extends IdentifiableObject>> identifiableObjectStoreMap;
 
     private Map<Class<? extends NameableObject>, GenericNameableObjectStore<? extends NameableObject>> nameableObjectStoreMap;
@@ -98,33 +103,57 @@ public class DefaultIdentifiableObjectManager
     @Override
     public void save( IdentifiableObject object )
     {
-        save( object, true );
+        save( object, currentUserService.getCurrentUser(), true );
+    }
+
+    @Override
+    public void save( IdentifiableObject object, User user )
+    {
+        save( object, user, true );
     }
 
     @Override
     public void save( IdentifiableObject object, boolean clearSharing )
     {
+        save( object, currentUserService.getCurrentUser(), clearSharing );
+    }
+
+    @Override
+    public void save( IdentifiableObject object, User user, boolean clearSharing )
+    {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( object.getClass() );
 
         if ( store != null )
         {
-            store.save( object, clearSharing );
+            store.save( object, user, clearSharing );
         }
     }
 
     @Override
     public void update( IdentifiableObject object )
     {
+        update( object, currentUserService.getCurrentUser() );
+    }
+
+    @Override
+    public void update( IdentifiableObject object, User user )
+    {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( object.getClass() );
 
         if ( store != null )
         {
-            store.update( object );
+            store.update( object, user );
         }
     }
 
     @Override
     public void update( List<IdentifiableObject> objects )
+    {
+        update( objects, currentUserService.getCurrentUser() );
+    }
+
+    @Override
+    public void update( List<IdentifiableObject> objects, User user )
     {
         if ( objects == null || objects.isEmpty() )
         {
@@ -133,18 +162,24 @@ public class DefaultIdentifiableObjectManager
 
         for ( IdentifiableObject object : objects )
         {
-            update( object );
+            update( object, user );
         }
     }
 
     @Override
     public void delete( IdentifiableObject object )
     {
+        delete( object, currentUserService.getCurrentUser() );
+    }
+
+    @Override
+    public void delete( IdentifiableObject object, User user )
+    {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( object.getClass() );
 
         if ( store != null )
         {
-            store.delete( object );
+            store.delete( object, user );
         }
     }
 
