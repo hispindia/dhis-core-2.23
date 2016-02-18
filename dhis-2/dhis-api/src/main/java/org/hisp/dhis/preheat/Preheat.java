@@ -166,6 +166,11 @@ public class Preheat
         return this;
     }
 
+    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> getMap()
+    {
+        return map;
+    }
+
     public Map<Class<? extends IdentifiableObject>, IdentifiableObject> getDefaults()
     {
         return defaults;
@@ -176,9 +181,14 @@ public class Preheat
         this.defaults = defaults;
     }
 
-    public static boolean isDefault( IdentifiableObject object )
+    public static boolean isDefaultClass( IdentifiableObject object )
     {
         return (DataElementCategory.class.isInstance( object ) || DataElementCategoryOption.class.isInstance( object )
-            || DataElementCategoryCombo.class.isInstance( object )) && "default".equals( object.getName() );
+            || DataElementCategoryCombo.class.isInstance( object ));
+    }
+
+    public static boolean isDefault( IdentifiableObject object )
+    {
+        return isDefaultClass( object ) && "default".equals( object.getName() );
     }
 }

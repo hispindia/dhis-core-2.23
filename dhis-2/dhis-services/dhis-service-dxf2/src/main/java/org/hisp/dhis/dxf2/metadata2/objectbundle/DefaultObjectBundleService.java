@@ -36,6 +36,8 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.preheat.InvalidObject;
+import org.hisp.dhis.preheat.Preheat;
+import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
@@ -211,8 +213,12 @@ public class DefaultObjectBundleService implements ObjectBundleService
     {
         for ( IdentifiableObject object : objects )
         {
+            if ( Preheat.isDefault( object ) ) continue;
+
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             manager.save( object, bundle.getUser() );
+
+            bundle.getPreheat().put( PreheatIdentifier.UID, object );
 
             if ( log.isDebugEnabled() )
             {

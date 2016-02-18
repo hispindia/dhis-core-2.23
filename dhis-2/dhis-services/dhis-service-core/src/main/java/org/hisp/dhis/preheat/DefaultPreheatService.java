@@ -295,7 +295,7 @@ public class DefaultPreheatService implements PreheatService
                 }
                 else
                 {
-                    Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                    // Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     for ( IdentifiableObject refObject : refObjects )
@@ -308,7 +308,7 @@ public class DefaultPreheatService implements PreheatService
                         }
                     }
 
-                    ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
+                    // ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
 
@@ -324,6 +324,8 @@ public class DefaultPreheatService implements PreheatService
             return;
         }
 
+        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = preheat.getDefaults();
+
         Schema schema = schemaService.getDynamicSchema( object.getClass() );
         schema.getProperties().stream()
             .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
@@ -332,6 +334,12 @@ public class DefaultPreheatService implements PreheatService
                 {
                     T refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
                     T ref = preheat.get( identifier, refObject );
+
+                    if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
+                    {
+                        ref = (T) defaults.get( refObject.getClass() );
+                    }
+
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), ref );
                 }
                 else
@@ -339,9 +347,17 @@ public class DefaultPreheatService implements PreheatService
                     Collection<T> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
-                    for ( IdentifiableObject reference : refObjects )
+                    System.err.println( "refObjects: " + refObjects );
+
+                    for ( IdentifiableObject refObject : refObjects )
                     {
-                        T ref = preheat.get( identifier, (T) reference );
+                        T ref = preheat.get( identifier, (T) refObject );
+
+                        if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
+                        {
+                            ref = (T) defaults.get( refObject.getClass() );
+                        }
+
                         if ( ref != null ) objects.add( ref );
                     }
 

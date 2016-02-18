@@ -46,7 +46,6 @@ import org.hisp.dhis.preheat.PreheatValidation;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -425,7 +424,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    @Ignore
     public void testCreateSimpleMetadataUID() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
@@ -443,10 +441,22 @@ public class ObjectBundleServiceTest
         List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<DataSet> dataSets = manager.getAll( DataSet.class );
+        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
 
         assertFalse( organisationUnits.isEmpty() );
         assertFalse( dataElements.isEmpty() );
         assertFalse( dataSets.isEmpty() );
+
+        for ( DataElement dataElement : dataElements )
+        {
+            assertNotNull( dataElement.getCategoryCombo() );
+            assertEquals( defaults.get( DataElementCategoryCombo.class ), dataElement.getCategoryCombo() );
+        }
+
+        assertFalse( dataSets.get( 0 ).getSources().isEmpty() );
+        assertFalse( dataSets.get( 0 ).getDataElements().isEmpty() );
+        assertEquals( 1, dataSets.get( 0 ).getSources().size() );
+        assertEquals( 2, dataSets.get( 0 ).getDataElements().size() );
     }
 
     private void defaultSetup()
