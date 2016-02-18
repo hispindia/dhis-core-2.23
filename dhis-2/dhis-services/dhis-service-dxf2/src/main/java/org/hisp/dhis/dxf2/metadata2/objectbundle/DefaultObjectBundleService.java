@@ -39,6 +39,7 @@ import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
+import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.user.CurrentUserService;
@@ -65,6 +66,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Autowired
     private SchemaValidator schemaValidator;
+
+    @Autowired
+    private SchemaService schemaService;
 
     @Autowired
     private SessionFactory sessionFactory;
@@ -100,7 +104,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
     {
         ObjectBundleValidation objectBundleValidation = new ObjectBundleValidation();
 
-        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
+
+        for ( Class<? extends IdentifiableObject> klass : klasses )
         {
             if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
             {
@@ -143,6 +149,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
+    @SuppressWarnings( "unchecked" )
     public void commit( ObjectBundle bundle )
     {
         if ( ObjectBundleMode.VALIDATE == bundle.getObjectBundleMode() )
@@ -152,8 +159,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         Session session = sessionFactory.getCurrentSession();
 
-        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
+
+        for ( Class<? extends IdentifiableObject> klass : klasses )
         {
+            System.err.println( "klass: " + klass );
             List<IdentifiableObject> objects = bundle.getObjects().get( klass );
 
             if ( objects.isEmpty() )
@@ -203,7 +213,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         for ( IdentifiableObject object : objects )
         {
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            session.save( object );
+            manager.save( object, bundle.getUser() );
 
             if ( log.isDebugEnabled() )
             {
@@ -232,5 +242,22 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 log.debug( msg );
             }
         }
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private List<Class<? extends IdentifiableObject>> getSortedClasses( ObjectBundle bundle )
+    {
+        List<Class<? extends IdentifiableObject>> klasses = new ArrayList<>();
+
+        schemaService.getMetadataSchemas().forEach( schema -> {
+            Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) schema.getKlass();
+
+            if ( bundle.getObjects().containsKey( klass ) )
+            {
+                klasses.add( klass );
+            }
+        } );
+
+        return klasses;
     }
 }
