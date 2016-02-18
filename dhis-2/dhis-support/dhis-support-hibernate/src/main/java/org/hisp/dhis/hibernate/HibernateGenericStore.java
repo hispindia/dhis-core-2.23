@@ -434,7 +434,7 @@ public class HibernateGenericStore<T>
             }
         }
 
-        if ( !Interpretation.class.isAssignableFrom( clazz ) && !isUpdateAllowed( object ) )
+        if ( !Interpretation.class.isAssignableFrom( clazz ) && !isUpdateAllowed( object, user ) )
         {
             AuditLogUtil.infoWrapper( log, username, object, AuditLogUtil.ACTION_UPDATE_DENIED );
             throw new UpdateAccessDeniedException( object.toString() );
@@ -459,7 +459,7 @@ public class HibernateGenericStore<T>
     {
         String username = user != null ? user.getUsername() : "system-process";
 
-        if ( !isDeleteAllowed( object ) )
+        if ( !isDeleteAllowed( object, user ) )
         {
             AuditLogUtil.infoWrapper( log, username, object, AuditLogUtil.ACTION_DELETE_DENIED );
             throw new DeleteAccessDeniedException( object.toString() );
@@ -635,46 +635,32 @@ public class HibernateGenericStore<T>
         return Dashboard.class.isAssignableFrom( clazz );
     }
 
-    protected boolean sharingEnabled( User currentUser )
+    protected boolean sharingEnabled( User user )
     {
-        return forceAcl() || (aclService.isShareable( clazz ) && !(currentUser == null || currentUser.isSuper()));
+        return forceAcl() || (aclService.isShareable( clazz ) && !(user == null || user.isSuper()));
     }
 
     protected boolean isReadAllowed( T object )
     {
-        if ( IdentifiableObject.class.isInstance( object ) )
-        {
-            IdentifiableObject idObject = (IdentifiableObject) object;
-
-            User currentUser = currentUserService.getCurrentUser();
-
-            if ( sharingEnabled( currentUser ) )
-            {
-                return aclService.canRead( currentUser, idObject );
-            }
-        }
-
-        return true;
+        return isReadAllowed( object, currentUserService.getCurrentUser() );
     }
 
-    protected boolean isWriteAllowed( T object )
+    protected boolean isReadAllowed( T object, User user )
     {
         if ( IdentifiableObject.class.isInstance( object ) )
         {
             IdentifiableObject idObject = (IdentifiableObject) object;
 
-            User currentUser = currentUserService.getCurrentUser();
-
-            if ( sharingEnabled( currentUser ) )
+            if ( sharingEnabled( user ) )
             {
-                return aclService.canWrite( currentUser, idObject );
+                return aclService.canRead( user, idObject );
             }
         }
 
         return true;
     }
 
-    protected boolean isUpdateAllowed( T object )
+    protected boolean isUpdateAllowed( T object, User user )
     {
         if ( IdentifiableObject.class.isInstance( object ) )
         {
@@ -682,14 +668,14 @@ public class HibernateGenericStore<T>
 
             if ( aclService.isShareable( clazz ) )
             {
-                return aclService.canUpdate( currentUserService.getCurrentUser(), idObject );
+                return aclService.canUpdate( user, idObject );
             }
         }
 
         return true;
     }
 
-    protected boolean isDeleteAllowed( T object )
+    protected boolean isDeleteAllowed( T object, User user )
     {
         if ( IdentifiableObject.class.isInstance( object ) )
         {
@@ -697,7 +683,7 @@ public class HibernateGenericStore<T>
 
             if ( aclService.isShareable( clazz ) )
             {
-                return aclService.canDelete( currentUserService.getCurrentUser(), idObject );
+                return aclService.canDelete( user, idObject );
             }
         }
 
