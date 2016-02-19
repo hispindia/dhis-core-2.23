@@ -126,12 +126,26 @@ public class Preheat
     public <T extends IdentifiableObject> Preheat put( PreheatIdentifier identifier, T object )
     {
         if ( object == null ) return this;
-        if ( !map.containsKey( identifier ) ) map.put( identifier, new HashMap<>() );
-        if ( !map.get( identifier ).containsKey( object.getClass() ) ) map.get( identifier ).put( object.getClass(), new HashMap<>() );
 
-        Map<String, IdentifiableObject> identifierMap = map.get( identifier ).get( object.getClass() );
-        String key = identifier.getIdentifier( object );
-        identifierMap.put( key, object );
+        if ( PreheatIdentifier.UID == identifier || PreheatIdentifier.AUTO == identifier )
+        {
+            if ( !map.containsKey( PreheatIdentifier.UID ) ) map.put( PreheatIdentifier.UID, new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.UID ).containsKey( object.getClass() ) ) map.get( PreheatIdentifier.UID ).put( object.getClass(), new HashMap<>() );
+
+            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.UID ).get( object.getClass() );
+            String key = PreheatIdentifier.UID.getIdentifier( object );
+            identifierMap.put( key, object );
+        }
+
+        if ( PreheatIdentifier.CODE == identifier || PreheatIdentifier.AUTO == identifier )
+        {
+            if ( !map.containsKey( PreheatIdentifier.CODE ) ) map.put( PreheatIdentifier.CODE, new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.CODE ).containsKey( object.getClass() ) ) map.get( PreheatIdentifier.CODE ).put( object.getClass(), new HashMap<>() );
+
+            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.CODE ).get( object.getClass() );
+            String key = PreheatIdentifier.CODE.getIdentifier( object );
+            identifierMap.put( key, object );
+        }
 
         return this;
     }
@@ -151,6 +165,33 @@ public class Preheat
         if ( containsKey( identifier, klass, key ) )
         {
             map.get( identifier ).get( klass ).remove( key );
+        }
+
+        return this;
+    }
+
+    public Preheat remove( PreheatIdentifier identifier, IdentifiableObject object )
+    {
+        Class<? extends IdentifiableObject> klass = object.getClass();
+
+        if ( PreheatIdentifier.UID == identifier || PreheatIdentifier.AUTO == identifier )
+        {
+            String key = PreheatIdentifier.UID.getIdentifier( object );
+
+            if ( containsKey( PreheatIdentifier.UID, klass, key ) )
+            {
+                map.get( PreheatIdentifier.UID ).get( klass ).remove( key );
+            }
+        }
+
+        if ( PreheatIdentifier.CODE == identifier || PreheatIdentifier.AUTO == identifier )
+        {
+            String key = PreheatIdentifier.CODE.getIdentifier( object );
+
+            if ( containsKey( PreheatIdentifier.CODE, klass, key ) )
+            {
+                map.get( PreheatIdentifier.CODE ).get( klass ).remove( key );
+            }
         }
 
         return this;

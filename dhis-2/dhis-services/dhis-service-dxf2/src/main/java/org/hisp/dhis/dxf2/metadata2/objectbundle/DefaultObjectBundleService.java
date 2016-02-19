@@ -267,7 +267,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             manager.save( object, bundle.getUser() );
 
-            bundle.getPreheat().put( PreheatIdentifier.UID, object );
+            bundle.getPreheat().put( bundle.getPreheatIdentifier(), object );
 
             if ( log.isDebugEnabled() )
             {
@@ -289,6 +289,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
         for ( IdentifiableObject object : persistedObjects )
         {
             manager.delete( object, bundle.getUser() );
+
+            bundle.getPreheat().remove( bundle.getPreheatIdentifier(), object );
 
             if ( log.isDebugEnabled() )
             {
