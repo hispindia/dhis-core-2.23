@@ -72,6 +72,8 @@ public class DefaultIdentifiableObjectManager
 {
     private static final Log log = LogFactory.getLog( DefaultIdentifiableObjectManager.class );
 
+    private final Map<Class<? extends IdentifiableObject>, IdentifiableObject> DEFAULTS = new HashMap<>();
+
     @Autowired
     private Set<GenericIdentifiableObjectStore<? extends IdentifiableObject>> identifiableObjectStores;
 
@@ -1113,13 +1115,15 @@ public class DefaultIdentifiableObjectManager
     @Override
     public Map<Class<? extends IdentifiableObject>, IdentifiableObject> getDefaults()
     {
-        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = new HashMap<>();
-        defaults.put( DataElementCategory.class, getByName( DataElementCategory.class, "default" ) );
-        defaults.put( DataElementCategoryCombo.class, getByName( DataElementCategoryCombo.class, "default" ) );
-        defaults.put( DataElementCategoryOption.class, getByName( DataElementCategoryOption.class, "default" ) );
-        defaults.put( DataElementCategoryOptionCombo.class, getByName( DataElementCategoryOptionCombo.class, "default" ) );
+        if ( DEFAULTS.isEmpty() )
+        {
+            DEFAULTS.put( DataElementCategory.class, getByName( DataElementCategory.class, "default" ) );
+            DEFAULTS.put( DataElementCategoryCombo.class, getByName( DataElementCategoryCombo.class, "default" ) );
+            DEFAULTS.put( DataElementCategoryOption.class, getByName( DataElementCategoryOption.class, "default" ) );
+            DEFAULTS.put( DataElementCategoryOptionCombo.class, getByName( DataElementCategoryOptionCombo.class, "default" ) );
+        }
 
-        return defaults;
+        return DEFAULTS;
     }
 
     //--------------------------------------------------------------------------
