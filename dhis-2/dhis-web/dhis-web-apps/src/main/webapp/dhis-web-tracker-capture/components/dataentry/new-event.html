@@ -10,7 +10,7 @@
                 {{'program_stage' | translate}}
             </div>
             <div class="col-sm-9">
-                <select class="form-control-program" 
+                <select class="form-control" 
                         ng-model="model.selectedStage"                                
                         ng-options="stage.displayName for stage in stages">                    
                 </select>
@@ -33,7 +33,7 @@
 
             </div>
             <div class="row" ng-if="isNewEvent">
-                <div class="col-sm-3" style="padding-left: 0px">{{model.selectedStage.excecutionDateLabel}}</div>
+                <div class="col-sm-3">{{model.selectedStage.excecutionDateLabel}}</div>
                 <div class="col-sm-9">
                     <input type="text" 
                            class="form-control" 
