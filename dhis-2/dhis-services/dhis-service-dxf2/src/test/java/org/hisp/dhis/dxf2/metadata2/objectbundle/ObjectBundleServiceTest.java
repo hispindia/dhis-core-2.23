@@ -39,6 +39,7 @@ import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
+import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.preheat.InvalidReference;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -441,6 +442,8 @@ public class ObjectBundleServiceTest
         List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<DataSet> dataSets = manager.getAll( DataSet.class );
+        DataSet dataSet = dataSets.get( 0 );
+
         Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
 
         assertFalse( organisationUnits.isEmpty() );
@@ -453,10 +456,11 @@ public class ObjectBundleServiceTest
             assertEquals( defaults.get( DataElementCategoryCombo.class ), dataElement.getCategoryCombo() );
         }
 
-        assertFalse( dataSets.get( 0 ).getSources().isEmpty() );
-        assertFalse( dataSets.get( 0 ).getDataElements().isEmpty() );
-        assertEquals( 1, dataSets.get( 0 ).getSources().size() );
-        assertEquals( 2, dataSets.get( 0 ).getDataElements().size() );
+        assertFalse( dataSet.getSources().isEmpty() );
+        assertFalse( dataSet.getDataElements().isEmpty() );
+        assertEquals( 1, dataSet.getSources().size() );
+        assertEquals( 2, dataSet.getDataElements().size() );
+        assertEquals( PeriodType.getPeriodTypeByName( "Monthly" ), dataSet.getPeriodType() );
     }
 
     private void defaultSetup()
