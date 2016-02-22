@@ -28,7 +28,6 @@
     <module>dhis-service-administration</module>
     <module>dhis-service-analytics</module>
     <!-- Level 4 -->
-    <module>dhis-service-eventreporting</module>
     <module>dhis-service-reporting</module>
   </modules>
   
