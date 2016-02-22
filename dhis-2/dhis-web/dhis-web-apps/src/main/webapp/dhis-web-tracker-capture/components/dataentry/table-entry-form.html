@@ -66,10 +66,8 @@
                     <th class="" ng-repeat="prStDe in currentStage.programStageDataElements">
                         {{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}
                         <span ng-if="prStDe.compulsory" class="required">*</span>
-                        <a href ng-if="prStDe.dataElement.description" Title="{{prStDe.dataElement.description}}">
-                            <d2-info data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"}]'>
-                            </d2-info>
-                        </a>
+                        <d2-info ng-if="prStDe.dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"}]'>
+                        </d2-info>
                     </th>
                     <th class="" style="text-align: right">Status</th>
                 </tr>

@@ -17,7 +17,7 @@
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
                 <td >
                     {{eventGridColumn.displayName}}
-                    <d2-info data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
+                    <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
                                             {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'>
                     </d2-info>
                     <span ng-if="eventGridColumn.compulsory" class="required">*</span>
@@ -277,7 +277,7 @@
                     <td>
                         {{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}
 
-                        <d2-info data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
+                        <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
                                                 {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'>
                         </d2-info>
                         <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
