@@ -1,8 +1,6 @@
-<div class="panel panel-info" ng-controller="DataEntryController">
-    <div ng-include="'components/dataentry/dataentry-print.html'">
-    </div>
-    <div class="panel-heading handle bold">
-        
+<div class="panel panel-info" ng-controller="DataEntryController">    
+    <div class="panel-heading handle bold">        
+        <div ng-include="'components/dataentry/dataentry-print.html'"></div>
         <div ng-if="useMainMenu && !mainMenuStageSelected()">
             {{'main_menu' | translate}}
             
@@ -46,11 +44,7 @@
                 </a>
                 <a class="small-horizonal-spacing" href ng-click="removeWidget(dataentryWidget)" title="{{removeLabel}}" ng-if="dataentryWidget.showHideAllowed"><i class="fa fa-times-circle vertical-center"></i></a>            
             </span>
-        </div>
-        
-        <!--<span class="nav-pills" ng-if="stageNeedsEvent(currentStage)">
-            | <a href ng-click="showCreateEvent(currentStage, eventCreationActions.add)" title="{{'add_new_event'| translate}}"><span ng-class="{true: 'widget - link - active', false: 'widget - link'} [!editingDisabled]">{{'add_new_event'| translate}}</span></a>
-        </span>-->        
+        </div>       
     </div>
 
     <div ng-show="dataentryWidget.expand && showSelf" class="panel-body dashboard-widget-container">
