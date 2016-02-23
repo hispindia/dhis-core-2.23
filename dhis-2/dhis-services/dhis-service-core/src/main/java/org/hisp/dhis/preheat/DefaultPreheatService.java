@@ -31,7 +31,6 @@ package org.hisp.dhis.preheat;
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -41,6 +40,7 @@ import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.user.User;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -199,31 +199,35 @@ public class DefaultPreheatService implements PreheatService
             return map;
         }
 
-        for ( Class<? extends IdentifiableObject> objectClass : objects.keySet() )
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> scanObjects = new HashMap<>();
+        scanObjects.putAll( objects ); // clone objects list, we don't want to modify it
+
+        if ( scanObjects.containsKey( User.class ) )
+        {
+            List<IdentifiableObject> users = scanObjects.get( User.class );
+            List<IdentifiableObject> userCredentials = new ArrayList<>();
+
+            for ( IdentifiableObject identifiableObject : users )
+            {
+                User user = (User) identifiableObject;
+
+                if ( user.getUserCredentials() != null )
+                {
+                    userCredentials.add( user.getUserCredentials() );
+                }
+            }
+
+            scanObjects.put( UserCredentials.class, userCredentials );
+        }
+
+        for ( Class<? extends IdentifiableObject> objectClass : scanObjects.keySet() )
         {
             Schema schema = schemaService.getDynamicSchema( objectClass );
             List<Property> properties = schema.getProperties().stream()
                 .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
                 .collect( Collectors.toList() );
 
-            List<IdentifiableObject> identifiableObjects = objects.get( objectClass );
-
-            if ( User.class.isAssignableFrom( objectClass ) )
-            {
-                List<IdentifiableObject> userCredentials = new ArrayList<>();
-
-                for ( IdentifiableObject identifiableObject : identifiableObjects )
-                {
-                    User user = (User) identifiableObject;
-
-                    if ( user.getUserCredentials() != null )
-                    {
-                        userCredentials.add( user.getUserCredentials() );
-                    }
-                }
-
-                // identifiableObjects.addAll( userCredentials );
-            }
+            List<IdentifiableObject> identifiableObjects = scanObjects.get( objectClass );
 
             if ( !uidMap.containsKey( objectClass ) ) uidMap.put( objectClass, new HashSet<>() );
             if ( !codeMap.containsKey( objectClass ) ) codeMap.put( objectClass, new HashSet<>() );
