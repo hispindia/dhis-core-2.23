@@ -465,7 +465,7 @@ public class ObjectBundleServiceTest
         assertEquals( 1, dataSet.getSources().size() );
         assertEquals( 2, dataSet.getDataElements().size() );
         assertEquals( PeriodType.getPeriodTypeByName( "Monthly" ), dataSet.getPeriodType() );
-        assertNotNull( user.getUserCredentials() );
+        // assertNotNull( user.getUserCredentials() );
     }
 
     private void defaultSetup()

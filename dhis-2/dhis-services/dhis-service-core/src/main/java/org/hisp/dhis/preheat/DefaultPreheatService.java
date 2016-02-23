@@ -222,7 +222,7 @@ public class DefaultPreheatService implements PreheatService
                     }
                 }
 
-                identifiableObjects.addAll( userCredentials );
+                // identifiableObjects.addAll( userCredentials );
             }
 
             if ( !uidMap.containsKey( objectClass ) ) uidMap.put( objectClass, new HashSet<>() );
