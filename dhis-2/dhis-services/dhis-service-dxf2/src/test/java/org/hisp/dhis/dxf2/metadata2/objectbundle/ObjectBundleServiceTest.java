@@ -442,6 +442,7 @@ public class ObjectBundleServiceTest
         List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<User> users = manager.getAll( User.class );
         DataSet dataSet = dataSets.get( 0 );
 
         Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
@@ -449,6 +450,7 @@ public class ObjectBundleServiceTest
         assertFalse( organisationUnits.isEmpty() );
         assertFalse( dataElements.isEmpty() );
         assertFalse( dataSets.isEmpty() );
+        assertFalse( users.isEmpty() );
 
         for ( DataElement dataElement : dataElements )
         {
