@@ -443,14 +443,16 @@ public class ObjectBundleServiceTest
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<DataSet> dataSets = manager.getAll( DataSet.class );
         List<User> users = manager.getAll( User.class );
-        DataSet dataSet = dataSets.get( 0 );
-
-        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
 
         assertFalse( organisationUnits.isEmpty() );
         assertFalse( dataElements.isEmpty() );
         assertFalse( dataSets.isEmpty() );
         assertFalse( users.isEmpty() );
+
+        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
+
+        DataSet dataSet = dataSets.get( 0 );
+        User user = users.get( 0 );
 
         for ( DataElement dataElement : dataElements )
         {
@@ -463,6 +465,7 @@ public class ObjectBundleServiceTest
         assertEquals( 1, dataSet.getSources().size() );
         assertEquals( 2, dataSet.getDataElements().size() );
         assertEquals( PeriodType.getPeriodTypeByName( "Monthly" ), dataSet.getPeriodType() );
+        assertNotNull( user.getUserCredentials() );
     }
 
     private void defaultSetup()
