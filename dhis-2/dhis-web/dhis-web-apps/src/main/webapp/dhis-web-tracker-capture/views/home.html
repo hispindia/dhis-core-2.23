@@ -146,18 +146,12 @@
                 </span>
                 
                 <div class="pull-right hideInPrint" ng-if="trackedEntityList.length > 0 && !showRegistrationDiv">
-                    <button class="btn btn-info"
-                            type="button"                             
-                            ng-click="showHideColumns()">
-                        {{showHideLabel}}
-                    </button>                    
+                    <a href ng-click="showHideColumns()" title="{{showHideLabel}}"><i class="fa fa-table fa-2x vertical-spacing"></i></a>                    
                 </div>
                 
             </div>
         </div>
-        <div class="row">            
-            <div class="col-sm-12" ng-if="!showRegistrationDiv" ng-include="'views/tei.html'"></div>
-        </div>
+        <div ng-if="!showRegistrationDiv" ng-include="'views/tei.html'"></div>
         <!-- entity grid ends -->
     </div>
 
