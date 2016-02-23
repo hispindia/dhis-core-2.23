@@ -59,7 +59,6 @@ public class AggregationQueryController
 
     public static final String RESOURCE_PATH = "/aggregationQueries";
 
-    @Autowired
     private CaseAggregationConditionService aggregationConditionService;
 
     @Autowired
