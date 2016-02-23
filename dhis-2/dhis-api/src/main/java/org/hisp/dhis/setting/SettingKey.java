@@ -36,7 +36,6 @@ import org.hisp.dhis.sms.config.SmsConfiguration;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -73,13 +72,8 @@ public enum SettingKey
     SCHEDULED_TASKS( "keySchedTasks", ListMap.class ),
     SMS_CONFIG( "keySmsConfig", SmsConfiguration.class ),
     CACHE_STRATEGY( "keyCacheStrategy", "CACHE_6AM_TOMORROW", String.class ),
-    TIME_FOR_SENDING_MESSAGE( "timeSendingMessage", "08:00", String.class ),
-    SEND_MESSAGE_SCHEDULED_TASKS( "sendMessageScheduled" ),
-    SCHEDULE_MESSAGE_TASKS( "scheduleMessage" ),
     PHONE_NUMBER_AREA_CODE( "phoneNumberAreaCode" ),
     MULTI_ORGANISATION_UNIT_FORMS( "multiOrganisationUnitForms", Boolean.FALSE, Boolean.class ),
-    SCHEDULE_AGGREGATE_QUERY_BUILDER_TASKS( "scheduleAggregateQueryBuilder", Map.class ),
-    SCHEDULE_AGGREGATE_QUERY_BUILDER_TASK_STRATEGY( "scheduleAggregateQueryBuilderTackStrategy", "lastMonth", String.class ),
     CONFIGURATION( "keyConfig", Configuration.class ),
     ACCOUNT_RECOVERY( "keyAccountRecovery", Boolean.FALSE, Boolean.class ),
     GOOGLE_ANALYTICS_UA( "googleAnalyticsUA" ),
