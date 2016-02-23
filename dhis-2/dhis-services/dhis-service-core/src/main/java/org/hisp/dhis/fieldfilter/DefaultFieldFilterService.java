@@ -46,6 +46,7 @@ import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -230,7 +231,7 @@ public class DefaultFieldFilterService implements FieldFilterService
                     child = new CollectionNode( property.getCollectionName() );
                     child.setNamespace( property.getNamespace() );
 
-                    if ( property.isIdentifiableObject() && !DataElementOperand.class.isAssignableFrom( property.getItemKlass() ) )
+                    if ( property.isIdentifiableObject() && isProperIdObject( property.getItemKlass() ) )
                     {
                         for ( Object collectionObject : collection )
                         {
@@ -263,7 +264,7 @@ public class DefaultFieldFilterService implements FieldFilterService
                         }
                     }
                 }
-                else if ( property.isIdentifiableObject() && !DataElementOperand.class.isAssignableFrom( property.getKlass() ) )
+                else if ( property.isIdentifiableObject() && isProperIdObject( property.getKlass() ) )
                 {
                     child = getProperties( property, returnValue, fields );
                 }
@@ -484,5 +485,10 @@ public class DefaultFieldFilterService implements FieldFilterService
         }
 
         return complexNode;
+    }
+
+    private boolean isProperIdObject( Class<?> klass )
+    {
+        return !(DataElementOperand.class.isAssignableFrom( klass ) || UserCredentials.class.isAssignableFrom( klass ));
     }
 }
