@@ -52,6 +52,20 @@
         <td><img src="${base}24.png" onclick="selectSymbol( '24.png' )"></td>
         <td><img src="${base}25.png" onclick="selectSymbol( '25.png' )"></td>
     </tr>
+        <tr>
+        <td><img src="${base}26.png" onclick="selectSymbol( '26.png' )"></td>
+        <td><img src="${base}27.png" onclick="selectSymbol( '27.png' )"></td>
+        <td><img src="${base}28.png" onclick="selectSymbol( '28.png' )"></td>
+        <td><img src="${base}29.png" onclick="selectSymbol( '29.png' )"></td>
+        <td><img src="${base}30.png" onclick="selectSymbol( '30.png' )"></td>
+    </tr>
+        <tr>
+        <td><img src="${base}31.png" onclick="selectSymbol( '31.png' )"></td>
+        <td><img src="${base}32.png" onclick="selectSymbol( '32.png' )"></td>
+        <td><img src="${base}33.png" onclick="selectSymbol( '33.png' )"></td>
+        <td><img src="${base}34.png" onclick="selectSymbol( '34.png' )"></td>
+        <td><img src="${base}35.png" onclick="selectSymbol( '35.png' )"></td>
+    </tr>
 </table>
 
 </div>
