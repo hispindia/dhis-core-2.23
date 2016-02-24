@@ -29,10 +29,9 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.user.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.stereotype.Component;
 
 /**
@@ -41,9 +40,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserObjectBundleHook extends AbstractObjectBundleHook
 {
-    @Autowired
-    private IdentifiableObjectManager manager;
-
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
@@ -51,5 +47,13 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         {
             return;
         }
+
+        User user = (User) identifiableObject;
+        UserCredentials userCredentials = user.getUserCredentials();
+
+        preheatService.connectReferences( userCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+        manager.save( userCredentials );
+
+        user.setUserCredentials( userCredentials );
     }
 }

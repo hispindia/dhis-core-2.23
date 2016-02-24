@@ -32,6 +32,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
+import org.hisp.dhis.user.UserCredentials;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,6 +48,8 @@ public class Preheat
     private Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> map = new HashMap<>();
 
     private Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = new HashMap<>();
+
+    private Map<String, UserCredentials> usernames = new HashMap<>();
 
     public Preheat()
     {
@@ -220,6 +223,16 @@ public class Preheat
     public void setDefaults( Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults )
     {
         this.defaults = defaults;
+    }
+
+    public Map<String, UserCredentials> getUsernames()
+    {
+        return usernames;
+    }
+
+    public void setUsernames( Map<String, UserCredentials> usernames )
+    {
+        this.usernames = usernames;
     }
 
     public static boolean isDefaultClass( IdentifiableObject object )

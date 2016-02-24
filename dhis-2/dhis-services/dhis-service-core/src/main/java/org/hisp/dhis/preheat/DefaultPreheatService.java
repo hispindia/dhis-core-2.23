@@ -75,6 +75,7 @@ public class DefaultPreheatService implements PreheatService
     {
         Preheat preheat = new Preheat();
         preheat.setDefaults( manager.getDefaults() );
+        preheat.setUsernames( getUsernames() );
 
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {
@@ -391,5 +392,20 @@ public class DefaultPreheatService implements PreheatService
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private Map<String, UserCredentials> getUsernames()
+    {
+        Map<String, UserCredentials> userCredentialsMap = new HashMap<>();
+        Query query = Query.from( schemaService.getDynamicSchema( UserCredentials.class ) );
+        List<UserCredentials> userCredentials = (List<UserCredentials>) queryService.query( query );
+
+        for ( UserCredentials uc : userCredentials )
+        {
+            userCredentialsMap.put( uc.getUsername(), uc );
+        }
+
+        return userCredentialsMap;
     }
 }

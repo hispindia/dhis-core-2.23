@@ -29,13 +29,26 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
+import org.hisp.dhis.preheat.PreheatService;
+import org.hisp.dhis.schema.validation.SchemaValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 public class AbstractObjectBundleHook implements ObjectBundleHook
 {
+    @Autowired
+    protected IdentifiableObjectManager manager;
+
+    @Autowired
+    protected PreheatService preheatService;
+
+    @Autowired
+    protected SchemaValidator validator;
+
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
