@@ -433,14 +433,6 @@ public class DefaultFieldFilterService implements FieldFilterService
     private FieldMap getFullFieldMap( Schema schema )
     {
         FieldMap fieldMap = new FieldMap();
-
-        /*
-        for ( String mapKey : schema.getPropertyMap().keySet() )
-        {
-            fieldMap.put( mapKey, new FieldMap() );
-        }
-        */
-
         fieldMap.put( ":owner", new FieldMap() );
 
         return fieldMap;
