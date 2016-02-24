@@ -64,10 +64,12 @@
                         {{currentStage.excecutionDateLabel}}
                     </th>
                     <th class="" ng-repeat="prStDe in currentStage.programStageDataElements">
-                        {{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}
-                        <span ng-if="prStDe.compulsory" class="required">*</span>
-                        <d2-info ng-if="prStDe.dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"}]'>
+                        <d2-info display-name="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}"
+                                 data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"},
+                                                {"name":"{{"url" | translate}}", "data":"{{prStDe.dataElement.url}}"}]'
+                                 data-title="Details">
                         </d2-info>
+                        <span ng-if="prStDe.compulsory" class="required">*</span>
                     </th>
                     <th class="" style="text-align: right">Status</th>
                 </tr>

@@ -2,9 +2,12 @@
 <table class="dhis2-list-table-striped dhis2-table-hover">
     <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled)">
         <td>
-            <span ng-bind="attribute.displayName"></span><span ng-if="attribute.mandatory || attribute.unique" class="required">*</span>
-            <d2-info ng-if="attribute.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{attribute.description}}"}]'>
+            <d2-info display-name="{{attribute.displayName}}"
+                     data-content='[{"name":"{{"description" | translate}}", "data":"{{attribute.description}}"},
+                                    {"name":"{{"url" | translate}}", "data":"{{attribute.url}}"}]'
+                     data-title="Details">
             </d2-info>
+            <span ng-if="attribute.mandatory || attribute.unique" class="required">*</span>
         </td>
         <td>
             <ng-form name="innerForm">

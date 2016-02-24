@@ -14,11 +14,13 @@
         </thead>
         <tr class="col-md-12" ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)">
             <td>
-                <span ng-bind="prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName"></span>
+                <d2-info display-name="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}"
+                         data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"},
+                                        {"name":"{{"url" | translate}}", "data":"{{prStDe.dataElement.url}}"}]'
+                         data-title="Details">
+                </d2-info>
                 <span ng-if="prStDe.compulsory" class="required">*</span>
-                <span class="hideInPrint">
-                    <d2-info ng-if="prStDe.dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"}]'>
-                    </d2-info>
+                <span class="hideInPrint">                    
                     <span ng-if="otherValuesLists[prStDe.dataElement.id]" ng-repeat="altValue in otherValuesLists[prStDe.dataElement.id] track by $index">
                         <span class="label label-default">{{altValue | translate}}</span>
                    </span>

@@ -159,12 +159,12 @@
 
                 <div class="row row-alternate compare-form-row" ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="currentEvent.eventDate && !isHidden(prStDe.dataElement.id, currentEvent)">
                     <div ng-class="getCompareModeColSize(compareModeColDefs.header)" class="compare-form-extra-padding">
-                        <span ng-bind="prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName"></span>
+                        <d2-info display-name="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}"
+                                 data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"},
+                                                {"name":"{{"url" | translate}}", "data":"{{prStDe.dataElement.url}}"}]'
+                                 data-title="Details">
+                        </d2-info>
                         <span ng-if="prStDe.compulsory" class="required">*</span>
-                        <span class="hideInPrint">
-                            <d2-info ng-if="prStDe.dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"}]'>
-                            </d2-info>
-                        </span>
                     </div>
 
                     <div ng-class="getCompareModeColSize(compareModeColDefs.otherEvents)" ng-if="otherStageEvents.length > 0" class="compare-form-extra-padding">                
@@ -299,14 +299,16 @@
                                     </div>
                                 </div>
                                 
-                                <div class="row row-alternate compare-form-row" ng-repeat="de in section.programStageDataElements" ng-if="!isHidden(de.dataElement.id, currentEvent)">
+                                <div class="row row-alternate compare-form-row" ng-repeat="de in section.programStageDataElements"
+                                     ng-if="!isHidden(de.dataElement.id, currentEvent)">
                                     <div ng-class="getCompareModeColSize(compareModeColDefs.header)" class="compare-form-extra-padding">
-                                        <span ng-bind="prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName"></span>                                
+                                        <d2-info display-name="{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName :
+                                                                 prStDes[de.dataElement.id].dataElement.displayName}}"
+                                                 data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
+                                                                {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'
+                                                 data-title="Details">
+                                        </d2-info>
                                         <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
-                                        <span class="hideInPrint">
-                                            <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"}]'>
-                                            </d2-info>
-                                        </span>
                                     </div>
 
                                     <!--other Events in section -->

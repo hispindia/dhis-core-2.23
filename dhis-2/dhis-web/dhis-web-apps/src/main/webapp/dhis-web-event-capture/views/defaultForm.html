@@ -15,10 +15,11 @@
         </thead>
         <tbody>
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
-                <td >
-                    {{eventGridColumn.displayName}}
-                    <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
-                                            {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'>
+                <td>
+                    <d2-info display-name="{{eventGridColumn.displayName}}"
+                             data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[eventGridColumn.id].dataElement.description}}"},
+                                            {"name":"{{"url" | translate}}", "data":"{{prStDes[eventGridColumn.id].dataElement.url}}"}]'
+                             data-title="Details">
                     </d2-info>
                     <span ng-if="eventGridColumn.compulsory" class="required">*</span>
                 </td>
@@ -275,11 +276,13 @@
             <tbody>
                 <tr ng-repeat="de in section.programStageDataElements" ng-if="!hiddenFields[de.dataElement.id]">
                     <td>
-                        {{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}
-
-                        <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
-                                                {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'>
+                        <d2-info display-name="{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName :
+                                                 prStDes[de.dataElement.id].dataElement.displayName}}"
+                                 data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
+                                                {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'
+                                 data-title="Details">
                         </d2-info>
+
                         <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
                     </td>
                     <td>
