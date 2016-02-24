@@ -38,13 +38,11 @@ public interface ObjectBundleHook
 {
     void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
 
-    void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
-
-    void preDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
-
     void postCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
+
+    void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
 
     void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
 
-    void postDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
+    void preDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
 }

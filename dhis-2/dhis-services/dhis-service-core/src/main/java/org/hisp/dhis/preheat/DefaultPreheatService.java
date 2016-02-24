@@ -31,6 +31,7 @@ package org.hisp.dhis.preheat;
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -307,6 +308,11 @@ public class DefaultPreheatService implements PreheatService
         schema.getProperties().stream()
             .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
             .forEach( p -> {
+                if ( skipCheckAndConnect( p.getKlass() ) || skipCheckAndConnect( p.getItemKlass() ) )
+                {
+                    return;
+                }
+
                 if ( !p.isCollection() )
                 {
                     IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
@@ -360,6 +366,11 @@ public class DefaultPreheatService implements PreheatService
         schema.getProperties().stream()
             .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
             .forEach( p -> {
+                if ( skipCheckAndConnect( p.getKlass() ) || skipCheckAndConnect( p.getItemKlass() ) )
+                {
+                    return;
+                }
+
                 if ( !p.isCollection() )
                 {
                     T refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
@@ -370,7 +381,14 @@ public class DefaultPreheatService implements PreheatService
                         ref = (T) defaults.get( refObject.getClass() );
                     }
 
-                    ReflectionUtils.invokeMethod( object, p.getSetterMethod(), ref );
+                    if ( ref != null && ref.getId() == 0 )
+                    {
+                        ReflectionUtils.invokeMethod( object, p.getSetterMethod(), (Object) null );
+                    }
+                    else
+                    {
+                        ReflectionUtils.invokeMethod( object, p.getSetterMethod(), ref );
+                    }
                 }
                 else
                 {
@@ -386,7 +404,7 @@ public class DefaultPreheatService implements PreheatService
                             ref = (T) defaults.get( refObject.getClass() );
                         }
 
-                        if ( ref != null ) objects.add( ref );
+                        if ( ref != null && ref.getId() != 0 ) objects.add( ref );
                     }
 
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
@@ -407,5 +425,10 @@ public class DefaultPreheatService implements PreheatService
         }
 
         return userCredentialsMap;
+    }
+
+    private boolean skipCheckAndConnect( Class<?> klass )
+    {
+        return klass != null && (UserCredentials.class.isAssignableFrom( klass ) || DataElementOperand.class.isAssignableFrom( klass ));
     }
 }

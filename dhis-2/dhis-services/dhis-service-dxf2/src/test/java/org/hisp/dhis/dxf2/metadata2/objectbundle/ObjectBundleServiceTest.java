@@ -47,6 +47,7 @@ import org.hisp.dhis.preheat.PreheatValidation;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
+import org.hisp.dhis.user.UserAuthorityGroup;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -442,12 +443,14 @@ public class ObjectBundleServiceTest
         List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
         List<User> users = manager.getAll( User.class );
 
         assertFalse( organisationUnits.isEmpty() );
         assertFalse( dataElements.isEmpty() );
         assertFalse( dataSets.isEmpty() );
         assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
 
         Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
 
@@ -465,7 +468,10 @@ public class ObjectBundleServiceTest
         assertEquals( 1, dataSet.getSources().size() );
         assertEquals( 2, dataSet.getDataElements().size() );
         assertEquals( PeriodType.getPeriodTypeByName( "Monthly" ), dataSet.getPeriodType() );
-        // assertNotNull( user.getUserCredentials() );
+
+        assertNotNull( user.getUserCredentials() );
+        assertEquals( "admin", user.getUserCredentials().getUsername() );
+        assertFalse( user.getUserCredentials().getUserAuthorityGroups().isEmpty() );
     }
 
     private void defaultSetup()

@@ -30,11 +30,11 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.preheat.InvalidObject;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -80,6 +80,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Autowired
     private IdentifiableObjectManager manager;
+
+    @Autowired( required = false )
+    private List<ObjectBundleHook> objectBundleHooks = new ArrayList<>();
 
     @Override
     public ObjectBundle create( ObjectBundleParams params )
@@ -208,8 +211,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
             return; // skip if validate only
         }
 
-        Session session = sessionFactory.getCurrentSession();
-
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
@@ -226,48 +227,54 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 case CREATE_AND_UPDATE:
                 case NEW_AND_UPDATES:
                 {
-                    handleCreatesAndUpdates( session, objects, bundle );
+                    handleCreatesAndUpdates( objects, bundle );
                     break;
                 }
                 case CREATE:
                 case NEW:
                 {
-                    handleCreates( session, objects, bundle );
+                    handleCreates( objects, bundle );
                     break;
                 }
                 case UPDATE:
                 case UPDATES:
                 {
-                    handleUpdates( session, objects, bundle );
+                    handleUpdates( objects, bundle );
                     break;
                 }
                 case DELETE:
                 case DELETES:
                 {
-                    handleDeletes( session, objects, bundle );
+                    handleDeletes( objects, bundle );
                     break;
                 }
             }
+
+            sessionFactory.getCurrentSession().flush();
         }
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
     }
 
-    private void handleCreatesAndUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleCreatesAndUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
 
     }
 
-    private void handleCreates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleCreates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         for ( IdentifiableObject object : objects )
         {
             if ( Preheat.isDefault( object ) ) continue;
 
+            objectBundleHooks.forEach( hook -> hook.preCreate( object, bundle ) );
+
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             manager.save( object, bundle.getUser() );
 
             bundle.getPreheat().put( bundle.getPreheatIdentifier(), object );
+
+            objectBundleHooks.forEach( hook -> hook.postCreate( object, bundle ) );
 
             if ( log.isDebugEnabled() )
             {
@@ -277,17 +284,18 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
     }
 
-    private void handleUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
 
     }
 
-    private void handleDeletes( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleDeletes( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );
 
         for ( IdentifiableObject object : persistedObjects )
         {
+            objectBundleHooks.forEach( hook -> hook.preDelete( object, bundle ) );
             manager.delete( object, bundle.getUser() );
 
             bundle.getPreheat().remove( bundle.getPreheatIdentifier(), object );

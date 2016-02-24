@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
@@ -49,18 +50,11 @@ public class AbstractObjectBundleHook implements ObjectBundleHook
     @Autowired
     protected SchemaValidator validator;
 
+    @Autowired
+    protected SessionFactory sessionFactory;
+
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
-    {
-    }
-
-    @Override
-    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
-    {
-    }
-
-    @Override
-    public void preDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
     }
 
@@ -70,12 +64,17 @@ public class AbstractObjectBundleHook implements ObjectBundleHook
     }
 
     @Override
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+    }
+
+    @Override
     public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
     }
 
     @Override
-    public void postDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void preDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
     }
 }
