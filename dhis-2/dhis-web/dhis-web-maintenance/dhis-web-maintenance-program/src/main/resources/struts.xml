@@ -666,23 +666,6 @@
       <result name="success" type="redirect">attributeGroup.action</result>
     </action>
 
-    <!-- Case Aggregation Condition -->
-
-    <action name="getProgramStages"
-      class="org.hisp.dhis.trackedentity.action.programstage.GetProgramStageListAction">
-      <result name="success" type="velocity-json">
-        /dhis-web-commons/ajax/jsonProgramStages.vm
-      </result>
-      <param name="onExceptionReturn">plainTextError</param>
-    </action>
-
-    <action name="getOptions"
-      class="org.hisp.dhis.trackedentity.action.caseaggregation.GetOptionsAction">
-      <result name="success" type="velocity-json">
-        /dhis-web-maintenance-program/jsonOptions.vm
-      </result>
-    </action>
-
     <!-- Validation - ValidationCriteria -->
 
     <action name="validationCriteria"

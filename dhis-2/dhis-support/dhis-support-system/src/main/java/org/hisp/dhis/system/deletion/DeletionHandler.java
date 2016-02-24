@@ -30,7 +30,6 @@ package org.hisp.dhis.system.deletion;
 
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeValue;
-import org.hisp.dhis.caseaggregation.CaseAggregationCondition;
 import org.hisp.dhis.chart.Chart;
 import org.hisp.dhis.common.filter.MetaDataFilter;
 import org.hisp.dhis.constant.Constant;
@@ -67,7 +66,6 @@ import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.mapping.Map;
 import org.hisp.dhis.mapping.MapView;
 import org.hisp.dhis.minmax.MinMaxDataElement;
-import org.hisp.dhis.security.oauth2.OAuth2Client;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -91,6 +89,7 @@ import org.hisp.dhis.relationship.Relationship;
 import org.hisp.dhis.relationship.RelationshipType;
 import org.hisp.dhis.report.Report;
 import org.hisp.dhis.reporttable.ReportTable;
+import org.hisp.dhis.security.oauth2.OAuth2Client;
 import org.hisp.dhis.sqlview.SqlView;
 import org.hisp.dhis.trackedentity.TrackedEntity;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
@@ -696,15 +695,6 @@ public abstract class DeletionHandler
     }
 
     public void deleteConstant( Constant constant )
-    {
-    }
-
-    public String allowDeleteCaseAggregationCondition( CaseAggregationCondition caseAggregationCondition )
-    {
-        return null;
-    }
-
-    public void deleteCaseAggregationCondition( CaseAggregationCondition caseAggregationCondition )
     {
     }
 

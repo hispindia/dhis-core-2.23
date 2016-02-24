@@ -547,22 +547,6 @@ var validationRules = {
             "required" : true
         }
     },
-    "caseAggregation" : {
-        "name" : {
-            "required" : true,
-            "rangelength" : [2,230]
-        },
-        "aggregationDataElementId" : {
-            "required" : true
-        },
-        "deSumId" : {
-            "required" : true
-        },
-        "aggregationCondition" : {
-            "required" : true,
-            "rangelength" : [2,1000]
-        }
-    },
     "programStageSection" : {
         "name" : {
             "required" : true,

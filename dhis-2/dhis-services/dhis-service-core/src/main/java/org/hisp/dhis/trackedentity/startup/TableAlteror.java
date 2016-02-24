@@ -28,21 +28,10 @@ package org.hisp.dhis.trackedentity.startup;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import static org.hisp.dhis.program.ProgramExpression.OBJECT_PROGRAM_STAGE;
-import static org.hisp.dhis.program.ProgramExpression.OBJECT_PROGRAM_STAGE_DATAELEMENT;
-import static org.hisp.dhis.program.ProgramExpression.SEPARATOR_ID;
-import static org.hisp.dhis.program.ProgramExpression.SEPARATOR_OBJECT;
-
-import java.sql.ResultSet;
-import java.sql.Statement;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.amplecode.quick.StatementHolder;
 import org.amplecode.quick.StatementManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.caseaggregation.CaseAggregationCondition;
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.jdbc.StatementBuilder;
@@ -53,6 +42,13 @@ import org.hisp.dhis.system.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.hisp.dhis.program.ProgramExpression.*;
 
 /**
  * @author Chau Thu Tran
@@ -81,10 +77,10 @@ public class TableAlteror
 
     @Autowired
     private ProgramStageService programStageService;
-    
+
     @Autowired
     private DataElementService dataElementService;
-    
+
     // -------------------------------------------------------------------------
     // Action Implementation
     // -------------------------------------------------------------------------
@@ -111,8 +107,6 @@ public class TableAlteror
         executeSql( "DROP TABLE programattributeoption" );
         executeSql( "DROP TABLE programattribute" );
         executeSql( "ALTER TABLE programstageinstance ALTER executiondate TYPE date" );
-
-        executeSql( "ALTER TABLE caseaggregationcondition RENAME description TO name" );
 
         executeSql( "UPDATE programstage_dataelements SET allowProvidedElsewhere=false WHERE allowProvidedElsewhere is null" );
         executeSql( "ALTER TABLE programstageinstance DROP COLUMN providedbyanotherfacility" );
@@ -151,13 +145,11 @@ public class TableAlteror
         executeSql( "UPDATE program SET onlyEnrollOnce='false' WHERE onlyEnrollOnce is null" );
         executeSql( "UPDATE programStage SET captureCoordinates=false WHERE captureCoordinates is null" );
 
-        executeSql( "update caseaggregationcondition set \"operator\"='times' where \"operator\"='SUM'" );
-
         executeSql( "update prorgam set \"operator\"='times' where \"operator\"='SUM'" );
         executeSql( "update program set remindCompleted=false where remindCompleted is null" );
         executeSql( "UPDATE program SET skipoffline=false where skipoffline is null" );
         executeSql( "UPDATE program SET displayfrontpagelist=false where displayfrontpagelist is null" );
-        
+
         executeSql( "UPDATE programinstance SET followup=false where followup is null" );
 
         updateProgramInstanceStatus();
@@ -166,7 +158,6 @@ public class TableAlteror
         executeSql( "ALTER TABLE program ALTER COLUMN dateofincidentdescription DROP NOT NULL" );
         executeSql( "UPDATE program SET displayOnAllOrgunit=true where displayOnAllOrgunit is null" );
         executeSql( "UPDATE program SET useFormNameDataElement=true where useFormNameDataElement is null" );
-        executeSql( "ALTER TABLE caseaggregationcondition ALTER COLUMN aggregationexpression TYPE varchar(1000)" );
         executeSql( "update program set selectEnrollmentDatesInFuture = false where selectEnrollmentDatesInFuture is null" );
         executeSql( "update program set selectIncidentDatesInFuture = false where selectIncidentDatesInFuture is null" );
         executeSql( "update validationcriteria set description = name where description is null or description='' " );
@@ -271,8 +262,6 @@ public class TableAlteror
 
         executeSql( "UPDATE trackedentityattribute SET valuetype='optionSet' WHERE valuetype='combo'" );
 
-        updateAggregateQueryBuilder();
-
         executeSql( "UPDATE programstageinstance SET status=1 WHERE completed=true" );
         executeSql( "ALTER TABLE programstageinstance DROP COLUMN completed" );
 
@@ -291,7 +280,7 @@ public class TableAlteror
 
         executeSql( "DROP SEQUENCE period_periodid_seq" );
         executeSql( "ALTER TABLE programstagesection DROP CONSTRAINT programstagesection_name_key" );
-        
+
         executeSql( "update eventreport set collapsedatadimensions = false where collapsedatadimensions is null" );
         executeSql( "update eventchart set collapsedatadimensions = false where collapsedatadimensions is null" );
 
@@ -301,29 +290,26 @@ public class TableAlteror
         executeSql( "alter table programindicator drop column valuetype" );
         executeSql( "alter table programindicator drop column rootdate" );
         executeSql( "alter table programindicator drop column eventoutputtype" );
-        
+
         executeSql( "ALTER TABLE programstage ALTER description TYPE text" );
-        
+
         executeSql( "update programindicator set displayinform = false where displayinform is null" );
-        
+
         executeSql( "drop index index_patientdatavalue" );
-        
+
         executeSql( "update program p set dataentryformid = (select dataentryformid from trackedentityform tf where tf.programid=p.programid limit 1)" );
         executeSql( "drop table trackedentityform" );
 
         executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
         executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
-        
+
         updateProgramStageList();
         updateProgramAttributeList();
-        
-        updateFixedAttributeInCaseAggregate( "DEDATEDIFF", CaseAggregationCondition.MINUS_OPERATOR );
+
         executeSql( "update userroleauthorities set authority='F_ADD_TRACKED_ENTITY_FORM' where authority='F_TRACKED_ENTITY_FORM_ADD'" );
 
         updateProgramExpressionUid();
-        
-        updatePropertiesChangeInCaseAggregate();
-        
+
         // TODO fix
         // executeSql( "DROP TABLE programstage_programindicators" );
     }
@@ -332,99 +318,6 @@ public class TableAlteror
     // Supporting methods
     // -------------------------------------------------------------------------
 
-    private void updateAggregateQueryBuilder()
-    {
-        StatementHolder holder = statementManager.getHolder();
-
-        try
-        {
-            Statement statement = holder.getStatement();
-            ResultSet resultSet = statement
-                .executeQuery( "select trackedentityattributeid from trackedentityattribute where name='Age'" );
-
-            if ( resultSet.next() )
-            {
-                int id = resultSet.getInt( "trackedentityattributeid" );
-
-                String source = "PC:DATE@executionDate#-DATE@birthDate#";
-                String target = CaseAggregationCondition.OBJECT_TRACKED_ENTITY_ATTRIBUTE
-                    + CaseAggregationCondition.SEPARATOR_OBJECT + id + ".visit";
-
-                updateFixedAttributeInCaseAggregate( source, target );
-            }
-        }
-        catch ( Exception ex )
-        {
-            ex.printStackTrace();
-        }
-    }
-
-    private void updateFixedAttributeInCaseAggregate( String source, String target )
-    {
-        StatementHolder holder = statementManager.getHolder();
-        try
-        {
-            Statement statement = holder.getStatement();
-            ResultSet resultSet = statement
-                .executeQuery( "SELECT caseaggregationconditionid, aggregationExpression FROM caseaggregationcondition where aggregationExpression like '%"
-                    + source + "%'" );
-
-            source = source.replaceAll( "@", "\\@" ).replaceAll( "#", "\\#" );
-
-            while ( resultSet.next() )
-            {
-                String id = resultSet.getString( "caseaggregationconditionid" );
-                String expression = resultSet.getString( "aggregationExpression" );
-
-                expression = expression.replaceAll( source, target );
-                expression = expression.replaceAll( "'", "\"" );
-                executeSql( "UPDATE caseaggregationcondition SET aggregationExpression='" + expression
-                    + "'  WHERE caseaggregationconditionid=" + id );
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.debug( ex );
-        }
-        finally
-        {
-            holder.close();
-        }
-    }
-    
-    private void updatePropertiesChangeInCaseAggregate()
-    {
-        StatementHolder holder = statementManager.getHolder();
-        try
-        {
-            Statement statement = holder.getStatement();
-            ResultSet resultSet = statement
-                .executeQuery( "SELECT caseaggregationconditionid, aggregationExpression FROM caseaggregationcondition where LOWER(aggregationExpression) like '%dateofincident%'" );
-
-            while ( resultSet.next() )
-            {
-                String id = resultSet.getString( "caseaggregationconditionid" );
-                String expression = resultSet.getString( "aggregationExpression" );
-
-                expression = expression.replaceAll( "dateOfIncident", "incidentDate" );
-                expression = expression.replaceAll( "dateofincident", "incidentDate" );
-                expression = expression.replaceAll( "'", "''" );
-                
-                executeSql( "UPDATE caseaggregationcondition SET aggregationExpression='" + expression
-                    + "'  WHERE caseaggregationconditionid=" + id );
-            }
-        }
-        catch ( Exception ex )
-        {
-            log.debug( ex );
-        }
-        finally
-        {
-            holder.close();
-        }
-    }
-  
-    
     private void updateProgramInstanceStatus()
     {
         // Set active status for events
@@ -479,7 +372,7 @@ public class TableAlteror
     {
         int exist = jdbcTemplate.queryForObject( "SELECT count(*) FROM trackedentity where name='Person'",
             Integer.class );
-        
+
         if ( exist == 0 )
         {
             String id = statementBuilder.getAutoIncrementValue();
@@ -498,7 +391,7 @@ public class TableAlteror
     private void updateProgramStageList()
     {
         int count = jdbcTemplate.queryForObject( "select count(*) from programstage where sort_order is null", Integer.class );
-        
+
         if ( count > 0 )
         {
             StatementHolder holder = statementManager.getHolder();
@@ -634,7 +527,7 @@ public class TableAlteror
             holder.close();
         }
     }
-    
+
     private int executeSql( String sql )
     {
         try
