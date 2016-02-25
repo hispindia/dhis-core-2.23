@@ -380,6 +380,8 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        
+        assertNotNull( validate );
     }
 
     @Test

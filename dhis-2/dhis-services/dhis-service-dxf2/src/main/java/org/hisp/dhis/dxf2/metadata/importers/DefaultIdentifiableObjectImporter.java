@@ -50,7 +50,6 @@ import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataelement.DataElementOperandService;
-import org.hisp.dhis.dataentryform.DataEntryFormService;
 import org.hisp.dhis.dxf2.common.ImportOptions;
 import org.hisp.dhis.dxf2.importsummary.ImportConflict;
 import org.hisp.dhis.dxf2.metadata.ImportTypeSummary;
@@ -117,9 +116,6 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
 
     @Autowired
     private ExpressionService expressionService;
-
-    @Autowired
-    private DataEntryFormService dataEntryFormService;
 
     @Autowired
     private DataElementOperandService dataElementOperandService;
