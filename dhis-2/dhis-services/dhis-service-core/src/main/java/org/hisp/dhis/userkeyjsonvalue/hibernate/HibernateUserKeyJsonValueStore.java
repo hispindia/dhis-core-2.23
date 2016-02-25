@@ -55,6 +55,7 @@ public class HibernateUserKeyJsonValueStore
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<String> getNamespacesByUser( User user )
     {
         List<UserKeyJsonValue> queryResult = getCriteria( Restrictions.eq( "user", user ) ).list();
@@ -72,6 +73,7 @@ public class HibernateUserKeyJsonValueStore
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<UserKeyJsonValue> getUserKeyJsonValueByUserAndNamespace( User user, String namespace )
     {
         return (List<UserKeyJsonValue>) getCriteria(

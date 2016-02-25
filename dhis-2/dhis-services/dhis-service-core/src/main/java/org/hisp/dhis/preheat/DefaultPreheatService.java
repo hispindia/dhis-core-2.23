@@ -156,7 +156,6 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( IdentifiableObject object )
     {
         if ( object == null )
