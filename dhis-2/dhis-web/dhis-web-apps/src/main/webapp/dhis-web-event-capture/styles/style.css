@@ -555,9 +555,9 @@ div#orgUnitTree {
     margin-top: 0em;
     margin-bottom: 0em;
     width:100%;
-    align: center;
+    text-align: center;
     border: 0;
-    border-top: 1px solid #ddd;"
+    border-top: 1px solid #ddd;
 }
 
 .tooltip-font {
