@@ -1,8 +1,7 @@
 #sharingDialog()
-<script type="text/javascript" src="../dhis-web-commons/javascripts/openlayers/OpenLayers.js"></script>
 <script type="text/javascript" src="plugin/table.js"></script>
 <script type="text/javascript" src="plugin/chart.js"></script>
-<script type="text/javascript" src="plugin/map.js"></script>
+<script type="text/javascript" src="../dhis-web-mapping/map.js"></script>
 <script type="text/javascript" src="plugin/eventreport.js"></script>
 <script type="text/javascript" src="plugin/eventchart.js"></script>
 <script type="text/javascript" src="../dhis-web-commons/oust/oust.js"></script>
@@ -84,10 +83,10 @@ jQuery( document ).ready( function() {
 </div>
 
 <div id="chartView" class="page">
-	<div id="chartViewHeader">
-		<span><a id="chartImageDownload" href="javascript:dhis2.db.downloadImage()">$i18n.getString( "download" )</a></span>
-		<span>$i18n.getString( "api_link" ): <a id="chartImageUrl" target="_blank"></a></span>
-	</div>
+    <div id="chartViewHeader">
+        <span><a id="chartImageDownload" href="javascript:dhis2.db.downloadImage()">$i18n.getString( "download" )</a></span>
+        <span>$i18n.getString( "api_link" ): <a id="chartImageUrl" target="_blank"></a></span>
+    </div>
     <div><img id="chartImage" src="" style="padding: 10px;"></div>
 </div>
 
@@ -123,10 +122,10 @@ jQuery( document ).ready( function() {
 </div>
 
 <div id="orgUnitSelectorForm" class="page">
-	<div class="tipText" style="padding: 2px 0 4px 0">$i18n.getString( "applies_to_favorites_with_user_org_units_only" )</div>
-	<div id="selectionTree" style="width:339px; height:376px"></div>
-	<div style="padding-top:15px; float:right;">
-		<a class="greyButtonLink" href="javascript:dhis2.db.clearSelectedOrgUnits()">$i18n.getString( "clear" )</a>
-		<a class="greyButtonLink" href="javascript:dhis2.db.updateSelectedOrgUnits()">$i18n.getString( "update" )</a>
-	</div>
+    <div class="tipText" style="padding: 2px 0 4px 0">$i18n.getString( "applies_to_favorites_with_user_org_units_only" )</div>
+    <div id="selectionTree" style="width:339px; height:376px"></div>
+    <div style="padding-top:15px; float:right;">
+        <a class="greyButtonLink" href="javascript:dhis2.db.clearSelectedOrgUnits()">$i18n.getString( "clear" )</a>
+        <a class="greyButtonLink" href="javascript:dhis2.db.updateSelectedOrgUnits()">$i18n.getString( "update" )</a>
+    </div>
 </div>
