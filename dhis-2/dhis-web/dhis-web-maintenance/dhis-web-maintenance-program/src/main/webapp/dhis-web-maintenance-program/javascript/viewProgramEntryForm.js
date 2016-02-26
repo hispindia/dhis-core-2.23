@@ -10,6 +10,7 @@ $( document ).ready( function()
 	$("#deleteButton").button("option", "icons", { primary: "ui-icon-trash" });
 	$("#insertButton").button("option", "icons", { primary: "ui-icon-plusthick" });
 	$("#propertiesButton").button("option", "icons", { primary: "ui-icon-newwin" });
+	$("#labelsButton").button("option", "icons", { primary: "ui-icon-newwin" });
 	$("#insertImagesButton").button("option", "icons", { primary: "ui-icon-newwin" });
 	$("#insertImageButton").button("option", "icons", { primary: "ui-icon-plusthick" });
 	
@@ -50,6 +51,25 @@ function openPropertiesSelector()
 			position: [($("body").width() - 555) - 50, 50],
 			close: function(ev, ui) { 
 				$("#propertiesButton").removeClass("ui-state-active2"); 
+			}
+		});
+}
+
+function openLabelsSelector()
+{	
+	$("#labelsButton").addClass("ui-state-active2");
+	$('#labelsDialog' ).dialog(
+		{
+			title:i18n_labels,
+			maximize:true, 
+			closable:true,
+			modal:false,
+			overlay:{background:'#000000', opacity:0.1},
+			minWidth: 595,
+			minHeight: 263,
+			position: [($("body").width() - 555) - 50, 50],
+			close: function(ev, ui) { 
+				$("#labelsButton").removeClass("ui-state-active2"); 
 			}
 		});
 }
@@ -266,6 +286,26 @@ function validateForm( checkViolate )
 	}
 }
 
+function checkLabelAssigned( id )
+{	
+	var assigned = false;
+	var assignedTo = "";
+	
+	var html = jQuery("#designTextarea").ckeditor().editor.getData();
+	var labels = jQuery( html ).find("span[d2-input-label]");
+	
+	labels.each(function(i, item){		
+		var labelAtt = jQuery(item).attr('d2-input-label');
+		if( labelAtt != undefined && labelAtt == id){
+			assigned = true;
+			assignedTo = jQuery(item).text();
+			return false;
+		}
+	});
+	
+	return {assigned: assigned, assignedTo: assignedTo};
+}
+
 function checkExisted( id )
 {	
 	var result = false;
@@ -296,56 +336,75 @@ function checkExisted( id )
 }
 
 function insertElement( type )
-{
+{ 
 	var id = '';
 	var value = '';
 	
-	if( type == 'fixedAttr' ){
-		var element = jQuery('#fixedAttrSelector option:selected');
+	if(type == 'lbl') {
+		var selectedText = jQuery("#designTextarea").ckeditor().editor.getSelection().getSelectedText();
+		var element = jQuery('#labelsSelector option:selected');
+		
 		if( element.length == 0 ) return;		
-		id = 'fixedattributeid="' + element.attr('value') + '"';
-		value = element.text();
-	}
-	else if( type == 'attr' ){
-		var element = jQuery('#attributesSelector option:selected');
-		if( element.length == 0 ) return;
 		
-		id = 'attributeid="' + element.attr('value') + '"';
-		value = element.text();
-	}
-	else if( type == 'prg' ){
-		var element = jQuery('#programAttrSelector option:selected');
-		if( element.length == 0 ) return;
+		id = 'attributeId.' + element.attr('value');
 		
-		id = 'programid="' + element.attr('value') + '"';
-		value = element.text();
+		var assigned = checkLabelAssigned( id );
+		if( assigned && assigned.assigned ){
+			setHeaderDelayMessage( i18n_label_is_assigned_to + ': ' + assigned.assignedTo );
+			return;
+		}
+		else{
+			var label = '<span title="' + selectedText + '" d2-input-label="' + id + '">' + selectedText + '</span>';		
+			var lEditor = jQuery("#designTextarea").ckeditor().editor;
+			lEditor.insertHtml( label );
+		}
 	}
-	
-	var htmlCode = "<input " + id + " value=\"[" + value + "]\" title=\"" + value + "\" ";
-	
-	suggestedValue = getFieldValue('suggestedField');
-	if( jQuery('#suggestedField').is(":visible") )
-	{
-		htmlCode += " suggested='" + suggestedValue + "' ";
+	else{
+		if( type == 'fixedAttr' ){
+			var element = jQuery('#fixedAttrSelector option:selected');
+			if( element.length == 0 ) return;		
+			id = 'fixedattributeid="' + element.attr('value') + '"';
+			value = element.text();
+		}
+		else if( type == 'attr' ){
+			var element = jQuery('#attributesSelector option:selected');
+			if( element.length == 0 ) return;
+			
+			id = 'attributeid="' + element.attr('value') + '"';
+			value = element.text();
+		}
+		else if( type == 'prg' ){
+			var element = jQuery('#programAttrSelector option:selected');
+			if( element.length == 0 ) return;
+			
+			id = 'programid="' + element.attr('value') + '"';
+			value = element.text();
+		}		
+		var htmlCode = "<input " + id + " value=\"[" + value + "]\" title=\"" + value + "\" ";
+		
+		suggestedValue = getFieldValue('suggestedField');
+		if( jQuery('#suggestedField').is(":visible") )
+		{
+			htmlCode += " suggested='" + suggestedValue + "' ";
+		}
+		
+		var isHidden = jQuery('#hiddenField').attr('checked');
+		if(isHidden)
+		{
+			htmlCode += " class='hidden' ";
+		}
+		htmlCode += " >";
+		
+		if( checkExisted( id ) ){		
+			// setMessage( "<span class='bold'>" + i18n_property_is_inserted + "</span>" );
+			setHeaderDelayMessage(i18n_property_is_inserted);
+			return;
+		}else{
+			var oEditor = jQuery("#designTextarea").ckeditor().editor;
+			oEditor.insertHtml( htmlCode );
+			setMessage("");
+		}
 	}
-	
-	var isHidden = jQuery('#hiddenField').attr('checked');
-	if(isHidden)
-	{
-		htmlCode += " class='hidden' ";
-	}
-	htmlCode += " >";
-	
-	if( checkExisted( id ) ){		
-		// setMessage( "<span class='bold'>" + i18n_property_is_inserted + "</span>" );
-        setHeaderDelayMessage(i18n_property_is_inserted);
-		return;
-	}else{
-		var oEditor = jQuery("#designTextarea").ckeditor().editor;
-		oEditor.insertHtml( htmlCode );
-		setMessage("");
-	}
-
 }
 
 function deleteProgramEntryForm( id, name )
