@@ -36,6 +36,10 @@ import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
  */
 public interface ObjectBundleHook
 {
+    void preImport( ObjectBundle objectBundle );
+
+    void postImport( ObjectBundle objectBundle );
+
     void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );
 
     void postCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle );

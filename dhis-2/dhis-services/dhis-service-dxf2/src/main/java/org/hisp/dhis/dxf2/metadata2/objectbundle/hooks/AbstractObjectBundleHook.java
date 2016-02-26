@@ -54,6 +54,16 @@ public class AbstractObjectBundleHook implements ObjectBundleHook
     protected SessionFactory sessionFactory;
 
     @Override
+    public void preImport( ObjectBundle objectBundle )
+    {
+    }
+
+    @Override
+    public void postImport( ObjectBundle objectBundle )
+    {
+    }
+
+    @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
     }

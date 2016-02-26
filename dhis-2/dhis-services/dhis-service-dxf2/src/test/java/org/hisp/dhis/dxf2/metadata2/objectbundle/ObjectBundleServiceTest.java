@@ -474,6 +474,7 @@ public class ObjectBundleServiceTest
         assertNotNull( user.getUserCredentials() );
         assertEquals( "admin", user.getUserCredentials().getUsername() );
         assertFalse( user.getUserCredentials().getUserAuthorityGroups().isEmpty() );
+        // assertFalse( user.getOrganisationUnits().isEmpty() );
     }
 
     private void defaultSetup()

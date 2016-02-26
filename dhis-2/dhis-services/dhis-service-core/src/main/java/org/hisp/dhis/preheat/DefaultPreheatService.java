@@ -29,8 +29,10 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
+import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
@@ -282,6 +284,89 @@ public class DefaultPreheatService implements PreheatService
         }
 
         return map;
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public Map<Class<?>, Map<String, Map<String, Object>>> collectObjectReferences( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    {
+        Map<Class<?>, Map<String, Map<String, Object>>> refs = new HashMap<>();
+
+        if ( objects.isEmpty() )
+        {
+            return refs;
+        }
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> scanObjects = new HashMap<>();
+        scanObjects.putAll( objects ); // clone objects list, we don't want to modify it
+
+        if ( scanObjects.containsKey( User.class ) )
+        {
+            List<IdentifiableObject> users = scanObjects.get( User.class );
+            List<IdentifiableObject> userCredentials = new ArrayList<>();
+
+            for ( IdentifiableObject identifiableObject : users )
+            {
+                User user = (User) identifiableObject;
+
+                if ( user.getUserCredentials() != null )
+                {
+                    userCredentials.add( user.getUserCredentials() );
+                }
+            }
+
+            scanObjects.put( UserCredentials.class, userCredentials );
+        }
+
+        for ( Class<? extends IdentifiableObject> objectClass : scanObjects.keySet() )
+        {
+            Schema schema = schemaService.getDynamicSchema( objectClass );
+            List<Property> properties = schema.getProperties().stream()
+                .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
+                .collect( Collectors.toList() );
+
+            List<IdentifiableObject> identifiableObjects = scanObjects.get( objectClass );
+            Map<String, Map<String, Object>> objectReferenceMap = new HashMap<>();
+            refs.put( objectClass, objectReferenceMap );
+
+            for ( IdentifiableObject object : identifiableObjects )
+            {
+                objectReferenceMap.put( object.getUid(), new HashMap<>() );
+
+                properties.forEach( p -> {
+                    if ( !p.isCollection() )
+                    {
+                        IdentifiableObject reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+
+                        if ( reference != null )
+                        {
+                            IdentifiableObject identifiableObject = new BaseIdentifiableObject();
+                            identifiableObject.mergeWith( reference, MergeMode.REPLACE );
+                            objectReferenceMap.get( object.getUid() ).put( p.getName(), identifiableObject );
+                        }
+                    }
+                    else
+                    {
+                        Collection<IdentifiableObject> refObjects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                        Collection<IdentifiableObject> references = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+
+                        if ( references != null )
+                        {
+                            for ( IdentifiableObject reference : references )
+                            {
+                                IdentifiableObject identifiableObject = new BaseIdentifiableObject();
+                                identifiableObject.mergeWith( reference, MergeMode.REPLACE );
+                                refObjects.add( identifiableObject );
+                            }
+                        }
+
+                        objectReferenceMap.get( object.getUid() ).put( p.getCollectionName(), refObjects );
+                    }
+                } );
+            }
+        }
+
+        return refs;
     }
 
     @Override

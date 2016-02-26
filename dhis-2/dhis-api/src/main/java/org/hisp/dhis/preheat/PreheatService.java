@@ -78,9 +78,12 @@ public interface PreheatService
      */
     Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> collectReferences( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects );
 
+    Map<Class<?>, Map<String, Map<String, Object>>> collectObjectReferences( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects );
+
     /**
      * Checks but does not connect any references, returns check report
-     *  @param objects    Object to check
+     *
+     * @param objects    Object to check
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */

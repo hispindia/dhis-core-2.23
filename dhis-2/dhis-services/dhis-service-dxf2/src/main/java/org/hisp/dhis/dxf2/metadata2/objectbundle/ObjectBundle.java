@@ -64,6 +64,8 @@ public class ObjectBundle
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
+    private Map<Class<?>, Map<String, Map<String, Object>>> objectReferences;
+
     public ObjectBundle( ObjectBundleParams params )
     {
         this.user = params.getUser();
@@ -167,5 +169,15 @@ public class ObjectBundle
     public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
         this.objects = objects;
+    }
+
+    public Map<Class<?>, Map<String, Map<String, Object>>> getObjectReferences()
+    {
+        return objectReferences;
+    }
+
+    public void setObjectReferences( Map<Class<?>, Map<String, Map<String, Object>>> objectReferences )
+    {
+        this.objectReferences = objectReferences;
     }
 }

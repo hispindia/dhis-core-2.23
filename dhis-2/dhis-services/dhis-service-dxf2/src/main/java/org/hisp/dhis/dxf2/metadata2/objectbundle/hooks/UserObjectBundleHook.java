@@ -37,6 +37,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
+import java.util.List;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
@@ -71,5 +73,23 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         manager.save( userCredentials );
 
         user.setUserCredentials( userCredentials );
+    }
+
+    @Override
+    public void postImport( ObjectBundle objectBundle )
+    {
+        if ( !objectBundle.getObjects().containsKey( User.class ) )
+        {
+            return;
+        }
+
+        List<IdentifiableObject> objects = objectBundle.getObjects().get( User.class );
+
+        for ( IdentifiableObject identifiableObject : objects )
+        {
+            User user = (User) identifiableObject;
+            preheatService.connectReferences( identifiableObject, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+            manager.update( identifiableObject );
+        }
     }
 }

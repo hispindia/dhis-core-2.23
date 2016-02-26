@@ -31,6 +31,8 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
+import org.hisp.dhis.common.BaseIdentifiableObject;
+import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
@@ -138,6 +140,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
             {
                 if ( Preheat.isDefault( identifiableObject ) ) continue;
 
+                if ( StringUtils.isEmpty( identifiableObject.getUid() ) )
+                {
+                    ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() );
+                }
+
                 if ( !StringUtils.isEmpty( identifiableObject.getUid() ) )
                 {
                     map.get( PreheatIdentifier.UID ).get( klass ).put( identifiableObject.getUid(), identifiableObject );
@@ -149,6 +156,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 }
             }
         }
+
+        bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
         return bundle;
     }
@@ -213,6 +222,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
 
+        objectBundleHooks.forEach( hook -> hook.preImport( bundle ) );
+
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
             List<IdentifiableObject> objects = bundle.getObjects().get( klass );
@@ -252,6 +263,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             sessionFactory.getCurrentSession().flush();
         }
+
+        objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
     }
