@@ -10,7 +10,6 @@ $( document ).ready( function()
 	$("#deleteButton").button("option", "icons", { primary: "ui-icon-trash" });
 	$("#insertButton").button("option", "icons", { primary: "ui-icon-plusthick" });
 	$("#propertiesButton").button("option", "icons", { primary: "ui-icon-newwin" });
-	$("#labelsButton").button("option", "icons", { primary: "ui-icon-newwin" });
 	$("#insertImagesButton").button("option", "icons", { primary: "ui-icon-newwin" });
 	$("#insertImageButton").button("option", "icons", { primary: "ui-icon-plusthick" });
 	
@@ -51,25 +50,6 @@ function openPropertiesSelector()
 			position: [($("body").width() - 555) - 50, 50],
 			close: function(ev, ui) { 
 				$("#propertiesButton").removeClass("ui-state-active2"); 
-			}
-		});
-}
-
-function openLabelsSelector()
-{	
-	$("#labelsButton").addClass("ui-state-active2");
-	$('#labelsDialog' ).dialog(
-		{
-			title:i18n_labels,
-			maximize:true, 
-			closable:true,
-			modal:false,
-			overlay:{background:'#000000', opacity:0.1},
-			minWidth: 595,
-			minHeight: 263,
-			position: [($("body").width() - 555) - 50, 50],
-			close: function(ev, ui) { 
-				$("#labelsButton").removeClass("ui-state-active2"); 
 			}
 		});
 }
@@ -342,7 +322,7 @@ function insertElement( type )
 	
 	if(type == 'lbl') {
 		var selectedText = jQuery("#designTextarea").ckeditor().editor.getSelection().getSelectedText();
-		var element = jQuery('#labelsSelector option:selected');
+		var element = jQuery('#attributeTab option:selected');
 		
 		if( element.length == 0 ) return;		
 		

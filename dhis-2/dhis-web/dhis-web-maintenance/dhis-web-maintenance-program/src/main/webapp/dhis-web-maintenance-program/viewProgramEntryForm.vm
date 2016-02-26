@@ -39,7 +39,7 @@
 	padding: 2px;
 }
 
-#attributesSelector, #programSelector, #labelSelector {
+#attributesSelector, #programSelector {
 	padding: 2px;
 }
 
@@ -98,8 +98,7 @@
             <button type="submit" id="saveAndCloseButton" onclick="isSave='false';"/>$i18n.getString( 'save_and_close' )</button>
             <button type="button" id="cancelButton" onclick="window.location='program.action'">$i18n.getString( 'cancel' )</button>
 			&nbsp;&nbsp;<span style="color:#606060">|</span>&nbsp;
-		    <button type="button" id="propertiesButton" onclick="openPropertiesSelector()"/>$i18n.getString( 'insert_properties' )</button>
-			<button type="button" id="labelsButton" onclick="openLabelsSelector()"/>$i18n.getString( 'insert_labels' )</button>
+		    <button type="button" id="propertiesButton" onclick="openPropertiesSelector()"/>$i18n.getString( 'insert_properties' )</button>			
 			<button type="button" id="insertImagesButton">$i18n.getString( 'insert_images' )</button>
 			&nbsp;&nbsp;<span style="color:#606060">|</span>&nbsp;
 		    <button type="button" id="deleteButton" #if($!program.dataEntryForm) #else style='display:none;' #end onclick="javascript:deleteProgramEntryForm($program.id,'$program.displayName');"  />$i18n.getString( 'delete_this_form' )</button>
@@ -115,13 +114,15 @@
     <table id="attributeTab">
    		<tr>
    			<td>
-   				<input type='text' id='attributeFilter' placeholder="$i18n.getString('filter')" style="width:400px;" onchange="filterList( this.value, 'attributesSelector' )">
+   				<input type='text' id='attributeFilter' placeholder="$i18n.getString('filter')" style="width:380px;" onchange="filterList( this.value, 'attributesSelector' )">
+			</td>
+			<td>
    				<input type='button' value="$i18n.getString('filter')" style="width:80px;" onclick="filterList( getFieldValue('attributeFilter'), 'attributesSelector' )">
 				<input type='button' value="$i18n.getString('clear')" style="width:80px;" onclick="setFieldValue('attributeFilter','');filterList( '', 'attributesSelector' )">
    			</td>
    		</tr>
    		<tr>
-   			<td>
+   			<td colspan='2'>
    				<select id="attributesSelector" multiple="multiple" style="height:200px;width:100%;" ondblclick="insertElement( 'attr' )">
    				#foreach( $attribute in $attributes )
    					<option value="$attribute.uid" mandatory='false'>$encoder.htmlEncode($attribute.displayName)</option>
@@ -139,12 +140,14 @@
 		<tr>
 			<td>
 				<input type='text' id='programAttrKey' placeholder="$i18n.getString('filter')" style="width:400px;" onchange="filterList( this.value, 'programAttrSelector' )">
+			</td>
+			<td>
 				<input type='button' value="$i18n.getString('filter')" style="width:80px;" onclick="filterList( getFieldValue('programAttrKey'), 'programAttrSelector' )">
 				<input type='button' value="$i18n.getString('clear')" style="width:80px;" onclick="setFieldValue('programAttrKey','');filterList( '', 'programAttrSelector' )">
 			</td>
 		</tr>
 		<tr>
-			<td>
+			<td colspan='2'>
 				<select id="programAttrSelector" multiple="multiple" style="height:200px;width:100%;" ondblclick="insertElement( 'prg' )">
 					<option value="enrollmentDate" >$encoder.htmlEncode($program.enrollmentDateLabel)</option>
 					#if($program.displayIncidentDate=='true')
@@ -159,38 +162,14 @@
 	<table>
 		<tr>
 			<td>
-                <button type="button" id="attributesButton" onclick="attributesOnClick()">$i18n.getString( "attributes" )</button>
+				<button type="button" id="labelsButton" onclick="insertElement( 'lbl' )"/>$i18n.getString( 'insert_labels' )</button>
+                <button type="button" id="attributesButton" onclick="attributesOnClick()">$i18n.getString( "attributes" )</button>				
 				#if($!program)
 					<button type="button" id="programAttrButton" onclick="programAttrOnClick()">$i18n.getString( "program" )</button>
 				#end
             </td>
 		</tr>
 	</table>
-
-	<span id='message' style="width: 436px;"></span>
-
-</div>
-
-<div id='labelsDialog' class='hidden'>
-  
-    <table>
-   		<tr>
-   			<td>
-   				<input type='text' id='labelFilter' placeholder="$i18n.getString('filter')" style="width:400px;" onchange="filterList( this.value, 'labelsSelector' )">
-   				<input type='button' value="$i18n.getString('filter')" style="width:80px;" onclick="filterList( getFieldValue('labelFilter'), 'labelsSelector' )">
-				<input type='button' value="$i18n.getString('clear')" style="width:80px;" onclick="setFieldValue('labelFilter','');filterList( '', 'labelsSelector' )">
-   			</td>
-   		</tr>
-   		<tr>
-   			<td>
-   				<select id="labelsSelector" multiple="multiple" style="height:200px;width:100%;" ondblclick="insertElement( 'lbl' )">
-				#foreach( $programAttribute in $programAttributes )
-   					<option value="$programAttribute.attribute.uid" mandatory='programAttribute.mandatory'>$encoder.htmlEncode($programAttribute.attribute.displayName)</option>
-   				#end
-   				</select>
-   			</td>
-   		</tr>
-   	</table>
 
 	<span id='message' style="width: 436px;"></span>
 
@@ -219,7 +198,6 @@
 	var i18n_required_fields_valivation = '$encoder.jsEscape( $i18n.getString( "required_fields_valivation" ) , "'" )';
 	var i18n_full_name = '$encoder.jsEscape( $i18n.getString( "full_name" ) , "'" )';
 	var i18n_properties = '$encoder.jsEscape( $i18n.getString( "properties" ) , "'" )';
-	var i18n_labels = '$encoder.jsEscape( $i18n.getString( "labels" ) , "'" )';
 	var i18n_confirm_delete = '$encoder.jsEscape( $i18n.getString( "confirm_delete_prorgam_entry_form_form" ) , "'" )';
 	var i18n_save_unsuccess_please_insert_all_required_fields = '$encoder.jsEscape( $i18n.getString( "save_unsuccess" ) , "'" )' + '. ' + '$encoder.jsEscape( $i18n.getString( "please_insert_all_required_fields" ) , "'" )';
 	var i18n_validate_success = '$encoder.jsEscape( $i18n.getString( "validate_success" ) , "'" )';

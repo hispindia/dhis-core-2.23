@@ -142,7 +142,7 @@
 		<tr>
 			<td colspan='2'>
 			
-				<select id="dataElementIds" name="dataElementIds" style="height:200px; width:100%;"  multiple="multiple" size="10" ondblclick="insertDataElement( '#dataElementSelection', '$programStage.uid')">
+				<select id="dataElementIds" name="dataElementIds" style="height:200px; width:100%;"  multiple="multiple" size="10" ondblclick="insertDataElement( '#dataElementSelection', '$programStage.uid', false)">
 				
 					#if( $programStage.program.programType.value=="WITHOUT_REGISTRATION" )
 						#set($name = "$encoder.htmlEncode($programStage.excecutionDateLabel)")
@@ -180,7 +180,7 @@
 								<option value='3'>$i18n.getString("code_and_name")</option>
 							</select>
 						</td>
-						<td style="padding-left:190px;"><td>
+						<td style="padding-left:190px;"></td>
 						<td>$i18n.getString("sort_by")</td>
 						<td>
 							<input type='radio' name='sortBy' value='1' onchange="sortByOnChange('dataElementSelection', '1')" checked >$i18n.getString("name")
@@ -195,7 +195,8 @@
 				#if(!$programStages.isEmpty())
 				<input type="button" value="$i18n.getString('other_program_stages')" onclick="hideById('dataElementSelection');showById('otherProgramStageDataElements');" >
 				#end
-				<input type="button" id="insertButton" value="$i18n.getString('insert')" onclick="insertDataElement( '#dataElementSelection', '$programStage.uid')" style="width:100px">
+				<input type="button" id="insertButton" value="$i18n.getString('insert')" onclick="insertDataElement( '#dataElementSelection', '$programStage.uid', false)" style="width:100px">
+				<input type="button" id="insertLabelButton" value="$i18n.getString('insert_label')" onclick="insertDataElement( '#dataElementSelection', '$programStage.uid', true)" style="width:100px">
 			</td>
 		</tr>
 	</table>
@@ -229,7 +230,7 @@
 		</tr>
 		<tr>
 			<td colspan='3'>
-				<select id="dataElementIds" name="dataElementIds" style="width:430px;"  multiple="multiple" size="10" ondblclick="insertDataElement( '#otherProgramStageDataElements', jQuery('#programStageIds option:selected').attr('uid') )"></select>
+				<select id="dataElementIds" name="dataElementIds" style="width:430px;"  multiple="multiple" size="10" ondblclick="insertDataElement( '#otherProgramStageDataElements', jQuery('#programStageIds option:selected').attr('uid'), false )"></select>
 				<select id="dataElementIdsStore" name="dataElementIdsStore" multiple="multiple" style="display:none"></select>
 			</td>
 		</tr>
@@ -259,7 +260,7 @@
 		<tr>
 			<td colspan='2'>
 				<input type="button" value="$i18n.getString('selected_program_stages')" onclick="hideById('otherProgramStageDataElements');showById('dataElementSelection');" >
-				<input type="button" value="Insert" id="insert" name="insert" onclick="insertDataElement( '#otherProgramStageDataElements', byId('programStageIds').value )"/>
+				<input type="button" value="Insert" id="insert" name="insert" onclick="insertDataElement( '#otherProgramStageDataElements', byId('programStageIds').value, false )"/>
 			</td>
 		</tr>
 	</table>	
@@ -292,4 +293,5 @@
 <script>
 	var i18n_delete_program_data_entry_confirm = '$encoder.jsEscape( $i18n.getString( "delete_program_data_entry_confirm" ) , "'" )';
 	var i18n_enter_a_name = '$encoder.jsEscape( $i18n.getString( "enter_a_name" ) , "'" )';
+	var i18n_label_is_assigned_to = '$encoder.jsEscape( $i18n.getString( "label_is_assigned_to" ) , "'" )';
 </script>

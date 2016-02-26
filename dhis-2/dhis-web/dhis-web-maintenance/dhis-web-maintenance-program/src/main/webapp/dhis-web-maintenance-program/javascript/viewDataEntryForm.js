@@ -123,6 +123,26 @@ function getSelectedValues( jQueryString )
 	return result;
 }
 
+function checkLabelAssigned( id )
+{	
+	var assigned = false;
+	var assignedTo = "";
+	
+	var html = jQuery("#designTextarea").ckeditor().editor.getData();
+	var labels = jQuery( html ).find("span[d2-input-label]");
+	
+	labels.each(function(i, item){		
+		var labelAtt = jQuery(item).attr('d2-input-label');
+		if( labelAtt != undefined && labelAtt == id){
+			assigned = true;
+			assignedTo = jQuery(item).text();
+			return false;
+		}
+	});
+	
+	return {assigned: assigned, assignedTo: assignedTo};
+}
+
 function checkExisted( id )
 {	
 	var result = false;
@@ -152,8 +172,8 @@ function filterDataElements( filter, container, list )
 	});	
 }
 
-function insertDataElement( source, programStageUid )
-{
+function insertDataElement( source, programStageUid, isLabel )
+{	
 	var dataElement = JSON.parse( jQuery( source + ' #dataElementIds').val() );
 
 	if( dataElement == null )
@@ -170,43 +190,64 @@ function insertDataElement( source, programStageUid )
 	
 	var htmlCode = "";
 	var id = programStageUid + "-" + dataElementUid + "-val" ;
-	if( dataElementUid == "executionDate" )
-	{
-		id = dataElementUid;
-	}	
-	var titleValue = dataElementUid + " - " + dataElementName + " - " + dataElementValueType;
 	
-	if ( dataElementValueType == "BOOLEAN" )
+	if( isLabel )
 	{
-		var displayName = dataElementName;
-		htmlCode = "<input title=\"" + titleValue + "\" name=\"entryselect\" id=\"" + id + "\" value=\"[" + displayName + "]\" title=\"" + displayName + "\">";
-	} 
-	else if ( dataElementValueType == "TRUE_ONLY" )
-	{
-		var displayName = dataElementName;
-		htmlCode = "<input type=\"checkbox\" title=\"" + titleValue + "\" name=\"entryselect\" id=\"" + id + "\" title=\"" + displayName + "\">";
-	} 
-	else if ( dataElementValueType == "USERNAME" )
-	{
-		var displayName = dataElementName;
-		htmlCode = "<input title=\"" + titleValue + "\" value=\"[" + displayName + "]\" name=\"entryfield\" id=\"" + id + "\" username=\"true\" />";
-	} 
+		var selectedText = jQuery("#designTextarea").ckeditor().editor.getSelection().getSelectedText();
+		var element = jQuery('#dataElementSelection option:selected');
+		
+		if( element.length == 0 ) return;
+		
+		var assigned = checkLabelAssigned( id );
+		if( assigned && assigned.assigned ){
+			jQuery( " #message_").html( "<span class='bold'>" + i18n_label_is_assigned_to + ': ' + assigned.assignedTo + "</span>" );
+			return;
+		}
+		else{
+			var label = '<span title="' + selectedText + '" d2-input-label="' + id + '">' + selectedText + '</span>';		
+			var lEditor = jQuery("#designTextarea").ckeditor().editor;
+			lEditor.insertHtml( label );
+		}
+	}
 	else
 	{
-		var displayName = dataElementName;
-		htmlCode = "<input title=\"" + titleValue + "\" value=\"[" + displayName + "]\" name=\"entryfield\" id=\"" + id + "\" />";
+		if( dataElementUid == "executionDate" )
+		{
+			id = dataElementUid;
+		}	
+		var titleValue = dataElementUid + " - " + dataElementName + " - " + dataElementValueType;
+		
+		if ( dataElementValueType == "BOOLEAN" )
+		{
+			var displayName = dataElementName;
+			htmlCode = "<input title=\"" + titleValue + "\" name=\"entryselect\" id=\"" + id + "\" value=\"[" + displayName + "]\" title=\"" + displayName + "\">";
+		} 
+		else if ( dataElementValueType == "TRUE_ONLY" )
+		{
+			var displayName = dataElementName;
+			htmlCode = "<input type=\"checkbox\" title=\"" + titleValue + "\" name=\"entryselect\" id=\"" + id + "\" title=\"" + displayName + "\">";
+		} 
+		else if ( dataElementValueType == "USERNAME" )
+		{
+			var displayName = dataElementName;
+			htmlCode = "<input title=\"" + titleValue + "\" value=\"[" + displayName + "]\" name=\"entryfield\" id=\"" + id + "\" username=\"true\" />";
+		} 
+		else
+		{
+			var displayName = dataElementName;
+			htmlCode = "<input title=\"" + titleValue + "\" value=\"[" + displayName + "]\" name=\"entryfield\" id=\"" + id + "\" />";
+		}
+		
+		if( checkExisted( id ) )
+		{		
+			jQuery( " #message_").html( "<span class='bold'>" + i18n_dataelement_is_inserted + "</span>" );
+			return;
+		}else{
+			var oEditor = jQuery("#designTextarea").ckeditor().editor;
+			oEditor.insertHtml( htmlCode );
+			jQuery(" #message_").html("");
+		}
 	}
-	
-	if( checkExisted( id ) )
-	{		
-		jQuery( " #message_").html( "<span class='bold'>" + i18n_dataelement_is_inserted + "</span>" );
-		return;
-	}else{
-		var oEditor = jQuery("#designTextarea").ckeditor().editor;
-		oEditor.insertHtml( htmlCode );
-		jQuery(" #message_").html("");
-	}
-
 }
 
 function displayNameOnChange( div, displayName )
