@@ -171,6 +171,11 @@ public class ObjectBundle
         this.objects = objects;
     }
 
+    public Map<String, Map<String, Object>> getObjectReferences( Class<?> klass )
+    {
+        return objectReferences.get( klass );
+    }
+
     public Map<Class<?>, Map<String, Map<String, Object>>> getObjectReferences()
     {
         return objectReferences;

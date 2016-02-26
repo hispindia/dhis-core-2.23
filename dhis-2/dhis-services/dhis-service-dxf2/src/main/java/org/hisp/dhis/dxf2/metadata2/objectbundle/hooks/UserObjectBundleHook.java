@@ -30,6 +30,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
+import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.hisp.dhis.user.UserService;
@@ -38,6 +39,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -76,6 +79,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     }
 
     @Override
+    @SuppressWarnings( "unchecked" )
     public void postImport( ObjectBundle objectBundle )
     {
         if ( !objectBundle.getObjects().containsKey( User.class ) )
@@ -84,11 +88,28 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         }
 
         List<IdentifiableObject> objects = objectBundle.getObjects().get( User.class );
+        Map<String, Map<String, Object>> references = objectBundle.getObjectReferences( User.class );
+
+        if ( references == null || references.isEmpty() )
+        {
+            return;
+        }
 
         for ( IdentifiableObject identifiableObject : objects )
         {
+            Map<String, Object> referenceMap = references.get( identifiableObject.getUid() );
+
+            if ( referenceMap.isEmpty() )
+            {
+                continue;
+            }
+
             User user = (User) identifiableObject;
+            user.setOrganisationUnits( (Set<OrganisationUnit>) referenceMap.get( "organisationUnits" ) );
+            user.setDataViewOrganisationUnits( (Set<OrganisationUnit>) referenceMap.get( "dataViewOrganisationUnits" ) );
+
             preheatService.connectReferences( identifiableObject, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+
             manager.update( identifiableObject );
         }
     }

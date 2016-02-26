@@ -29,7 +29,6 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
-import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
@@ -340,9 +339,15 @@ public class DefaultPreheatService implements PreheatService
 
                         if ( reference != null )
                         {
-                            IdentifiableObject identifiableObject = new BaseIdentifiableObject();
-                            identifiableObject.mergeWith( reference, MergeMode.REPLACE );
-                            objectReferenceMap.get( object.getUid() ).put( p.getName(), identifiableObject );
+                            try
+                            {
+                                IdentifiableObject identifiableObject = (IdentifiableObject) p.getKlass().newInstance();
+                                identifiableObject.mergeWith( reference, MergeMode.REPLACE );
+                                objectReferenceMap.get( object.getUid() ).put( p.getName(), identifiableObject );
+                            }
+                            catch ( InstantiationException | IllegalAccessException ignored )
+                            {
+                            }
                         }
                     }
                     else
@@ -354,9 +359,16 @@ public class DefaultPreheatService implements PreheatService
                         {
                             for ( IdentifiableObject reference : references )
                             {
-                                IdentifiableObject identifiableObject = new BaseIdentifiableObject();
-                                identifiableObject.mergeWith( reference, MergeMode.REPLACE );
-                                refObjects.add( identifiableObject );
+                                try
+                                {
+                                    IdentifiableObject identifiableObject = (IdentifiableObject) p.getItemKlass().newInstance();
+                                    identifiableObject.mergeWith( reference, MergeMode.REPLACE );
+                                    refObjects.add( identifiableObject );
+                                }
+                                catch ( InstantiationException | IllegalAccessException ignored )
+                                {
+                                }
+
                             }
                         }
 

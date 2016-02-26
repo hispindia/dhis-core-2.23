@@ -380,7 +380,7 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        
+
         assertNotNull( validate );
     }
 
@@ -474,7 +474,8 @@ public class ObjectBundleServiceTest
         assertNotNull( user.getUserCredentials() );
         assertEquals( "admin", user.getUserCredentials().getUsername() );
         assertFalse( user.getUserCredentials().getUserAuthorityGroups().isEmpty() );
-        // assertFalse( user.getOrganisationUnits().isEmpty() );
+        assertFalse( user.getOrganisationUnits().isEmpty() );
+        assertEquals( "PdWlltZnVZe", user.getOrganisationUnit().getUid() );
     }
 
     private void defaultSetup()
