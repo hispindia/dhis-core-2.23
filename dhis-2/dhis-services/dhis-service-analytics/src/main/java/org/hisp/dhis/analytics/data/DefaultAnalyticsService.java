@@ -330,7 +330,7 @@ public class DefaultAnalyticsService
             {
                 grid.addRow();
                 grid.addValues( entry.getKey().split( DIMENSION_SEP ) );
-                grid.addValue( params.isSkipRounding() ? entry.getValue() : getRounded( entry.getValue() ) );
+                grid.addValue( AnalyticsUtils.getRoundedValueObject( params, entry.getValue() ) );
             }
         }
     }
@@ -371,7 +371,7 @@ public class DefaultAnalyticsService
             {
                 grid.addRow();
                 grid.addValues( entry.getKey().split( DIMENSION_SEP ) );
-                grid.addValue( dataSourceParams.isSkipRounding() ? entry.getValue() : getRounded( entry.getValue() ) );
+                grid.addValue( AnalyticsUtils.getRoundedValueObject( dataSourceParams, entry.getValue() ) );
             }
         }
     }
@@ -1027,17 +1027,6 @@ public class DefaultAnalyticsService
         }
 
         return typedMap;
-    }
-
-    /**
-     * Returns the given value. If of class Double the value is rounded.
-     *
-     * @param value the value to return and potentially round.
-     * @return the rounded value.
-     */
-    private Object getRounded( Object value )
-    {
-        return value != null && Double.class.equals( value.getClass() ) ? MathUtils.getRounded( (Double) value ) : value;
     }
 
     /**
