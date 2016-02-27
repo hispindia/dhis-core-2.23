@@ -32,6 +32,7 @@ import static org.hisp.dhis.common.DataDimensionItem.DATA_DIMENSION_TYPE_CLASS_M
 import static org.hisp.dhis.system.util.DateUtils.getMediumDateString;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -188,5 +189,28 @@ public class AnalyticsUtils
     {
         return valueMap.entrySet().stream().collect( Collectors.toMap( e -> e.getKey().replaceFirst( 
             DimensionalObject.DIMENSION_SEP, DimensionalObjectUtils.COMPOSITE_DIM_OBJECT_PLAIN_SEP ), e -> e.getValue() ) );
+    }
+
+    /**
+     * Converts a String, Object map into a specific String, Double map.
+     *
+     * @param map the map to convert.
+     * @return a mapping between string and double values.
+     */
+    public static Map<String, Double> getDoubleMap( Map<String, Object> map )
+    {
+        Map<String, Double> typedMap = new HashMap<>();
+
+        for ( Map.Entry<String, Object> entry : map.entrySet() )
+        {
+            final Object value = entry.getValue();
+
+            if ( value != null && Double.class.equals( value.getClass() ) )
+            {
+                typedMap.put( entry.getKey(), (Double) entry.getValue() );
+            }
+        }
+
+        return typedMap;
     }
 }

@@ -744,7 +744,7 @@ public class DefaultAnalyticsService
      */
     private Map<String, Double> getAggregatedDataValueMap( DataQueryParams params )
     {
-        return getDoubleMap( getAggregatedValueMap( params, ANALYTICS_TABLE_NAME ) );
+        return AnalyticsUtils.getDoubleMap( getAggregatedValueMap( params, ANALYTICS_TABLE_NAME ) );
     }
 
     /**
@@ -770,7 +770,7 @@ public class DefaultAnalyticsService
      */
     private Map<String, Double> getAggregatedCompletenessValueMap( DataQueryParams params )
     {
-        return getDoubleMap( getAggregatedValueMap( params, COMPLETENESS_TABLE_NAME ) );
+        return AnalyticsUtils.getDoubleMap( getAggregatedValueMap( params, COMPLETENESS_TABLE_NAME ) );
     }
 
     /**
@@ -783,7 +783,7 @@ public class DefaultAnalyticsService
      */
     private Map<String, Double> getAggregatedCompletenessTargetMap( DataQueryParams params )
     {
-        return getDoubleMap( getAggregatedValueMap( params, COMPLETENESS_TARGET_TABLE_NAME ) );
+        return AnalyticsUtils.getDoubleMap( getAggregatedValueMap( params, COMPLETENESS_TARGET_TABLE_NAME ) );
     }
 
     /**
@@ -797,7 +797,7 @@ public class DefaultAnalyticsService
      */
     private Map<String, Double> getAggregatedOrganisationUnitTargetMap( DataQueryParams params )
     {
-        return getDoubleMap( getAggregatedValueMap( params, ORGUNIT_TARGET_TABLE_NAME ) );
+        return AnalyticsUtils.getDoubleMap( getAggregatedValueMap( params, ORGUNIT_TARGET_TABLE_NAME ) );
     }
 
     /**
@@ -1004,29 +1004,6 @@ public class DefaultAnalyticsService
         Integer cores = (Integer) systemSettingManager.getSystemSetting( SettingKey.DATABASE_SERVER_CPUS );
 
         return ( cores == null || cores == 0 ) ? SystemUtils.getCpuCores() : cores;
-    }
-
-    /**
-     * Converts a String, Object map into a specific String, Double map.
-     *
-     * @param map the map to convert.
-     * @return a mapping between string and double values.
-     */
-    private Map<String, Double> getDoubleMap( Map<String, Object> map )
-    {
-        Map<String, Double> typedMap = new HashMap<>();
-
-        for ( Map.Entry<String, Object> entry : map.entrySet() )
-        {
-            final Object value = entry.getValue();
-
-            if ( value != null && Double.class.equals( value.getClass() ) )
-            {
-                typedMap.put( entry.getKey(), (Double) entry.getValue() );
-            }
-        }
-
-        return typedMap;
     }
 
     /**
