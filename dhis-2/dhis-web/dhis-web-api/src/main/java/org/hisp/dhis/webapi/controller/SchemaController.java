@@ -96,7 +96,7 @@ public class SchemaController
 
         if ( fields.isEmpty() )
         {
-            fields.add( "*,authorities[*],properties[*,constants[*]]" );
+            fields.add( "*" );
         }
 
         Schemas schemas = new Schemas( schemaService.getSortedSchemas() );
@@ -117,7 +117,7 @@ public class SchemaController
 
         if ( fields.isEmpty() )
         {
-            fields.add( "*,authorities[*],properties[*,constants[*]]" );
+            fields.add( "*" );
         }
 
         Schema schema = getSchemaFromType( type );
