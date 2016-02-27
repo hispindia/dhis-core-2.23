@@ -431,7 +431,7 @@ public class ObjectBundleServiceTest
     public void testCreateSimpleMetadataUID() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/simple_metadata1.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/simple_metadata.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
