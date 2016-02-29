@@ -121,7 +121,6 @@ var d2Directives = angular.module('d2Directives', [])
             placement: "@placement"
         },
         link: function (scope, element, attrs) {
-            console.log('the template:  ', scope.template);
             var content = $templateCache.get(scope.template);
             content = $compile(content)(scope);
             scope.content.heading = scope.content.value && scope.content.value.length > 20 ? scope.content.value.substring(0,20).concat('...') : scope.content.value;
