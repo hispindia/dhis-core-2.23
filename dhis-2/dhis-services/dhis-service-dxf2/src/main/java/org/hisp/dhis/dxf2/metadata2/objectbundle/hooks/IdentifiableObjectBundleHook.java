@@ -28,67 +28,53 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hibernate.SessionFactory;
+import org.hisp.dhis.attribute.Attribute;
+import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
-import org.hisp.dhis.preheat.PreheatService;
-import org.hisp.dhis.schema.SchemaService;
-import org.hisp.dhis.schema.validation.SchemaValidator;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hisp.dhis.schema.Schema;
+import org.hisp.dhis.user.UserGroup;
+import org.hisp.dhis.user.UserGroupAccess;
+import org.springframework.core.annotation.Order;
+import org.springframework.stereotype.Component;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class AbstractObjectBundleHook implements ObjectBundleHook
+@Order( 0 )
+@Component
+public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
 {
-    @Autowired
-    protected IdentifiableObjectManager manager;
-
-    @Autowired
-    protected PreheatService preheatService;
-
-    @Autowired
-    protected SchemaValidator validator;
-
-    @Autowired
-    protected SessionFactory sessionFactory;
-
-    @Autowired
-    protected SchemaService schemaService;
-
-    @Override
-    public void preImport( ObjectBundle objectBundle )
-    {
-    }
-
-    @Override
-    public void postImport( ObjectBundle objectBundle )
-    {
-    }
-
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
+        Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
+        handleAttributeValuesCreate( identifiableObject, objectBundle, schema );
+        handleUserGroupAccessesCreate( identifiableObject, objectBundle, schema );
     }
 
-    @Override
-    public void postCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void handleAttributeValuesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
+        if ( !schema.havePersistedProperty( "attributeValues" ) ) return;
+
+        for ( AttributeValue attributeValue : identifiableObject.getAttributeValues() )
+        {
+            Attribute attribute = bundle.getPreheat().get( bundle.getPreheatIdentifier(), attributeValue.getAttribute() );
+            if ( attribute != null ) attributeValue.setAttribute( attribute );
+            sessionFactory.getCurrentSession().save( attributeValue );
+        }
     }
 
-    @Override
-    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void handleUserGroupAccessesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
-    }
+        if ( !schema.havePersistedProperty( "userGroupAccesses" ) ) return;
+        identifiableObject.getUserGroupAccesses().clear();
 
-    @Override
-    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
-    {
-    }
-
-    @Override
-    public void preDelete( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
-    {
+        for ( UserGroupAccess userGroupAccess : identifiableObject.getUserGroupAccesses() )
+        {
+            UserGroup userGroup = bundle.getPreheat().get( bundle.getPreheatIdentifier(), userGroupAccess.getUserGroup() );
+            if ( userGroup != null ) userGroupAccess.setUserGroup( userGroup );
+            sessionFactory.getCurrentSession().save( userGroupAccess );
+        }
     }
 }

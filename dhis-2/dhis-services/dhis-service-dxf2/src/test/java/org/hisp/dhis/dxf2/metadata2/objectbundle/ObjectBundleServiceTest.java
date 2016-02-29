@@ -538,6 +538,22 @@ public class ObjectBundleServiceTest
         assertEquals( "PdWlltZnVZe", user.getOrganisationUnit().getUid() );
 
         assertEquals( 2, optionSet.getOptions().size() );
+
+        // attribute value check
+        DataElement dataElementA = manager.get( DataElement.class, "SG4HuKlNEFH" );
+        DataElement dataElementB = manager.get( DataElement.class, "CCwk5Yx440o" );
+        DataElement dataElementC = manager.get( DataElement.class, "j5PneRdU7WT" );
+        DataElement dataElementD = manager.get( DataElement.class, "k90AVpBahO4" );
+
+        assertNotNull( dataElementA );
+        assertNotNull( dataElementB );
+        assertNotNull( dataElementC );
+        assertNotNull( dataElementD );
+
+        assertTrue( dataElementA.getAttributeValues().isEmpty() );
+        assertTrue( dataElementB.getAttributeValues().isEmpty() );
+        assertFalse( dataElementC.getAttributeValues().isEmpty() );
+        assertFalse( dataElementD.getAttributeValues().isEmpty() );
     }
 
     private void defaultSetup()

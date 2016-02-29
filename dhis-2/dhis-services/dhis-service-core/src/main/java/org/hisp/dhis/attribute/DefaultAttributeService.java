@@ -182,7 +182,6 @@ public class DefaultAttributeService
     // AttributeValue implementation
     // -------------------------------------------------------------------------
 
-
     @Override
     public <T extends IdentifiableObject> void addAttributeValue( T object, AttributeValue attributeValue ) throws NonUniqueAttributeValueException
     {

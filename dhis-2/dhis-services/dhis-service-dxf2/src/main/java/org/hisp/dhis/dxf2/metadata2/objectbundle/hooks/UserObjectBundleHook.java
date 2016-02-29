@@ -109,8 +109,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
             user.setDataViewOrganisationUnits( (Set<OrganisationUnit>) referenceMap.get( "dataViewOrganisationUnits" ) );
 
             preheatService.connectReferences( identifiableObject, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-
-            manager.update( identifiableObject );
+            sessionFactory.getCurrentSession().update( identifiableObject );
         }
     }
 }
