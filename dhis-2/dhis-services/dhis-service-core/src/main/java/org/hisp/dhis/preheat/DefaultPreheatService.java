@@ -44,6 +44,7 @@ import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
+import org.hisp.dhis.user.UserGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -290,8 +291,24 @@ public class DefaultPreheatService implements PreheatService
                         }
                     } );
 
+                    if ( !uidMap.containsKey( UserGroup.class ) ) uidMap.put( UserGroup.class, new HashSet<>() );
+                    if ( !codeMap.containsKey( UserGroup.class ) ) codeMap.put( UserGroup.class, new HashSet<>() );
+
+                    object.getUserGroupAccesses().forEach( uga -> {
+                        UserGroup userGroup = uga.getUserGroup();
+
+                        if ( userGroup != null )
+                        {
+                            if ( !StringUtils.isEmpty( userGroup.getUid() ) ) uidMap.get( UserGroup.class ).add( userGroup.getUid() );
+                            if ( !StringUtils.isEmpty( userGroup.getCode() ) ) codeMap.get( UserGroup.class ).add( userGroup.getCode() );
+                        }
+                    } );
+
                     if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
                     if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
+
+                    if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
+                    if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
 
                     if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
                     if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
