@@ -281,6 +281,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             if ( Preheat.isDefault( object ) ) continue;
 
             objectBundleHooks.forEach( hook -> hook.preCreate( object, bundle ) );
+            object.getAttributeValues().clear();
 
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             manager.save( object, bundle.getUser() );
