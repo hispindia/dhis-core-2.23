@@ -60,7 +60,7 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
         for ( AttributeValue attributeValue : identifiableObject.getAttributeValues() )
         {
             Attribute attribute = bundle.getPreheat().get( bundle.getPreheatIdentifier(), attributeValue.getAttribute() );
-            if ( attribute != null ) attributeValue.setAttribute( attribute );
+            attributeValue.setAttribute( attribute );
             sessionFactory.getCurrentSession().save( attributeValue );
         }
     }
@@ -68,12 +68,11 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
     public void handleUserGroupAccessesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "userGroupAccesses" ) ) return;
-        identifiableObject.getUserGroupAccesses().clear();
 
         for ( UserGroupAccess userGroupAccess : identifiableObject.getUserGroupAccesses() )
         {
             UserGroup userGroup = bundle.getPreheat().get( bundle.getPreheatIdentifier(), userGroupAccess.getUserGroup() );
-            if ( userGroup != null ) userGroupAccess.setUserGroup( userGroup );
+            userGroupAccess.setUserGroup( userGroup );
             sessionFactory.getCurrentSession().save( userGroupAccess );
         }
     }
