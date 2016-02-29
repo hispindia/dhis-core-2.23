@@ -304,14 +304,14 @@ public class DefaultPreheatService implements PreheatService
                         }
                     } );
 
+                    if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
+                    if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
+
                     if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
                     if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
 
                     if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
                     if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
-
-                    if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
-                    if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
                 }
             } );
         }
