@@ -78,13 +78,15 @@ public class TrackedEntityAttribute
 
     private Boolean confidential = false;
 
-    private Boolean unique = false;
+    private Boolean unique = false;    
 
     // For Local ID type
 
     private Boolean orgunitScope = false;
 
     private Boolean programScope = false;
+    
+    private TrackedEntityAttributeSearchScope searchScope;
 
     // -------------------------------------------------------------------------
     // Constructors
@@ -394,6 +396,19 @@ public class TrackedEntityAttribute
         this.confidential = confidential;
     }
 
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public TrackedEntityAttributeSearchScope getSearchScope()
+    {
+        return searchScope;
+    }
+
+    public void setSearchScope( TrackedEntityAttributeSearchScope searchScope )
+    {
+        this.searchScope = searchScope;
+    }    
+    
     @Override
     public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {
@@ -417,6 +432,7 @@ public class TrackedEntityAttribute
                 unique = trackedEntityAttribute.isUnique();
                 orgunitScope = trackedEntityAttribute.getOrgunitScope();
                 programScope = trackedEntityAttribute.getProgramScope();
+                searchScope = trackedEntityAttribute.getSearchScope();
                 optionSet = trackedEntityAttribute.getOptionSet();
             }
             else if ( mergeMode.isMerge() )
@@ -430,9 +446,10 @@ public class TrackedEntityAttribute
                 sortOrderInVisitSchedule = trackedEntityAttribute.getSortOrderInVisitSchedule() == null ? sortOrderInVisitSchedule : trackedEntityAttribute.getSortOrderInVisitSchedule();
                 displayInListNoProgram = trackedEntityAttribute.getDisplayInListNoProgram() == null ? displayInListNoProgram : trackedEntityAttribute.getDisplayInListNoProgram();
                 sortOrderInListNoProgram = trackedEntityAttribute.getSortOrderInListNoProgram() == null ? sortOrderInListNoProgram : trackedEntityAttribute.getSortOrderInListNoProgram();
-                unique = trackedEntityAttribute.isUnique() == null ? unique : trackedEntityAttribute.isUnique();
+                unique = trackedEntityAttribute.isUnique() == null ? unique : trackedEntityAttribute.isUnique();                
                 orgunitScope = trackedEntityAttribute.getOrgunitScope() == null ? orgunitScope : trackedEntityAttribute.getOrgunitScope();
                 programScope = trackedEntityAttribute.getProgramScope() == null ? programScope : trackedEntityAttribute.getProgramScope();
+                searchScope = trackedEntityAttribute.getSearchScope() == null ? searchScope : trackedEntityAttribute.getSearchScope();
                 optionSet = trackedEntityAttribute.getOptionSet() == null ? optionSet : trackedEntityAttribute.getOptionSet();
             }
         }

@@ -79,7 +79,7 @@
 		<td><label for="confidential">$i18n.getString( "confidential" ) <br /><span class="tipText">($i18n.getString( "not_available_for_search_and_analytics" ))</span></label></td>
 		<td>
             #if( $encryptionAvailable )
-			    <input type='checkbox' id="confidential" name="confidential" value='true'>
+			    <input type='checkbox' id="confidential" name="confidential" value='true' onchange='applyConfidentialEffect();'>
             #else
                 <p style="max-width: 312px">
                     <b>$i18n.getString( "encryption_not_available" )</b>
@@ -89,6 +89,18 @@
 		<td></td>
 	</tr>
 
+	<tr>
+		<td><label for="searchScope">$i18n.getString( "search_scope" ) <br /></label></td>
+		<td>
+            <select id="searchScope" name="searchScope" >
+				<option value='SEARCH_OUS'>$i18n.getString('within_search_ous')</option>				
+				<option value='OWN_OUS'>$i18n.getString('within_own_ous')</option>
+				<option value='NOT_SEARCHABLE'>$i18n.getString('not_searchable')</option>
+			</select>
+		</td>
+		<td></td>
+	</tr>
+	
 	<tr>
 		<td><label for="optionSetId">$i18n.getString( "option_set" )</label></td>
 		<td><select id="optionSetId" name="optionSetId" onchange="optionSetChanged()">

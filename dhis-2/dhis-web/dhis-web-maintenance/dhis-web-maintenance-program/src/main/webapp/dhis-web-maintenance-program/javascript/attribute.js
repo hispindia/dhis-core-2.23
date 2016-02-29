@@ -6,6 +6,8 @@ $(function() {
 
   typeOnChange();
   optionSetChanged();
+  applyConfidentialEffect();
+  
 });
 
 // -----------------------------------------------------------------------------
@@ -127,4 +129,14 @@ function uniqueOnChange() {
     jQuery('#valueType [value=TRACKER_ASSOCIATE]').show();
     jQuery('#valueType [value=USERNAME]').show();
   }
+}
+
+function applyConfidentialEffect() {
+	if( $('#confidential').attr('checked') == "checked" ) {
+		$('#searchScope').find('option[value="NOT_SEARCHABLE"]').prop('selected', true);
+		$('#searchScope').prop('disabled', true);
+	}
+	else {
+		$('#searchScope').prop('disabled', false);
+	}
 }

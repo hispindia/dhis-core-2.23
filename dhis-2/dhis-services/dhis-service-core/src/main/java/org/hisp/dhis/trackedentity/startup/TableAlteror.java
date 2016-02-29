@@ -256,7 +256,10 @@ public class TableAlteror
         executeSql( "update trackedentityattribute set aggregationype='AVERAGE' where aggregationtype is null" );
 
         executeSql( "UPDATE trackedentityattribute SET valuetype='string' WHERE valuetype='localId';" );
-        executeSql( "UPDATE trackedentityattribute SET valuetype='number' WHERE valuetype='age'" );
+        executeSql( "UPDATE trackedentityattribute SET valuetype='number' WHERE valuetype='age'" );        
+
+        executeSql( "update trackedentityattribute set searchscope='NOT_SEARCHABLE' where confidential=true" );
+        executeSql( "update trackedentityattribute set searchscope='SEARCH_OUS' where searchscope is null" );
 
         executeSql( "DROP TABLE orgunitgroupprograms" );
 

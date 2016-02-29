@@ -37,6 +37,7 @@ import org.hisp.dhis.legend.LegendService;
 import org.hisp.dhis.option.OptionService;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
+import org.hisp.dhis.trackedentity.TrackedEntityAttributeSearchScope;
 import org.hisp.dhis.trackedentity.TrackedEntityAttributeService;
 import org.hisp.dhis.trackedentity.TrackedEntityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,6 +189,13 @@ public class UpdateAttributeAction
     {
         this.jsonAttributeValues = jsonAttributeValues;
     }
+    
+    private TrackedEntityAttributeSearchScope searchScope;
+
+    public void setSearchScope( TrackedEntityAttributeSearchScope searchScope )
+    {
+        this.searchScope = searchScope;
+    }
 
     // -------------------------------------------------------------------------
     // Action implementation
@@ -212,6 +220,7 @@ public class UpdateAttributeAction
         trackedEntityAttribute.setExpression( expression );
         trackedEntityAttribute.setDisplayOnVisitSchedule( false );
         trackedEntityAttribute.setOptionSet( optionSet );
+        trackedEntityAttribute.setSearchScope( searchScope );
 
         unique = unique != null;
         trackedEntityAttribute.setUnique( unique );
