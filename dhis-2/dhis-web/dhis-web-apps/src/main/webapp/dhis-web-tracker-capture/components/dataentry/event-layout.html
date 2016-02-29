@@ -4,8 +4,31 @@
             <div class="event-container" ng-click="getEventPage('BACKWARD')" ng-if="$index === 0 && eventPagingStart > 0">
                 {{'previous'| translate}}
             </div>
-
-            <div class="event-container" title="[{{'org_unit' | translate}}: {{dhis2Event.orgUnitName}}, {{'program_stage' | translate}}: {{dhis2Event.name}}]" ng-class="getEventStyle(dhis2Event)" ng-click="showDataEntry(dhis2Event, false)">                
+            
+            <script type="text/ng-template" id="event-details.html">                
+                <table class="table table-striped table-bordered">
+                    <tr>
+                        <td>{{'org_unit' | translate}}</td>
+                        <td>{{content.orgUnitName}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'program_stage' | translate}}</td>
+                        <td>{{content.name}}</td>
+                    </tr>
+                    <tr>
+                        <td>{{'date' | translate}}</td>
+                        <td>{{content.eventDate ? content.eventDate : content.dueDate}}</td>
+                    </tr>
+                </table>
+            </script>
+            <div class="event-container" 
+                 d2-pop-over 
+                 details="{{'details'| translate}}"
+                 content="dhis2Event"
+                 template="event-details.html"  
+                 placement="right" 
+                 ng-class="getEventStyle(dhis2Event)" 
+                 ng-click="showDataEntry(dhis2Event, false)">                
                 <div class="event-container-item">
                     {{dhis2Event.sortingDate}}
                 </div>

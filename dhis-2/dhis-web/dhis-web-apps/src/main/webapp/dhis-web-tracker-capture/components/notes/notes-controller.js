@@ -61,7 +61,6 @@ trackerCapture.controller('NotesController',
             DialogService.showDialog({}, dialogOptions);
             return;
         }
-        
 
         var newNote = {value: $scope.note.value};
 
@@ -74,7 +73,10 @@ trackerCapture.controller('NotesController',
         }
 
         var e = angular.copy($scope.selectedEnrollment);
-
+        e.enrollmentDate = DateUtils.formatFromUserToApi(e.enrollmentDate);
+        if(e.incidentDate){
+            e.incidentDate = DateUtils.formatFromUserToApi(e.incidentDate);
+        }
         e.notes = [newNote];
         EnrollmentService.updateForNote(e).then(function(){
             $scope.note = {};
