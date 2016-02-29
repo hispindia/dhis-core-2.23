@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hibernate.Session;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.IdentifiableObject;
@@ -56,24 +57,26 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
     public void handleAttributeValuesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "attributeValues" ) ) return;
+        Session session = sessionFactory.getCurrentSession();
 
         for ( AttributeValue attributeValue : identifiableObject.getAttributeValues() )
         {
             Attribute attribute = bundle.getPreheat().get( bundle.getPreheatIdentifier(), attributeValue.getAttribute() );
             attributeValue.setAttribute( attribute );
-            sessionFactory.getCurrentSession().save( attributeValue );
+            session.save( attributeValue );
         }
     }
 
     public void handleUserGroupAccessesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "userGroupAccesses" ) ) return;
+        Session session = sessionFactory.getCurrentSession();
 
         for ( UserGroupAccess userGroupAccess : identifiableObject.getUserGroupAccesses() )
         {
             UserGroup userGroup = bundle.getPreheat().get( bundle.getPreheatIdentifier(), userGroupAccess.getUserGroup() );
             userGroupAccess.setUserGroup( userGroup );
-            sessionFactory.getCurrentSession().save( userGroupAccess );
+            session.save( userGroupAccess );
         }
     }
 }

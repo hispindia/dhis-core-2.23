@@ -556,6 +556,20 @@ public class ObjectBundleServiceTest
         assertFalse( dataElementD.getAttributeValues().isEmpty() );
     }
 
+    @Test
+    public void testValidateMetadataAttributeValuesUniqueAndMandatoryUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_av_unique_and_mandatory.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validation = objectBundleService.validate( bundle );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
