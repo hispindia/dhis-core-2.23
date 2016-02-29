@@ -29,6 +29,7 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
+import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
@@ -275,6 +276,22 @@ public class DefaultPreheatService implements PreheatService
                             if ( !StringUtils.isEmpty( code ) ) codeMap.get( klass ).add( code );
                         }
                     }
+
+                    if ( !uidMap.containsKey( Attribute.class ) ) uidMap.put( Attribute.class, new HashSet<>() );
+                    if ( !codeMap.containsKey( Attribute.class ) ) codeMap.put( Attribute.class, new HashSet<>() );
+
+                    object.getAttributeValues().forEach( av -> {
+                        Attribute attribute = av.getAttribute();
+
+                        if ( attribute != null )
+                        {
+                            if ( !StringUtils.isEmpty( attribute.getUid() ) ) uidMap.get( Attribute.class ).add( attribute.getUid() );
+                            if ( !StringUtils.isEmpty( attribute.getCode() ) ) codeMap.get( Attribute.class ).add( attribute.getCode() );
+                        }
+                    } );
+
+                    if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
+                    if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
 
                     if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
                     if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
