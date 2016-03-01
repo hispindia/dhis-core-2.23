@@ -1174,13 +1174,8 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
 
         private Set<UserGroupAccess> extractUserGroupAccesses( T object )
         {
-            Set<UserGroupAccess> userGroupAccesses = new HashSet<>();
-
-            if ( schema.havePersistedProperty( "userGroupAccesses" ) )
-            {
-                userGroupAccesses = ReflectionUtils.invokeGetterMethod( "userGroupAccesses", object );
-                ReflectionUtils.invokeSetterMethod( "userGroupAccesses", object, new HashSet<>() );
-            }
+            userGroupAccesses = object.getUserGroupAccesses();
+            object.setUserGroupAccesses( new HashSet<>() );
 
             return userGroupAccesses;
         }
