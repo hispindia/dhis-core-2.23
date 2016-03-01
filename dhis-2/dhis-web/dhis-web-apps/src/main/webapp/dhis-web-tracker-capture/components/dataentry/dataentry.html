@@ -5,7 +5,7 @@
             {{'main_menu' | translate}}
             
             <span class="pull-right widget-link">
-                <a href ng-click="toggleLegend()" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
+                <a href ng-click="model.showLegend = !model.showLegend" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
                 <a class="small-horizonal-spacing" href ng-click="expandCollapse(dataentryWidget)">
                     <span ng-show="dataentryWidget.expand"><i class="fa fa-chevron-up vertical-center" title="{{collapseLabel}}"></i></span>
                     <span ng-show="!dataentryWidget.expand"><i class="fa fa-chevron-down vertical-center" title="{{expandLabel}}"></i></span>
@@ -14,10 +14,10 @@
             
         </div>
         <div ng-if="!useMainMenu">            
-            {{'dataentry' | translate}}            
-            <span class="pull-right widget-link">  
-               
-                <a href ng-click="toggleLegend()" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
+            {{'dataentry' | translate}}
+            <span class="pull-right widget-link">               
+                <a href ng-click="model.showEventSearch = !model.showEventSearch" title="{{'search'| translate}}" class="small-horizonal-spacing"><i class="fa fa-search vertical-center"></i></a>
+                <a href ng-click="model.showLegend = !model.showLegend" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
                 <a href ng-click="toggleEventsTableDisplay()" title="{{showEventsAsTables ? 'toggle_table_view_off' : 'toggle_table_view_on'| translate}}" ng-show="stagesCanBeShownAsTable"><span ng-if="!showEventsAsTables"><i class="fa fa-bars vertical-center"></i></span><span ng-if="showEventsAsTables"><i class="fa fa-square vertical-center"></i></span></a>
                 <a class="small-horizonal-spacing" href ng-click="expandCollapse(dataentryWidget)">
                     <span ng-show="dataentryWidget.expand"><i class="fa fa-chevron-up vertical-center" title="{{collapseLabel}}"></i></span>
@@ -36,7 +36,7 @@
                         {{stage.displayName}} ({{getStageEventCnt(stage)}})
                     </a>
                 </span>
-                <a href ng-click="toggleLegend()" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
+                <a href ng-click="model.showLegend = !model.showLegend" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
                 <a href ng-click="toggleEventsTableDisplay()" title="{{showEventsAsTables ? 'toggle_table_view_off' : 'toggle_table_view_on'| translate}}" ng-show="stagesCanBeShownAsTable"><span ng-if="!showEventsAsTables"><i class="fa fa-bars vertical-center"></i></span><span ng-if="showEventsAsTables"><i class="fa fa-square vertical-center"></i></span></a>
                 <a class="small-horizonal-spacing" href ng-click="expandCollapse(dataentryWidget)">
                     <span ng-show="dataentryWidget.expand"><i class="fa fa-chevron-up vertical-center" title="{{collapseLabel}}"></i></span>
@@ -55,7 +55,7 @@
 
         <div ng-if="dashboardReady"> 
             
-            <div ng-if="showLegend">
+            <div ng-if="model.showLegend">
                 <span class='bold'>{{'legend'| translate}}</span>
                 <table class="table table-bordered" style="width: 100%;">
                     <tr>
@@ -64,7 +64,7 @@
                         </td>
                     </tr>
                 </table>
-            </div>            
+            </div>
             <div ng-if="useMainMenu && !mainMenuStageSelected() && eventsLoaded">
                     <div class="">
                         <div ng-repeat="mainMenuStage in mainMenuStages" class="main-menu-item-container" ng-class="getMainMenuItemStyle(mainMenuStage)" ng-click="openStageFromMenu(mainMenuStage)">                            

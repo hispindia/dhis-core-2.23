@@ -103,7 +103,11 @@ trackerCapture.controller('DataEntryController',
         {color: 'alert-default', description: 'skipped', showInStageLegend: false, showInEventLegend: true},
         {color: '', description: 'empty', showInStageLegend: true, showInEventLegend: false}
     ];
-    $scope.showLegend = false;
+ 
+    $scope.model= {};
+    $scope.model.showLegend = false;
+    $scope.model.showEventSearch = false;
+    $scope.model.eventSearchText = '';
     
     $scope.filterLegend = function(){
         if($scope.mainMenuStageSelected()){
@@ -156,8 +160,12 @@ trackerCapture.controller('DataEntryController',
             } 
         }
     }
-
-    $scope.model= {};
+    
+    $scope.$watch("model.eventSearchText", function(newValue, oldValue){        
+        if($scope.model.eventSearchText !== ''){
+            $scope.currentEvent = null;
+        }
+    });
             
     $scope.print = function(divName){
         $scope.printForm = true;
@@ -2073,10 +2081,6 @@ trackerCapture.controller('DataEntryController',
                 
                 return $q.reject(error);
             });        
-    };
-
-    $scope.toggleLegend = function () {
-        $scope.showLegend = !$scope.showLegend;
     };
 
     $scope.getEventStyle = function (ev, skipCurrentEventStyle) {
