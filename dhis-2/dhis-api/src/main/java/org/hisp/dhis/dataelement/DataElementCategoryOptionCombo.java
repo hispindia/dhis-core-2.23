@@ -28,12 +28,9 @@ package org.hisp.dhis.dataelement;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -87,7 +84,6 @@ public class DataElementCategoryOptionCombo
 
     public DataElementCategoryOptionCombo()
     {
-
     }
     
     // -------------------------------------------------------------------------
@@ -200,74 +196,9 @@ public class DataElementCategoryOptionCombo
         categoryOptions.clear();
     }
 
-    /**
-     * Tests whether two objects compare on a name basis. The default equals
-     * method becomes unusable in the case of detached objects in conjunction
-     * with persistence frameworks that put proxys on associated objects and
-     * collections, since it tests the class type which will differ between the
-     * proxy and the raw type.
-     *
-     * @param object the object to test for equality.
-     * @return true if objects are equal, false otherwise.
-     */
-    public boolean equalsOnName( DataElementCategoryOptionCombo object )
-    {
-        if ( this == object )
-        {
-            return true;
-        }
-
-        if ( object == null || object.getCategoryCombo() == null || object.getCategoryOptions() == null )
-        {
-            return false;
-        }
-
-        if ( !categoryCombo.getName().equals( object.getCategoryCombo().getName() ) )
-        {
-            return false;
-        }
-
-        if ( categoryOptions.size() != object.getCategoryOptions().size() )
-        {
-            return false;
-        }
-
-        final Set<String> names1 = new HashSet<>();
-        final Set<String> names2 = new HashSet<>();
-
-        for ( DataElementCategoryOption option : categoryOptions )
-        {
-            names1.add( option.getName() );
-        }
-
-        for ( DataElementCategoryOption option : object.getCategoryOptions() )
-        {
-            names2.add( option.getName() );
-        }
-
-        return names1.equals( names2 );
-    }
-
     public boolean isDefault()
     {
         return categoryCombo != null && DEFAULT_NAME.equals( categoryCombo.getName() );
-    }
-
-    /**
-     * Creates a mapping between the category option combo identifier and name
-     * for the given collection of elements.
-     */
-    @Deprecated
-    public static Map<Integer, String> getCategoryOptionComboMap( Collection<DataElementCategoryOptionCombo> categoryOptionCombos )
-    {
-        Map<Integer, String> map = new HashMap<>();
-
-        for ( DataElementCategoryOptionCombo coc : categoryOptionCombos )
-        {
-            map.put( coc.getId(), coc.getName() );
-        }
-
-        return map;
     }
 
     // -------------------------------------------------------------------------

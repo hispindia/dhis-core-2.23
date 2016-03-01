@@ -560,25 +560,6 @@ public class DefaultDataElementCategoryService
     }
 
     @Override
-    public DataElementCategoryOptionCombo getDataElementCategoryOptionCombo( DataElementCategoryOptionCombo categoryOptionCombo )
-    {
-        for ( DataElementCategoryOptionCombo dcoc : getAllDataElementCategoryOptionCombos() )
-        {
-            // -----------------------------------------------------------------
-            // Hibernate puts proxies on associations and makes the native
-            // equals methods unusable
-            // -----------------------------------------------------------------
-
-            if ( dcoc.equalsOnName( categoryOptionCombo ) )
-            {
-                return dcoc;
-            }
-        }
-
-        return null;
-    }
-
-    @Override
     public DataElementCategoryOptionCombo getDataElementCategoryOptionCombo( DataElementCategoryCombo categoryCombo,
         Set<DataElementCategoryOption> categoryOptions )
     {

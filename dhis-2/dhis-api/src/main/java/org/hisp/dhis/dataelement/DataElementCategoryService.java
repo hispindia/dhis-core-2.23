@@ -418,15 +418,6 @@ public interface DataElementCategoryService
     /**
      * Retrieves a DataElementCategoryOptionCombo.
      *
-     * @param categoryOptionCombo the DataElementCategoryOptionCombo to
-     *                            retrieve.
-     * @return a DataElementCategoryOptionCombo.
-     */
-    DataElementCategoryOptionCombo getDataElementCategoryOptionCombo( DataElementCategoryOptionCombo categoryOptionCombo );
-
-    /**
-     * Retrieves a DataElementCategoryOptionCombo.
-     *
      * @param categoryCombo   the DataElementCategoryOptionCombo.
      * @param categoryOptions the set of DataElementCategoryOptions.
      */
