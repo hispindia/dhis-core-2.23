@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2;
+package org.hisp.dhis.preheat;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,19 +28,30 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
-
-import java.util.List;
-import java.util.Map;
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ErrorReport;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface MetadataImportService
+public class PreheatErrorReport extends ErrorReport
 {
-    ImportReport importMetadata( MetadataImportParams params );
+    private final PreheatIdentifier preheatIdentifier;
 
-    void validate( MetadataImportParams params );
+    public PreheatErrorReport( PreheatIdentifier preheatIdentifier, Class<?> mainKlass, ErrorCode errorCode, Object... args )
+    {
+        super( mainKlass, errorCode, args );
+        this.preheatIdentifier = preheatIdentifier;
+    }
 
-    MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
+    public PreheatIdentifier getPreheatIdentifier()
+    {
+        return preheatIdentifier;
+    }
+
+    public IdentifiableObject getObjectReference()
+    {
+        return value != null ? (IdentifiableObject) value : null;
+    }
 }

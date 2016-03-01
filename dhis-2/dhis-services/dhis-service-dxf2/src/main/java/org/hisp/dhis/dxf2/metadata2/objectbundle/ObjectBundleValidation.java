@@ -28,10 +28,10 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.preheat.InvalidObject;
-import org.hisp.dhis.preheat.PreheatValidation;
+import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.schema.validation.ValidationViolation;
 
 import java.util.ArrayList;
@@ -44,24 +44,67 @@ import java.util.Map;
  */
 public class ObjectBundleValidation
 {
-    private Map<Class<? extends IdentifiableObject>, List<PreheatValidation>> preheatValidations = new HashMap<>();
+    private Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> errorReports = new HashMap<>();
 
     private Map<Class<? extends IdentifiableObject>, List<List<ValidationViolation>>> validationViolations = new HashMap<>();
-
-    private Map<Class<? extends IdentifiableObject>, List<InvalidObject>> invalidObjects = new HashMap<>();
 
     public ObjectBundleValidation()
     {
     }
 
-    public void addPreheatValidations( Class<? extends IdentifiableObject> klass, List<PreheatValidation> preheatValidations )
+    public void addPreheatErrorReports( List<PreheatErrorReport> preheatErrorReports )
     {
-        this.preheatValidations.put( klass, preheatValidations );
+        preheatErrorReports.forEach( this::addErrorReport );
     }
 
-    public Map<Class<? extends IdentifiableObject>, List<PreheatValidation>> getPreheatValidations()
+    public <T extends ErrorReport> void addErrorReport( T errorReport )
     {
-        return preheatValidations;
+        if ( !errorReports.containsKey( errorReport.getMainKlass() ) )
+        {
+            errorReports.put( errorReport.getMainKlass(), new HashMap<>() );
+        }
+
+        if ( !errorReports.get( errorReport.getMainKlass() ).containsKey( errorReport.getErrorCode() ) )
+        {
+            errorReports.get( errorReport.getMainKlass() ).put( errorReport.getErrorCode(), new ArrayList<>() );
+        }
+
+        errorReports.get( errorReport.getMainKlass() ).get( errorReport.getErrorCode() ).add( errorReport );
+    }
+
+    public void addErrorReport( Class<?> mainKlass, ErrorCode errorCode, Object... args )
+    {
+        ErrorReport errorReport = new ErrorReport( mainKlass, errorCode, args );
+        addErrorReport( errorReport );
+    }
+
+    public Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> getErrorReports()
+    {
+        return errorReports;
+    }
+
+    public Map<ErrorCode, List<ErrorReport>> getErrorReports( Class<?> klass )
+    {
+        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
+
+        if ( map == null )
+        {
+            return new HashMap<>();
+        }
+
+        return map;
+    }
+
+    public List<ErrorReport> getErrorReports( Class<?> klass, ErrorCode errorCode )
+    {
+        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
+
+        if ( !map.containsKey( errorCode ) )
+        {
+            return new ArrayList<>();
+        }
+
+        return map.get( errorCode );
     }
 
     public void addValidationViolation( Class<? extends IdentifiableObject> klass, List<List<ValidationViolation>> validationViolations )
@@ -72,28 +115,5 @@ public class ObjectBundleValidation
     public Map<Class<? extends IdentifiableObject>, List<List<ValidationViolation>>> getValidationViolations()
     {
         return validationViolations;
-    }
-
-    public void addInvalidObject( Class<? extends IdentifiableObject> klass, InvalidObject invalidObject )
-    {
-        if ( !invalidObjects.containsKey( klass ) )
-        {
-            invalidObjects.put( klass, new ArrayList<>() );
-        }
-
-        invalidObjects.get( klass ).add( invalidObject );
-    }
-
-    public Map<Class<? extends IdentifiableObject>, List<InvalidObject>> getInvalidObjects()
-    {
-        return invalidObjects;
-    }
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this )
-            .add( "preheatValidations", preheatValidations )
-            .toString();
     }
 }

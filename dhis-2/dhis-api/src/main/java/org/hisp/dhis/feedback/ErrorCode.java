@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,70 +28,26 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.google.common.base.MoreObjects;
-import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.common.IdentifiableObjectUtils;
-import org.springframework.util.Assert;
-
 /**
+ * E5000 - E5999: Preheat Errors
+ * E6000 - E6999: DXF2 Import Errors
+ *
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "invalidObject", namespace = DxfNamespaces.DXF_2_0 )
-public class InvalidObject
+public enum ErrorCode
 {
-    private String name;
+    E5000( "No matching object for given reference. Identifier was {0}, and object was {1}." ),
+    E5001( "Invalid reference {0} on object {1} for association \"{2}\"." );
 
-    private PreheatIdentifier identifier;
+    private String message;
 
-    private Object object;
-
-    public InvalidObject( Object object, PreheatIdentifier identifier )
+    ErrorCode( String message )
     {
-        Assert.notNull( object );
-        Assert.notNull( identifier );
-
-        this.object = object;
-        this.identifier = identifier;
-        this.name = IdentifiableObjectUtils.getDisplayName( object );
+        this.message = message;
     }
 
-    public String getName()
+    public String getMessage()
     {
-        return name;
-    }
-
-    public void setName( String name )
-    {
-        this.name = name;
-    }
-
-    public PreheatIdentifier getIdentifier()
-    {
-        return identifier;
-    }
-
-    public void setIdentifier( PreheatIdentifier identifier )
-    {
-        this.identifier = identifier;
-    }
-
-    public Object getObject()
-    {
-        return object;
-    }
-
-    public void setObject( Object object )
-    {
-        this.object = object;
-    }
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this )
-            .add( "name", name )
-            .add( "identifier", identifier )
-            .toString();
+        return message;
     }
 }

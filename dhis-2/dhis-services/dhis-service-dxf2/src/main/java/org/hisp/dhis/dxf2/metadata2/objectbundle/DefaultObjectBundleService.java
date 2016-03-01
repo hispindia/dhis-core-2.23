@@ -37,8 +37,9 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
-import org.hisp.dhis.preheat.InvalidObject;
+import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.preheat.Preheat;
+import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -182,14 +183,15 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
                     if ( object == null )
                     {
-                        objectBundleValidation.addInvalidObject( klass, new InvalidObject( identifiableObject, bundle.getPreheatIdentifier() ) );
+                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                            bundle.getPreheatIdentifier().getIdentifiers( identifiableObject ) );
                         iterator.remove();
                     }
                 }
             }
 
-            objectBundleValidation.addPreheatValidations( klass, preheatService.checkReferences(
-                bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+            List<List<PreheatErrorReport>> referenceErrors = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            referenceErrors.forEach( objectBundleValidation::addPreheatErrorReports ); // collapsing for now, we might want to give pr object ref list
 
             List<List<ValidationViolation>> validationViolations = new ArrayList<>();
 

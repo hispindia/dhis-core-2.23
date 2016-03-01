@@ -28,7 +28,11 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -50,7 +54,7 @@ public enum PreheatIdentifier
      */
     AUTO;
 
-    @SuppressWarnings("incomplete-switch")
+    @SuppressWarnings( "incomplete-switch" )
     public <T extends IdentifiableObject> String getIdentifier( T object )
     {
         switch ( this )
@@ -62,5 +66,26 @@ public enum PreheatIdentifier
         }
 
         throw new RuntimeException( "Unhandled identifier type." );
+    }
+
+    public <T extends IdentifiableObject> List<String> getIdentifiers( T object )
+    {
+        switch ( this )
+        {
+            case UID:
+            {
+                return Lists.newArrayList( object.getUid() );
+            }
+            case CODE:
+            {
+                return Lists.newArrayList( object.getCode() );
+            }
+            case AUTO:
+            {
+                return Lists.newArrayList( object.getUid(), object.getCode() );
+            }
+        }
+
+        return new ArrayList<>();
     }
 }

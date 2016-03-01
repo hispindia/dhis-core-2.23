@@ -501,11 +501,11 @@ public class PreheatServiceTest
 
         preheatService.validate( params );
         Preheat preheat = preheatService.preheat( params );
-        List<InvalidReference> invalidReferences = preheatService.checkReferences( dataElementGroup, preheat, PreheatIdentifier.UID ).getInvalidReferences();
-        assertEquals( 3, invalidReferences.size() );
-        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 0 ).getIdentifier() );
-        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 1 ).getIdentifier() );
-        assertEquals( PreheatIdentifier.UID, invalidReferences.get( 2 ).getIdentifier() );
+        List<PreheatErrorReport> referenceErrors = preheatService.checkReferences( dataElementGroup, preheat, PreheatIdentifier.UID );
+        assertEquals( 3, referenceErrors.size() );
+        assertEquals( PreheatIdentifier.UID, referenceErrors.get( 0 ).getPreheatIdentifier() );
+        assertEquals( PreheatIdentifier.UID, referenceErrors.get( 1 ).getPreheatIdentifier() );
+        assertEquals( PreheatIdentifier.UID, referenceErrors.get( 2 ).getPreheatIdentifier() );
     }
 
     @Test

@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2;
+package org.hisp.dhis.dxf2.metadata2.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,19 +28,66 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
+import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.feedback.ErrorReports;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface MetadataImportService
+public class ImportReport
 {
-    ImportReport importMetadata( MetadataImportParams params );
+    private ImportStats stats = new ImportStats();
 
-    void validate( MetadataImportParams params );
+    private Map<Class<?>, ErrorReports> errorReportMap = new HashMap<>();
 
-    MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
+    public ImportReport()
+    {
+    }
+
+    public ImportStats getStats()
+    {
+        return stats;
+    }
+
+    public void addErrorReport( ErrorReport errorReport )
+    {
+        if ( !errorReportMap.containsKey( errorReport.getMainKlass() ) )
+        {
+            errorReportMap.put( errorReport.getMainKlass(), new ErrorReports() );
+        }
+
+        errorReportMap.get( errorReport.getMainKlass() ).getErrorReports().add( errorReport );
+    }
+
+    public void addErrorReports( ErrorReports errorReports )
+    {
+        if ( errorReports == null || errorReports.getErrorReports().isEmpty() )
+        {
+            return;
+        }
+
+        Class<?> mainKlass = errorReports.getErrorReports().get( 0 ).getMainKlass();
+
+        if ( !errorReportMap.containsKey( mainKlass ) )
+        {
+            errorReportMap.put( mainKlass, new ErrorReports() );
+        }
+
+        errorReportMap.get( mainKlass ).getErrorReports().addAll( errorReports.getErrorReports() );
+    }
+
+    public Map<Class<?>, ErrorReports> getErrorReportMap()
+    {
+        return errorReportMap;
+    }
+
+    public List<ErrorReports> getErrorReports()
+    {
+        return new ArrayList<>( errorReportMap.values() );
+    }
 }

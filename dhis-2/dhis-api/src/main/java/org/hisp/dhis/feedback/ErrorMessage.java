@@ -1,4 +1,4 @@
-package org.hisp.dhis.preheat;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,40 +28,30 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.base.MoreObjects;
-import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.schema.Property;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.text.MessageFormat;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class PreheatValidation
+public class ErrorMessage
 {
-    private List<InvalidReference> invalidReferences = new ArrayList<>();
+    private final ErrorCode errorCode;
 
-    public PreheatValidation()
+    private final Object[] args;
+
+    public ErrorMessage( ErrorCode errorCode, Object... args )
     {
+        this.errorCode = errorCode;
+        this.args = args;
     }
 
-    public void addInvalidReference( Object object, PreheatIdentifier identifier, IdentifiableObject refObject, Property property )
+    public ErrorCode getErrorCode()
     {
-        invalidReferences.add( new InvalidReference( object, identifier, refObject, property ) );
+        return errorCode;
     }
 
-    public List<InvalidReference> getInvalidReferences()
+    public String getMessage()
     {
-        return invalidReferences;
-    }
-
-
-    @Override
-    public String toString()
-    {
-        return MoreObjects.toStringHelper( this )
-            .add( "invalidReferences", invalidReferences )
-            .toString();
+        return MessageFormat.format( errorCode.getMessage(), args );
     }
 }

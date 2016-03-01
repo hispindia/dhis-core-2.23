@@ -34,6 +34,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElementOperand;
+import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -416,22 +417,22 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<PreheatValidation> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public List<List<PreheatErrorReport>> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
-        List<PreheatValidation> preheatValidations = new ArrayList<>();
-        objects.forEach( object -> preheatValidations.add( checkReferences( object, preheat, identifier ) ) );
+        List<List<PreheatErrorReport>> preheatErrorReports = new ArrayList<>();
+        objects.forEach( object -> preheatErrorReports.add( checkReferences( object, preheat, identifier ) ) );
 
-        return preheatValidations;
+        return preheatErrorReports;
     }
 
     @Override
-    public PreheatValidation checkReferences( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<PreheatErrorReport> checkReferences( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
-        PreheatValidation preheatValidation = new PreheatValidation();
+        List<PreheatErrorReport> preheatErrorReports = new ArrayList<>();
 
         if ( object == null )
         {
-            return preheatValidation;
+            return preheatErrorReports;
         }
 
         Schema schema = schemaService.getDynamicSchema( object.getClass() );
@@ -450,7 +451,8 @@ public class DefaultPreheatService implements PreheatService
 
                     if ( ref == null && refObject != null && !Preheat.isDefault( refObject ) )
                     {
-                        preheatValidation.addInvalidReference( object, identifier, refObject, p );
+                        preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
+                            identifier.getIdentifiers( refObject ), identifier.getIdentifiers( object ), p.getName() ) );
                     }
                 }
                 else
@@ -466,7 +468,8 @@ public class DefaultPreheatService implements PreheatService
 
                         if ( ref == null && refObject != null )
                         {
-                            preheatValidation.addInvalidReference( object, identifier, refObject, p );
+                            preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
+                                identifier.getIdentifiers( refObject ), identifier.getIdentifiers( object ), p.getCollectionName() ) );
                         }
                         else
                         {
@@ -478,7 +481,7 @@ public class DefaultPreheatService implements PreheatService
                 }
             } );
 
-        return preheatValidation;
+        return preheatErrorReports;
     }
 
     @Override

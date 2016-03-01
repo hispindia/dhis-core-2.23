@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,19 +28,22 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
-
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface MetadataImportService
+public class ErrorReports
 {
-    ImportReport importMetadata( MetadataImportParams params );
+    private List<ErrorReport> errorReports = new ArrayList<>();
 
-    void validate( MetadataImportParams params );
+    public ErrorReports()
+    {
+    }
 
-    MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
+    public List<ErrorReport> getErrorReports()
+    {
+        return errorReports;
+    }
 }

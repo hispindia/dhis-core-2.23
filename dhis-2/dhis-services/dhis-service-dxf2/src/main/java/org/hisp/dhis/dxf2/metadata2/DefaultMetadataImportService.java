@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
 import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.user.CurrentUserService;
@@ -62,8 +63,10 @@ public class DefaultMetadataImportService implements MetadataImportService
     private IdentifiableObjectManager manager;
 
     @Override
-    public void importMetadata( MetadataImportParams params )
+    public ImportReport importMetadata( MetadataImportParams params )
     {
+        ImportReport report = new ImportReport();
+
         if ( params.getUser() == null )
         {
             params.setUser( currentUserService.getCurrentUser() );
@@ -74,6 +77,8 @@ public class DefaultMetadataImportService implements MetadataImportService
             List<? extends IdentifiableObject> objects = params.getObjects( klass );
             objects.forEach( this::importObject );
         }
+
+        return report;
     }
 
     @Override

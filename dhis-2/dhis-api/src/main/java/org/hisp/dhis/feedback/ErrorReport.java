@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,19 +28,79 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
-
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.MoreObjects;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public interface MetadataImportService
+public class ErrorReport
 {
-    ImportReport importMetadata( MetadataImportParams params );
+    protected final ErrorMessage message;
 
-    void validate( MetadataImportParams params );
+    protected final Class<?> mainKlass;
 
-    MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
+    protected Class<?> errorKlass;
+
+    protected Object value;
+
+    public ErrorReport( Class<?> mainKlass, ErrorCode errorCode, Object... args )
+    {
+        this.mainKlass = mainKlass;
+        this.message = new ErrorMessage( errorCode, args );
+    }
+
+    public ErrorReport( Class<?> mainKlass, ErrorMessage message )
+    {
+        this.mainKlass = mainKlass;
+        this.message = message;
+    }
+
+    public ErrorCode getErrorCode()
+    {
+        return message.getErrorCode();
+    }
+
+    public String getMessage()
+    {
+        return message.getMessage();
+    }
+
+    public Class<?> getMainKlass()
+    {
+        return mainKlass;
+    }
+
+    public Class<?> getErrorKlass()
+    {
+        return errorKlass;
+    }
+
+    public ErrorReport setErrorKlass( Class<?> errorKlass )
+    {
+        this.errorKlass = errorKlass;
+        return this;
+    }
+
+    public Object getValue()
+    {
+        return value;
+    }
+
+    public ErrorReport setValue( Object value )
+    {
+        this.value = value;
+        return this;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "message", getMessage() )
+            .add( "mainKlass", mainKlass )
+            .add( "errorKlass", errorKlass )
+            .add( "value", value )
+            .toString();
+    }
 }
