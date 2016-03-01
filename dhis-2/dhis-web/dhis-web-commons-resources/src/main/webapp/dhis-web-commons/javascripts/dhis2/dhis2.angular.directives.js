@@ -118,7 +118,8 @@ var d2Directives = angular.module('d2Directives', [])
             content: '=',
             title: '@details',
             template: "@template",
-            placement: "@placement"
+            placement: "@placement",
+            trigger: "@trigger"
         },
         link: function (scope, element, attrs) {
             var content = $templateCache.get(scope.template);
@@ -127,11 +128,17 @@ var d2Directives = angular.module('d2Directives', [])
             var options = {
                 content: content,
                 placement: scope.placement ? scope.placement : 'auto',
-                trigger: 'hover',
+                trigger: scope.trigger ? scope.trigger : 'hover',
                 html: true,
                 title: scope.title
             };
-            element.popover(options);
+            element.popover(options);            
+            
+            $('body').on('click', function (e) {
+                if( !element[0].contains(e.target) ) {
+                    element.popover('hide');
+                }
+            });
         }
     };
 })
@@ -627,65 +634,4 @@ var d2Directives = angular.module('d2Directives', [])
         link: function (scope, element, attrs) {
         }
     };
-})
-.directive('d2Info', function ($translate) {
-    return {
-        restrict: 'EA',
-        template: '<a style="cursor: pointer;" type="button" data-container="body" data-toggle="popover"' +
-        'data-placement="right" data-html="true" data-title="{{title}}" data-trigger="click" ' +
-        'data-content="{{formattedContent}}">' +
-        '{{displayName}}'+
-        '</a>',
-        scope: {
-            title: '@?',
-            content: '@',
-            displayName: '@'
-        },
-        link: function (scope, element) {
-            var showIcon = true;
-
-            scope.formattedContent = getFormattedContent(scope.content);
-
-            $('body').on('click', function (e) {
-                $('[data-toggle="popover"]').each(function () {
-                    if (!$(this).is(e.target)) {
-                        $(this).popover('hide');
-                    } else {
-                        if (showIcon) {
-                            $(this).popover('show');
-                        }
-                    }
-                });
-            });
-
-            element.on('$destroy', function (e) {
-                $('[data-toggle="popover"]').each(function () {
-                    if (!$(this).is(e.target)) {
-                        $(this).popover('hide');
-                        scope.clicked = false;
-                    }
-                });
-            });
-
-            function getFormattedContent(contentArrayString) {
-                var contentArray = $.parseJSON(contentArrayString);
-                var formattedString = "";
-                for (var index = 0; index < contentArray.length; index++) {
-                    var content = contentArray[index];
-                    if (!content.data) {
-                        content.data = "Not available";
-                    }
-                    if (index >= 1) {
-                        formattedString += '<hr class="tooltip-separator-line">';
-                    }
-                    if (content.name === $translate.instant('url') && content.data !== "Not available") {
-                        formattedString += '<div class="tooltip-font"><b>' + content.name + ': </b><a href=' + content.data + ' target=\'_blank\' style=\'cursor:pointer;pointer-events:auto;\'>' + content.data + '</a></div>';
-                    } else {
-                        formattedString += '<div class="tooltip-font"><b>' + content.name + ': </b>' + content.data + '</div>';
-                    }
-                }
-                return formattedString;
-            }
-        }
-    }
 });

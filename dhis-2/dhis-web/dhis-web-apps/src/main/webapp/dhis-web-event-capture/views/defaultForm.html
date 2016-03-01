@@ -1,3 +1,22 @@
+<script type="text/ng-template" id="dataelement-details.html">
+    <table class="table table-bordered">
+        <tr>
+            <td class="bold">{{'description' | translate}}</td>
+            <td>{{content.description ? content.description : 'not_available' | translate}}</td>
+        </tr>
+        <tr>
+            <td class="bold">{{'url' | translate}}</td>
+            <td>
+                <span ng-if="content.url">
+                    <a href="{{content.url}}" target="_blank">{{content.url}}</a>
+                </span>
+                <span ng-if="!content.url">
+                    {{'not_available' | translate}}
+                </span>
+            </td>
+        </tr>
+    </table>
+</script>
 <div  ng-if='!selectedProgramStage.programStageSections.length'>
     <div ng-include="'views/event-details.html'"></div>
     <table class="dhis2-list-table-striped table-with-fixed-layout">
@@ -16,13 +35,16 @@
         <tbody>
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
                 <td>
-                    <d2-info display-name="{{eventGridColumn.displayName}}"
-                             data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[eventGridColumn.id].dataElement.description}}"},
-                                            {"name":"{{"url" | translate}}", "data":"{{prStDes[eventGridColumn.id].dataElement.url}}"}]'
-                             data-title="Details">
-                    </d2-info>
-                    <span ng-if="eventGridColumn.compulsory" class="required">*</span>
-                </td>
+                    <span d2-pop-over 
+                        details="{{'details'| translate}}"
+                        content="prStDes[eventGridColumn.id].dataElement"
+                        template="dataelement-details.html"
+                        trigger="click"
+                        placement="right">
+                        <a href >{{eventGridColumn.displayName}}</a>
+                    </span>
+                    <span ng-if="eventGridColumn.compulsory" class="required">*</span>                    
+                </td>                
                 <td>
                     <ng-form name="innerForm">
                         <div ng-if="prStDes[eventGridColumn.id].dataElement.optionSetValue">
@@ -276,15 +298,16 @@
             <tbody>
                 <tr ng-repeat="de in section.programStageDataElements" ng-if="!hiddenFields[de.dataElement.id]">
                     <td>
-                        <d2-info display-name="{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName :
-                                                 prStDes[de.dataElement.id].dataElement.displayName}}"
-                                 data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"},
-                                                {"name":"{{"url" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.url}}"}]'
-                                 data-title="Details">
-                        </d2-info>
-
-                        <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
-                    </td>
+                        <span d2-pop-over 
+                            details="{{'details'| translate}}"
+                            content="prStDes[de.dataElement.id].dataElement"
+                            template="dataelement-details.html"
+                            trigger="click"
+                            placement="right">
+                            <a href >{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}</a>
+                        </span>
+                        <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>                        
+                    </td>                    
                     <td>
                         <ng-form name="innerForm">
                             <div ng-if="prStDes[de.dataElement.id].dataElement.optionSetValue">

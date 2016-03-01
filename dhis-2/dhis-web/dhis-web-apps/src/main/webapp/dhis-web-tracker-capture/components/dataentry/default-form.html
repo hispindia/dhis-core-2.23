@@ -1,3 +1,22 @@
+<script type="text/ng-template" id="dataelement-details.html">
+    <table class="table table-bordered">
+        <tr>
+            <td class="bold">{{'description' | translate}}</td>
+            <td>{{content.description ? content.description : 'not_available' | translate}}</td>
+        </tr>
+        <tr>
+            <td class="bold">{{'url' | translate}}</td>
+            <td>
+                <span ng-if="content.url">
+                    <a href="{{content.url}}" target="_blank">{{content.url}}</a>
+                </span>
+                <span ng-if="!content.url">
+                    {{'not_available' | translate}}
+                </span>
+            </td>
+        </tr>
+    </table>
+</script>
 <form name="outerForm" novalidate>
     <table class="dhis2-list-table-striped default-form-table" ng-if='currentEvent && !currentStage.programStageSections.length'>
         <thead>
@@ -14,11 +33,14 @@
         </thead>
         <tr class="col-md-12" ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)">
             <td>
-                <d2-info display-name="{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}"
-                         data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDe.dataElement.description}}"},
-                                        {"name":"{{"url" | translate}}", "data":"{{prStDe.dataElement.url}}"}]'
-                         data-title="Details">
-                </d2-info>
+                <span d2-pop-over 
+                    details="{{'details'| translate}}"
+                    content="prStDe.dataElement"
+                    template="dataelement-details.html"
+                    trigger="click"
+                    placement="right">
+                    <a href >{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}</a>
+                </span>
                 <span ng-if="prStDe.compulsory" class="required">*</span>
                 <span class="hideInPrint">                    
                     <span ng-if="otherValuesLists[prStDe.dataElement.id]" ng-repeat="altValue in otherValuesLists[prStDe.dataElement.id] track by $index">
@@ -73,7 +95,14 @@
                     <tbody id="list">       
                         <tr ng-repeat="de in section.programStageDataElements" ng-if="!isHidden(de.dataElement.id)">
                             <td>
-                                <span ng-bind="prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName"></span>       
+                                <span d2-pop-over 
+                                    details="{{'details'| translate}}"
+                                    content="prStDes[de.dataElement.id].dataElement"
+                                    template="dataelement-details.html"
+                                    trigger="click"
+                                    placement="right">
+                                    <a href >{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}</a>
+                                </span>
                                 <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
                                 <span class="hideInPrint">
                                     <d2-info ng-if="prStDes[de.dataElement.id].dataElement.description" data-content='[{"name":"{{"description" | translate}}", "data":"{{prStDes[de.dataElement.id].dataElement.description}}"}]'>
@@ -82,22 +111,22 @@
                                         <span class="label label-default">{{altValue | translate}}</span>
                                     </span>
                                 </span>
-                        </td>
-                        <td dhis2-compiled-include="components/dataentry/section-inner-form.html">
-                        </td>
-                        <td class="hideInPrint audit-icon-column" align="center" ng-if="currentEvent.event">
-                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.displayName}}" current-event="{{currentEvent.event}}"></d2-audit>
-                        </td>
-                        <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
-                            <div class="align-center" ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">
-                                <input type="checkbox"
-                                       class="form-control-checkbox"
-                                       ng-model="currentEvent.providedElsewhere[prStDes[de.dataElement.id].dataElement.id]"
-                                       ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"
-                                       ng-change="saveDatavalueLocation(prStDes[de.dataElement.id])"/>
-                            </div>
-                        </td>
-                    </tr>
+                            </td>
+                            <td dhis2-compiled-include="components/dataentry/section-inner-form.html">
+                            </td>
+                            <td class="hideInPrint audit-icon-column" align="center" ng-if="currentEvent.event">
+                                <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.displayName}}" current-event="{{currentEvent.event}}"></d2-audit>
+                            </td>
+                            <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
+                                <div class="align-center" ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">
+                                    <input type="checkbox"
+                                           class="form-control-checkbox"
+                                           ng-model="currentEvent.providedElsewhere[prStDes[de.dataElement.id].dataElement.id]"
+                                           ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed"
+                                           ng-change="saveDatavalueLocation(prStDes[de.dataElement.id])"/>
+                                </div>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </accordion-group> 

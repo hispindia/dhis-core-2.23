@@ -1,12 +1,34 @@
 <h3 ng-if="widget !== 'PROFILE'">{{'profile'| translate}}</h3>
+<script type="text/ng-template" id="attribute-details.html">
+    <table class="table table-bordered">
+        <tr>
+            <td class="bold">{{'description' | translate}}</td>
+            <td>{{content.description ? content.description : 'not_available' | translate}}</td>
+        </tr>
+        <!--<tr>
+            <td class="bold">{{'url' | translate}}</td>
+            <td>
+                <span ng-if="content.url">
+                    <a href="{{content.url}}" target="_blank">{{content.url}}</a>
+                </span>
+                <span ng-if="!content.url">
+                    {{'not_available' | translate}}
+                </span>
+            </td>
+        </tr>-->
+    </table>
+</script>
 <table class="dhis2-list-table-striped dhis2-table-hover">
     <tr ng-repeat="attribute in attributes | filter: {attribute: 'true'} " ng-if="!hiddenFields[attribute.id] && ((editingDisabled  && attribute.show) || !editingDisabled)">
         <td>
-            <d2-info display-name="{{attribute.displayName}}"
-                     data-content='[{"name":"{{"description" | translate}}", "data":"{{attribute.description}}"},
-                                    {"name":"{{"url" | translate}}", "data":"{{attribute.url}}"}]'
-                     data-title="Details">
-            </d2-info>
+            <span d2-pop-over 
+                details="{{'details'| translate}}"
+                content="attribute"
+                template="attribute-details.html"
+                trigger="click"
+                placement="right">
+                <a href >{{attribute.displayName}}</a>
+            </span>
             <span ng-if="attribute.mandatory || attribute.unique" class="required">*</span>
         </td>
         <td>

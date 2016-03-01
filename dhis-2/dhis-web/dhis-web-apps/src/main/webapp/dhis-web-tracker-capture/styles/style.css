@@ -1334,7 +1334,11 @@ input, button, select, textarea {
 }
 
 .default-form-table > tbody > tr {
-    height: 40px;
+    height: 40px;   
+}
+
+.default-form-table > tbody > tr:hover > td, .default-form-table > tbody > tr:hover > th {
+    background-color: #dfe9f4;
 }
 
 .row.null-margins {
@@ -1925,26 +1929,4 @@ a.disable-link-effects:focus {
 .row-with-go-button {
     margin-top: 46%;
     margin-left: 1%;
-}
-
-/*classes for the details tooltip popup for dataelements*/
-
-.popover {
-    max-width:400px;
-    pointer-events:none;
-}
-
-.tooltip-separator-line {
-    height: 0;
-    margin-right:0em;
-    margin-top: 0em;
-    margin-bottom: 0em;
-    width:100%;
-    text-align: center;
-    border: 0;
-    border-top: 1px solid #ddd;
-}
-
-.tooltip-font {
-    font-size: small;
 }
