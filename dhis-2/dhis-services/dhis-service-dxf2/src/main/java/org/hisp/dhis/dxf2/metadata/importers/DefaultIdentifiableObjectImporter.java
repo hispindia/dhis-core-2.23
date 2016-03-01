@@ -1165,8 +1165,8 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
 
             if ( schema.havePersistedProperty( "attributeValues" ) )
             {
-                attributeValues = ReflectionUtils.invokeGetterMethod( "attributeValues", object );
-                ReflectionUtils.invokeSetterMethod( "attributeValues", object, new HashSet<>() );
+                attributeValues = object.getAttributeValues();
+                object.setAttributeValues( new HashSet<>() );
             }
 
             return attributeValues;
