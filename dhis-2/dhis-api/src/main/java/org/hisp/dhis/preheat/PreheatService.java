@@ -29,7 +29,6 @@ package org.hisp.dhis.preheat;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.feedback.ErrorReports;
 
 import java.util.Collection;
 import java.util.List;

@@ -321,7 +321,6 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public Map<Class<?>, Map<String, Map<String, Object>>> collectObjectReferences( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
         Map<Class<?>, Map<String, Map<String, Object>>> refs = new HashMap<>();
