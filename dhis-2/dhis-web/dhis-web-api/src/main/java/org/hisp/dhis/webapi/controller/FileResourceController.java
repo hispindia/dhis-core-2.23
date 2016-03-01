@@ -85,9 +85,9 @@ public class FileResourceController
     @Autowired
     private ServletContext servletContext;
 
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Controller methods
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @RequestMapping( value = "/{uid}", method = RequestMethod.GET )
     public @ResponseBody FileResource getFileResource( @PathVariable String uid )
@@ -95,7 +95,8 @@ public class FileResourceController
     {
         FileResource fileResource = fileResourceService.getFileResource( uid );
 
-        if ( fileResource == null ) {
+        if ( fileResource == null ) 
+        {
             throw new WebMessageException( WebMessageUtils.notFound( FileResource.class, uid ) );
         }
 
@@ -118,21 +119,7 @@ public class FileResourceController
             throw new WebMessageException( WebMessageUtils.conflict( "Could not read file or file is empty." ) );
         }
 
-        ByteSource bytes = new ByteSource()
-        {
-            @Override
-            public InputStream openStream() throws IOException
-            {
-                try
-                {
-                    return file.getInputStream();
-                }
-                catch ( IOException ioe )
-                {
-                    return new NullInputStream( 0 );
-                }
-            }
-        };
+        ByteSource bytes = new MultipartFileByteSource( file );
 
         String contentMd5 = bytes.hash( Hashing.md5() ).toString();
 
@@ -155,10 +142,10 @@ public class FileResourceController
 
         return webMessage;
     }
-
-    // ---------------------------------------------------------------------
+    
+    // -------------------------------------------------------------------------
     // Supportive methods
-    // ---------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     private boolean isValidContentType( String contentType )
     {
@@ -183,5 +170,33 @@ public class FileResourceController
         multipartFile.transferTo( tmpFile );
 
         return tmpFile;
+    }
+
+    // -------------------------------------------------------------------------
+    // Inner classes
+    // -------------------------------------------------------------------------
+
+    private class MultipartFileByteSource
+        extends ByteSource
+    {
+        private MultipartFile file;
+        
+        public MultipartFileByteSource( MultipartFile file )
+        {
+            this.file = file;
+        }
+        
+        @Override
+        public InputStream openStream() throws IOException
+        {
+            try
+            {
+                return file.getInputStream();
+            }
+            catch ( IOException ioe )
+            {
+                return new NullInputStream( 0 );
+            }
+        }
     }
 }

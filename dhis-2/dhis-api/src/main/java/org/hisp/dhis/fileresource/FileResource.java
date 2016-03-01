@@ -180,9 +180,9 @@ public class FileResource
         return assigned;
     }
 
-    public void setStorageStatus( FileResourceStorageStatus storageStatus )
+    public void setAssigned( boolean assigned )
     {
-        this.storageStatus = storageStatus;
+        this.assigned = assigned;
     }
 
     @JsonProperty
@@ -193,11 +193,14 @@ public class FileResource
         return storageStatus;
     }
 
-    public void setAssigned( boolean assigned )
+    public void setStorageStatus( FileResourceStorageStatus storageStatus )
     {
-        this.assigned = assigned;
+        this.storageStatus = storageStatus;
     }
 
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public FileResourceDomain getDomain()
     {
         return domain;
