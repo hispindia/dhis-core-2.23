@@ -713,14 +713,14 @@ div#selectionTree
 /* Map plugin (Leaflet) specific z-index overrides                            */
 /*----------------------------------------------------------------------------*/
 
-/* jQuery ui css */
-.ui-front {
+/* dhis2 theme css */
+#header
 {
   z-index: 1100;
 }
 
-/* dhis2 theme css */
-#header {
+/* jQuery ui css */
+.ui-front
 {
-  z-index: 1100;
+  z-index: 1101;
 }
