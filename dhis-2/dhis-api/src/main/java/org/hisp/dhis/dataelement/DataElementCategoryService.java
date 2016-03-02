@@ -534,6 +534,8 @@ public interface DataElementCategoryService
 
     List<DataElementCategoryCombo> getDataElementCategoryCombosBetweenByName( String name, int first, int max );
 
+    void updateCategoryOptionComboNames();
+    
     // -------------------------------------------------------------------------
     // DataElementOperand
     // -------------------------------------------------------------------------
