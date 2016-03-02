@@ -28,11 +28,9 @@ package org.hisp.dhis.webapi.controller.metadata;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportParams;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportService;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
-import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.webapi.service.ContextService;
@@ -45,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -68,18 +64,9 @@ public class MetadataImportController
     public void postMetadata( HttpServletRequest request, HttpServletResponse response ) throws IOException
     {
         MetadataImportParams params = metadataImportService.getParamsFromMap( contextService.getParameterValuesMap() );
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = renderService.fromMetadata( request.getInputStream(), RenderFormat.JSON );
-        params.setObjects( objects );
+        params.setObjects( renderService.fromMetadata( request.getInputStream(), RenderFormat.JSON ) );
 
-        if ( ObjectBundleMode.VALIDATE == params.getObjectBundleMode() )
-        {
-            ImportReport importReport = metadataImportService.validate( params );
-            renderService.toJson( response.getOutputStream(), importReport );
-        }
-        else if ( ObjectBundleMode.COMMIT == params.getObjectBundleMode() )
-        {
-            ImportReport importReport = metadataImportService.importMetadata( params );
-            renderService.toJson( response.getOutputStream(), importReport );
-        }
+        ImportReport importReport = metadataImportService.importMetadata( params );
+        renderService.toJson( response.getOutputStream(), importReport );
     }
 }

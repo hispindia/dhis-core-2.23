@@ -40,7 +40,5 @@ public interface MetadataImportService
 {
     ImportReport importMetadata( MetadataImportParams params );
 
-    ImportReport validate( MetadataImportParams params );
-
     MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters );
 }

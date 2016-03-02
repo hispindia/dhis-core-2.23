@@ -116,10 +116,14 @@ public class DefaultPreheatService implements PreheatService
                 for ( Class<? extends IdentifiableObject> klass : uidMap.keySet() )
                 {
                     Collection<String> identifiers = uidMap.get( klass );
-                    Query query = Query.from( schemaService.getDynamicSchema( klass ) );
-                    query.add( Restrictions.in( "id", identifiers ) );
-                    List<? extends IdentifiableObject> objects = queryService.query( query );
-                    preheat.put( PreheatIdentifier.UID, objects );
+
+                    if ( !identifiers.isEmpty() )
+                    {
+                        Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                        query.add( Restrictions.in( "id", identifiers ) );
+                        List<? extends IdentifiableObject> objects = queryService.query( query );
+                        preheat.put( PreheatIdentifier.UID, objects );
+                    }
                 }
             }
 
@@ -128,10 +132,14 @@ public class DefaultPreheatService implements PreheatService
                 for ( Class<? extends IdentifiableObject> klass : codeMap.keySet() )
                 {
                     Collection<String> identifiers = codeMap.get( klass );
-                    Query query = Query.from( schemaService.getDynamicSchema( klass ) );
-                    query.add( Restrictions.in( "code", identifiers ) );
-                    List<? extends IdentifiableObject> objects = queryService.query( query );
-                    preheat.put( PreheatIdentifier.CODE, objects );
+
+                    if ( !identifiers.isEmpty() )
+                    {
+                        Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                        query.add( Restrictions.in( "code", identifiers ) );
+                        List<? extends IdentifiableObject> objects = queryService.query( query );
+                        preheat.put( PreheatIdentifier.CODE, objects );
+                    }
                 }
             }
         }

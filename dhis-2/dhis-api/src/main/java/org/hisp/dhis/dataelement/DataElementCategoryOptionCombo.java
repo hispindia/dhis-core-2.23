@@ -28,11 +28,13 @@ package org.hisp.dhis.dataelement;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.apache.commons.lang3.StringUtils;
 import org.hisp.dhis.common.BaseDimensionalItemObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
@@ -43,13 +45,10 @@ import org.hisp.dhis.common.annotation.Scanned;
 import org.hisp.dhis.common.view.DetailedView;
 import org.hisp.dhis.common.view.ExportView;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Abyot Aselefew
@@ -72,7 +71,7 @@ public class DataElementCategoryOptionCombo
      */
     @Scanned
     private Set<DataElementCategoryOption> categoryOptions = new HashSet<>();
-    
+
     /**
      * Indicates whether to ignore data approval.
      */
@@ -85,7 +84,7 @@ public class DataElementCategoryOptionCombo
     public DataElementCategoryOptionCombo()
     {
     }
-    
+
     // -------------------------------------------------------------------------
     // hashCode, equals and toString
     // -------------------------------------------------------------------------
@@ -224,28 +223,34 @@ public class DataElementCategoryOptionCombo
         {
             return name;
         }
-        
+
         StringBuilder builder = new StringBuilder();
-        
+
+        if ( categoryCombo == null || categoryCombo.getCategories().isEmpty() )
+        {
+            return uid;
+        }
+
         List<DataElementCategory> categories = this.categoryCombo.getCategories();
-            
+
         for ( DataElementCategory category : categories )
         {
             List<DataElementCategoryOption> options = category.getCategoryOptions();
-            
-            optionLoop: for ( DataElementCategoryOption option : this.categoryOptions )
+
+            optionLoop:
+            for ( DataElementCategoryOption option : this.categoryOptions )
             {
                 if ( options.contains( option ) )
                 {
                     builder.append( option.getDisplayName() ).append( ", " );
-                    
+
                     continue optionLoop;
                 }
             }
         }
-        
+
         builder.delete( Math.max( builder.length() - 2, 0 ), builder.length() );
-        
+
         return StringUtils.substring( builder.toString(), 0, 255 );
     }
 
@@ -308,7 +313,7 @@ public class DataElementCategoryOptionCombo
     {
         this.ignoreApproval = ignoreApproval;
     }
-    
+
     @Override
     public void mergeWith( IdentifiableObject other, MergeMode mergeMode )
     {

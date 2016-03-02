@@ -191,7 +191,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             }
 
             List<List<PreheatErrorReport>> referenceErrors = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            referenceErrors.forEach( objectBundleValidation::addPreheatErrorReports ); // collapsing for now, we might want to give pr object ref list
+            referenceErrors.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
 
             List<List<ValidationViolation>> validationViolations = new ArrayList<>();
 

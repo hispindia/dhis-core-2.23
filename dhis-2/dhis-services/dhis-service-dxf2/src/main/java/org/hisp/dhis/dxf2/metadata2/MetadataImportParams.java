@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -167,5 +168,19 @@ public class MetadataImportParams
     {
         objects.forEach( this::addObject );
         return this;
+    }
+
+    public ObjectBundleParams toObjectBundleParams()
+    {
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setUser( user );
+        params.setImportMode( importMode );
+        params.setObjects( objects );
+        params.setPreheatIdentifier( preheatIdentifier );
+        params.setPreheatMode( preheatMode );
+        params.setObjectBundleMode( objectBundleMode );
+        params.setMergeMode( mergeMode );
+
+        return params;
     }
 }

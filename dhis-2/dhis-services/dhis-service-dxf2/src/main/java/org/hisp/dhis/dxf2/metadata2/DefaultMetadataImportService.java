@@ -29,6 +29,10 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleService;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleValidation;
 import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -45,6 +49,9 @@ public class DefaultMetadataImportService implements MetadataImportService
     @Autowired
     private CurrentUserService currentUserService;
 
+    @Autowired
+    private ObjectBundleService objectBundleService;
+
     @Override
     public ImportReport importMetadata( MetadataImportParams params )
     {
@@ -55,13 +62,12 @@ public class DefaultMetadataImportService implements MetadataImportService
             params.setUser( currentUserService.getCurrentUser() );
         }
 
-        return report;
-    }
+        ObjectBundleParams bundleParams = params.toObjectBundleParams();
+        ObjectBundle objectBundle = objectBundleService.create( bundleParams );
 
-    @Override
-    public ImportReport validate( MetadataImportParams params )
-    {
-        ImportReport report = new ImportReport();
+        ObjectBundleValidation validation = objectBundleService.validate( objectBundle );
+        report.setErrorReports( validation.getErrorReports() );
+
         return report;
     }
 

@@ -31,7 +31,6 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.schema.validation.ValidationViolation;
 
 import java.util.ArrayList;
@@ -52,9 +51,9 @@ public class ObjectBundleValidation
     {
     }
 
-    public void addPreheatErrorReports( List<PreheatErrorReport> preheatErrorReports )
+    public void addErrorReports( List<? extends ErrorReport> errorReports )
     {
-        preheatErrorReports.forEach( this::addErrorReport );
+        errorReports.forEach( this::addErrorReport );
     }
 
     public <T extends ErrorReport> void addErrorReport( T errorReport )

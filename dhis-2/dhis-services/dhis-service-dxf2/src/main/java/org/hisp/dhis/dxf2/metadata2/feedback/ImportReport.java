@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.hisp.dhis.common.DxfNamespaces;
+import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 
 import java.util.ArrayList;
@@ -47,7 +48,7 @@ public class ImportReport
 {
     private ImportStats stats = new ImportStats();
 
-    private Map<Class<?>, List<ErrorReport>> errorReportMap = new HashMap<>();
+    private Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> errorReports = new HashMap<>();
 
     public ImportReport()
     {
@@ -60,42 +61,65 @@ public class ImportReport
         return stats;
     }
 
-    public void addErrorReport( ErrorReport errorReport )
-    {
-        if ( !errorReportMap.containsKey( errorReport.getMainKlass() ) )
-        {
-            errorReportMap.put( errorReport.getMainKlass(), new ArrayList<>() );
-        }
-
-        errorReportMap.get( errorReport.getMainKlass() ).add( errorReport );
-    }
-
     public void addErrorReports( List<ErrorReport> errorReports )
     {
-        if ( errorReports == null || errorReports.isEmpty() )
+        errorReports.forEach( this::addErrorReport );
+    }
+
+    public <T extends ErrorReport> void addErrorReport( T errorReport )
+    {
+        if ( !errorReports.containsKey( errorReport.getMainKlass() ) )
         {
-            return;
+            errorReports.put( errorReport.getMainKlass(), new HashMap<>() );
         }
 
-        Class<?> mainKlass = errorReports.get( 0 ).getMainKlass();
-
-        if ( !errorReportMap.containsKey( mainKlass ) )
+        if ( !errorReports.get( errorReport.getMainKlass() ).containsKey( errorReport.getErrorCode() ) )
         {
-            errorReportMap.put( mainKlass, new ArrayList<>() );
+            errorReports.get( errorReport.getMainKlass() ).put( errorReport.getErrorCode(), new ArrayList<>() );
         }
 
-        errorReportMap.get( mainKlass ).addAll( errorReports );
+        errorReports.get( errorReport.getMainKlass() ).get( errorReport.getErrorCode() ).add( errorReport );
+    }
+
+    public void addErrorReport( Class<?> mainKlass, ErrorCode errorCode, Object... args )
+    {
+        ErrorReport errorReport = new ErrorReport( mainKlass, errorCode, args );
+        addErrorReport( errorReport );
     }
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public Map<Class<?>, List<ErrorReport>> getErrorReportMap()
+    public Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> getErrorReports()
     {
-        return errorReportMap;
+        return errorReports;
     }
 
-    public List<List<ErrorReport>> getErrorReports()
+    public Map<ErrorCode, List<ErrorReport>> getErrorReports( Class<?> klass )
     {
-        return new ArrayList<>( errorReportMap.values() );
+        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
+
+        if ( map == null )
+        {
+            return new HashMap<>();
+        }
+
+        return map;
+    }
+
+    public List<ErrorReport> getErrorReports( Class<?> klass, ErrorCode errorCode )
+    {
+        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
+
+        if ( !map.containsKey( errorCode ) )
+        {
+            return new ArrayList<>();
+        }
+
+        return map.get( errorCode );
+    }
+
+    public void setErrorReports( Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> errorReports )
+    {
+        this.errorReports = errorReports;
     }
 }
