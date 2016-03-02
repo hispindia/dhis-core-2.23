@@ -63,6 +63,9 @@ public class FlattenedDataIntegrityReport
 
     @JsonProperty
     private SortedMap<String, Collection<String>> dataElementsInDataSetNotInForm;
+    
+    @JsonProperty
+    private List<String> invalidCategoryCombos;
 
     @JsonProperty
     private Map<String, Set<String>> categoryOptionCombosNotInDataElementCategoryCombo;
@@ -126,6 +129,8 @@ public class FlattenedDataIntegrityReport
         dataElementsViolatingExclusiveGroupSets = transformSortedMap( report.getDataElementsViolatingExclusiveGroupSets() );
 
         dataElementsInDataSetNotInForm = transformSortedMap( report.getDataElementsInDataSetNotInForm() );
+        
+        invalidCategoryCombos = transformCollection( report.getInvalidCategoryCombos() );
 
         categoryOptionCombosNotInDataElementCategoryCombo = transformMapOfSets( report.getCategoryOptionCombosNotInDataElementCategoryCombo() );
 

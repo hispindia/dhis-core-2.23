@@ -36,6 +36,7 @@ import org.hisp.dhis.common.comparator.IdentifiableObjectNameComparator;
 import org.hisp.dhis.commons.filter.Filter;
 import org.hisp.dhis.commons.filter.FilterUtils;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementGroup;
@@ -75,6 +76,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 import static org.hisp.dhis.commons.collection.ListUtils.getDuplicates;
 
@@ -277,6 +279,14 @@ public class DefaultDataIntegrityService
         }
 
         return map;
+    }
+    
+    @Override
+    public List<DataElementCategoryCombo> getInvalidCategoryCombos()
+    {
+        List<DataElementCategoryCombo> categoryCombos = categoryService.getAllDataElementCategoryCombos();
+        
+        return categoryCombos.stream().filter( c -> !c.isValid() ).collect( Collectors.toList() );
     }
 
     // -------------------------------------------------------------------------
@@ -660,6 +670,7 @@ public class DefaultDataIntegrityService
         report.setDataElementsAssignedToDataSetsWithDifferentPeriodTypes( getDataElementsAssignedToDataSetsWithDifferentPeriodTypes() );
         report.setDataElementsViolatingExclusiveGroupSets( getDataElementsViolatingExclusiveGroupSets() );
         report.setDataElementsInDataSetNotInForm( getDataElementsInDataSetNotInForm() );
+        report.setInvalidCategoryCombos( getInvalidCategoryCombos() );
 
         log.info( "Checked data elements" );
 

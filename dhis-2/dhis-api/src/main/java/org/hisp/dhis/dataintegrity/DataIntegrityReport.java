@@ -29,6 +29,7 @@ package org.hisp.dhis.dataintegrity;
  */
 
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
@@ -60,6 +61,8 @@ public class DataIntegrityReport
     private SortedMap<DataElement, Collection<DataElementGroup>> dataElementsViolatingExclusiveGroupSets;
 
     private SortedMap<DataSet, Collection<DataElement>> dataElementsInDataSetNotInForm;
+    
+    private List<DataElementCategoryCombo> invalidCategoryCombos;
 
     private Map<DataSet, Set<DataElementOperand>> categoryOptionCombosNotInDataElementCategoryCombo;
     
@@ -156,6 +159,16 @@ public class DataIntegrityReport
     public void setDataElementsInDataSetNotInForm( SortedMap<DataSet, Collection<DataElement>> dataElementsInDataSetNotInForm )
     {
         this.dataElementsInDataSetNotInForm = dataElementsInDataSetNotInForm;
+    }
+
+    public List<DataElementCategoryCombo> getInvalidCategoryCombos()
+    {
+        return invalidCategoryCombos;
+    }
+
+    public void setInvalidCategoryCombos( List<DataElementCategoryCombo> invalidCategoryCombos )
+    {
+        this.invalidCategoryCombos = invalidCategoryCombos;
     }
 
     public Map<DataSet, Set<DataElementOperand>> getCategoryOptionCombosNotInDataElementCategoryCombo()

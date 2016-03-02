@@ -34,6 +34,7 @@ import java.util.SortedMap;
 
 import org.hisp.dhis.common.SetMap;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
@@ -87,6 +88,11 @@ public interface DataIntegrityService
      * either the custom form or sections of the data set.
      */
     SortedMap<DataSet, Collection<DataElement>> getDataElementsInDataSetNotInForm();
+    
+    /**
+     * Returns all invalid category combinations.
+     */
+    List<DataElementCategoryCombo> getInvalidCategoryCombos();
     
     // -------------------------------------------------------------------------
     // Section
