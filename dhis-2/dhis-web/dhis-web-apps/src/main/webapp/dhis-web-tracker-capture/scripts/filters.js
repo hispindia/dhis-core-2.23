@@ -16,7 +16,7 @@ var trackerCaptureFilters = angular.module('trackerCaptureFilters', [])
             return pagedList;
         }        
            
-        var filteredData = fullList;
+        var filteredData = fullList && fullList.length ? fullList : pagedList;
         filteredData = $filter('filter')(filteredData, filterText);
         return filteredData;
     }; 
