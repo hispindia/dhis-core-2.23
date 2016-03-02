@@ -91,9 +91,9 @@ public class DefaultExportServiceTest
     @Override
     public void setUpTest()
     {
-        deA = DhisConvenienceTest.createDataElement( 'A' );
-        deB = DhisConvenienceTest.createDataElement( 'B' );
-        deC = DhisConvenienceTest.createDataElement( 'C' );
+        deA = createDataElement( 'A' );
+        deB = createDataElement( 'B' );
+        deC = createDataElement( 'C' );
         dsA = DhisConvenienceTest.createDataSet( 'A', new MonthlyPeriodType() );
         ouA = DhisConvenienceTest.createOrganisationUnit( 'A' );
         ouB = DhisConvenienceTest.createOrganisationUnit( 'B' );

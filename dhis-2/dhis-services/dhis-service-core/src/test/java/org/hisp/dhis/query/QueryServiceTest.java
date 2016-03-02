@@ -510,10 +510,10 @@ public class QueryServiceTest
     }
 
     @Test
-    public void testIsNull()
+    public void testIsNotNull()
     {
         Query query = Query.from( schemaService.getDynamicSchema( DataElement.class ) );
-        query.add( Restrictions.isNull( "categoryCombo" ) );
+        query.add( Restrictions.isNotNull( "categoryCombo" ) );
 
         List<? extends IdentifiableObject> objects = queryService.query( query );
 
@@ -528,9 +528,9 @@ public class QueryServiceTest
     }
 
     @Test
-    public void testIsNullUrl() throws QueryParserException
+    public void testIsNotNullUrl() throws QueryParserException
     {
-        Query query = queryService.getQueryFromUrl( DataElement.class, Lists.newArrayList( "categoryCombo:null" ), Lists.<Order>newArrayList() );
+        Query query = queryService.getQueryFromUrl( DataElement.class, Lists.newArrayList( "categoryCombo:!null" ), Lists.<Order>newArrayList() );
         List<? extends IdentifiableObject> objects = queryService.query( query );
 
         assertEquals( 6, objects.size() );

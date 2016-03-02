@@ -345,11 +345,11 @@ public class InMemoryQueryEngineTest
     }
 
     @Test
-    public void testIsNull()
+    public void testIsNotNull()
     {
         Query query = Query.from( schemaService.getDynamicSchema( DataElement.class ) );
         query.setObjects( dataElements );
-        query.add( Restrictions.isNull( "categoryCombo" ) );
+        query.add( Restrictions.isNotNull( "categoryCombo" ) );
 
         List<? extends IdentifiableObject> objects = queryEngine.query( query );
 
@@ -364,11 +364,11 @@ public class InMemoryQueryEngineTest
     }
 
     @Test
-    public void testIsNotNull()
+    public void testIsNull()
     {
         Query query = Query.from( schemaService.getDynamicSchema( DataElement.class ) );
         query.setObjects( dataElements );
-        query.add( Restrictions.isNotNull( "categoryCombo" ) );
+        query.add( Restrictions.isNull( "categoryCombo" ) );
 
         List<? extends IdentifiableObject> objects = queryEngine.query( query );
 

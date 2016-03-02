@@ -208,6 +208,10 @@ public class TableAlteror
 
         executeSql( "ALTER TABLE organisationunit DROP COLUMN hasPatients" );
 
+        // dataelement_categorycombo not null
+        executeSql( "update dataelement set categorycomboid = " + defaultCategoryComboId + " where categorycomboid is null" );
+        executeSql( "alter table dataelement add constraint fk_dataelement_categorycombo foreign key (categorycomboid) references categorycombo (categorycomboid) match simple;" );
+
         // categories_categoryoptions
         // set to 0 temporarily
         int c1 = executeSql( "UPDATE categories_categoryoptions SET sort_order=0 WHERE sort_order is NULL OR sort_order=0" );

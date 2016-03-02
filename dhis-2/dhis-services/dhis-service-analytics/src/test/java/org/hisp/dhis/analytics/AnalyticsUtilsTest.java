@@ -28,6 +28,7 @@ package org.hisp.dhis.analytics;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.DhisSpringTest;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -45,12 +46,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.hisp.dhis.DhisConvenienceTest.*;
-
 /**
  * @author Lars Helge Overland
  */
-public class AnalyticsUtilsTest
+public class AnalyticsUtilsTest extends DhisSpringTest
 {
     @Test
     public void testGetByDataDimensionType()

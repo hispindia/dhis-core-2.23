@@ -46,6 +46,7 @@ import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
+import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementDomain;
 import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementGroupSet;
@@ -99,6 +100,7 @@ import org.hisp.dhis.validation.ValidationRuleGroup;
 import org.joda.time.DateTime;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -109,6 +111,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.Assert;
 import org.xml.sax.InputSource;
 
+import javax.annotation.PostConstruct;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.xpath.XPath;
@@ -161,6 +164,17 @@ public abstract class DhisConvenienceTest
     protected UserService userService;
 
     protected RenderService renderService;
+
+    @Autowired( required = false )
+    protected DataElementCategoryService _categoryService;
+
+    protected static DataElementCategoryService categoryService;
+
+    @PostConstruct
+    protected void initStaticServices()
+    {
+        categoryService = _categoryService;
+    }
 
     static
     {
@@ -364,6 +378,13 @@ public abstract class DhisConvenienceTest
         dataElement.setDomainType( DataElementDomain.AGGREGATE );
         dataElement.setAggregationType( AggregationType.SUM );
 
+        if ( categoryService != null )
+        {
+            DataElementCategoryCombo categoryCombo = categoryService.getDefaultDataElementCategoryCombo();
+            dataElement.setCategoryCombo( categoryCombo );
+        }
+
+
         return dataElement;
     }
 
@@ -372,17 +393,8 @@ public abstract class DhisConvenienceTest
      */
     public static DataElement createDataElement( char uniqueCharacter, ValueType valueType )
     {
-        DataElement dataElement = new DataElement();
-        dataElement.setAutoFields();
-
-        dataElement.setUid( BASE_DE_UID + uniqueCharacter );
-        dataElement.setName( "DataElement" + uniqueCharacter );
-        dataElement.setShortName( "DataElementShort" + uniqueCharacter );
-        dataElement.setCode( "DataElementCode" + uniqueCharacter );
-        dataElement.setDescription( "DataElementDescription" + uniqueCharacter );
+        DataElement dataElement = createDataElement( uniqueCharacter );
         dataElement.setValueType( valueType );
-        dataElement.setDomainType( DataElementDomain.AGGREGATE );
-        dataElement.setAggregationType( AggregationType.SUM );
 
         return dataElement;
     }
@@ -1654,4 +1666,5 @@ public abstract class DhisConvenienceTest
 
         return sw.toString();
     }
+
 }
