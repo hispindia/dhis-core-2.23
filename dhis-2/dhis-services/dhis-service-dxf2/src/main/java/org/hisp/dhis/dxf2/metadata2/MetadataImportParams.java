@@ -29,7 +29,10 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.importexport.ImportStrategy;
+import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.user.User;
 
@@ -43,16 +46,52 @@ import java.util.Map;
  */
 public class MetadataImportParams
 {
-    private PreheatMode preheatMode = PreheatMode.ALL;
-
-    private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
-
     private User user;
+
+    private ObjectBundleMode objectBundleMode = ObjectBundleMode.VALIDATE;
+
+    private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
+
+    private PreheatMode preheatMode = PreheatMode.REFERENCE;
+
+    private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
+
+    private MergeMode mergeMode = MergeMode.MERGE;
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public MetadataImportParams()
     {
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser( User user )
+    {
+        this.user = user;
+    }
+
+    public ObjectBundleMode getObjectBundleMode()
+    {
+        return objectBundleMode;
+    }
+
+    public void setObjectBundleMode( ObjectBundleMode objectBundleMode )
+    {
+        this.objectBundleMode = objectBundleMode;
+    }
+
+    public PreheatIdentifier getPreheatIdentifier()
+    {
+        return preheatIdentifier;
+    }
+
+    public void setPreheatIdentifier( PreheatIdentifier preheatIdentifier )
+    {
+        this.preheatIdentifier = preheatIdentifier;
     }
 
     public PreheatMode getPreheatMode()
@@ -65,24 +104,34 @@ public class MetadataImportParams
         this.preheatMode = preheatMode;
     }
 
-    public ImportStrategy getImportStrategy()
+    public ImportStrategy getImportMode()
     {
-        return importStrategy;
+        return importMode;
     }
 
-    public void setImportStrategy( ImportStrategy importStrategy )
+    public void setImportMode( ImportStrategy importMode )
     {
-        this.importStrategy = importStrategy;
+        this.importMode = importMode;
     }
 
-    public User getUser()
+    public MergeMode getMergeMode()
     {
-        return user;
+        return mergeMode;
     }
 
-    public void setUser( User user )
+    public void setMergeMode( MergeMode mergeMode )
     {
-        this.user = user;
+        this.mergeMode = mergeMode;
+    }
+
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
+    {
+        return objects;
+    }
+
+    public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    {
+        this.objects = objects;
     }
 
     public List<Class<? extends IdentifiableObject>> getClasses()

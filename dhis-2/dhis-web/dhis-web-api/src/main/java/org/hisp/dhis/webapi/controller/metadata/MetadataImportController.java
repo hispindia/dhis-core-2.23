@@ -28,16 +28,25 @@ package org.hisp.dhis.webapi.controller.metadata;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.dxf2.metadata2.MetadataImportException;
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportParams;
 import org.hisp.dhis.dxf2.metadata2.MetadataImportService;
+import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
+import org.hisp.dhis.render.RenderFormat;
+import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.webapi.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -52,11 +61,25 @@ public class MetadataImportController
     @Autowired
     private ContextService contextService;
 
-    @RequestMapping( value = "", method = RequestMethod.POST )
-    public void postMetadata() throws IOException, MetadataImportException
+    @Autowired
+    private RenderService renderService;
+
+    @RequestMapping( value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE )
+    public void postMetadata( HttpServletRequest request, HttpServletResponse response ) throws IOException
     {
         MetadataImportParams params = metadataImportService.getParamsFromMap( contextService.getParameterValuesMap() );
-        metadataImportService.validate( params );
-        metadataImportService.importMetadata( params );
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = renderService.fromMetadata( request.getInputStream(), RenderFormat.JSON );
+        params.setObjects( objects );
+
+        if ( ObjectBundleMode.VALIDATE == params.getObjectBundleMode() )
+        {
+            ImportReport importReport = metadataImportService.validate( params );
+            renderService.toJson( response.getOutputStream(), importReport );
+        }
+        else if ( ObjectBundleMode.COMMIT == params.getObjectBundleMode() )
+        {
+            ImportReport importReport = metadataImportService.importMetadata( params );
+            renderService.toJson( response.getOutputStream(), importReport );
+        }
     }
 }

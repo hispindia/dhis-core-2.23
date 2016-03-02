@@ -28,8 +28,11 @@ package org.hisp.dhis.dxf2.metadata2.feedback;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ErrorReports;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,16 +42,19 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
+@JacksonXmlRootElement( localName = "importReport", namespace = DxfNamespaces.DXF_2_0 )
 public class ImportReport
 {
     private ImportStats stats = new ImportStats();
 
-    private Map<Class<?>, ErrorReports> errorReportMap = new HashMap<>();
+    private Map<Class<?>, List<ErrorReport>> errorReportMap = new HashMap<>();
 
     public ImportReport()
     {
     }
 
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public ImportStats getStats()
     {
         return stats;
@@ -58,35 +64,37 @@ public class ImportReport
     {
         if ( !errorReportMap.containsKey( errorReport.getMainKlass() ) )
         {
-            errorReportMap.put( errorReport.getMainKlass(), new ErrorReports() );
+            errorReportMap.put( errorReport.getMainKlass(), new ArrayList<>() );
         }
 
-        errorReportMap.get( errorReport.getMainKlass() ).getErrorReports().add( errorReport );
+        errorReportMap.get( errorReport.getMainKlass() ).add( errorReport );
     }
 
-    public void addErrorReports( ErrorReports errorReports )
+    public void addErrorReports( List<ErrorReport> errorReports )
     {
-        if ( errorReports == null || errorReports.getErrorReports().isEmpty() )
+        if ( errorReports == null || errorReports.isEmpty() )
         {
             return;
         }
 
-        Class<?> mainKlass = errorReports.getErrorReports().get( 0 ).getMainKlass();
+        Class<?> mainKlass = errorReports.get( 0 ).getMainKlass();
 
         if ( !errorReportMap.containsKey( mainKlass ) )
         {
-            errorReportMap.put( mainKlass, new ErrorReports() );
+            errorReportMap.put( mainKlass, new ArrayList<>() );
         }
 
-        errorReportMap.get( mainKlass ).getErrorReports().addAll( errorReports.getErrorReports() );
+        errorReportMap.get( mainKlass ).addAll( errorReports );
     }
 
-    public Map<Class<?>, ErrorReports> getErrorReportMap()
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public Map<Class<?>, List<ErrorReport>> getErrorReportMap()
     {
         return errorReportMap;
     }
 
-    public List<ErrorReports> getErrorReports()
+    public List<List<ErrorReport>> getErrorReports()
     {
         return new ArrayList<>( errorReportMap.values() );
     }

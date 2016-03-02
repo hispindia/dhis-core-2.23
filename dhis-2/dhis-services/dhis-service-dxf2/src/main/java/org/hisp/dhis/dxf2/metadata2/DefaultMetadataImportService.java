@@ -28,8 +28,6 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
 import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,6 @@ public class DefaultMetadataImportService implements MetadataImportService
     @Autowired
     private CurrentUserService currentUserService;
 
-    @Autowired
-    private IdentifiableObjectManager manager;
-
     @Override
     public ImportReport importMetadata( MetadataImportParams params )
     {
@@ -60,19 +55,14 @@ public class DefaultMetadataImportService implements MetadataImportService
             params.setUser( currentUserService.getCurrentUser() );
         }
 
-        for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
-        {
-            List<? extends IdentifiableObject> objects = params.getObjects( klass );
-            objects.forEach( this::importObject );
-        }
-
         return report;
     }
 
     @Override
-    public void validate( MetadataImportParams params )
+    public ImportReport validate( MetadataImportParams params )
     {
-
+        ImportReport report = new ImportReport();
+        return report;
     }
 
     @Override
@@ -80,14 +70,5 @@ public class DefaultMetadataImportService implements MetadataImportService
     {
         MetadataImportParams params = new MetadataImportParams();
         return params;
-    }
-
-    //------------------------------------------------------------------------------------------------
-    // Helpers
-    //------------------------------------------------------------------------------------------------
-
-    private void importObject( IdentifiableObject object )
-    {
-        manager.save( object );
     }
 }
