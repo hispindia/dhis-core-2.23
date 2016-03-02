@@ -33,6 +33,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.dataelement.DataElement;
@@ -267,7 +268,7 @@ public class DataIntegrityServiceTest
     @Test
     public void testGetIndicatorsWithIdenticalFormulas()
     {
-        Collection<Collection<Indicator>> expected = dataIntegrityService.getIndicatorsWithIdenticalFormulas();
+        Set<Set<Indicator>> expected = dataIntegrityService.getIndicatorsWithIdenticalFormulas();
 
         Collection<Indicator> violation = expected.iterator().next();
         

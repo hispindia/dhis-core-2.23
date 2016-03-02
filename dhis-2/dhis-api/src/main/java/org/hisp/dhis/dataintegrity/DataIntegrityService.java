@@ -127,7 +127,7 @@ public interface DataIntegrityService
     /**
      * Gets all indicators with identical numerator and denominator.
      */
-    Set<Collection<Indicator>> getIndicatorsWithIdenticalFormulas();
+    Set<Set<Indicator>> getIndicatorsWithIdenticalFormulas();
 
     /**
      * Gets all indicators which are not assigned to any groups.

@@ -366,7 +366,7 @@ public class DefaultDataIntegrityService
     // -------------------------------------------------------------------------
 
     @Override
-    public Set<Collection<Indicator>> getIndicatorsWithIdenticalFormulas()
+    public Set<Set<Indicator>> getIndicatorsWithIdenticalFormulas()
     {
         Map<String, Indicator> formulas = new HashMap<>();
 

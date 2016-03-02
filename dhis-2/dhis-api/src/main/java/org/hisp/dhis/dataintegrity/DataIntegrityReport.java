@@ -41,62 +41,66 @@ import org.hisp.dhis.organisationunit.OrganisationUnitGroup;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.validation.ValidationRule;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * @author Halvdan Hoem Grelland <halvdanhg@gmail.com>
  */
 public class DataIntegrityReport
 {
-    private List<DataElement> dataElementsWithoutDataSet;
+    private List<DataElement> dataElementsWithoutDataSet = new ArrayList<>();
     
-    private List<DataElement> dataElementsWithoutGroups;
+    private List<DataElement> dataElementsWithoutGroups = new ArrayList<>();
     
-    private Map<DataElement, Collection<DataSet>> dataElementsAssignedToDataSetsWithDifferentPeriodTypes;
+    private Map<DataElement, Collection<DataSet>> dataElementsAssignedToDataSetsWithDifferentPeriodTypes = new HashMap<>();
     
-    private SortedMap<DataElement, Collection<DataElementGroup>> dataElementsViolatingExclusiveGroupSets;
+    private SortedMap<DataElement, Collection<DataElementGroup>> dataElementsViolatingExclusiveGroupSets = new TreeMap<>();
 
-    private SortedMap<DataSet, Collection<DataElement>> dataElementsInDataSetNotInForm;
+    private SortedMap<DataSet, Collection<DataElement>> dataElementsInDataSetNotInForm = new TreeMap<>();
     
-    private List<DataElementCategoryCombo> invalidCategoryCombos;
+    private List<DataElementCategoryCombo> invalidCategoryCombos = new ArrayList<>();
 
-    private Map<DataSet, Set<DataElementOperand>> categoryOptionCombosNotInDataElementCategoryCombo;
+    private Map<DataSet, Set<DataElementOperand>> categoryOptionCombosNotInDataElementCategoryCombo = new HashMap<>();
     
-    private List<DataSet> dataSetsNotAssignedToOrganisationUnits;
+    private List<DataSet> dataSetsNotAssignedToOrganisationUnits = new ArrayList<>();
     
-    private List<Section> sectionsWithInvalidCategoryCombinations;
+    private List<Section> sectionsWithInvalidCategoryCombinations = new ArrayList<>();
 
-    private Collection<Collection<Indicator>> indicatorsWithIdenticalFormulas;
+    private Set<Set<Indicator>> indicatorsWithIdenticalFormulas = new HashSet<>();
     
-    private List<Indicator> indicatorsWithoutGroups;
+    private List<Indicator> indicatorsWithoutGroups = new ArrayList<>();
     
-    private Map<Indicator, String> invalidIndicatorNumerators;
+    private Map<Indicator, String> invalidIndicatorNumerators = new HashMap<>();
     
-    private Map<Indicator, String> invalidIndicatorDenominators;
+    private Map<Indicator, String> invalidIndicatorDenominators = new HashMap<>();
     
-    private SortedMap<Indicator, Collection<IndicatorGroup>> indicatorsViolatingExclusiveGroupSets;
+    private SortedMap<Indicator, Collection<IndicatorGroup>> indicatorsViolatingExclusiveGroupSets = new TreeMap<>();
     
-    private List<Period> duplicatePeriods;
+    private List<Period> duplicatePeriods = new ArrayList<>();
     
-    private List<OrganisationUnit> organisationUnitsWithCyclicReferences;
+    private List<OrganisationUnit> organisationUnitsWithCyclicReferences = new ArrayList<>();
     
-    private List<OrganisationUnit> orphanedOrganisationUnits;
+    private List<OrganisationUnit> orphanedOrganisationUnits = new ArrayList<>();
     
-    private List<OrganisationUnit> organisationUnitsWithoutGroups;
+    private List<OrganisationUnit> organisationUnitsWithoutGroups = new ArrayList<>();
     
-    private SortedMap<OrganisationUnit, Collection<OrganisationUnitGroup>> organisationUnitsViolatingExclusiveGroupSets;
+    private SortedMap<OrganisationUnit, Collection<OrganisationUnitGroup>> organisationUnitsViolatingExclusiveGroupSets = new TreeMap<>();
     
-    private List<OrganisationUnitGroup> organisationUnitGroupsWithoutGroupSets;
+    private List<OrganisationUnitGroup> organisationUnitGroupsWithoutGroupSets = new ArrayList<>();
     
-    private List<ValidationRule> validationRulesWithoutGroups;
+    private List<ValidationRule> validationRulesWithoutGroups = new ArrayList<>();
     
-    private Map<ValidationRule, String> invalidValidationRuleLeftSideExpressions;
+    private Map<ValidationRule, String> invalidValidationRuleLeftSideExpressions = new HashMap<>();
     
-    private Map<ValidationRule, String> invalidValidationRuleRightSideExpressions;
+    private Map<ValidationRule, String> invalidValidationRuleRightSideExpressions = new HashMap<>();
 
     //-------------------------------------------------------------------------
     // Constructors
@@ -201,12 +205,12 @@ public class DataIntegrityReport
         this.sectionsWithInvalidCategoryCombinations = sectionsWithInvalidCategoryCombinations;
     }
 
-    public Collection<Collection<Indicator>> getIndicatorsWithIdenticalFormulas()
+    public Set<Set<Indicator>> getIndicatorsWithIdenticalFormulas()
     {
         return indicatorsWithIdenticalFormulas;
     }
 
-    public void setIndicatorsWithIdenticalFormulas( Collection<Collection<Indicator>> indicatorsWithIdenticalFormulas )
+    public void setIndicatorsWithIdenticalFormulas( Set<Set<Indicator>> indicatorsWithIdenticalFormulas )
     {
         this.indicatorsWithIdenticalFormulas = indicatorsWithIdenticalFormulas;
     }
