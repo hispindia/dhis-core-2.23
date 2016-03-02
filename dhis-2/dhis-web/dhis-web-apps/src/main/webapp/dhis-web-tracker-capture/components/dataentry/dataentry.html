@@ -16,7 +16,7 @@
         <div ng-if="!useMainMenu">            
             {{'dataentry' | translate}}
             <span class="pull-right widget-link">               
-                <a href ng-click="model.showEventSearch = !model.showEventSearch" title="{{'search'| translate}}" class="small-horizonal-spacing"><i class="fa fa-search vertical-center"></i></a>
+                <a href ng-click="model.showEventSearch = !model.showEventSearch" title="{{'search'| translate}}" ng-if="allEventsSorted.length > eventPageSize" class="small-horizonal-spacing"><i class="fa fa-search vertical-center"></i></a>
                 <a href ng-click="model.showLegend = !model.showLegend" title="{{'event_color_legend'| translate}}" class="small-horizonal-spacing"><i class="fa fa-info-circle vertical-center"></i></a>
                 <a href ng-click="toggleEventsTableDisplay()" title="{{showEventsAsTables ? 'toggle_table_view_off' : 'toggle_table_view_on'| translate}}" ng-show="stagesCanBeShownAsTable"><span ng-if="!showEventsAsTables"><i class="fa fa-bars vertical-center"></i></span><span ng-if="showEventsAsTables"><i class="fa fa-square vertical-center"></i></span></a>
                 <a class="small-horizonal-spacing" href ng-click="expandCollapse(dataentryWidget)">

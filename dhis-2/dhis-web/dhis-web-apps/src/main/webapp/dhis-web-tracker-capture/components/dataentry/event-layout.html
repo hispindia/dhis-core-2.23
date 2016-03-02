@@ -1,9 +1,9 @@
 <div class="row">
-    <div class="col-sm-12" ng-if="allEventsSorted.length > eventPageSize && model.showEventSearch">
-        <input class="form-control" ng-model="model.eventSearchText"/>
+    <div class="col-sm-12" ng-if="model.showEventSearch">
+        <input class="form-control" placeholder="{{'type_your_search_criteria_here' | translate}}" ng-model="model.eventSearchText"/>
     </div>    
     <div ng-class="getTopLineColumnStyle(1)">
-        <div ng-if="!useMainMenu || (useMainMenu && !hideTopLineEventsForFormTypes[displayCustomForm])" ng-repeat="dhis2Event in getTopLineEventsPage() | filter:model.eventSearchText">            
+        <div ng-if="!useMainMenu || (useMainMenu && !hideTopLineEventsForFormTypes[displayCustomForm])" ng-repeat="dhis2Event in getTopLineEventsPage() | eventListFilter:allEventsSorted:model.eventSearchText">            
             <div class="event-container" ng-click="getEventPage('BACKWARD')" ng-if="$index === 0 && eventPagingStart > 0">
                 {{'previous'| translate}}
             </div>
