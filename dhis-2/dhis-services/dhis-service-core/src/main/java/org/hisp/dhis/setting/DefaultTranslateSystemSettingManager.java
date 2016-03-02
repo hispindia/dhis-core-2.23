@@ -59,10 +59,10 @@ public class DefaultTranslateSystemSettingManager
     {
         Map<String, String> translations = new Hashtable<>();
 
-        translations.put( SettingKey.APPLICATION_TITLE.getDefaultValue().toString(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_TITLE.getDefaultValue().toString(), localeStr, SettingKey.APPLICATION_TITLE.getDefaultValue().toString() ) );        
-        translations.put( SettingKey.APPLICATION_INTRO.getDefaultValue().toString(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_INTRO.getDefaultValue().toString(), localeStr, "" ) );
-        translations.put( SettingKey.APPLICATION_NOTIFICATION.getDefaultValue().toString(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_NOTIFICATION.getDefaultValue().toString(), localeStr, "" ) );
-        translations.put( SettingKey.APPLICATION_FOOTER.getDefaultValue().toString(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_FOOTER.getDefaultValue().toString(), localeStr, "" ) );
+        translations.put( SettingKey.APPLICATION_TITLE.getName(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_TITLE.getName(), localeStr, SettingKey.APPLICATION_TITLE.getDefaultValue().toString() ) );
+        translations.put( SettingKey.APPLICATION_INTRO.getName(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_INTRO.getName(), localeStr, "" ) );
+        translations.put( SettingKey.APPLICATION_NOTIFICATION.getName(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_NOTIFICATION.getName(), localeStr, "" ) );
+        translations.put( SettingKey.APPLICATION_FOOTER.getName(), getSystemSettingWithFallbacks( SettingKey.APPLICATION_FOOTER.getName(), localeStr, "" ) );
                 
         return translations;
     }
@@ -72,14 +72,14 @@ public class DefaultTranslateSystemSettingManager
     {
         Map<String, String> translations = new Hashtable<>();
 
-        translations.put( SettingKey.APPLICATION_TITLE.getDefaultValue().toString(), ObjectUtils.firstNonNull( 
-            systemSettingManager.getSystemSetting( SettingKey.APPLICATION_TITLE.getDefaultValue().toString() + localeStr ), SettingKey.APPLICATION_TITLE.getDefaultValue().toString() ).toString() );        
-        translations.put( SettingKey.APPLICATION_INTRO.getDefaultValue().toString(), ObjectUtils.firstNonNull( 
-            systemSettingManager.getSystemSetting( SettingKey.APPLICATION_INTRO.getDefaultValue().toString() + localeStr ), "" ).toString() );
-        translations.put( SettingKey.APPLICATION_NOTIFICATION.getDefaultValue().toString(), ObjectUtils.firstNonNull( 
-            systemSettingManager.getSystemSetting( SettingKey.APPLICATION_NOTIFICATION.getDefaultValue().toString() + localeStr ), "" ).toString() );
-        translations.put( SettingKey.APPLICATION_FOOTER.getDefaultValue().toString(), ObjectUtils.firstNonNull( 
-            systemSettingManager.getSystemSetting( SettingKey.APPLICATION_FOOTER.getDefaultValue().toString() + localeStr ), "" ).toString() );
+        translations.put( SettingKey.APPLICATION_TITLE.getName(), ObjectUtils.firstNonNull(
+                systemSettingManager.getSystemSetting(SettingKey.APPLICATION_TITLE.getName() + localeStr), SettingKey.APPLICATION_TITLE.getDefaultValue(), "" ).toString() );
+        translations.put( SettingKey.APPLICATION_INTRO.getName(), ObjectUtils.firstNonNull(
+                systemSettingManager.getSystemSetting( SettingKey.APPLICATION_INTRO.getName() + localeStr ), "" ).toString() );
+        translations.put( SettingKey.APPLICATION_NOTIFICATION.getName(), ObjectUtils.firstNonNull(
+                systemSettingManager.getSystemSetting( SettingKey.APPLICATION_NOTIFICATION.getName() + localeStr ), "" ).toString() );
+        translations.put( SettingKey.APPLICATION_FOOTER.getName(), ObjectUtils.firstNonNull(
+                systemSettingManager.getSystemSetting( SettingKey.APPLICATION_FOOTER.getName() + localeStr ), "" ).toString() );
                 
         return translations;
     }
