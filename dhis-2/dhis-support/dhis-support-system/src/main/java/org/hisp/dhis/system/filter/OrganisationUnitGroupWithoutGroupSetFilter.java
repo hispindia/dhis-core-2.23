@@ -32,6 +32,8 @@ import org.hisp.dhis.organisationunit.OrganisationUnitGroup;
 import org.hisp.dhis.commons.filter.Filter;
 
 /**
+ * TODO remove
+ * 
  * @author Lars Helge Overland
  */
 public class OrganisationUnitGroupWithoutGroupSetFilter

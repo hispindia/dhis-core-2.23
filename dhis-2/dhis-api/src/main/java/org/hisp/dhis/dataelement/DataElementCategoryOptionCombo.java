@@ -231,14 +231,13 @@ public class DataElementCategoryOptionCombo
             return uid;
         }
 
-        List<DataElementCategory> categories = this.categoryCombo.getCategories();
+        List<DataElementCategory> categories = categoryCombo.getCategories();
 
         for ( DataElementCategory category : categories )
         {
             List<DataElementCategoryOption> options = category.getCategoryOptions();
 
-            optionLoop:
-            for ( DataElementCategoryOption option : this.categoryOptions )
+            optionLoop: for ( DataElementCategoryOption option : categoryOptions )
             {
                 if ( options.contains( option ) )
                 {
