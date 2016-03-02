@@ -46,13 +46,14 @@ public class CategoryComboController
 {
     @Autowired
     private DataElementCategoryService categoryService;
-    
+
     @Override
     public void postCreateEntity( DataElementCategoryCombo categoryCombo )
     {
         categoryService.updateOptionCombos( categoryCombo );
     }
-    
+
+    @Override
     public void postUpdateEntity( DataElementCategoryCombo categoryCombo )
     {
         categoryService.updateOptionCombos( categoryCombo );
