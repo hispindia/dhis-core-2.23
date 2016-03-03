@@ -182,7 +182,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     IdentifiableObject identifiableObject = iterator.next();
                     IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
 
-                    if ( object != null )
+                    if ( object != null && object.getId() > 0 )
                     {
                         objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
                             bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
