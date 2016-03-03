@@ -980,7 +980,7 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
 
                     if ( attribute == null )
                     {
-                        errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E5001, attributeValue.getAttribute().getUid(),
+                        errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E5002, attributeValue.getAttribute().getUid(),
                             object.getUid(), "attributeValues" ) );
                     }
 

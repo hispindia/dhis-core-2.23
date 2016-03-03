@@ -52,8 +52,9 @@ public enum ErrorCode
     E4011( "Attribute \"{0}\" is required, but not value was found." ),
 
     /* Preheat Errors */
-    E5000( "No matching object for given reference. Identifier was {0}, and object was {1}." ),
-    E5001( "Invalid reference {0} on object {1} for association \"{2}\"." );
+    E5000( "Found matching object for given reference, but import mode is CREATE. Identifier was {0}, and object was {1}." ),
+    E5001( "No matching object for given reference. Identifier was {0}, and object was {1}." ),
+    E5002( "Invalid reference {0} on object {1} for association \"{2}\"." );
 
     private String message;
 

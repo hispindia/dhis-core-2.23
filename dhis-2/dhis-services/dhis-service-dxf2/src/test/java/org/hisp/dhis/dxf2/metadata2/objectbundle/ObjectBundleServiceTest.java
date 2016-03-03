@@ -257,7 +257,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -276,7 +276,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 1, validate.getErrorReports( DataElement.class ).get( ErrorCode.E5000 ).size() );
+        assertEquals( 1, validate.getErrorReports( DataElement.class ).get( ErrorCode.E5001 ).size() );
         assertFalse( validate.getErrorReports( DataElement.class ).get( ErrorCode.E4000 ).isEmpty() );
         assertEquals( 0, bundle.getObjects().get( DataElement.class ).size() );
     }
@@ -297,7 +297,7 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -316,7 +316,7 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -335,7 +335,7 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -354,7 +354,7 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -373,7 +373,7 @@ public class ObjectBundleServiceTest
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5000 ).size() );
+        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test

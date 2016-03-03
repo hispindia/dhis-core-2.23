@@ -471,7 +471,7 @@ public class DefaultPreheatService implements PreheatService
 
                     if ( ref == null && refObject != null && !Preheat.isDefault( refObject ) )
                     {
-                        preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
+                        preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
                             identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getName() ) );
                     }
                 }
@@ -488,7 +488,7 @@ public class DefaultPreheatService implements PreheatService
 
                         if ( ref == null && refObject != null )
                         {
-                            preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
+                            preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
                                 identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getCollectionName() ) );
                         }
                         else

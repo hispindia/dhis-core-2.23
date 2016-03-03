@@ -173,7 +173,24 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
-            if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
+            if ( bundle.getImportMode().isCreate() )
+            {
+                Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
+
+                while ( iterator.hasNext() )
+                {
+                    IdentifiableObject identifiableObject = iterator.next();
+                    IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+
+                    if ( object != null )
+                    {
+                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
+                        iterator.remove();
+                    }
+                }
+            }
+            else if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
             {
                 Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
 
@@ -184,7 +201,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
                     if ( object == null )
                     {
-                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                             bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
                         iterator.remove();
                     }
