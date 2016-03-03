@@ -306,7 +306,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             objectBundleHooks.forEach( hook -> hook.preCreate( object, bundle ) );
 
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            manager.save( object, bundle.getUser() );
+            manager.save( object, bundle.getUser(), false );
 
             bundle.getPreheat().put( bundle.getPreheatIdentifier(), object );
 

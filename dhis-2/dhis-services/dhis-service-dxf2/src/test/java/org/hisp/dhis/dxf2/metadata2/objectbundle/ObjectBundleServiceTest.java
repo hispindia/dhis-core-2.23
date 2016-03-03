@@ -51,6 +51,7 @@ import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserAuthorityGroup;
+import org.hisp.dhis.user.UserGroup;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -568,7 +569,7 @@ public class ObjectBundleServiceTest
     public void testValidateMetadataAttributeValuesUniqueAndMandatoryUID() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/metadata_av_unique_and_mandatory.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
@@ -576,6 +577,37 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
+    }
+
+    @Test
+    public void testCreateDataSetsWithUgaUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle ).getErrorReports();
+        objectBundleService.commit( bundle );
+
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<UserGroup> userGroups = manager.getAll( UserGroup.class );
+
+        assertEquals( 1, organisationUnits.size() );
+        assertEquals( 2, dataElements.size() );
+        assertEquals( 1, userRoles.size() );
+        assertEquals( 1, users.size() );
+        assertEquals( 2, userGroups.size() );
+
+        assertEquals( 1, dataElements.get( 0 ).getUserGroupAccesses().size() );
+        assertEquals( 1, dataElements.get( 1 ).getUserGroupAccesses().size() );
     }
 
     private void defaultSetup()
