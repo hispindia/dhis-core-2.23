@@ -472,7 +472,7 @@ public class DefaultPreheatService implements PreheatService
                     if ( ref == null && refObject != null && !Preheat.isDefault( refObject ) )
                     {
                         preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
-                            identifier.getIdentifiers( refObject ), identifier.getIdentifiers( object ), p.getName() ) );
+                            identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getName() ) );
                     }
                 }
                 else
@@ -489,7 +489,7 @@ public class DefaultPreheatService implements PreheatService
                         if ( ref == null && refObject != null )
                         {
                             preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5001,
-                                identifier.getIdentifiers( refObject ), identifier.getIdentifiers( object ), p.getCollectionName() ) );
+                                identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getCollectionName() ) );
                         }
                         else
                         {

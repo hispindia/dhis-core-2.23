@@ -30,6 +30,7 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,5 +88,18 @@ public enum PreheatIdentifier
         }
 
         return new ArrayList<>();
+    }
+
+    public <T extends IdentifiableObject> String getIdentifiersWithName( T object )
+    {
+        List<String> identifiers = getIdentifiers( object );
+        String name = StringUtils.isEmpty( object.getDisplayName() ) ? null : object.getDisplayName();
+
+        if ( name == null )
+        {
+            return identifiers.toString();
+        }
+
+        return name + " " + identifiers.toString();
     }
 }

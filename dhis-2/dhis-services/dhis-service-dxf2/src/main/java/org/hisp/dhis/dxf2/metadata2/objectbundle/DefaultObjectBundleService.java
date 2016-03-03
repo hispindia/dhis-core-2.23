@@ -185,7 +185,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     if ( object == null )
                     {
                         objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
-                            bundle.getPreheatIdentifier().getIdentifiers( identifiableObject ) );
+                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
                         iterator.remove();
                     }
                 }
