@@ -192,20 +192,19 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             List<List<PreheatErrorReport>> referenceErrors = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
             referenceErrors.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
+            Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
 
-            List<List<ErrorReport>> validationErrorReports = new ArrayList<>();
-
-            for ( IdentifiableObject object : bundle.getObjects().get( klass ) )
+            while ( iterator.hasNext() )
             {
-                List<ErrorReport> validate = schemaValidator.validate( object );
+                IdentifiableObject object = iterator.next();
+                List<ErrorReport> objectValidation = schemaValidator.validate( object );
 
-                if ( !validate.isEmpty() )
+                if ( !objectValidation.isEmpty() )
                 {
-                    validationErrorReports.add( validate );
+                    objectBundleValidation.addErrorReports( objectValidation );
+                    iterator.remove();
                 }
             }
-
-            validationErrorReports.forEach( objectBundleValidation::addErrorReports );
         }
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );

@@ -276,8 +276,9 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 1, validate.getErrorReports( DataElement.class ).size() );
-        assertEquals( 2, bundle.getObjects().get( DataElement.class ).size() );
+        assertEquals( 1, validate.getErrorReports( DataElement.class ).get( ErrorCode.E5000 ).size() );
+        assertFalse( validate.getErrorReports( DataElement.class ).get( ErrorCode.E4000 ).isEmpty() );
+        assertEquals( 0, bundle.getObjects().get( DataElement.class ).size() );
     }
 
     @Test
