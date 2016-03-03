@@ -66,7 +66,9 @@ public class DefaultSchemaValidator implements SchemaValidator
             return new ArrayList<>();
         }
 
-        Schema schema = schemaService.getSchema( object.getClass() );
+        Class<?> klass = object.getClass();
+
+        Schema schema = schemaService.getSchema( klass );
 
         List<ErrorReport> errorReports = new ArrayList<>();
 
@@ -83,66 +85,66 @@ public class DefaultSchemaValidator implements SchemaValidator
             {
                 if ( property.isRequired() )
                 {
-                    errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4000, property.getName() ).setErrorKlass( property.getKlass() ) );
+                    errorReports.add( new ErrorReport( klass, ErrorCode.E4000, property.getName() ).setErrorKlass( property.getKlass() ) );
                 }
 
                 continue;
             }
 
-            errorReports.addAll( validateString( value, property ) );
-            errorReports.addAll( validateCollection( value, property ) );
-            errorReports.addAll( validateInteger( value, property ) );
-            errorReports.addAll( validateFloat( value, property ) );
-            errorReports.addAll( validateDouble( value, property ) );
+            errorReports.addAll( validateString( klass, value, property ) );
+            errorReports.addAll( validateCollection( klass, value, property ) );
+            errorReports.addAll( validateInteger( klass, value, property ) );
+            errorReports.addAll( validateFloat( klass, value, property ) );
+            errorReports.addAll( validateDouble( klass, value, property ) );
         }
 
         return errorReports;
     }
 
-    private List<? extends ErrorReport> validateString( Object object, Property property )
+    private List<? extends ErrorReport> validateString( Class<?> klass, Object propertyObject, Property property )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
         // TODO How should empty strings be handled? they are not valid color, password, url, etc of course.
-        if ( !String.class.isInstance( object ) || StringUtils.isEmpty( object ) )
+        if ( !String.class.isInstance( propertyObject ) || StringUtils.isEmpty( propertyObject ) )
         {
             return errorReports;
         }
 
-        String value = (String) object;
+        String value = (String) propertyObject;
 
         // check column max length
         if ( value.length() > property.getLength() )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4001, property.getName(), property.getLength(), value.length() )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4001, property.getName(), property.getLength(), value.length() )
                 .setErrorKlass( property.getKlass() ) );
             return errorReports;
         }
 
         if ( value.length() < property.getMin() || value.length() > property.getMax() )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4002, property.getName(), property.getMin(), property.getMax(), value.length() )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4002, property.getName(), property.getMin(), property.getMax(), value.length() )
                 .setErrorKlass( property.getKlass() ) );
         }
 
         if ( PropertyType.EMAIL == property.getPropertyType() && !GenericValidator.isEmail( value ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4003, property.getName(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4003, property.getName(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
         else if ( PropertyType.URL == property.getPropertyType() && !isUrl( value ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4004, property.getName(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4004, property.getName(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
         else if ( PropertyType.PASSWORD == property.getPropertyType() && !ValidationUtils.passwordIsValid( value ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4005, property.getName(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4005, property.getName(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
         else if ( PropertyType.COLOR == property.getPropertyType() && !ValidationUtils.isValidHexColor( value ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4006, property.getName(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4006, property.getName(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
 
@@ -162,80 +164,80 @@ public class DefaultSchemaValidator implements SchemaValidator
         return !StringUtils.isEmpty( url ) && (url.startsWith( "http://" ) || url.startsWith( "https://" ));
     }
 
-    private List<? extends ErrorReport> validateCollection( Object object, Property property )
+    private List<? extends ErrorReport> validateCollection( Class<?> klass, Object propertyObject, Property property )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( !Collection.class.isInstance( object ) )
+        if ( !Collection.class.isInstance( propertyObject ) )
         {
             return errorReports;
         }
 
-        Collection<?> value = (Collection<?>) object;
+        Collection<?> value = (Collection<?>) propertyObject;
 
         if ( value.size() < property.getMin() || value.size() > property.getMax() )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4007, property.getName(), property.getMin(), property.getMax(), value.size() )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4007, property.getName(), property.getMin(), property.getMax(), value.size() )
                 .setErrorKlass( property.getKlass() ) );
         }
 
         return errorReports;
     }
 
-    private List<? extends ErrorReport> validateInteger( Object object, Property property )
+    private List<? extends ErrorReport> validateInteger( Class<?> klass, Object propertyObject, Property property )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( !Integer.class.isInstance( object ) )
+        if ( !Integer.class.isInstance( propertyObject ) )
         {
             return errorReports;
         }
 
-        Integer value = (Integer) object;
+        Integer value = (Integer) propertyObject;
 
         if ( !GenericValidator.isInRange( value, property.getMin(), property.getMax() ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
 
         return errorReports;
     }
 
-    private List<? extends ErrorReport> validateFloat( Object object, Property property )
+    private List<? extends ErrorReport> validateFloat( Class<?> klass, Object propertyObject, Property property )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( !Float.class.isInstance( object ) )
+        if ( !Float.class.isInstance( propertyObject ) )
         {
             return errorReports;
         }
 
-        Float value = (Float) object;
+        Float value = (Float) propertyObject;
 
         if ( !GenericValidator.isInRange( value, property.getMin(), property.getMax() ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
 
         return errorReports;
     }
 
-    private List<? extends ErrorReport> validateDouble( Object object, Property property )
+    private List<? extends ErrorReport> validateDouble( Class<?> klass, Object propertyObject, Property property )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( !Double.class.isInstance( object ) )
+        if ( !Double.class.isInstance( propertyObject ) )
         {
             return errorReports;
         }
 
-        Double value = (Double) object;
+        Double value = (Double) propertyObject;
 
         if ( !GenericValidator.isInRange( value, property.getMin(), property.getMax() ) )
         {
-            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
+            errorReports.add( new ErrorReport( klass, ErrorCode.E4008, property.getName(), property.getMin(), property.getMax(), value )
                 .setErrorKlass( property.getKlass() ) );
         }
 
