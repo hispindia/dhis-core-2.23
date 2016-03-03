@@ -28,6 +28,8 @@ package org.hisp.dhis.schema.validation;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.feedback.ErrorReport;
+
 import java.util.List;
 
 /**
@@ -42,7 +44,7 @@ public interface SchemaValidator
      * @param persisted Only include persisted properties
      * @return WebMessage containing validation response
      */
-    List<ValidationViolation> validate( Object object, boolean persisted );
+    List<ErrorReport> validate( Object object, boolean persisted );
 
     /**
      * Validate object against its schema, the object is required to be non-null and have a schema associated with it.
@@ -52,5 +54,5 @@ public interface SchemaValidator
      * @param object Object to validate
      * @return WebMessage containing validation response
      */
-    List<ValidationViolation> validate( Object object );
+    List<ErrorReport> validate( Object object );
 }

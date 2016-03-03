@@ -28,14 +28,14 @@ package org.hisp.dhis.webapi.utils;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.dxf2.common.Status;
 import org.hisp.dhis.dxf2.importsummary.ImportStatus;
 import org.hisp.dhis.dxf2.importsummary.ImportSummaries;
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
 import org.hisp.dhis.dxf2.metadata.ImportTypeSummary;
-import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.dxf2.webmessage.WebMessage;
-import org.hisp.dhis.dxf2.common.Status;
-import org.hisp.dhis.dxf2.webmessage.responses.ValidationViolationsWebMessageResponse;
+import org.hisp.dhis.dxf2.webmessage.responses.ErrorReportsWebMessageResponse;
+import org.hisp.dhis.feedback.ErrorReport;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
@@ -246,12 +246,12 @@ public final class WebMessageUtils
         return webMessage;
     }
 
-    public static WebMessage validationViolations( List<ValidationViolation> validationViolations )
+    public static WebMessage errorReports( List<ErrorReport> errorReports )
     {
         WebMessage webMessage = new WebMessage();
-        webMessage.setResponse( new ValidationViolationsWebMessageResponse( validationViolations ) );
+        webMessage.setResponse( new ErrorReportsWebMessageResponse( errorReports ) );
 
-        if ( !validationViolations.isEmpty() )
+        if ( !errorReports.isEmpty() )
         {
             webMessage.setStatus( Status.ERROR );
             webMessage.setHttpStatus( HttpStatus.BAD_REQUEST );

@@ -61,6 +61,8 @@ import org.hisp.dhis.eventchart.EventChart;
 import org.hisp.dhis.eventreport.EventReport;
 import org.hisp.dhis.expression.Expression;
 import org.hisp.dhis.expression.ExpressionService;
+import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
@@ -70,7 +72,6 @@ import org.hisp.dhis.program.ProgramValidation;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
-import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.security.acl.AclService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.trackedentity.TrackedEntity;
@@ -283,12 +284,12 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
             return false;
         }
 
-        List<ValidationViolation> validationViolations = schemaValidator.validate( object );
+        List<ErrorReport> errorReports = schemaValidator.validate( object );
 
-        if ( !validationViolations.isEmpty() )
+        if ( !errorReports.isEmpty() )
         {
             summaryType.getImportConflicts().add(
-                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + validationViolations ) );
+                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + errorReports ) );
 
             return false;
         }
@@ -302,12 +303,12 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
         }
 
         NonIdentifiableObjects nonIdentifiableObjects = new NonIdentifiableObjects( user );
-        validationViolations = nonIdentifiableObjects.validate( object, object );
+        errorReports = nonIdentifiableObjects.validate( object, object );
 
-        if ( !validationViolations.isEmpty() )
+        if ( !errorReports.isEmpty() )
         {
             summaryType.getImportConflicts().add(
-                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + validationViolations ) );
+                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + errorReports ) );
 
             return false;
         }
@@ -408,23 +409,23 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
             return true;
         }
 
-        List<ValidationViolation> validationViolations = schemaValidator.validate( object );
+        List<ErrorReport> errorReports = schemaValidator.validate( object );
 
-        if ( !validationViolations.isEmpty() )
+        if ( !errorReports.isEmpty() )
         {
             summaryType.getImportConflicts().add(
-                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + validationViolations ) );
+                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + errorReports ) );
 
             return false;
         }
 
         NonIdentifiableObjects nonIdentifiableObjects = new NonIdentifiableObjects( user );
-        validationViolations = nonIdentifiableObjects.validate( persistedObject, object );
+        errorReports = nonIdentifiableObjects.validate( persistedObject, object );
 
-        if ( !validationViolations.isEmpty() )
+        if ( !errorReports.isEmpty() )
         {
             summaryType.getImportConflicts().add(
-                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + validationViolations ) );
+                new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Validation Violations: " + errorReports ) );
 
             return false;
         }
@@ -966,10 +967,10 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
             this.user = user;
         }
 
-        public List<ValidationViolation> validate( T persistedObject, T object )
+        public List<ErrorReport> validate( T persistedObject, T object )
         {
             schema = schemaService.getDynamicSchema( object.getClass() );
-            List<ValidationViolation> validationViolations = new ArrayList<>();
+            List<ErrorReport> errorReports = new ArrayList<>();
 
             if ( schema.havePersistedProperty( "attributeValues" ) )
             {
@@ -979,17 +980,17 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
 
                     if ( attribute == null )
                     {
-                        validationViolations.add( new ValidationViolation( attributeValue.getAttribute().getUid(),
-                            "Unknown reference to " + attributeValue.getAttribute() + " on object " + attributeValue ) );
+                        errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E5001, attributeValue.getAttribute().getUid(),
+                            object.getUid(), "attributeValues" ) );
                     }
 
                     attributeValue.setAttribute( attribute );
                 }
 
-                validationViolations.addAll( attributeService.validateAttributeValues( persistedObject, object.getAttributeValues() ) );
+                errorReports.addAll( attributeService.validateAttributeValues( persistedObject, object.getAttributeValues() ) );
             }
 
-            return validationViolations;
+            return errorReports;
         }
 
         public void extract( T object )

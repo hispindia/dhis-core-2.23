@@ -238,8 +238,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getValidationViolations().isEmpty() );
-        assertEquals( 2, validate.getValidationViolations().get( DataElement.class ).size() );
+        assertFalse( validate.getErrorReports().isEmpty() );
+        assertEquals( 2, validate.getErrorReports().get( DataElement.class ).size() );
     }
 
     @Test

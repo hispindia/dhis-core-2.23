@@ -28,10 +28,8 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.schema.validation.ValidationViolation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,8 +42,6 @@ import java.util.Map;
 public class ObjectBundleValidation
 {
     private Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> errorReports = new HashMap<>();
-
-    private Map<Class<? extends IdentifiableObject>, List<List<ValidationViolation>>> validationViolations = new HashMap<>();
 
     public ObjectBundleValidation()
     {
@@ -104,15 +100,5 @@ public class ObjectBundleValidation
         }
 
         return map.get( errorCode );
-    }
-
-    public void addValidationViolation( Class<? extends IdentifiableObject> klass, List<List<ValidationViolation>> validationViolations )
-    {
-        this.validationViolations.put( klass, validationViolations );
-    }
-
-    public Map<Class<? extends IdentifiableObject>, List<List<ValidationViolation>>> getValidationViolations()
-    {
-        return validationViolations;
     }
 }

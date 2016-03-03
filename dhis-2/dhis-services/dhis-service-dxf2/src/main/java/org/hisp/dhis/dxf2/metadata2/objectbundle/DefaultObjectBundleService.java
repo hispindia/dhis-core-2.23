@@ -38,6 +38,7 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -46,7 +47,6 @@ import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
-import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -193,19 +193,19 @@ public class DefaultObjectBundleService implements ObjectBundleService
             List<List<PreheatErrorReport>> referenceErrors = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
             referenceErrors.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
 
-            List<List<ValidationViolation>> validationViolations = new ArrayList<>();
+            List<List<ErrorReport>> validationErrorReports = new ArrayList<>();
 
             for ( IdentifiableObject object : bundle.getObjects().get( klass ) )
             {
-                List<ValidationViolation> validate = schemaValidator.validate( object );
+                List<ErrorReport> validate = schemaValidator.validate( object );
 
                 if ( !validate.isEmpty() )
                 {
-                    validationViolations.add( validate );
+                    validationErrorReports.add( validate );
                 }
             }
 
-            objectBundleValidation.addValidationViolation( klass, validationViolations );
+            validationErrorReports.forEach( objectBundleValidation::addErrorReports );
         }
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );

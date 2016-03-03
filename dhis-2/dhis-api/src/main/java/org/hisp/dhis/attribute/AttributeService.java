@@ -30,7 +30,7 @@ package org.hisp.dhis.attribute;
 
 import org.hisp.dhis.attribute.exception.NonUniqueAttributeValueException;
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.schema.validation.ValidationViolation;
+import org.hisp.dhis.feedback.ErrorReport;
 
 import java.util.List;
 import java.util.Set;
@@ -183,7 +183,7 @@ public interface AttributeService
      */
     int getAttributeValueCount();
 
-    <T extends IdentifiableObject> List<ValidationViolation> validateAttributeValues( T object, Set<AttributeValue> attributeValues );
+    <T extends IdentifiableObject> List<ErrorReport> validateAttributeValues( T object, Set<AttributeValue> attributeValues );
 
     <T extends IdentifiableObject> void updateAttributeValues( T object, List<String> jsonAttributeValues ) throws Exception;
 

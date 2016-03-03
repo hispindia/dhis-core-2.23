@@ -29,13 +29,29 @@ package org.hisp.dhis.feedback;
  */
 
 /**
+ * E4000 - E4999: Metadata Validation Errors
  * E5000 - E5999: Preheat Errors
- * E6000 - E6999: DXF2 Import Errors
+ * E6000 - E6999: Metadata Import Errors
  *
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 public enum ErrorCode
 {
+    /* Metadata Validation Errors */
+    E4000( "Missing required property \"{0}\"." ),
+    E4001( "Maximum length of property \"{0}\"is {1}, but given length was {2}." ),
+    E4002( "Allowed length range for property \"{0}\" is [{1},{2}], but given length was {3}." ),
+    E4003( "Property \"{0}\" requires a valid email address, was given \"{1}\"." ),
+    E4004( "Property \"{0}\" requires a valid URL, was given \"{1}\"." ),
+    E4005( "Property \"{0}\" requires a valid password, was given \"{1}\"." ),
+    E4006( "Property \"{0}\" requires a valid HEX color, was given \"{1}\"." ),
+    E4007( "Allowed size range for collection property \"{0}\" is [{1},{2}], but size given was {3}." ),
+    E4008( "Allowed range for numeric property \"{0}\" is [{1},{2}], but number given was {3}." ),
+    E4009( "Attribute \"{0}\" is unique, and value \"{1}\" already exist." ),
+    E4010( "Attribute \"{0}\" is not supported for type \"{1}\"." ),
+    E4011( "Attribute \"{0}\" is required, but not value was found." ),
+
+    /* Preheat Errors */
     E5000( "No matching object for given reference. Identifier was {0}, and object was {1}." ),
     E5001( "Invalid reference {0} on object {1} for association \"{2}\"." );
 

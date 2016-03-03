@@ -32,8 +32,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.schema.validation.ValidationViolation;
 import org.hisp.dhis.dxf2.webmessage.AbstractWebMessageResponse;
+import org.hisp.dhis.feedback.ErrorReport;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,26 +41,26 @@ import java.util.List;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class ValidationViolationsWebMessageResponse
+public class ErrorReportsWebMessageResponse
     extends AbstractWebMessageResponse
 {
-    private List<ValidationViolation> validationViolations = new ArrayList<>();
+    private List<ErrorReport> errorReports = new ArrayList<>();
 
-    public ValidationViolationsWebMessageResponse( List<ValidationViolation> validationViolations )
+    public ErrorReportsWebMessageResponse( List<ErrorReport> errorReports )
     {
-        this.validationViolations = validationViolations;
+        this.errorReports = errorReports;
     }
 
     @JsonProperty
-    @JacksonXmlElementWrapper( localName = "validationViolations", namespace = DxfNamespaces.DXF_2_0, useWrapping = false )
-    @JacksonXmlProperty( localName = "validationViolation", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ValidationViolation> getValidationViolations()
+    @JacksonXmlElementWrapper( localName = "errorReports", namespace = DxfNamespaces.DXF_2_0, useWrapping = false )
+    @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
+    public List<ErrorReport> getErrorReports()
     {
-        return validationViolations;
+        return errorReports;
     }
 
-    public void setValidationViolations( List<ValidationViolation> validationViolations )
+    public void setErrorReports( List<ErrorReport> errorReports )
     {
-        this.validationViolations = validationViolations;
+        this.errorReports = errorReports;
     }
 }
