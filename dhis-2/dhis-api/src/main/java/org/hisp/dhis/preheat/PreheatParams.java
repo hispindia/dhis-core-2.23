@@ -29,6 +29,7 @@ package org.hisp.dhis.preheat;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.user.User;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,8 @@ import java.util.Set;
  */
 public class PreheatParams
 {
+    private User user;
+
     private PreheatMode preheatMode = PreheatMode.ALL;
 
     private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
@@ -50,6 +53,16 @@ public class PreheatParams
 
     public PreheatParams()
     {
+    }
+
+    public User getUser()
+    {
+        return user;
+    }
+
+    public void setUser( User user )
+    {
+        this.user = user;
     }
 
     public PreheatMode getPreheatMode()

@@ -43,6 +43,7 @@ import org.hisp.dhis.schema.PropertyType;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
+import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.hisp.dhis.user.UserGroup;
@@ -74,13 +75,22 @@ public class DefaultPreheatService implements PreheatService
     @Autowired
     private IdentifiableObjectManager manager;
 
+    @Autowired
+    private CurrentUserService currentUserService;
+
     @Override
     @SuppressWarnings( "unchecked" )
     public Preheat preheat( PreheatParams params )
     {
         Preheat preheat = new Preheat();
+        preheat.setUser( params.getUser() );
         preheat.setDefaults( manager.getDefaults() );
         preheat.setUsernames( getUsernames() );
+
+        if ( preheat.getUser() == null )
+        {
+            preheat.setUser( currentUserService.getCurrentUser() );
+        }
 
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {
@@ -93,6 +103,7 @@ public class DefaultPreheatService implements PreheatService
             for ( Class<? extends IdentifiableObject> klass : params.getClasses() )
             {
                 Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                query.setUser( preheat.getUser() );
                 List<? extends IdentifiableObject> objects = queryService.query( query );
 
                 if ( PreheatIdentifier.UID == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier() )
@@ -120,6 +131,7 @@ public class DefaultPreheatService implements PreheatService
                     if ( !identifiers.isEmpty() )
                     {
                         Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                        query.setUser( preheat.getUser() );
                         query.add( Restrictions.in( "id", identifiers ) );
                         List<? extends IdentifiableObject> objects = queryService.query( query );
                         preheat.put( PreheatIdentifier.UID, objects );
@@ -136,6 +148,7 @@ public class DefaultPreheatService implements PreheatService
                     if ( !identifiers.isEmpty() )
                     {
                         Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                        query.setUser( preheat.getUser() );
                         query.add( Restrictions.in( "code", identifiers ) );
                         List<? extends IdentifiableObject> objects = queryService.query( query );
                         preheat.put( PreheatIdentifier.CODE, objects );

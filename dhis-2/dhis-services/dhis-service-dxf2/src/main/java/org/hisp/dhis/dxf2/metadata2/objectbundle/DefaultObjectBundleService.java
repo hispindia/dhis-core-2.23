@@ -99,6 +99,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         PreheatParams preheatParams = params.getPreheatParams();
+        preheatParams.setUser( params.getUser() );
 
         if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
         {
@@ -190,8 +191,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 }
             }
 
-            List<List<PreheatErrorReport>> referenceErrors = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            referenceErrors.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
+            List<List<PreheatErrorReport>> referencesErrorReports = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            referencesErrorReports.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
 
             if ( !bundle.getImportMode().isDelete() )
             {
@@ -200,11 +201,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 while ( iterator.hasNext() )
                 {
                     IdentifiableObject object = iterator.next();
-                    List<ErrorReport> objectValidation = schemaValidator.validate( object );
+                    List<ErrorReport> validationErrorReports = schemaValidator.validate( object );
 
-                    if ( !objectValidation.isEmpty() )
+                    if ( !validationErrorReports.isEmpty() )
                     {
-                        objectBundleValidation.addErrorReports( objectValidation );
+                        objectBundleValidation.addErrorReports( validationErrorReports );
                         iterator.remove();
                     }
                 }
