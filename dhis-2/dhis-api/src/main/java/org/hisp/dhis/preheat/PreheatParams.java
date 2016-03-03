@@ -28,6 +28,7 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.Objects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.user.User;
 
@@ -107,5 +108,18 @@ public class PreheatParams
     {
         this.references = references;
         return this;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper( this )
+            .add( "user", user )
+            .add( "preheatMode", preheatMode )
+            .add( "preheatIdentifier", preheatIdentifier )
+            .add( "classes", classes )
+            .add( "references", references )
+            .toString();
     }
 }

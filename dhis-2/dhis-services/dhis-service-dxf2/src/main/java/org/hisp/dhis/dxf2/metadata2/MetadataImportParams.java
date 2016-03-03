@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.Objects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
@@ -182,5 +183,19 @@ public class MetadataImportParams
         params.setMergeMode( mergeMode );
 
         return params;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return Objects.toStringHelper( this )
+            .add( "user", user )
+            .add( "objectBundleMode", objectBundleMode )
+            .add( "preheatIdentifier", preheatIdentifier )
+            .add( "preheatMode", preheatMode )
+            .add( "importMode", importMode )
+            .add( "mergeMode", mergeMode )
+            .toString();
     }
 }

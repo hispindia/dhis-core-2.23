@@ -75,7 +75,7 @@ public class DataEntryForm
 
     public DataEntryForm()
     {
-        this.setAutoFields();
+
     }
 
     public DataEntryForm( String name )

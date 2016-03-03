@@ -70,7 +70,7 @@ public class ProgramTrackedEntityAttribute
 
     public ProgramTrackedEntityAttribute()
     {
-        setAutoFields();
+
     }
 
     public ProgramTrackedEntityAttribute( Program program, TrackedEntityAttribute attribute )

@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.importexport.ImportStrategy;
@@ -174,5 +175,19 @@ public class ObjectBundleParams
         params.setPreheatMode( preheatMode );
 
         return params;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "user", user )
+            .add( "objectBundleMode", objectBundleMode )
+            .add( "preheatIdentifier", preheatIdentifier )
+            .add( "preheatMode", preheatMode )
+            .add( "importMode", importMode )
+            .add( "mergeMode", mergeMode )
+            .toString();
     }
 }
