@@ -77,7 +77,7 @@ public class Document
     @JsonProperty
     @JsonView( { DetailedView.class, ExportView.class } )
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    @Property( PropertyType.URL )
+    // @Property( PropertyType.URL )
     public String getUrl()
     {
         return url;
