@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
 
 /**
@@ -122,7 +122,7 @@ public class UserGroupAccess
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this )
+        return MoreObjects.toStringHelper( this )
             .add( "id", id )
             .add( "access", access )
             .toString();

@@ -1,5 +1,7 @@
 package org.hisp.dhis.preheat;
 
+import com.google.common.base.MoreObjects;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -28,7 +30,6 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.base.Objects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.user.User;
 
@@ -114,7 +115,7 @@ public class PreheatParams
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this )
+        return MoreObjects.toStringHelper( this )
             .add( "user", user )
             .add( "preheatMode", preheatMode )
             .add( "preheatIdentifier", preheatIdentifier )
