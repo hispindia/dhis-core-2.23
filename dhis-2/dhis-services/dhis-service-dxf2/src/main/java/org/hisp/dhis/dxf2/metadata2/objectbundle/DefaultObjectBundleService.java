@@ -298,6 +298,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleCreates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        log.info( "Creating " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+
         for ( IdentifiableObject object : objects )
         {
             if ( Preheat.isDefault( object ) ) continue;
@@ -321,18 +323,21 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        log.info( "Updating " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+
         for ( IdentifiableObject object : objects )
         {
             if ( Preheat.isDefault( object ) ) continue;
+
+            objectBundleHooks.forEach( hook -> hook.preUpdate( object, bundle ) );
+
+            preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
             IdentifiableObject persistedObject = bundle.getPreheat().get( bundle.getPreheatIdentifier(), object );
             persistedObject.mergeWith( object, bundle.getMergeMode() );
             persistedObject.mergeSharingWith( object );
 
-            objectBundleHooks.forEach( hook -> hook.preUpdate( persistedObject, bundle ) );
-
-            preheatService.connectReferences( persistedObject, bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            manager.update( persistedObject, bundle.getUser() );
+            sessionFactory.getCurrentSession().update( persistedObject );
 
             objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
 
@@ -346,6 +351,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleDeletes( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        log.info( "Deleting " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+
         List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );
 
         for ( IdentifiableObject object : persistedObjects )

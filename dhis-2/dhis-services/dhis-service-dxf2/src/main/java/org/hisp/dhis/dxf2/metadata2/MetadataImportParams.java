@@ -50,7 +50,7 @@ public class MetadataImportParams
 {
     private User user;
 
-    private ObjectBundleMode objectBundleMode = ObjectBundleMode.VALIDATE;
+    private ObjectBundleMode objectBundleMode = ObjectBundleMode.COMMIT;
 
     private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
 

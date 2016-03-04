@@ -69,10 +69,12 @@ public class DefaultMetadataImportService implements MetadataImportService
         }
 
         ObjectBundleParams bundleParams = params.toObjectBundleParams();
-        ObjectBundle objectBundle = objectBundleService.create( bundleParams );
+        ObjectBundle bundle = objectBundleService.create( bundleParams );
 
-        ObjectBundleValidation validation = objectBundleService.validate( objectBundle );
+        ObjectBundleValidation validation = objectBundleService.validate( bundle );
         report.setErrorReports( validation.getErrorReports() );
+
+        objectBundleService.commit( bundle );
 
         return report;
     }
@@ -81,7 +83,7 @@ public class DefaultMetadataImportService implements MetadataImportService
     public MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters )
     {
         MetadataImportParams params = new MetadataImportParams();
-        params.setObjectBundleMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "objectBundleMode", ObjectBundleMode.VALIDATE ) );
+        params.setObjectBundleMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "objectBundleMode", ObjectBundleMode.COMMIT ) );
         params.setPreheatMode( getEnumWithDefault( PreheatMode.class, parameters, "preheatMode", PreheatMode.REFERENCE ) );
         params.setPreheatIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
         params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.CREATE_AND_UPDATE ) );
