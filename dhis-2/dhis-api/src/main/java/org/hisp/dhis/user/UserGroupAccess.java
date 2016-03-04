@@ -119,7 +119,6 @@ public class UserGroupAccess
         this.userGroup = userGroup;
     }
 
-
     @Override
     public String toString()
     {

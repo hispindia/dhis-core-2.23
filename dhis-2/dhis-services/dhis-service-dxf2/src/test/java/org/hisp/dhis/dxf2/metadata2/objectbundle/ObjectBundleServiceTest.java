@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Sets;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.common.IdScheme;
@@ -629,15 +630,18 @@ public class ObjectBundleServiceTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setPreheatMode( PreheatMode.REFERENCE );
         params.setImportMode( ImportStrategy.UPDATE );
         params.setObjects( metadata );
+
+        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
+        UserGroup userGroup = manager.get( UserGroup.class, "ugabcdefghA" );
+        assertEquals( 4, dataElementMap.size() );
+        assertNotNull( userGroup );
 
         ObjectBundle bundle = objectBundleService.create( params );
         objectBundleService.validate( bundle );
         objectBundleService.commit( bundle );
-
-        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
-        assertEquals( 4, dataElementMap.size() );
 
         DataElement dataElementA = dataElementMap.get( "deabcdefghA" );
         DataElement dataElementB = dataElementMap.get( "deabcdefghB" );
@@ -668,6 +672,11 @@ public class ObjectBundleServiceTest
         assertEquals( "DEDB", dataElementB.getDescription() );
         assertEquals( "DEDC", dataElementC.getDescription() );
         assertEquals( "DEDD", dataElementD.getDescription() );
+
+        assertEquals( 1, dataElementA.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
+        assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
     }
 
     @Test
@@ -684,12 +693,14 @@ public class ObjectBundleServiceTest
         params.setImportMode( ImportStrategy.UPDATE );
         params.setObjects( metadata );
 
+        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
+        UserGroup userGroup = manager.get( UserGroup.class, "ugabcdefghA" );
+        assertEquals( 4, dataElementMap.size() );
+        assertNotNull( userGroup );
+
         ObjectBundle bundle = objectBundleService.create( params );
         objectBundleService.validate( bundle );
         objectBundleService.commit( bundle );
-
-        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
-        assertEquals( 4, dataElementMap.size() );
 
         DataElement dataElementA = dataElementMap.get( "deabcdefghA" );
         DataElement dataElementB = dataElementMap.get( "deabcdefghB" );
@@ -720,6 +731,11 @@ public class ObjectBundleServiceTest
         assertEquals( "DEDB", dataElementB.getDescription() );
         assertEquals( "DEDC", dataElementC.getDescription() );
         assertEquals( "DEDD", dataElementD.getDescription() );
+
+        assertEquals( 1, dataElementA.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
+        assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
     }
 
     private void defaultSetup()
@@ -736,5 +752,8 @@ public class ObjectBundleServiceTest
 
         User user = createUser( 'A' );
         manager.save( user );
+
+        UserGroup userGroup = createUserGroup( 'A', Sets.newHashSet( user ) );
+        manager.save( userGroup );
     }
 }

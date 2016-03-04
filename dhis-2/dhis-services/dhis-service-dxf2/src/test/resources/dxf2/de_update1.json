@@ -16,7 +16,15 @@
       "categoryCombo": {
         "id": "hmqVMxvDKUD"
       },
-      "userGroupAccesses": [],
+      "userGroupAccesses": [
+        {
+          "userGroup": {
+            "id": "ugabcdefghA",
+            "code": "UserGroupCodeA"
+          },
+          "access": "r-------"
+        }
+      ],
       "attributeValues": [],
       "aggregationLevels": []
     },
@@ -56,7 +64,15 @@
       "categoryCombo": {
         "id": "hmqVMxvDKUD"
       },
-      "userGroupAccesses": [],
+      "userGroupAccesses": [
+        {
+          "userGroup": {
+            "id": "ugabcdefghA",
+            "code": "UserGroupCodeA"
+          },
+          "access": "r-------"
+        }
+      ],
       "attributeValues": [],
       "aggregationLevels": []
     },

@@ -50,11 +50,19 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
         Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
-        handleAttributeValuesCreate( identifiableObject, objectBundle, schema );
-        handleUserGroupAccessesCreate( identifiableObject, objectBundle, schema );
+        handleAttributeValues( identifiableObject, objectBundle, schema );
+        handleUserGroupAccesses( identifiableObject, objectBundle, schema );
     }
 
-    public void handleAttributeValuesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
+    @Override
+    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
+        handleAttributeValues( identifiableObject, objectBundle, schema );
+        handleUserGroupAccesses( identifiableObject, objectBundle, schema );
+    }
+
+    public void handleAttributeValues( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "attributeValues" ) ) return;
         Session session = sessionFactory.getCurrentSession();
@@ -67,7 +75,7 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
         }
     }
 
-    public void handleUserGroupAccessesCreate( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
+    public void handleUserGroupAccesses( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "userGroupAccesses" ) ) return;
         Session session = sessionFactory.getCurrentSession();

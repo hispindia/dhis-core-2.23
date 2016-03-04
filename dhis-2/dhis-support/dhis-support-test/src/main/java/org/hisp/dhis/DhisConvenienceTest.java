@@ -151,6 +151,8 @@ public abstract class DhisConvenienceTest
 
     protected static final String BASE_USER_UID = "userabcdef";
 
+    protected static final String BASE_USER_GROUP_UID = "ugabcdefgh";
+
     private static final String EXT_TEST_DIR = System.getProperty( "user.home" ) + File.separator + "dhis2_test_dir";
 
     private static Date date;
@@ -1125,6 +1127,8 @@ public abstract class DhisConvenienceTest
         UserGroup userGroup = new UserGroup();
         userGroup.setAutoFields();
 
+        userGroup.setUid( BASE_USER_GROUP_UID + uniqueCharacter );
+        userGroup.setCode( "UserGroupCode" + uniqueCharacter );
         userGroup.setName( "UserGroup" + uniqueCharacter );
         userGroup.setMembers( users );
 
