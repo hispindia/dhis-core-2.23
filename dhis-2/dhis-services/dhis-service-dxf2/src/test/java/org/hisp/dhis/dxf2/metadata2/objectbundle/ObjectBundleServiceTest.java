@@ -620,7 +620,7 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    public void testUpdateDataElements() throws IOException
+    public void testUpdateDataElementsUID() throws IOException
     {
         defaultSetup();
 
@@ -653,6 +653,73 @@ public class ObjectBundleServiceTest
         assertEquals( "DEB", dataElementB.getName() );
         assertEquals( "DEC", dataElementC.getName() );
         assertEquals( "DED", dataElementD.getName() );
+
+        assertEquals( "DECA", dataElementA.getCode() );
+        assertEquals( "DECB", dataElementB.getCode() );
+        assertEquals( "DECC", dataElementC.getCode() );
+        assertEquals( "DECD", dataElementD.getCode() );
+
+        assertEquals( "DESA", dataElementA.getShortName() );
+        assertEquals( "DESB", dataElementB.getShortName() );
+        assertEquals( "DESC", dataElementC.getShortName() );
+        assertEquals( "DESD", dataElementD.getShortName() );
+
+        assertEquals( "DEDA", dataElementA.getDescription() );
+        assertEquals( "DEDB", dataElementB.getDescription() );
+        assertEquals( "DEDC", dataElementC.getDescription() );
+        assertEquals( "DEDD", dataElementD.getDescription() );
+    }
+
+    @Test
+    public void testUpdateDataElementsCODE() throws IOException
+    {
+        defaultSetup();
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_update2.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setPreheatIdentifier( PreheatIdentifier.CODE );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
+        assertEquals( 4, dataElementMap.size() );
+
+        DataElement dataElementA = dataElementMap.get( "deabcdefghA" );
+        DataElement dataElementB = dataElementMap.get( "deabcdefghB" );
+        DataElement dataElementC = dataElementMap.get( "deabcdefghC" );
+        DataElement dataElementD = dataElementMap.get( "deabcdefghD" );
+
+        assertNotNull( dataElementA );
+        assertNotNull( dataElementB );
+        assertNotNull( dataElementC );
+        assertNotNull( dataElementD );
+
+        assertEquals( "DEA", dataElementA.getName() );
+        assertEquals( "DEB", dataElementB.getName() );
+        assertEquals( "DEC", dataElementC.getName() );
+        assertEquals( "DED", dataElementD.getName() );
+
+        assertEquals( "DataElementCodeA", dataElementA.getCode() );
+        assertEquals( "DataElementCodeB", dataElementB.getCode() );
+        assertEquals( "DataElementCodeC", dataElementC.getCode() );
+        assertEquals( "DataElementCodeD", dataElementD.getCode() );
+
+        assertEquals( "DESA", dataElementA.getShortName() );
+        assertEquals( "DESB", dataElementB.getShortName() );
+        assertEquals( "DESC", dataElementC.getShortName() );
+        assertEquals( "DESD", dataElementD.getShortName() );
+
+        assertEquals( "DEDA", dataElementA.getDescription() );
+        assertEquals( "DEDB", dataElementB.getDescription() );
+        assertEquals( "DEDC", dataElementC.getDescription() );
+        assertEquals( "DEDD", dataElementD.getDescription() );
     }
 
     private void defaultSetup()

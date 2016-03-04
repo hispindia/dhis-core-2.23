@@ -35,7 +35,6 @@ import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -314,7 +313,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Created object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                String msg = "Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
         }
@@ -328,6 +327,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             IdentifiableObject persistedObject = bundle.getPreheat().get( bundle.getPreheatIdentifier(), object );
             persistedObject.mergeWith( object, bundle.getMergeMode() );
+            persistedObject.mergeSharingWith( object );
 
             objectBundleHooks.forEach( hook -> hook.preUpdate( persistedObject, bundle ) );
 
@@ -338,7 +338,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Updated object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
                 log.debug( msg );
             }
         }
@@ -357,7 +357,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Deleted object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                String msg = "Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
         }
