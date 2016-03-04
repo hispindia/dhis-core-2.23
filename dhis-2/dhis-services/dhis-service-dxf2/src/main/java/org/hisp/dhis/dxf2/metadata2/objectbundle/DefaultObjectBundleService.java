@@ -322,7 +322,26 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        for ( IdentifiableObject object : objects )
+        {
+            if ( Preheat.isDefault( object ) ) continue;
 
+            IdentifiableObject persistedObject = bundle.getPreheat().get( bundle.getPreheatIdentifier(), object );
+            persistedObject.mergeWith( object, bundle.getMergeMode() );
+
+            objectBundleHooks.forEach( hook -> hook.preUpdate( persistedObject, bundle ) );
+
+            preheatService.connectReferences( persistedObject, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            manager.update( persistedObject, bundle.getUser() );
+
+            objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
+
+            if ( log.isDebugEnabled() )
+            {
+                String msg = "Updated object '" + IdentifiableObjectUtils.getDisplayName( object ) + "'";
+                log.debug( msg );
+            }
+        }
     }
 
     private void handleDeletes( List<IdentifiableObject> objects, ObjectBundle bundle )
