@@ -35,20 +35,6 @@ public class SystemUtils
 {
     private static final int FACTOR_MB = 1024 * 1024;
 
-    public static boolean isRunningForUse()
-    {
-        try
-        {
-            Class.forName( "org.hisp.dhis.DhisSpringTest" );
-        }
-        catch ( ClassNotFoundException e )
-        {
-            return true;
-        }
-
-        return false;
-    }
-
     /**
      * Gets the number of CPU cores available to this JVM.
      * @return the number of available CPU cores.
