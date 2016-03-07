@@ -37,10 +37,11 @@ import org.hisp.dhis.system.util.AnnotationUtils;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.translation.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.StringUtils;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,7 +51,8 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class DefaultSchemaService implements SchemaService
+public class DefaultSchemaService 
+    implements ApplicationListener<ContextRefreshedEvent>, SchemaService
 {
     private Map<Class<?>, Schema> classSchemaMap = new HashMap<>();
 
@@ -72,8 +74,7 @@ public class DefaultSchemaService implements SchemaService
     @Autowired
     private TranslationService translationService;
 
-    @PostConstruct
-    public void init()
+    public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
     {
         for ( SchemaDescriptor descriptor : descriptors )
         {
@@ -99,7 +100,7 @@ public class DefaultSchemaService implements SchemaService
             updateSelf( schema );
         }
     }
-
+    
     @Override
     public Schema getSchema( Class<?> klass )
     {
