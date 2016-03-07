@@ -34,6 +34,7 @@ import com.google.common.collect.Lists;
 import org.apache.commons.lang3.StringUtils;
 import org.hisp.dhis.i18n.I18n;
 import org.hisp.dhis.i18n.I18nManager;
+import org.hisp.dhis.system.util.SystemUtils;
 import org.hisp.dhis.system.util.ValidationUtils;
 import org.jasypt.encryption.pbe.PBEStringEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +56,12 @@ public class DefaultSystemSettingManager
     implements SystemSettingManager
 {
     /**
-     * Cache for system settings. Does not accept nulls.
+     * Cache for system settings. Does not accept nulls. Disabled during test phase.
      */
     private static final Cache<String, Optional<Serializable>> SETTING_CACHE = CacheBuilder.newBuilder()
         .expireAfterAccess( 1, TimeUnit.HOURS )
         .initialCapacity( 200 )
-        .maximumSize( 400 )
+        .maximumSize( SystemUtils.isTestRun() ? 0 : 400 )
         .build();
 
     private static final Map<String, SettingKey> NAME_KEY_MAP = Lists.newArrayList(
@@ -69,7 +70,7 @@ public class DefaultSystemSettingManager
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
-
+    
     private SystemSettingStore systemSettingStore;
 
     public void setSystemSettingStore( SystemSettingStore systemSettingStore )
@@ -184,7 +185,7 @@ public class DefaultSystemSettingManager
     }
 
     private Optional<Serializable> getSystemSettingOptional( String name, Serializable defaultValue )
-    {
+    {        
         SystemSetting setting = systemSettingStore.getByName( name );
 
         if ( setting != null && setting.hasValue() )

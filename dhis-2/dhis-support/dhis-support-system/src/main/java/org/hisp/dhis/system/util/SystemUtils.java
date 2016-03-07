@@ -24,7 +24,8 @@ package org.hisp.dhis.system.util;
  * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
  * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) AR
+ * ISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
@@ -35,6 +36,15 @@ public class SystemUtils
 {
     private static final int FACTOR_MB = 1024 * 1024;
 
+    /**
+     * Indicates whether the current thread is running for testing.
+     * @return true if test run.
+     */
+    public static boolean isTestRun()
+    {
+        return "true".equals( System.getProperty( "org.hisp.dhis.test", "false" ) );
+    }
+    
     /**
      * Gets the number of CPU cores available to this JVM.
      * @return the number of available CPU cores.
@@ -52,7 +62,6 @@ public class SystemUtils
     {
         return "Mem Total in JVM: " + ( Runtime.getRuntime().totalMemory() / FACTOR_MB ) + 
             " Free in JVM: " + ( Runtime.getRuntime().freeMemory() / FACTOR_MB ) +
-            " Max Limit: " + ( Runtime.getRuntime().maxMemory() / FACTOR_MB );
-            
+            " Max Limit: " + ( Runtime.getRuntime().maxMemory() / FACTOR_MB );     
     }
 }
