@@ -113,7 +113,7 @@ public class SmsController
 
         if ( async )
         {
-            smsSender.sendAyncMessages( sms );
+            smsSender.sendAyncMessage( sms );
 
             webMessageService.send( WebMessageUtils.ok( "Message Sent asynchronously" ), response, request );
 

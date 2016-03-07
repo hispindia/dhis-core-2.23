@@ -46,5 +46,5 @@ public interface SmsSender
 
     String sendMessage( String subject, String text, User sender, List<User> users, boolean forceSend );
     
-    boolean sendAyncMessages( OutboundSms sms );
+    boolean sendAyncMessage( OutboundSms sms );
 }

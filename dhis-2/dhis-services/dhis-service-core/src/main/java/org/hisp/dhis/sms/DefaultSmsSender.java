@@ -205,7 +205,7 @@ public class DefaultSmsSender
 
     @Transactional
     @Override
-    public boolean sendAyncMessages( OutboundSms sms )
+    public boolean sendAyncMessage( OutboundSms sms )
         throws SmsServiceException
     {
         if ( transportService == null || !transportService.isEnabled() )
