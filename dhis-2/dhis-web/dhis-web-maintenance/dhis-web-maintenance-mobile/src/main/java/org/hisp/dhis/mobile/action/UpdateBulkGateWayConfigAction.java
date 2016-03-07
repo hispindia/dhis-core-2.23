@@ -1,5 +1,7 @@
 package org.hisp.dhis.mobile.action;
 
+import org.hisp.dhis.common.CodeGenerator;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -124,6 +126,7 @@ public class UpdateBulkGateWayConfigAction
                 bulkGatewayConfig.setPassword( password );
                 bulkGatewayConfig.setUsername( username );
                 bulkGatewayConfig.setRegion( region );
+                bulkGatewayConfig.setUid( CodeGenerator.generateCode( 10 ) );
 
                 if ( smsConfig.getGateways() == null || smsConfig.getGateways().isEmpty() )
                 {

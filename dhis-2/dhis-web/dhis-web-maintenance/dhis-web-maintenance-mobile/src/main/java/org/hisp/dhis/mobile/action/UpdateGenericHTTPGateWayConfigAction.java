@@ -31,6 +31,7 @@ package org.hisp.dhis.mobile.action;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.sms.config.GenericHttpGatewayConfig;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
@@ -126,6 +127,7 @@ public class UpdateGenericHTTPGateWayConfigAction
                 gatewayConfig.setParameters( map );
                 gatewayConfig.setName( name );
                 gatewayConfig.setUrlTemplate( urlTemplate );
+                gatewayConfig.setUid( CodeGenerator.generateCode( 10 ) );
 
                 if ( config.getGateways() == null || config.getGateways().isEmpty() )
                 {
