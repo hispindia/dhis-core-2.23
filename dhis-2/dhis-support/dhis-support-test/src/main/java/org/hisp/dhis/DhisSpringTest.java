@@ -32,8 +32,8 @@ import java.lang.reflect.Method;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,19 +46,14 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration( locations = { "classpath*:/META-INF/dhis/beans.xml", "classpath*:/META-INF/dhis/security.xml" } )
 @Transactional
 public abstract class DhisSpringTest
-    extends DhisConvenienceTest implements ApplicationContextAware
+    extends DhisConvenienceTest
 {
     // -------------------------------------------------------------------------
     // ApplicationContextAware implementation
     // -------------------------------------------------------------------------
 
+    @Autowired
     protected ApplicationContext context;
-
-    @Override
-    public void setApplicationContext( ApplicationContext context )
-    {
-        this.context = context;
-    }
     
     // -------------------------------------------------------------------------
     // Fixture
@@ -104,7 +99,7 @@ public abstract class DhisSpringTest
     {
         String id = "org.hisp.dhis.system.startup.StartupRoutineExecutor";
 
-        if ( context.containsBean( id ) )
+        if ( context != null && context.containsBean( id ) )
         {
             Object object = context.getBean( id );
 
