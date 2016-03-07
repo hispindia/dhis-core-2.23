@@ -37,6 +37,7 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.common.IdentifiableProperty;
 import org.hisp.dhis.i18n.I18nService;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -372,6 +373,26 @@ public class DefaultDataElementCategoryService
     public int getDataElementCategoryOptionCountByName( String name )
     {
         return categoryOptionStore.getCountLikeName( name );
+    }
+
+    @Override
+    public Set<DataElementCategoryOption> getCoDimensionConstraints( UserCredentials userCredentials )
+    {
+        Set<DataElementCategoryOption> options = null;
+
+        Set<DataElementCategory> catConstraints = userCredentials.getCatDimensionConstraints();
+
+        if ( catConstraints != null && !catConstraints.isEmpty() )
+        {
+            options = new HashSet<>();
+
+            for ( DataElementCategory category : catConstraints )
+            {
+                options.addAll( getDataElementCategoryOptions( category ) );
+            }
+        }
+
+        return options;
     }
 
     // -------------------------------------------------------------------------
@@ -921,6 +942,26 @@ public class DefaultDataElementCategoryService
         return categoryOptionGroupStore.getCountLikeName( name );
     }
 
+    @Override
+    public Set<CategoryOptionGroup> getCogDimensionConstraints( UserCredentials userCredentials )
+    {
+        Set<CategoryOptionGroup> groups = null;
+
+        Set<CategoryOptionGroupSet> cogsConstraints = userCredentials.getCogsDimensionConstraints();
+
+        if ( cogsConstraints != null && !cogsConstraints.isEmpty() )
+        {
+            groups = new HashSet<>();
+
+            for ( CategoryOptionGroupSet cogs : cogsConstraints )
+            {
+                groups.addAll( getCategoryOptionGroups( cogs ) );
+            }
+        }
+
+        return groups;
+    }
+
     // -------------------------------------------------------------------------
     // CategoryOptionGroupSet
     // -------------------------------------------------------------------------
@@ -1007,5 +1048,5 @@ public class DefaultDataElementCategoryService
     public int getCategoryOptionGroupSetCountByName( String name )
     {
         return categoryOptionGroupSetStore.getCountLikeName( name );
-    }
+    }    
 }

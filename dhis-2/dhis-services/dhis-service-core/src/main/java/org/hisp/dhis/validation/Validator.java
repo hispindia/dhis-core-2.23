@@ -44,7 +44,6 @@ import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.system.util.SystemUtils;
 import org.hisp.dhis.user.CurrentUserService;
-import org.hisp.dhis.user.UserService;
 
 /**
  * Evaluates validation rules.
@@ -79,12 +78,12 @@ public class Validator
         Collection<Period> periods, Collection<ValidationRule> rules, DataElementCategoryOptionCombo attributeCombo,
         Date lastScheduledRun, ConstantService constantService, ExpressionService expressionService,
         PeriodService periodService, DataValueService dataValueService,
-        DataElementCategoryService dataElementCategoryService, UserService userService,
+        DataElementCategoryService dataElementCategoryService,
         CurrentUserService currentUserService )
     {
         ValidationRunContext context = ValidationRunContext.getNewContext( sources, periods, attributeCombo, rules,
             constantService.getConstantMap(), ValidationRunType.SCHEDULED, lastScheduledRun, expressionService,
-            periodService, dataValueService, dataElementCategoryService, userService, currentUserService );
+            periodService, dataValueService, dataElementCategoryService, currentUserService );
 
         int threadPoolSize = getThreadPoolSize( context );
         ExecutorService executor = Executors.newFixedThreadPool( threadPoolSize );

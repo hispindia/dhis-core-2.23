@@ -46,7 +46,6 @@ import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.UserCredentials;
-import org.hisp.dhis.user.UserService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -136,7 +135,6 @@ public class ValidationRunContext
      * @param periodService              period service
      * @param dataValueService           data value service
      * @param dataElementCategoryService data element category service
-     * @param userService                user service
      * @param currentUserService         current user service
      * @return context object for this run
      */
@@ -145,7 +143,7 @@ public class ValidationRunContext
         Map<String, Double> constantMap, ValidationRunType runType, Date lastScheduledRun,
         ExpressionService expressionService, PeriodService periodService,
         DataValueService dataValueService, DataElementCategoryService dataElementCategoryService,
-        UserService userService, CurrentUserService currentUserService )
+        CurrentUserService currentUserService )
     {
         UserCredentials currentUserCredentials = currentUserService.getCurrentUser().getUserCredentials();
 
@@ -162,8 +160,8 @@ public class ValidationRunContext
         context.dataValueService = dataValueService;
         context.dataElementCategoryService = dataElementCategoryService;
         context.attributeCombo = attributeCombo;
-        context.cogDimensionConstraints = userService.getCogDimensionConstraints( currentUserCredentials );
-        context.coDimensionConstraints = userService.getCoDimensionConstraints( currentUserCredentials );
+        context.cogDimensionConstraints = dataElementCategoryService.getCogDimensionConstraints( currentUserCredentials );
+        context.coDimensionConstraints = dataElementCategoryService.getCoDimensionConstraints( currentUserCredentials );
         context.initialize( sources, periods, rules );
 
         return context;

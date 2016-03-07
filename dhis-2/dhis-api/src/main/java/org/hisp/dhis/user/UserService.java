@@ -31,10 +31,6 @@ package org.hisp.dhis.user;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-
-import org.hisp.dhis.dataelement.CategoryOptionGroup;
-import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataset.DataSet;
 
 /**
@@ -106,24 +102,6 @@ public interface UserService
     void deleteUser( User user );
 
     List<User> getUsersByUid( List<String> uids );
-
-    /**
-     * Returns a set of CategoryOptionGroups that may be seen by the current
-     * user, if the current user has any CategoryOptionGroupSet constraint(s).
-     *
-     * @param userCredentials User credentials to check restrictions for.
-     * @return Set of CategoryOptionGroups if constrained, else null.
-     */
-    Set<CategoryOptionGroup> getCogDimensionConstraints( UserCredentials userCredentials );
-
-    /**
-     * Returns a set of CategoryOptions that may be seen by the current
-     * user, if the current user has any Category constraint(s).
-     *
-     * @param userCredentials User credentials to check restrictions for.
-     * @return Set of CategoryOptions if constrained, else null.
-     */
-    Set<DataElementCategoryOption> getCoDimensionConstraints( UserCredentials userCredentials );
 
     boolean isLastSuperUser( UserCredentials userCredentials );
 

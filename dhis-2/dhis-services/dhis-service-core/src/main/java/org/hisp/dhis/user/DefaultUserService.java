@@ -31,20 +31,13 @@ package org.hisp.dhis.user;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.AuditLogUtil;
 import org.hisp.dhis.commons.filter.FilterUtils;
-import org.hisp.dhis.dataelement.CategoryOptionGroup;
-import org.hisp.dhis.dataelement.CategoryOptionGroupSet;
-import org.hisp.dhis.dataelement.DataElementCategory;
-import org.hisp.dhis.dataelement.DataElementCategoryOption;
-import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.security.PasswordManager;
@@ -102,13 +95,6 @@ public class DefaultUserService
     public void setCurrentUserService( CurrentUserService currentUserService )
     {
         this.currentUserService = currentUserService;
-    }
-
-    private DataElementCategoryService categoryService;
-
-    public void setCategoryService( DataElementCategoryService categoryService )
-    {
-        this.categoryService = categoryService;
     }
 
     private SystemSettingManager systemSettingManager;
@@ -294,46 +280,6 @@ public class DefaultUserService
         UserQueryParams params = new UserQueryParams();
         params.setPhoneNumber( phoneNumber );
         return getUsers( params );
-    }
-
-    @Override
-    public Set<CategoryOptionGroup> getCogDimensionConstraints( UserCredentials userCredentials )
-    {
-        Set<CategoryOptionGroup> groups = null;
-
-        Set<CategoryOptionGroupSet> cogsConstraints = userCredentials.getCogsDimensionConstraints();
-
-        if ( cogsConstraints != null && !cogsConstraints.isEmpty() )
-        {
-            groups = new HashSet<>();
-
-            for ( CategoryOptionGroupSet cogs : cogsConstraints )
-            {
-                groups.addAll( categoryService.getCategoryOptionGroups( cogs ) );
-            }
-        }
-
-        return groups;
-    }
-
-    @Override
-    public Set<DataElementCategoryOption> getCoDimensionConstraints( UserCredentials userCredentials )
-    {
-        Set<DataElementCategoryOption> options = null;
-
-        Set<DataElementCategory> catConstraints = userCredentials.getCatDimensionConstraints();
-
-        if ( catConstraints != null && !catConstraints.isEmpty() )
-        {
-            options = new HashSet<>();
-
-            for ( DataElementCategory category : catConstraints )
-            {
-                options.addAll( categoryService.getDataElementCategoryOptions( category ) );
-            }
-        }
-
-        return options;
     }
 
     @Override

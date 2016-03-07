@@ -50,7 +50,6 @@ import org.hisp.dhis.security.SecurityService;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
-import org.hisp.dhis.user.UserService;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
@@ -96,13 +95,6 @@ public class DefaultDataApprovalLevelService
     public void setCurrentUserService( CurrentUserService currentUserService )
     {
         this.currentUserService = currentUserService;
-    }
-
-    private UserService userService;
-
-    public void setUserService( UserService userService )
-    {
-        this.userService = userService;
     }
 
     private SecurityService securityService;
@@ -269,8 +261,8 @@ public class DefaultDataApprovalLevelService
 
         int lowestNumberOrgUnitLevel = getCurrentUsersLowestNumberOrgUnitLevel();
 
-        boolean canSeeAllDimensions = CollectionUtils.isEmpty( userService.getCoDimensionConstraints( userCredentials ) )
-            && CollectionUtils.isEmpty( userService.getCogDimensionConstraints( userCredentials ) );
+        boolean canSeeAllDimensions = CollectionUtils.isEmpty( categoryService.getCoDimensionConstraints( userCredentials ) )
+            && CollectionUtils.isEmpty( categoryService.getCogDimensionConstraints( userCredentials ) );
 
         List<DataApprovalLevel> approvalLevels = getAllDataApprovalLevels();
         List<DataApprovalLevel> userDataApprovalLevels = new ArrayList<>();

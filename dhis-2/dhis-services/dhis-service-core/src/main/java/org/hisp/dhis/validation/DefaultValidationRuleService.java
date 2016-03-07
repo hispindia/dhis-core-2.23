@@ -56,7 +56,6 @@ import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserGroup;
-import org.hisp.dhis.user.UserService;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
@@ -159,13 +158,6 @@ public class DefaultValidationRuleService
         this.organisationUnitService = organisationUnitService;
     }
 
-    private UserService userService;
-
-    public void setUserService( UserService userService )
-    {
-        this.userService = userService;
-    }
-
     private CurrentUserService currentUserService;
 
     public void setCurrentUserService( CurrentUserService currentUserService )
@@ -194,7 +186,7 @@ public class DefaultValidationRuleService
         Collection<ValidationRule> rules = group != null ? group.getMembers() : getAllValidationRules();
 
         Collection<ValidationResult> results = Validator.validate( sources, periods, rules, attributeCombo, null,
-            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, userService, currentUserService );
+            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, currentUserService );
 
         formatPeriods( results, format );
 
@@ -219,7 +211,7 @@ public class DefaultValidationRuleService
         sources.add( source );
 
         return Validator.validate( sources, periods, rules, null, null,
-            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, userService, currentUserService );
+            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, currentUserService );
     }
 
     @Override
@@ -241,7 +233,7 @@ public class DefaultValidationRuleService
         sources.add( source );
 
         return Validator.validate( sources, periods, rules, attributeCombo, null,
-            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, userService, currentUserService );
+            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, currentUserService );
     }
 
     @Override
@@ -267,7 +259,7 @@ public class DefaultValidationRuleService
             + ", last run: " + (lastScheduledRun == null ? "[none]" : lastScheduledRun) );
 
         Collection<ValidationResult> results = Validator.validate( sources, periods, rules, null, lastScheduledRun,
-            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, userService, currentUserService );
+            constantService, expressionService, periodService, dataValueService, dataElementCategoryService, currentUserService );
 
         log.info( "Validation run result count: " + results.size() );
 
