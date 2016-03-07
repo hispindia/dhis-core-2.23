@@ -29,7 +29,6 @@ package org.hisp.dhis.sms.config;
  */
 
 import java.util.List;
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
@@ -39,6 +38,8 @@ import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 
 /**
  * Manages the {@link SmsConfiguration} for the DHIS instance.
@@ -47,7 +48,7 @@ import org.springframework.beans.factory.annotation.Autowired;
  * context, initializing them on startup and on any SMS configuration changes.
  */
 public class DefaultSmsConfigurationManager
-    implements SmsConfigurationManager
+    implements ApplicationListener<ContextRefreshedEvent>, SmsConfigurationManager
 {
     private static final Log log = LogFactory.getLog( DefaultSmsConfigurationManager.class );
 
@@ -57,19 +58,23 @@ public class DefaultSmsConfigurationManager
     @Autowired( required = false )
     private List<SmsConfigurable> smsConfigurables;
 
-    @PostConstruct
-    public String initializeSmsConfigurables()
+    public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
+    {
+        initializeSmsConfigurables();
+    }
+    
+    public void initializeSmsConfigurables()
     {
         if ( smsConfigurables == null )
         {
-            return null;
+            return;
         }
 
         SmsConfiguration smsConfiguration = getSmsConfiguration();
 
         if ( smsConfiguration == null )
         {
-            return null;
+            return;
         }
 
         String message = null;
@@ -84,19 +89,18 @@ public class DefaultSmsConfigurationManager
 
                 if ( message != null && !message.equals( "success" ) )
                 {
-                    return message;
+                    return;
                 }
             }
             catch ( Throwable t )
             {
                 log.warn( "Unable to initialize service " + smsConfigurable.getClass().getSimpleName()
                     + " with configuration " + smsConfiguration, t );
-                return "Unable to initialize service " + smsConfigurable.getClass().getSimpleName()
-                    + " with configuration " + smsConfiguration + t.getMessage();
+                return;
             }
         }
 
-        return message;
+        return;
     }
 
     @Override
