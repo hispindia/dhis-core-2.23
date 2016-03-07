@@ -30,6 +30,8 @@ package org.hisp.dhis.webapi.controller;
 
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.dxf2.metadata.ImportSummary;
+import org.hisp.dhis.i18n.I18n;
+import org.hisp.dhis.i18n.I18nManager;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.node.exception.InvalidTypeException;
 import org.hisp.dhis.node.types.CollectionNode;
@@ -55,6 +57,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.common.collect.Lists;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -89,10 +93,13 @@ public class SystemController
 
     @Autowired
     private RenderService renderService;
+    
+    @Autowired
+    private I18nManager i18nManager;
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // UID Generator
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @RequestMapping( value = { "/uid", "/id" }, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE } )
     public @ResponseBody RootNode getUid( @RequestParam( required = false, defaultValue = "1" ) Integer limit )
@@ -200,12 +207,34 @@ public class SystemController
     @RequestMapping( value = "/flags", method = RequestMethod.GET, produces = { "application/json" } )
     public @ResponseBody List<StyleObject> getFlags()
     {
-        return systemSettingManager.getFlagObjects();
+        return getFlagObjects();
     }
 
     @RequestMapping( value = "/styles", method = RequestMethod.GET, produces = { "application/json" } )
     public @ResponseBody List<StyleObject> getStyles()
     {
         return styleManager.getStyles();
+    }
+
+    // -------------------------------------------------------------------------
+    // Supportive methods
+    // -------------------------------------------------------------------------
+
+    private List<StyleObject> getFlagObjects()
+    {
+        List<String> flags = systemSettingManager.getFlags();
+        
+        I18n i18n = i18nManager.getI18n();
+
+        List<StyleObject> list = Lists.newArrayList();
+
+        for ( String flag : flags )
+        {
+            String file = flag + ".png";
+
+            list.add( new StyleObject( i18n.getString( flag ), flag, file ) );
+        }
+
+        return list;
     }
 }
