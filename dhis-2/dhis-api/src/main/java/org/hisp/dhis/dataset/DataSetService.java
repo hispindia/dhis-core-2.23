@@ -220,7 +220,13 @@ public interface DataSetService
     int getDataSetCount();
 
     List<DataSet> getDataSetsBetween( int first, int max );
-
+    
+    /**
+     * Returns the data sets associated with the current user. If the current
+     * user has the ALL authority then all data sets are returned.
+     */
+    List<DataSet> getCurrentUserDataSets();
+    
     // -------------------------------------------------------------------------
     // DataSet LockExceptions
     // -------------------------------------------------------------------------

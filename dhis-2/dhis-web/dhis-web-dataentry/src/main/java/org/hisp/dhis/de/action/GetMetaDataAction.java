@@ -50,6 +50,7 @@ import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dataset.DataSetService;
 import org.hisp.dhis.expression.ExpressionService;
 import org.hisp.dhis.indicator.Indicator;
 import org.hisp.dhis.indicator.IndicatorService;
@@ -106,6 +107,9 @@ public class GetMetaDataAction
     {
         this.currentUserService = currentUserService;
     }
+    
+    @Autowired
+    private DataSetService dataSetService;
 
     @Autowired
     private IdentifiableObjectManager identifiableObjectManager;
@@ -231,7 +235,7 @@ public class GetMetaDataAction
 
         expressionService.substituteExpressions( indicators, null );
 
-        dataSets = currentUserService.getCurrentUserDataSets();
+        dataSets = dataSetService.getCurrentUserDataSets();
         
         Set<DataElementCategoryCombo> categoryComboSet = new HashSet<>();
         Set<DataElementCategory> categorySet = new HashSet<>();

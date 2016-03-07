@@ -50,9 +50,11 @@ import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.User;
 import org.joda.time.DateTime;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 /**
@@ -289,6 +291,26 @@ public class DefaultDataSetService
         return getObjectsBetweenByName( i18nService, dataSetStore, name, first, max );
     }
 
+    @Override
+    public List<DataSet> getCurrentUserDataSets()
+    {
+        User user = currentUserService.getCurrentUser();
+        
+        if ( user == null )
+        {
+            return Lists.newArrayList();
+        }
+        
+        if ( user.isSuper() )
+        {
+            return getAllDataSets();
+        }
+        else
+        {
+            return i18n( i18nService, Lists.newArrayList( user.getUserCredentials().getAllDataSets() ) );
+        }
+    }
+    
     // -------------------------------------------------------------------------
     // DataSet LockExceptions
     // -------------------------------------------------------------------------
