@@ -58,6 +58,7 @@ public class DefaultSmsConfigurationManager
     @Autowired( required = false )
     private List<SmsConfigurable> smsConfigurables;
 
+    @Override
     public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
     {
         initializeSmsConfigurables();

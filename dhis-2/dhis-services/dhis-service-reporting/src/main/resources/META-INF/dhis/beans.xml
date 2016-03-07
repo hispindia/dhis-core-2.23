@@ -167,8 +167,7 @@
 
   <!-- Scheduling -->
 
-  <bean id="org.hisp.dhis.scheduling.SchedulingManager" class="org.hisp.dhis.scheduling.DefaultSchedulingManager"
-    init-method="scheduleTasks">
+  <bean id="org.hisp.dhis.scheduling.SchedulingManager" class="org.hisp.dhis.scheduling.DefaultSchedulingManager">
     <property name="systemSettingManager" ref="org.hisp.dhis.setting.SystemSettingManager" />
     <property name="scheduler" ref="scheduler" />
     <property name="tasks">

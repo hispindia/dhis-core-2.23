@@ -74,6 +74,7 @@ public class DefaultSchemaService
     @Autowired
     private TranslationService translationService;
 
+    @Override
     public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
     {
         for ( SchemaDescriptor descriptor : descriptors )

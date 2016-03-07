@@ -63,6 +63,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 /**
  * @author Halvdan Hoem Grelland
  */
@@ -111,6 +114,7 @@ public class JCloudsFileResourceContentStore
     // Life cycle management
     // -------------------------------------------------------------------------
 
+    @PostConstruct
     public void init()
     {
         String provider = configurationProvider.getProperty( ConfigurationKey.FILESTORE_PROVIDER );
@@ -183,6 +187,7 @@ public class JCloudsFileResourceContentStore
         }
     }
 
+    @PreDestroy
     public void cleanUp()
     {
         blobStoreContext.close();
@@ -361,7 +366,7 @@ public class JCloudsFileResourceContentStore
 
         if ( provider.equals( JCLOUDS_PROVIDER_KEY_FILESYSTEM ) && !locationManager.externalDirectorySet() )
         {
-            log.warn( "File system file store provider could not be configured; external directory is not set. " +
+            log.info( "File system file store provider could not be configured; external directory is not set. " +
                 "Falling back to in-memory provider." );
             provider = JCLOUDS_PROVIDER_KEY_TRANSIENT;
         }

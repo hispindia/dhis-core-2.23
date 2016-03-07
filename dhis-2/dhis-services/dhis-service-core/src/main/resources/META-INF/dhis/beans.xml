@@ -624,8 +624,7 @@
     <property name="sessionFactory" ref="sessionFactory" />
   </bean>
 
-  <bean id="org.hisp.dhis.fileresource.FileResourceContentStore" class="org.hisp.dhis.fileresource.JCloudsFileResourceContentStore"
-    init-method="init" destroy-method="cleanUp">
+  <bean id="org.hisp.dhis.fileresource.FileResourceContentStore" class="org.hisp.dhis.fileresource.JCloudsFileResourceContentStore">
     <property name="configurationProvider" ref="dhisConfigurationProvider" />
     <property name="locationManager" ref="locationManager" />
   </bean>
