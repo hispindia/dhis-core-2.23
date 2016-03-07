@@ -41,7 +41,6 @@ import org.hibernate.event.spi.PostUpdateEventListener;
 import org.hibernate.event.spi.PreCollectionUpdateEvent;
 import org.hibernate.event.spi.PreCollectionUpdateEventListener;
 import org.hibernate.internal.SessionFactoryImpl;
-import org.hibernate.persister.entity.EntityPersister;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -142,12 +141,6 @@ public class HibernateEventListenerWiring
         {
             updateIdentifiableObjects();
         }
-
-        @Override
-        public boolean requiresPostCommitHanding( EntityPersister arg0 )
-        {
-            return false;
-        }
     };
 
     private PostInsertEventListener postInsertEventListener = new PostInsertEventListener()
@@ -157,12 +150,6 @@ public class HibernateEventListenerWiring
         {
             updateIdentifiableObjects();
         }
-
-        @Override
-        public boolean requiresPostCommitHanding( EntityPersister arg0 )
-        {
-            return false;
-        }
     };
 
     private PostDeleteEventListener postDeleteEventListener = new PostDeleteEventListener()
@@ -171,12 +158,6 @@ public class HibernateEventListenerWiring
         public void onPostDelete( PostDeleteEvent event )
         {
             updateIdentifiableObjects();
-        }
-
-        @Override
-        public boolean requiresPostCommitHanding( EntityPersister arg0 )
-        {
-            return false;
         }
     };
 
