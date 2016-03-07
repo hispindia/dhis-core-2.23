@@ -105,20 +105,32 @@ public class SmsController
 
     @PreAuthorize( "hasRole('ALL') or hasRole(' F_MOBILE_SENDSMS')" )
     @RequestMapping( value = "/outbound", method = RequestMethod.POST, consumes = "application/json" )
-    public void sendSMSMessage( HttpServletResponse response, HttpServletRequest request )
-        throws WebMessageException, IOException
+    public void sendSMSMessage( @RequestParam( required = false ) boolean async, HttpServletResponse response,
+        HttpServletRequest request)
+            throws WebMessageException, IOException
     {
         OutboundSms sms = renderService.fromJson( request.getInputStream(), OutboundSms.class );
 
-        String result = smsSender.sendMessage( sms );
-        
-        if ( result.equals( "success" ) )
+        if ( async )
         {
-            webMessageService.send( WebMessageUtils.ok( "Message sent" ), response, request );
+            smsSender.sendAyncMessages( sms );
+
+            webMessageService.send( WebMessageUtils.ok( "Message Sent asynchronously" ), response, request );
+
         }
         else
         {
-            webMessageService.send( WebMessageUtils.error( "Message sending failed" ), response, request );
+            String result = smsSender.sendMessage( sms );
+
+            if ( result.equals( "success" ) )
+            {
+                webMessageService.send( WebMessageUtils.ok( "Message sent" ), response, request );
+            }
+            else
+            {
+                throw new WebMessageException( WebMessageUtils.error( "Message seding failed" ) );
+            }
+
         }
     }
 

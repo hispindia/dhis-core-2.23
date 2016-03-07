@@ -28,29 +28,55 @@ package org.hisp.dhis.sms.outbound;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.List;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.smslib.AGateway;
+import org.smslib.IOutboundMessageNotification;
 import org.smslib.OutboundMessage;
+import org.smslib.OutboundMessage.MessageStatuses;
+import org.springframework.beans.factory.annotation.Autowired;
 
-public interface OutboundSmsService
+public class DefaultOutboundNotification
+    implements IOutboundMessageNotification
 {
-    String ID = OutboundSmsService.class.getName();
 
-    List<OutboundSms> getAllOutboundSms();
+    private static final Log log = LogFactory.getLog( DefaultOutboundNotification.class );
 
-    List<OutboundSms> getAllOutboundSms( Integer min, Integer max );
+    // -------------------------------------------------------------------------
+    // Dependencies
+    // -------------------------------------------------------------------------
 
-    int saveOutboundSms( OutboundSms sms );
+    @Autowired
+    private OutboundSmsService outboundSmsService;
 
-    void updateOutboundSms( OutboundSms sms );
+    private OutboundSms outboundSms;
 
-    void deleteById( Integer outboundSmsId );
+    public void setOutboundSms( OutboundSms outboundSms )
+    {
+        this.outboundSms = outboundSms;
+    }
 
-    List<OutboundSms> getOutboundSms( OutboundSmsStatus status );
+    // -------------------------------------------------------------------------
+    // Implementation
+    // -------------------------------------------------------------------------
 
-    List<OutboundSms> getOutboundSms( OutboundSmsStatus status, Integer min, Integer max );
+    @Override
+    public void process( AGateway gateway, OutboundMessage msg )
+    {
+        log.info( "SENDING via " + gateway.getGatewayId() + " " );
 
-    OutboundSms getOutboundSms( int id );
-    
-    OutboundSms convertToOutboundSms (OutboundMessage sms);
+        outboundSms = outboundSmsService.convertToOutboundSms( msg );
+        outboundSmsService.saveOutboundSms( outboundSms );
+
+        if ( msg.getMessageStatus() == MessageStatuses.SENT )
+        {
+            log.info( "SENT To ::: " + msg.getRecipient() );
+        }
+        else
+        {
+            log.info( "FAILED To ::: " + msg.getRecipient() );
+        }
+
+    }
+
 }

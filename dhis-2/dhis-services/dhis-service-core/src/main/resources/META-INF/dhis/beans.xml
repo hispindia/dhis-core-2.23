@@ -1115,13 +1115,16 @@
   </bean>
 
   <bean id="org.smslib.IInboundMessageNotification" class="org.hisp.dhis.sms.incoming.SMPPInboundNotification" />
-
+  
+  <bean id="org.smslib.IOutboundMessageNotification" class="org.hisp.dhis.sms.outbound.DefaultOutboundNotification" />
+  
   <bean id="org.hisp.dhis.sms.outbound.OutboundSmsService" class="org.hisp.dhis.sms.outbound.DefaultOutboundSmsService">
     <property name="outboundSmsStore" ref="org.hisp.dhis.sms.hibernate.OutboundSmsStore" />
   </bean>
 
   <bean id="org.hisp.dhis.sms.outbound.OutboundSmsTransportService" class="org.hisp.dhis.sms.outbound.DefaultOutboundSmsTransportService">
-    <property name="smppInboundMessageNotification" ref="org.smslib.IInboundMessageNotification" />
+    <property name="smppInboundMessageNotification" ref="org.smslib.IInboundMessageNotification" />  
+    <property name="outboundMessageNotification" ref="org.smslib.IOutboundMessageNotification" />
     <property name="outboundSmsService" ref="org.hisp.dhis.sms.outbound.OutboundSmsService" />
     <property name="smsPublisher" ref="org.hisp.dhis.sms.SmsPublisher" />
   </bean>
