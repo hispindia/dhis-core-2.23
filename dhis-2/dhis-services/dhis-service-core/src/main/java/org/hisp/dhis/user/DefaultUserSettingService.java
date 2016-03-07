@@ -34,6 +34,7 @@ import com.google.common.collect.Sets;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
+import org.hisp.dhis.system.util.SystemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -59,7 +60,7 @@ public class DefaultUserSettingService
     private static Cache<String, Optional<Serializable>> SETTING_CACHE = CacheBuilder.newBuilder()
         .expireAfterAccess( 1, TimeUnit.HOURS )
         .initialCapacity( 200 )
-        .maximumSize( 10000 )
+        .maximumSize( SystemUtils.isTestRun() ? 0 : 10000 )
         .build();
 
     private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
