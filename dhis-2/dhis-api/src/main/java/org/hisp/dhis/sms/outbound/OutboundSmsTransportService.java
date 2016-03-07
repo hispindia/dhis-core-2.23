@@ -72,5 +72,5 @@ public interface OutboundSmsTransportService
     String sendMessage( OutboundSms sms, String gatewayId )
         throws SmsServiceException;
     
-    boolean sendAyncMessages(OutboundSms sms, String gatewayId);
+    boolean sendAyncMessage( OutboundSms sms, String gatewayId );
 }

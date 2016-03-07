@@ -497,9 +497,8 @@ public class DefaultOutboundSmsTransportService
     }
 
     @Override
-    public boolean sendAyncMessages( OutboundSms sms, String gatewayId )
+    public boolean sendAyncMessage( OutboundSms sms, String gatewayId )
     {
-
         String recipient = null;
 
         Set<String> recipients = sms.getRecipients();

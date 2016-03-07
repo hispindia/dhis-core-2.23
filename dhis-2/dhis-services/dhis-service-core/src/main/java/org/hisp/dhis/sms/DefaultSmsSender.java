@@ -213,7 +213,7 @@ public class DefaultSmsSender
             throw new SmsServiceNotEnabledException();
         }
 
-        return transportService.sendAyncMessages( sms, transportService.getDefaultGateway() );
+        return transportService.sendAyncMessage( sms, transportService.getDefaultGateway() );
     }
 
     // -------------------------------------------------------------------------
