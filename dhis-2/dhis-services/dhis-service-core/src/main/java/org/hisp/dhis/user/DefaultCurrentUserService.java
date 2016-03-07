@@ -33,6 +33,7 @@ import java.util.Set;
 
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.security.spring.AbstractSpringSecurityCurrentUserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -46,12 +47,8 @@ public class DefaultCurrentUserService
     // Dependencies
     // -------------------------------------------------------------------------
 
-    private UserService userService;
-
-    public void setUserService( UserService userService )
-    {
-        this.userService = userService;
-    }
+    @Autowired
+    private CurrentUserStore currentUserStore;
 
     // -------------------------------------------------------------------------
     // CurrentUserService implementation
@@ -67,7 +64,7 @@ public class DefaultCurrentUserService
             return null;
         }
 
-        UserCredentials userCredentials = userService.getUserCredentialsByUsername( username );
+        UserCredentials userCredentials = currentUserStore.getUserCredentialsByUsername( username );
 
         if ( userCredentials == null )
         {

@@ -276,6 +276,8 @@
     <property name="clazz" value="org.hisp.dhis.user.User" />
     <property name="cacheable" value="true" />
   </bean>
+  
+  <bean id="org.hisp.dhis.user.CurrentUserStore" class="org.hisp.dhis.user.hibernate.HibernateCurrentUserStore" />
 
   <bean id="org.hisp.dhis.user.UserSettingStore" class="org.hisp.dhis.user.hibernate.HibernateUserSettingStore">
     <property name="sessionFactory" ref="sessionFactory" />
@@ -826,9 +828,7 @@
     </property>
   </bean>
 
-  <bean id="org.hisp.dhis.user.CurrentUserService" class="org.hisp.dhis.user.DefaultCurrentUserService">
-    <property name="userService" ref="org.hisp.dhis.user.UserService" />
-  </bean>
+  <bean id="org.hisp.dhis.user.CurrentUserService" class="org.hisp.dhis.user.DefaultCurrentUserService" />
 
   <bean id="org.hisp.dhis.user.UserSettingService" class="org.hisp.dhis.user.DefaultUserSettingService">
     <property name="currentUserService" ref="org.hisp.dhis.user.CurrentUserService" />
