@@ -259,7 +259,9 @@ public class TableAlteror
         executeSql( "UPDATE trackedentityattribute SET valuetype='number' WHERE valuetype='age'" );        
 
         executeSql( "update trackedentityattribute set searchscope='NOT_SEARCHABLE' where confidential=true" );
-        executeSql( "update trackedentityattribute set searchscope='SEARCH_OUS' where searchscope is null" );
+        executeSql( "update trackedentityattribute set searchscope='SEARCH_ORG_UNITS' where searchscope is null" );
+        executeSql( "update trackedentityattribute set searchscope='SEARCH_ORG_UNITS' where searchscope='SEARCH_OUS'" );
+        executeSql( "update trackedentityattribute set searchscope='DATA_CAPTURE_ORG_UNITS' where searchscope='OWN_OUS'" );
 
         executeSql( "DROP TABLE orgunitgroupprograms" );
 

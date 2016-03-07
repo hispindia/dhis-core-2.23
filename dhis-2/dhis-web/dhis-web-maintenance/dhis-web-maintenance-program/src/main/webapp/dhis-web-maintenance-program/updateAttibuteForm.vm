@@ -39,7 +39,7 @@
         <td><input type="text" id="shortName" name="shortName" value="$!encoder.htmlEncode( $attribute.shortName )" ></td>
       </tr>     
       <tr>
-        <td><label for="code">$i18n.getString( "code" )</td>
+        <td><label for="code">$i18n.getString( "code" )</label></td>
         <td><input type="text" id="code" name="code" value="$!encoder.htmlEncode( $attribute.code )"></label></td>
       </tr>      
       <tr>
@@ -90,8 +90,9 @@
 		<td><label for="searchScope">$i18n.getString( "search_scope" ) <br /></label></td>
 		<td>
             <select id="searchScope" name="searchScope" >
-				<option value='SEARCH_OUS' #if( $attribute.searchScope=='SEARCH_OUS' ) selected #end>$i18n.getString('within_search_ous')</option>				
-				<option value='OWN_OUS' #if( $attribute.searchScope=='OWN_OUS' ) selected #end>$i18n.getString('within_own_ous')</option>
+				<option value='SEARCH_ORG_UNITS' #if( $attribute.searchScope=='SEARCH_ORG_UNITS' ) selected #end>$i18n.getString('across_search_orgunits')</option>				
+				<option value='DATA_CAPTURE_ORG_UNITS' #if( $attribute.searchScope=='DATA_CAPTURE_ORG_UNITS' ) selected #end>$i18n.getString('across_data_capture_orgunits')</option>
+				<option value='ALL_ORG_UNITS' #if( $attribute.searchScope=='ALL_ORG_UNITS' ) selected #end>$i18n.getString('across_all_orgunits')</option>
 				<option value='NOT_SEARCHABLE' #if( $attribute.searchScope=='NOT_SEARCHABLE' ) selected #end>$i18n.getString('not_searchable')</option>
 			</select>
 		</td>

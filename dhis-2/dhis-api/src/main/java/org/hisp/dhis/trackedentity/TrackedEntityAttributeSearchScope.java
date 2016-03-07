@@ -34,32 +34,5 @@ package org.hisp.dhis.trackedentity;
  */
 public enum TrackedEntityAttributeSearchScope
 {
-
-    NOT_SEARCHABLE( "not_searchable" ), OWN_OUS( "own_organisations" ), SEARCH_OUS( "search_organisations" );
-
-    private final String value;
-
-    private TrackedEntityAttributeSearchScope( String value )
-    {
-        this.value = value;
-    }
-
-    public static TrackedEntityAttributeSearchScope fromValue( String value )
-    {
-        for ( TrackedEntityAttributeSearchScope trackedEntityAttributeSearchScope : TrackedEntityAttributeSearchScope
-            .values() )
-        {
-            if ( trackedEntityAttributeSearchScope.value.equalsIgnoreCase( value ) )
-            {
-                return trackedEntityAttributeSearchScope;
-            }
-        }
-
-        return null;
-    }
-
-    public String getValue()
-    {
-        return value;
-    }
+    NOT_SEARCHABLE, DATA_CAPTURE_ORG_UNITS, SEARCH_ORG_UNITS, ALL_ORG_UNITS
 }
