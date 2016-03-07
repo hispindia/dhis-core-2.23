@@ -178,7 +178,7 @@ public class HibernateTranslationStore
     }
 
     @Override
-    public boolean haveTranslations( String className )
+    public boolean hasTranslations( String className )
     {
         Session session = sessionFactory.getCurrentSession();
 

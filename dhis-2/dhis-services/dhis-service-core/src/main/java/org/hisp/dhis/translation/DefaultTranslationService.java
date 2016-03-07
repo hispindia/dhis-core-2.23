@@ -157,8 +157,8 @@ public class DefaultTranslationService
     }
 
     @Override
-    public boolean haveTranslations( String className )
+    public boolean hasTranslations( String className )
     {
-        return translationStore.haveTranslations( className );
+        return translationStore.hasTranslations( className );
     }
 }

@@ -83,7 +83,7 @@ public class DefaultSchemaService
             if ( sessionFactory.getClassMetadata( schema.getKlass() ) != null )
             {
                 schema.setPersisted( true );
-                schema.setTranslated( translationService.haveTranslations( schema.getKlass().getSimpleName() ) );
+                schema.setTranslated( translationService.hasTranslations( schema.getKlass().getSimpleName() ) );
             }
 
             schema.setDisplayName( beautify( schema.getName() ) );

@@ -145,5 +145,11 @@ public interface TranslationService
 
     void createOrUpdate( Translation translation );
 
-    boolean haveTranslations( String className );
+    /**
+     * Indicates whether translations exist for the given class name.
+     * 
+     * @param className the class name.
+     * @return true if translations exist.
+     */
+    boolean hasTranslations( String className );
 }
