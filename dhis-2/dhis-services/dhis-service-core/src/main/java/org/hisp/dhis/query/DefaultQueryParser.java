@@ -77,7 +77,7 @@ public class DefaultQueryParser implements QueryParser
     private Restriction getRestriction( Schema schema, String path, String operator, Object arg ) throws QueryParserException
     {
         // optimize if not translated
-        if ( !schema.isTranslated() )
+        if ( !schemaService.isTranslated( schema.getKlass() ) )
         {
             if ( path.startsWith( "displayName:" ) && schema.havePersistedProperty( "name" ) )
             {

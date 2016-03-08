@@ -30,6 +30,8 @@ package org.hisp.dhis.schema;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.CaseFormat;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.hibernate.SessionFactory;
@@ -47,11 +49,13 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class DefaultSchemaService 
+public class DefaultSchemaService
     implements ApplicationListener<ContextRefreshedEvent>, SchemaService
 {
     private Map<Class<?>, Schema> classSchemaMap = new HashMap<>();
@@ -61,6 +65,12 @@ public class DefaultSchemaService
     private Map<String, Schema> pluralSchemaMap = new HashMap<>();
 
     private Map<Class<?>, Schema> dynamicClassSchemaMap = new HashMap<>();
+
+    private static Cache<Class<?>, Boolean> IS_TRANSLATED_CACHE = CacheBuilder.newBuilder()
+        .expireAfterAccess( 15, TimeUnit.MINUTES )
+        .initialCapacity( 100 )
+        .maximumSize( 200 )
+        .build();
 
     @Autowired
     private PropertyIntrospectorService propertyIntrospectorService;
@@ -84,7 +94,6 @@ public class DefaultSchemaService
             if ( sessionFactory.getClassMetadata( schema.getKlass() ) != null )
             {
                 schema.setPersisted( true );
-                schema.setTranslated( translationService.hasTranslations( schema.getKlass().getSimpleName() ) );
             }
 
             schema.setDisplayName( beautify( schema.getName() ) );
@@ -101,7 +110,7 @@ public class DefaultSchemaService
             updateSelf( schema );
         }
     }
-    
+
     @Override
     public Schema getSchema( Class<?> klass )
     {
@@ -218,6 +227,20 @@ public class DefaultSchemaService
         Collections.sort( schemas, OrderComparator.INSTANCE );
 
         return schemas;
+    }
+
+    @Override
+    public boolean isTranslated( final Class<?> klass )
+    {
+        try
+        {
+            return IS_TRANSLATED_CACHE.get( klass, () -> translationService.hasTranslations( klass.getSimpleName() ) );
+        }
+        catch ( ExecutionException ignored )
+        {
+        }
+
+        return true;
     }
 
     private void updateSelf( Schema schema )
