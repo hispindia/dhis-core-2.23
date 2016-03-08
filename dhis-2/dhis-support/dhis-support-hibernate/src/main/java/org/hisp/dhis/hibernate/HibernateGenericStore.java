@@ -54,8 +54,6 @@ import org.hisp.dhis.hibernate.exception.DeleteAccessDeniedException;
 import org.hisp.dhis.hibernate.exception.ReadAccessDeniedException;
 import org.hisp.dhis.hibernate.exception.UpdateAccessDeniedException;
 import org.hisp.dhis.interpretation.Interpretation;
-import org.hisp.dhis.schema.Schema;
-import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.security.acl.AccessStringHelper;
 import org.hisp.dhis.security.acl.AclService;
 import org.hisp.dhis.user.CurrentUserService;
@@ -92,9 +90,6 @@ public class HibernateGenericStore<T>
 
     @Autowired
     protected CurrentUserService currentUserService;
-
-    @Autowired
-    protected SchemaService schemaService;
 
     /**
      * Allows injection (e.g. by a unit test)
@@ -564,13 +559,6 @@ public class HibernateGenericStore<T>
     @SuppressWarnings( "unchecked" )
     public T getByAttribute( Attribute attribute )
     {
-        Schema schema = schemaService.getDynamicSchema( getClazz() );
-
-        if ( schema == null || !schema.havePersistedProperty( "attributeValues" ) )
-        {
-            return null;
-        }
-
         Criteria criteria = getCriteria();
         criteria.createAlias( "attributeValues", "av" );
         criteria.add( Restrictions.eq( "av.attribute", attribute ) );
@@ -582,13 +570,6 @@ public class HibernateGenericStore<T>
     @SuppressWarnings( "unchecked" )
     public List<AttributeValue> getAttributeValueByAttribute( Attribute attribute )
     {
-        Schema schema = schemaService.getDynamicSchema( getClazz() );
-
-        if ( schema == null || !schema.havePersistedProperty( "attributeValues" ) )
-        {
-            return null;
-        }
-
         String hql = "select av from " + getClazz().getSimpleName() + "  as e " +
             "inner join e.attributeValues av inner join av.attribute at where at = :attribute )";
 
@@ -599,13 +580,6 @@ public class HibernateGenericStore<T>
     @SuppressWarnings( "unchecked" )
     public List<AttributeValue> getAttributeValueByAttributeAndValue( Attribute attribute, String value )
     {
-        Schema schema = schemaService.getDynamicSchema( getClazz() );
-
-        if ( schema == null || !schema.havePersistedProperty( "attributeValues" ) )
-        {
-            return null;
-        }
-
         String hql = "select av from " + getClazz().getSimpleName() + "  as e " +
             "inner join e.attributeValues av inner join av.attribute at where at = :attribute and av.value = :value)";
 
