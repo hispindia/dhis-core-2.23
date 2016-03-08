@@ -42,6 +42,7 @@ import org.hisp.dhis.system.util.DateUtils;
 import org.hisp.dhis.system.util.MathUtils;
 import org.hisp.dhis.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
@@ -83,10 +84,10 @@ public class DefaultTrackedEntityAttributeService
     }
 
     @Autowired
-    private TrackedEntityInstanceService trackedEntityInstanceService;
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    private ApplicationContext applicationContext;
 
     // -------------------------------------------------------------------------
     // Implementation methods
@@ -256,6 +257,10 @@ public class DefaultTrackedEntityAttributeService
             params.setOrganisationUnitMode( OrganisationUnitSelectionMode.ALL );
         }
 
+        // TODO re-factor to avoid circular dependency
+        
+        TrackedEntityInstanceService trackedEntityInstanceService = (TrackedEntityInstanceService) applicationContext.getBean( TrackedEntityInstanceService.class );
+        
         Grid instances = trackedEntityInstanceService.getTrackedEntityInstancesGrid( params );
 
         if ( !(instances.getHeight() == 0) )
