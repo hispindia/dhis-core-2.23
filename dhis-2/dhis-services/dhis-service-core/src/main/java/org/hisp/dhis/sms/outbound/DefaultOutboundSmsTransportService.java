@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.sms.SmsPublisher;
 import org.hisp.dhis.sms.SmsServiceException;
 import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
 import org.hisp.dhis.sms.config.ClickatellGatewayConfig;
@@ -94,13 +93,6 @@ public class DefaultOutboundSmsTransportService
         this.outboundSmsService = outboundSmsService;
     }
 
-//    private SmsPublisher smsPublisher;
-//
-//    public void setSmsPublisher( SmsPublisher smsPublisher )
-//    {
-//        this.smsPublisher = smsPublisher;
-//    }
-
     // -------------------------------------------------------------------------
     // OutboundSmsTransportService implementation
     // -------------------------------------------------------------------------
@@ -128,8 +120,7 @@ public class DefaultOutboundSmsTransportService
 
         try
         {
-            getService().stopService();
-           // smsPublisher.stop();
+            getService().stopService();       
         }
         catch ( SMSLibException e )
         {
@@ -162,17 +153,6 @@ public class DefaultOutboundSmsTransportService
                 {
                     getService().setInboundMessageNotification( smppInboundMessageNotification );
                 }
-
-                try
-                {
-                   // smsPublisher.start();
-                }
-                catch ( Exception e1 )
-                {
-                    message = "Unable to start smsConsumer service " + e1.getMessage();
-                    log.warn( "Unable to start smsConsumer service ", e1 );
-                }
-
             }
             catch ( SMSLibException e )
             {
