@@ -1962,3 +1962,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         this.eventCreationActions = { add: 'ADD',  schedule: 'SCHEDULE', referral: 'REFERRAL'};
 })
 
+.service('MessagingService', function($http){
+    return {
+        sendSmsMessage: function(message){    
+            var promise = $http.post('../api/sms/outbound', message).then(function(response){
+                return response.data;           
+            });
+            return promise;            
+        }
+    };
+});
+
