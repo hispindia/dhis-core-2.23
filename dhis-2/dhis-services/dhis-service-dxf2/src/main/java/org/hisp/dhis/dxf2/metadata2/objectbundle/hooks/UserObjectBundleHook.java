@@ -91,6 +91,8 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         sessionFactory.getCurrentSession().save( userCredentials );
         user.setUserCredentials( userCredentials );
         sessionFactory.getCurrentSession().update( userCredentials );
+
+        userCredentials = null;
     }
 
     @Override

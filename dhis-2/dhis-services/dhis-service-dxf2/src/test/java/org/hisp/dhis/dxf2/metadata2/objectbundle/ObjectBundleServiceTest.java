@@ -38,6 +38,7 @@ import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
+import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
@@ -58,7 +59,6 @@ import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -797,7 +797,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    @Ignore
     public void testCreateDataSetWithSectionsAndGreyedFields() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
@@ -809,8 +808,44 @@ public class ObjectBundleServiceTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
         objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<Section> sections = manager.getAll( Section.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<DataElementOperand> dataElementOperands = manager.getAll( DataElementOperand.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 2, sections.size() );
+        assertEquals( 1, dataElementOperands.size() );
+
+        DataSet dataSet = dataSets.get( 0 );
+        assertEquals( 2, dataSet.getSections().size() );
+
+        Section section1 = sections.get( 0 );
+        Section section2 = sections.get( 1 );
+
+        assertEquals( 1, section1.getDataElements().size() );
+        assertEquals( 1, section2.getDataElements().size() );
+
+        assertNotNull( section1.getDataSet() );
+        assertNotNull( section2.getDataSet() );
+
+        Section section = manager.get( Section.class, "JwcV2ZifEQf" );
+        assertNotNull( section.getDataSet() );
+        assertNotNull( section.getCategoryCombo() );
+        // assertEquals( 1, section.getGreyedFields().size() );
     }
 
     private void defaultSetup()
