@@ -769,6 +769,16 @@ public class ObjectBundleServiceTest
 
         List<DataSet> dataSets = manager.getAll( DataSet.class );
         List<Section> sections = manager.getAll( Section.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( dataSets.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
 
         assertEquals( 1, dataSets.size() );
         assertEquals( 2, sections.size() );
