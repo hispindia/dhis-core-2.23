@@ -154,7 +154,7 @@
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="jdbcTemplate" ref="jdbcTemplate" />
     <property name="cacheable" value="true" />
-    <property name="dataSetService" ref="org.hisp.dhis.dataset.DataSetService" />
+    <property name="dataSetStore" ref="org.hisp.dhis.dataset.DataSetStore" />
     <property name="periodService" ref="org.hisp.dhis.period.PeriodService" />
   </bean>
 

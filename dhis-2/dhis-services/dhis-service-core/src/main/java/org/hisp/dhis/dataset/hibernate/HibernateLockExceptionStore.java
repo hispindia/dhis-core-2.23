@@ -34,7 +34,7 @@ import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataset.DataSet;
-import org.hisp.dhis.dataset.DataSetService;
+import org.hisp.dhis.dataset.DataSetStore;
 import org.hisp.dhis.dataset.LockException;
 import org.hisp.dhis.dataset.LockExceptionStore;
 import org.hisp.dhis.hibernate.HibernateGenericStore;
@@ -59,11 +59,11 @@ public class HibernateLockExceptionStore
     // Dependencies
     // -------------------------------------------------------------------------
 
-    private DataSetService dataSetService;
+    private DataSetStore dataSetStore;
 
-    public void setDataSetService( DataSetService dataSetService )
+    public void setDataSetStore( DataSetStore dataSetStore )
     {
-        this.dataSetService = dataSetService;
+        this.dataSetStore = dataSetStore;
     }
 
     private PeriodService periodService;
@@ -110,7 +110,7 @@ public class HibernateLockExceptionStore
 
                 LockException lockException = new LockException();
                 Period period = periodService.getPeriod( periodId );
-                DataSet dataSet = dataSetService.getDataSet( dataSetId );
+                DataSet dataSet = dataSetStore.get( dataSetId );
 
                 lockException.setDataSet( dataSet );
                 lockException.setPeriod( period );
