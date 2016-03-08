@@ -258,8 +258,10 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
+        System.err.println( validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ) );
+
         assertFalse( validate.getObjectErrorReportsMap().isEmpty() );
-        assertEquals( 7, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
+        assertEquals( 5, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E4000 ).size() );
     }
 

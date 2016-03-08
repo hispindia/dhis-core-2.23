@@ -487,7 +487,7 @@ public class DefaultPreheatService implements PreheatService
                     IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
                     IdentifiableObject ref = preheat.get( identifier, refObject );
 
-                    if ( ref == null && refObject != null && !Preheat.isDefault( refObject ) )
+                    if ( ref == null && refObject != null && !Preheat.isDefaultClass( refObject.getClass() ) )
                     {
                         preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
                             identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getName() ) );
@@ -518,6 +518,22 @@ public class DefaultPreheatService implements PreheatService
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
+
+        if ( schema.havePersistedProperty( "attributeValues" ) )
+        {
+            object.getAttributeValues().stream()
+                .filter( attributeValue -> attributeValue.getAttribute() != null && preheat.get( identifier, attributeValue.getAttribute() ) == null )
+                .forEach( attributeValue -> preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
+                    identifier.getIdentifiersWithName( attributeValue.getAttribute() ), identifier.getIdentifiersWithName( object ), "attributeValues" ) ) );
+        }
+
+        if ( schema.havePersistedProperty( "userGroupAccesses" ) )
+        {
+            object.getUserGroupAccesses().stream()
+                .filter( userGroupAccess -> userGroupAccess.getUserGroup() != null && preheat.get( identifier, userGroupAccess.getUserGroup() ) == null )
+                .forEach( attributeValue -> preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
+                    identifier.getIdentifiersWithName( attributeValue.getUserGroup() ), identifier.getIdentifiersWithName( object ), "userGroupAccesses" ) ) );
+        }
 
         return preheatErrorReports;
     }

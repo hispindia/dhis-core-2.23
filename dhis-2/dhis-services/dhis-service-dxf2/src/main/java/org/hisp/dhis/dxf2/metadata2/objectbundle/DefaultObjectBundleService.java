@@ -181,16 +181,17 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 {
                     IdentifiableObject identifiableObject = iterator.next();
                     IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
-                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
 
                     if ( object != null && object.getId() > 0 )
                     {
+                        ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
                         objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
                             bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
+                        objectBundleValidation.addObjectErrorReport( objectErrorReport );
+
                         iterator.remove();
                     }
 
-                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
                     idx++;
                 }
             }
@@ -203,16 +204,16 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 {
                     IdentifiableObject identifiableObject = iterator.next();
                     IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
-                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
 
                     if ( object == null )
                     {
+                        ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
                         objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                             bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
+                        objectBundleValidation.addObjectErrorReport( objectErrorReport );
                         iterator.remove();
                     }
 
-                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
                     idx++;
                 }
             }
