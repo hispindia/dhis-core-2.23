@@ -37,7 +37,6 @@ trackerCapture.controller('ProfileController',
         $scope.optionSets = selections.optionSets;
         $scope.trackedEntityForm = null;
         $scope.customForm = null;
-        $scope.attributes = [];
         $scope.attributesById = CurrentSelection.getAttributesById();
         
         //display only those attributes that belong to the selected program

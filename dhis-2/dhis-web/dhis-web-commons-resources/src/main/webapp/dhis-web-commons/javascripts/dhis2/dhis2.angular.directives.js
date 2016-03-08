@@ -387,69 +387,40 @@ var d2Directives = angular.module('d2Directives', [])
                 });                 
             }
         }
-    };    
+    };
 })
-
 .directive('d2Audit', function () {
     return {
         restrict: 'E',
-        template: '<span class="hideInPrint audit-icon" title="{{\'audit_history\' | translate}}"><i class="glyphicon glyphicon-user" data-ng-click="showAuditHistory()" ng-if="showAuditIcon()"></i></span>',
-        scope:{
-            dataElementId: '@dataelementId',
-            dataElementName: '@dataelementName',
-            currentEvent:'@',
-            type:'@',
-            selectedTeiId:'@',
-            isAuditIconPresent:'=?'
+        template: '<span class="hideInPrint audit-icon" title="{{\'audit_history\' | translate}}" data-ng-click="showAuditHistory()">' +
+        '<i class="glyphicon glyphicon-user""></i>' +
+        '</span>',
+        scope: {
+            eventId: '@',
+            type: '@',
+            nameIdMap: '='
         },
-        controller:function($scope, $modal) {
-            if (!$scope.dataElementId) {
-                return;
-            }
-
-            $scope.showAuditIcon = function() {
-                if ($scope.currentEvent && $scope.currentEvent !== 'SINGLE_EVENT') {
-                    $scope.isAuditIconPresent = true;
-                    return true;
-                }
-                if ($scope.type === "attribute" && $scope.selectedTeiId) {
-                    $scope.isAuditIconPresent = true;
-                    return true;
-                }
-                $scope.isAuditIconPresent = false;
-                return false;
-            }
-
-            $scope.showAuditHistory = function() {
-
+        controller: function ($scope, $modal) {
+            $scope.showAuditHistory = function () {
                 $modal.open({
                     templateUrl: "../dhis-web-commons/angular-forms/audit-history.html",
                     controller: "AuditHistoryController",
                     resolve: {
-                        dataElementId: function () {
-                            return $scope.dataElementId;
+                        eventId: function () {
+                            return $scope.eventId;
                         },
-                        dataElementName: function () {
-                            return $scope.dataElementName;
-                        },
-                        dataType: function() {
+                        dataType: function () {
                             return $scope.type;
                         },
-                        currentEvent: function() {
-                            return $scope.currentEvent;
-                        },
-                        selectedTeiId: function() {
-                            return $scope.selectedTeiId;
+                        nameIdMap: function () {
+                            return $scope.nameIdMap;
                         }
                     }
                 })
-
             }
-
-        }
+        },
     };
 })
-
 .directive('d2RadioButton', function (){  
     return {
         restrict: 'E',

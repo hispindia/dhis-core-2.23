@@ -28,9 +28,7 @@
                 <th>
                     {{'value'| translate}}                    
                 </th>
-                <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-                </th>
-            </tr>                        
+            </tr>
         </thead>
         <tbody>
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
@@ -263,10 +261,7 @@
                         </div>
                     </ng-form>
                 </td>
-                <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-                    <d2-audit dataelement-id="{{prStDes[eventGridColumn.id].dataElement.id}}" dataelement-name="{{prStDes[eventGridColumn.id].dataElement.displayName}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                </td>
-            </tr>        
+            </tr>
         </tbody>
     </table>
     
@@ -291,9 +286,7 @@
                     <th>
                         {{'value'| translate}}                    
                     </th>
-                    <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-                    </th>
-                </tr>                        
+                </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="de in section.programStageDataElements" ng-if="!hiddenFields[de.dataElement.id]">
@@ -533,12 +526,6 @@
                                 {{warningMessages[de.dataElement.id]}}
                             </div>
                         </ng-form>
-                        <!--<span class="hideInPrint audit-icon" ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-                            <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.displayName}}"  current-event="{{currentEvent.event}}"></d2-audit>
-                        </span>-->
-                    </td>
-                    <td ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'">
-                        <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.displayName}}"  current-event="{{currentEvent.event}}"></d2-audit>
                     </td>
                 </tr>
             </tbody>

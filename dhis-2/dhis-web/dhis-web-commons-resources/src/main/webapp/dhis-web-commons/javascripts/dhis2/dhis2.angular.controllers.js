@@ -49,39 +49,91 @@ var d2Controllers = angular.module('d2Controllers', [])
     $scope.captureCoordinate = function(){
         $scope.location = CurrentSelection.getLocation();
         $modalInstance.close($scope.location);
-    }; 
-})
+    };
+        })
 
 //Controller for audit history
-.controller('AuditHistoryController', function( $scope, $modalInstance, $modal, AuditHistoryDataService,
-                                                              dataElementId, dataElementName, currentEvent, dataType, selectedTeiId,
-                                                              DateUtils ) {
+.controller('AuditHistoryController', function ($scope, $modalInstance, $modal, AuditHistoryDataService, DateUtils,
+                                                    eventId, dataType, nameIdMap) {
 
-    $scope.close = function() {
+    $scope.itemList = {};
+
+    $scope.model = {type: dataType};
+
+    $scope.close = function () {
         $modalInstance.close();
     };
 
-    $scope.trackedEntity = dataElementName;
+    $scope.$watch("itemList", function (itemList) {
+        $scope.listInDisplay = itemList;
+    });
 
-    AuditHistoryDataService.getAuditHistoryData(dataElementId, dataType, dataElementName, currentEvent, selectedTeiId).then(function( data ) {
+    $scope.searchTheList = function () {
+        var searchStr = $scope.searchText;
+        var filteredItemList = {};
+        for (var item in $scope.itemList) {
+            for (var index = 0; index < $scope.itemList[item].length; index++) {
+                var element = $scope.itemList[item][index];
+                if (!isSubString(item, searchStr) && !isSubString(element.created, searchStr) && !isSubString(element.value, searchStr) && !isSubString(element.modifiedBy, searchStr)) {
+                } else {
+                    if (!filteredItemList[item]) {
+                        filteredItemList[item] = [];
+                    }
+                    filteredItemList[item].push(element);
+                }
+            }
+        }
+        $scope.listInDisplay = filteredItemList;
+    }
 
-        $scope.itemList = [];
+    function isSubString(str, subStr) {
+        return str.toLowerCase().indexOf(subStr.toLowerCase()) > -1;
+    }
 
-        var reponseData = data.trackedEntityDataValueAudits ? data.trackedEntityDataValueAudits : data.trackedEntityAttributeValueAudits;
-        if( reponseData ) {
-            angular.forEach(reponseData, function( dataValue ) {
+
+    AuditHistoryDataService.getAuditHistoryData(eventId, dataType).then(function (data) {
+
+        $scope.itemList = {};
+
+        var reponseData = data.trackedEntityDataValueAudits ? data.trackedEntityDataValueAudits :
+            data.trackedEntityAttributeValueAudits ? data.trackedEntityAttributeValueAudits : null;
+        if (reponseData) {
+            for (var index = 0; index < reponseData.length; index++) {
+
+                var dataValue = reponseData[index];
+
                 /*The true/false values are displayed as Yes/No*/
                 if (dataValue.value === "true") {
                     dataValue.value = "Yes";
                 } else if (dataValue.value === "false") {
                     dataValue.value = "No";
                 }
-                $scope.itemList.push({created: DateUtils.formatToHrsMinsSecs(dataValue.created), value: dataValue.value, auditType: dataValue.auditType,
-                    modifiedBy:dataValue.modifiedBy});
-            });
+                if (dataType === "attribute") {
+                    if (nameIdMap[dataValue.trackedEntityAttribute.id] && nameIdMap[dataValue.trackedEntityAttribute.id].displayName) {
+                        var attributeName = nameIdMap[dataValue.trackedEntityAttribute.id].displayName;
+                        if (!$scope.itemList[attributeName]) {
+                            $scope.itemList[attributeName] = [];
+                        }
+                        $scope.itemList[attributeName].push({
+                            created: DateUtils.formatToHrsMinsSecs(dataValue.created), value: dataValue.value,
+                            auditType: dataValue.auditType, modifiedBy: dataValue.modifiedBy
+                        });
+                    }
+                } else if (dataType === "dataElement") {
+                    if (nameIdMap[dataValue.dataElement.id] && nameIdMap[dataValue.dataElement.id].dataElement) {
+                        var dataElementName = nameIdMap[dataValue.dataElement.id].dataElement.displayName;
+                        if (!$scope.itemList[dataElementName]) {
+                            $scope.itemList[dataElementName] = [];
+                        }
+                        $scope.itemList[dataElementName].push({
+                            created: DateUtils.formatToHrsMinsSecs(dataValue.created), value: dataValue.value,
+                            auditType: dataValue.auditType, modifiedBy: dataValue.modifiedBy
+                        });
+                    }
+                }
+            }
         }
     });
-
 })
 .controller('InputController', function( $scope) {
     $scope.inputObj = {isAuditIconPresent:false};

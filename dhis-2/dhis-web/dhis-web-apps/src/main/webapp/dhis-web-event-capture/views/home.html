@@ -26,7 +26,7 @@
         <img src="../images/ajax-loader-bar.gif" alt="{{'in_progress'| translate}}" ng-if="!selectedOrgUnit"/><br>
         {{'loading_metadata'| translate}}
     </div>
-    
+
     <div ng-show="selectedOrgUnit && userAuthority.canAddOrUpdateEvent">
         
         <h3>
@@ -108,7 +108,7 @@
             </div>
         </div>        
         <!-- selection ends -->        
-        
+
         <!-- event grid begins -->
         <div ng-include="'views/eventList.html'"></div>
         <!-- event grid ends -->
@@ -119,6 +119,10 @@
                 <h3>
                     <span ng-if="editingEventInFull">{{'event_details'| translate}}</span>
                     <span ng-if="eventRegistration">{{'new_event'| translate}}</span>
+                    <span ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'" style="margin-left: 53%">
+                        <d2-audit style="font-size: 15px" name-id-map="prStDes" event-id="{{currentEvent.event}}" data-type="dataElement">
+                        </d2-audit>
+                    </span>
                 </h3>
                 <div class="col-sm-8">
                     <div class="bordered-div">
@@ -128,6 +132,7 @@
                         <div ng-include="'views/buttons-section.html'"></div>
                     </div>                    
                 </div>
+
                 <div class="col-sm-4" ng-if="allProgramRules.programIndicators.rules && allProgramRules.programIndicators.rules.length > 0">
                     <div class="bordered-div">
                         <div ng-if="allProgramRules.programIndicators.rules && allProgramRules.programIndicators.rules.length > 0" ng-include="'views/indicators.html'"></div>

@@ -25,8 +25,6 @@
             </th>
             <th class="" ng-bind="valueLabel">
             </th>
-            <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event">
-            </th>
             <th class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]" ng-bind="providedElsewhereLabel">
             </th>
         </tr>
@@ -50,9 +48,6 @@
             </td>
             
             <td dhis2-compiled-include="components/dataentry/inner-form.html">                
-            </td>
-            <td ng-if="currentEvent.event" class="hideInPrint audit-icon-column" align="center">
-                <d2-audit dataelement-id="{{prStDe.dataElement.id}}" dataelement-name="{{prStDe.dataElement.displayName}}" current-event="{{currentEvent.event}}"></d2-audit>
             </td>
             <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
                 <div class="align-center" ng-show="prStDe.allowProvidedElsewhere">
@@ -86,8 +81,6 @@
                         </th>
                         <th ng-bind="valueLabel">
                         </th>
-                        <th class="hideInPrint audit-icon-column" ng-if="currentEvent.event">
-                        </th>
                         <th class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]" ng-bind="providedElsewhereLabel">
                         </th>
                     </tr>
@@ -113,9 +106,6 @@
                                 </span>
                             </td>
                             <td dhis2-compiled-include="components/dataentry/section-inner-form.html">
-                            </td>
-                            <td class="hideInPrint audit-icon-column" align="center" ng-if="currentEvent.event">
-                                <d2-audit dataelement-id="{{de.dataElement.id}}" dataelement-name="{{prStDes[de.dataElement.id].dataElement.displayName}}" current-event="{{currentEvent.event}}"></d2-audit>
                             </td>
                             <td class="form-narrow-column" ng-if="allowProvidedElsewhereExists[currentStage.id]">
                                 <div class="align-center" ng-show="prStDes[de.dataElement.id].allowProvidedElsewhere">
