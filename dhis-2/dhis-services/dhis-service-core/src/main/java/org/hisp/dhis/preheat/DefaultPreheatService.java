@@ -504,7 +504,7 @@ public class DefaultPreheatService implements PreheatService
 
                         IdentifiableObject ref = preheat.get( identifier, refObject );
 
-                        if ( ref == null && refObject != null )
+                        if ( ref == null && refObject != null && !Preheat.isDefaultClass( refObject.getClass() ) )
                         {
                             preheatErrorReports.add( new PreheatErrorReport( identifier, object.getClass(), ErrorCode.E5002,
                                 identifier.getIdentifiersWithName( refObject ), identifier.getIdentifiersWithName( object ), p.getCollectionName() ) );

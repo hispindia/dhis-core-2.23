@@ -39,6 +39,7 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -57,6 +58,7 @@ import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -257,8 +259,6 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-
-        System.err.println( validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ) );
 
         assertFalse( validate.getObjectErrorReportsMap().isEmpty() );
         assertEquals( 5, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
@@ -748,6 +748,59 @@ public class ObjectBundleServiceTest
         assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
         assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
         assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
+    }
+
+    @Test
+    public void testCreateDataSetWithSections() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/dataset_with_sections.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<Section> sections = manager.getAll( Section.class );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 2, sections.size() );
+
+        DataSet dataSet = dataSets.get( 0 );
+        assertEquals( 2, dataSet.getSections().size() );
+
+        Section section1 = sections.get( 0 );
+        Section section2 = sections.get( 1 );
+
+        assertEquals( 1, section1.getDataElements().size() );
+        assertEquals( 1, section2.getDataElements().size() );
+
+        assertNotNull( section1.getDataSet() );
+        assertNotNull( section2.getDataSet() );
+    }
+
+    @Test
+    @Ignore
+    public void testCreateDataSetWithSectionsAndGreyedFields() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/dataset_with_sections_gf.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
     }
 
     private void defaultSetup()

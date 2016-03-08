@@ -35,6 +35,7 @@ import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.dbms.DbmsManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -82,6 +83,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Autowired
     private IdentifiableObjectManager manager;
+
+    @Autowired
+    private DbmsManager dbmsManager;
 
     @Autowired( required = false )
     private List<ObjectBundleHook> objectBundleHooks = new ArrayList<>();
@@ -304,6 +308,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );
 
+        dbmsManager.clearSession();
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
     }
 
@@ -314,7 +319,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleCreates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
-        log.info( "Creating " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
         {
@@ -339,7 +344,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
-        log.info( "Updating " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
         {
@@ -367,7 +372,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleDeletes( List<IdentifiableObject> objects, ObjectBundle bundle )
     {
-        log.info( "Deleting " + objects.size() + " object of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );
 
