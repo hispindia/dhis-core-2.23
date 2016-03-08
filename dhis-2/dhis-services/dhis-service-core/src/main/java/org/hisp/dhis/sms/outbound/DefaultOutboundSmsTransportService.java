@@ -94,12 +94,12 @@ public class DefaultOutboundSmsTransportService
         this.outboundSmsService = outboundSmsService;
     }
 
-    private SmsPublisher smsPublisher;
-
-    public void setSmsPublisher( SmsPublisher smsPublisher )
-    {
-        this.smsPublisher = smsPublisher;
-    }
+//    private SmsPublisher smsPublisher;
+//
+//    public void setSmsPublisher( SmsPublisher smsPublisher )
+//    {
+//        this.smsPublisher = smsPublisher;
+//    }
 
     // -------------------------------------------------------------------------
     // OutboundSmsTransportService implementation
@@ -129,7 +129,7 @@ public class DefaultOutboundSmsTransportService
         try
         {
             getService().stopService();
-            smsPublisher.stop();
+           // smsPublisher.stop();
         }
         catch ( SMSLibException e )
         {
@@ -165,7 +165,7 @@ public class DefaultOutboundSmsTransportService
 
                 try
                 {
-                    smsPublisher.start();
+                   // smsPublisher.start();
                 }
                 catch ( Exception e1 )
                 {

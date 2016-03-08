@@ -1101,6 +1101,10 @@
   <bean id="org.hisp.dhis.sms.SmsPublisher" class="org.hisp.dhis.sms.SmsPublisher" />
 
   <bean id="org.hisp.dhis.sms.config.SmsConfigurationManager" class="org.hisp.dhis.sms.config.DefaultSmsConfigurationManager" />
+  
+  <bean id="org.hisp.dhis.sms.incoming.SmsConsumerService" class="org.hisp.dhis.sms.incoming.DefaultSmsConsumerService" />
+  
+
 
   <bean id="org.hisp.dhis.sms.incoming.IncomingSmsService" class="org.hisp.dhis.sms.incoming.DefaultIncomingSmsService">
     <property name="incomingSmsStore" ref="org.hisp.dhis.sms.hibernate.IncomingSmsStore" />
@@ -1119,7 +1123,6 @@
     <property name="smppInboundMessageNotification" ref="org.smslib.IInboundMessageNotification" />  
     <property name="outboundMessageNotification" ref="org.smslib.IOutboundMessageNotification" />
     <property name="outboundSmsService" ref="org.hisp.dhis.sms.outbound.OutboundSmsService" />
-    <property name="smsPublisher" ref="org.hisp.dhis.sms.SmsPublisher" />
   </bean>
 
   <bean id="org.hisp.dhis.sms.SmsSender" class="org.hisp.dhis.sms.DefaultSmsSender" />

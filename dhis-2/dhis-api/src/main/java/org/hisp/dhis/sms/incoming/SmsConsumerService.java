@@ -1,6 +1,5 @@
-package org.hisp.dhis.sms;
+package org.hisp.dhis.sms.incoming;
 
-import java.util.concurrent.ScheduledFuture;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -30,40 +29,9 @@ import java.util.concurrent.ScheduledFuture;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.TaskScheduler;
 
-public class SmsPublisher
+public interface SmsConsumerService
 {
-
-    @Autowired
-    private MessageQueue messageQueue;
-
-    @Autowired
-    private SmsConsumerThread smsConsumer;
-
-    @Autowired
-    private TaskScheduler taskScheduler;
-
-    private ScheduledFuture<?> future;
-
-    public void start()
-    {
-        messageQueue.initialize();
-
-        future = taskScheduler.scheduleWithFixedDelay( new Runnable()
-        {
-            public void run()
-            {
-                smsConsumer.spawnSmsConsumer();
-            }
-        }, 5000 );
-    }
-
-    public void stop()
-    {
-        future.cancel( true );
-    }
+    void startSmsConsumer();
+    void stopSmsConsumer();    
 }
