@@ -30,12 +30,15 @@ package org.hisp.dhis.sms.incoming;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.sms.SmsPublisher;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
 
 public class DefaultSmsConsumerService
     implements ApplicationListener<ContextRefreshedEvent>, SmsConsumerService

@@ -99,7 +99,7 @@ public class SmsController
         }
         else
         {
-            throw new WebMessageException( WebMessageUtils.error( "Message seding failed" ) );
+            throw new WebMessageException( WebMessageUtils.error( "Message sending failed" ) );
         }
     }
 
@@ -128,7 +128,7 @@ public class SmsController
             }
             else
             {
-                throw new WebMessageException( WebMessageUtils.error( "Message seding failed" ) );
+                throw new WebMessageException( WebMessageUtils.error( "Message sending failed" ) );
             }
 
         }

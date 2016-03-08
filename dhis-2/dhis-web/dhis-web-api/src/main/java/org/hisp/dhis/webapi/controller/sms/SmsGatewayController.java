@@ -56,6 +56,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Zubair <rajazubair.asghar@gmail.com>
  */
+
 @RestController
 @RequestMapping( value = "/sms/gateways" )
 public class SmsGatewayController
