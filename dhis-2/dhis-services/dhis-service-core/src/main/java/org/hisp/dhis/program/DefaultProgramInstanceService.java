@@ -80,6 +80,9 @@ public class DefaultProgramInstanceService
 
     @Autowired
     private ProgramInstanceStore programInstanceStore;
+    
+    @Autowired
+    private ProgramStageInstanceStore programStageInstanceStore;
 
     @Autowired
     private ProgramService programService;
@@ -95,9 +98,6 @@ public class DefaultProgramInstanceService
 
     @Autowired
     private MessageService messageService;
-
-    @Autowired
-    private ProgramStageInstanceService programStageInstanceService;
 
     @Autowired
     private TrackedEntityInstanceService trackedEntityInstanceService;
@@ -598,21 +598,18 @@ public class DefaultProgramInstanceService
         {
             if ( programStageInstance.getExecutionDate() == null )
             {
-                // ---------------------------------------------------------------------
-                // Set status as skipped for overdue events
-                // ---------------------------------------------------------------------
+                // -------------------------------------------------------------
+                // Set status as skipped for overdue events, or delete
+                // -------------------------------------------------------------
+                
                 if ( programStageInstance.getDueDate().before( currentDate ) )
                 {
                     programStageInstance.setStatus( EventStatus.SKIPPED );
-                    programStageInstanceService.updateProgramStageInstance( programStageInstance );
+                    programStageInstanceStore.update( programStageInstance );
                 }
-
-                // ---------------------------------------------------------------------
-                // Remove scheduled events
-                // ---------------------------------------------------------------------
                 else
                 {
-                    programStageInstanceService.deleteProgramStageInstance( programStageInstance );
+                    programStageInstanceStore.delete( programStageInstance );
                 }
             }
         }
