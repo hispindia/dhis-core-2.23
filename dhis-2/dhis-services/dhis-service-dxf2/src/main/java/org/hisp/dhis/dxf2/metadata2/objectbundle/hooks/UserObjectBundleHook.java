@@ -51,6 +51,8 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     @Autowired
     private UserService userService;
 
+    private UserCredentials userCredentials;
+
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
@@ -60,7 +62,8 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         }
 
         User user = (User) identifiableObject;
-        UserCredentials userCredentials = user.getUserCredentials();
+        userCredentials = user.getUserCredentials();
+        user.setUserCredentials( null );
 
         if ( objectBundle.getPreheat().getUsernames().containsKey( userCredentials.getUsername() ) )
         {
@@ -73,9 +76,21 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         }
 
         preheatService.connectReferences( userCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-        manager.save( userCredentials );
+    }
 
+    @Override
+    public void postCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !User.class.isInstance( identifiableObject ) || userCredentials == null )
+        {
+            return;
+        }
+
+        User user = (User) identifiableObject;
+        userCredentials.setUserInfo( user );
+        sessionFactory.getCurrentSession().save( userCredentials );
         user.setUserCredentials( userCredentials );
+        sessionFactory.getCurrentSession().update( userCredentials );
     }
 
     @Override
