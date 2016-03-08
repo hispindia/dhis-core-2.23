@@ -255,8 +255,8 @@ public class Preheat
 
     public static boolean isDefaultClass( Class<?> klass )
     {
-        return (DataElementCategory.class.isAssignableFrom( klass ) || DataElementCategoryOption.class.isInstance( klass )
-            || DataElementCategoryCombo.class.isInstance( klass ));
+        return DataElementCategory.class.isAssignableFrom( klass ) || DataElementCategoryOption.class.isAssignableFrom( klass )
+            || DataElementCategoryCombo.class.isAssignableFrom( klass );
     }
 
     public static boolean isDefault( IdentifiableObject object )
