@@ -1967,6 +1967,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         sendSmsMessage: function(message){    
             var promise = $http.post('../api/sms/outbound', message).then(function(response){
                 return response.data;           
+            }, function(response){
+                return response.data;
             });
             return promise;            
         }

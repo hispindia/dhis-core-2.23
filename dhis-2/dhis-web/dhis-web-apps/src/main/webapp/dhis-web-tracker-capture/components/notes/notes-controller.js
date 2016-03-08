@@ -97,7 +97,7 @@ trackerCapture.controller('NotesController',
         var smsMessage = {message: $scope.message.value, recipients: [$scope.message.phoneNumber]};        
         MessagingService.sendSmsMessage(smsMessage).then(function(response){
             var dialogOptions = {
-                headerText: 'sms_send_status',
+                headerText: response.status,
                 bodyText: response.message
             };                
 
