@@ -40,7 +40,6 @@ import org.joda.time.Seconds;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.concurrent.ListenableFuture;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.net.URI;
 import java.util.List;
@@ -54,8 +53,6 @@ public class DefaultFileResourceService
     implements FileResourceService
 {
     private static final Log log = LogFactory.getLog(DefaultFileResourceService.class);
-
-    private static final String KEY_FILE_CLEANUP_TASK = "fileResourceCleanupTask";
 
     private static final Duration IS_ORPHAN_TIME_DELTA = Hours.TWO.toStandardDuration();
 
@@ -92,27 +89,6 @@ public class DefaultFileResourceService
     public void setUploadCallback( FileResourceUploadCallback uploadCallback )
     {
         this.uploadCallback = uploadCallback;
-    }
-
-    private FileResourceCleanUpTask fileResourceCleanUpTask;
-
-    public void setFileResourceCleanUpTask( FileResourceCleanUpTask fileResourceCleanUpTask )
-    {
-        this.fileResourceCleanUpTask = fileResourceCleanUpTask;
-    }
-
-    // -------------------------------------------------------------------------
-    // Init
-    // -------------------------------------------------------------------------
-
-    @PostConstruct
-    public void init()
-    {
-        // Background task which queries for non-assigned or failed-upload
-        // FileResources and deletes them from the database and/or file store.
-        // Runs every day at 2 AM server time.
-
-        scheduler.scheduleTask( KEY_FILE_CLEANUP_TASK, fileResourceCleanUpTask, Scheduler.CRON_DAILY_2AM );
     }
 
     // -------------------------------------------------------------------------

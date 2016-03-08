@@ -34,10 +34,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hisp.dhis.common.ListMap;
+import org.hisp.dhis.fileresource.FileResourceCleanUpTask;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.scheduling.ScheduledTaskStatus;
 import org.hisp.dhis.system.scheduling.Scheduler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
@@ -75,6 +77,9 @@ public class DefaultSchedulingManager
         this.tasks = tasks;
     }
     
+    @Autowired
+    private FileResourceCleanUpTask fileResourceCleanUpTask;
+    
     // TODO Avoid map, use bean identifier directly and get bean from context
 
     // -------------------------------------------------------------------------
@@ -85,6 +90,7 @@ public class DefaultSchedulingManager
     public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
     {
         scheduleTasks();
+        scheduleFixedTasks();
     }
     
     @Override
@@ -101,6 +107,11 @@ public class DefaultSchedulingManager
                 scheduler.scheduleTask( cron, scheduledTasks, cron );
             }
         }
+    }
+    
+    private void scheduleFixedTasks()
+    {
+        scheduler.scheduleTask( FileResourceCleanUpTask.KEY_TASK, fileResourceCleanUpTask, Scheduler.CRON_DAILY_2AM );
     }
     
     @Override

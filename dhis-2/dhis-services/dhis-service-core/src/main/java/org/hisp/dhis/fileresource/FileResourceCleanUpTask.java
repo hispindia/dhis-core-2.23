@@ -38,13 +38,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Deletes any orphaned FileResources.
+ * Deletes any orphaned FileResources. Queries for non-assigned or failed-upload
+ * FileResources and deletes them from the database and/or file store.
  *
  * @author Halvdan Hoem Grelland
  */
 public class FileResourceCleanUpTask
     implements Runnable
 {
+    public static final String KEY_TASK = "fileResourceCleanupTask";
+    
     private static final Log log = LogFactory.getLog( FileResourceCleanUpTask.class );
 
     @Autowired
