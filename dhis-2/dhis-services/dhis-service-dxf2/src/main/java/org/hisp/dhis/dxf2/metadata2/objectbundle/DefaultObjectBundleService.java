@@ -38,8 +38,8 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.preheat.Preheat;
-import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -175,55 +175,70 @@ public class DefaultObjectBundleService implements ObjectBundleService
             if ( bundle.getImportMode().isCreate() )
             {
                 Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
+                int idx = 0;
 
                 while ( iterator.hasNext() )
                 {
                     IdentifiableObject identifiableObject = iterator.next();
                     IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
 
                     if ( object != null && object.getId() > 0 )
                     {
-                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
-                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
+                        objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
                         iterator.remove();
                     }
+
+                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
+                    idx++;
                 }
             }
             else if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
             {
                 Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
+                int idx = 0;
 
                 while ( iterator.hasNext() )
                 {
                     IdentifiableObject identifiableObject = iterator.next();
                     IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
 
                     if ( object == null )
                     {
-                        objectBundleValidation.addErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
-                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) );
+                        objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
+                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
                         iterator.remove();
                     }
+
+                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
+                    idx++;
                 }
             }
 
-            List<List<PreheatErrorReport>> referencesErrorReports = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            referencesErrorReports.forEach( objectBundleValidation::addErrorReports ); // collapsing for now, we might want to give pr object ref list
+            List<ObjectErrorReport> objectErrorReports = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            objectBundleValidation.addObjectErrorReports( objectErrorReports );
 
             if ( !bundle.getImportMode().isDelete() )
             {
                 Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
+                int idx = 0;
 
                 while ( iterator.hasNext() )
                 {
                     IdentifiableObject object = iterator.next();
                     List<ErrorReport> validationErrorReports = schemaValidator.validate( object );
+                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
 
                     if ( !validationErrorReports.isEmpty() )
                     {
-                        objectBundleValidation.addErrorReports( validationErrorReports );
+                        objectErrorReport.addErrorReports( validationErrorReports );
                         iterator.remove();
                     }
+
+                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
+                    idx++;
                 }
             }
         }

@@ -29,6 +29,7 @@ package org.hisp.dhis.preheat;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.feedback.ObjectErrorReport;
 
 import java.util.Collection;
 import java.util.List;
@@ -86,7 +87,7 @@ public interface PreheatService
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */
-    List<List<PreheatErrorReport>> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+    List<ObjectErrorReport> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
 
     /**
      * Checks but does not connect any references, returns check report

@@ -30,8 +30,10 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.feedback.ObjectErrorReport;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,64 +43,83 @@ import java.util.Map;
  */
 public class ObjectBundleValidation
 {
-    private Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> errorReports = new HashMap<>();
+    private Map<Class<?>, Map<Integer, ObjectErrorReport>> objectErrorReportsMap = new HashMap<>();
 
     public ObjectBundleValidation()
     {
     }
 
-    public void addErrorReports( List<? extends ErrorReport> errorReports )
+    public void addObjectErrorReports( List<ObjectErrorReport> objectErrorReports )
     {
-        errorReports.forEach( this::addErrorReport );
+        objectErrorReports.forEach( this::addObjectErrorReport );
     }
 
-    public <T extends ErrorReport> void addErrorReport( T errorReport )
+    public void addObjectErrorReport( ObjectErrorReport objectErrorReport )
     {
-        if ( !errorReports.containsKey( errorReport.getMainKlass() ) )
+        if ( objectErrorReport == null || objectErrorReport.getErrorCodes().isEmpty() )
         {
-            errorReports.put( errorReport.getMainKlass(), new HashMap<>() );
+            return;
         }
 
-        if ( !errorReports.get( errorReport.getMainKlass() ).containsKey( errorReport.getErrorCode() ) )
+        Class<?> objectClass = objectErrorReport.getObjectClass();
+
+        if ( !objectErrorReportsMap.containsKey( objectClass ) )
         {
-            errorReports.get( errorReport.getMainKlass() ).put( errorReport.getErrorCode(), new ArrayList<>() );
+            objectErrorReportsMap.put( objectClass, new HashMap<>() );
         }
 
-        errorReports.get( errorReport.getMainKlass() ).get( errorReport.getErrorCode() ).add( errorReport );
+        Map<Integer, ObjectErrorReport> indexMap = objectErrorReportsMap.get( objectClass );
+
+        if ( !indexMap.containsKey( objectErrorReport.getObjectIndex() ) )
+        {
+            indexMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
+        }
+        else
+        {
+            indexMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
+        }
     }
 
-    public void addErrorReport( Class<?> mainKlass, ErrorCode errorCode, Object... args )
+    public List<ObjectErrorReport> getAllObjectErrorReports( Class<?> klass )
     {
-        ErrorReport errorReport = new ErrorReport( mainKlass, errorCode, args );
-        addErrorReport( errorReport );
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+        Map<Integer, ObjectErrorReport> errorReportMap = objectErrorReportsMap.get( klass );
+        errorReportMap.values().forEach( objectErrorReports::add );
+
+        return objectErrorReports;
     }
 
-    public Map<Class<?>, Map<ErrorCode, List<ErrorReport>>> getErrorReports()
+    public Map<Integer, ObjectErrorReport> getObjectErrorReports( Class<?> klass )
     {
+        return objectErrorReportsMap.get( klass );
+    }
+
+    public List<ErrorReport> getErrorReportsByCode( Class<?> klass, ErrorCode errorCode )
+    {
+        List<ErrorReport> errorReports = new ArrayList<>();
+
+        if ( !objectErrorReportsMap.containsKey( klass ) )
+        {
+            return errorReports;
+        }
+
+        Collection<ObjectErrorReport> objectErrorReports = objectErrorReportsMap.get( klass ).values();
+
+        for ( ObjectErrorReport objectErrorReport : objectErrorReports )
+        {
+            List<ErrorReport> byCode = objectErrorReport.getErrorReportsByCode().get( errorCode );
+
+            if ( byCode != null )
+            {
+                errorReports.addAll( byCode );
+            }
+        }
+
         return errorReports;
     }
 
-    public Map<ErrorCode, List<ErrorReport>> getErrorReports( Class<?> klass )
+    public Map<Class<?>, Map<Integer, ObjectErrorReport>> getObjectErrorReportsMap()
     {
-        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
-
-        if ( map == null )
-        {
-            return new HashMap<>();
-        }
-
-        return map;
-    }
-
-    public List<ErrorReport> getErrorReports( Class<?> klass, ErrorCode errorCode )
-    {
-        Map<ErrorCode, List<ErrorReport>> map = errorReports.get( klass );
-
-        if ( !map.containsKey( errorCode ) )
-        {
-            return new ArrayList<>();
-        }
-
-        return map.get( errorCode );
+        return objectErrorReportsMap;
     }
 }

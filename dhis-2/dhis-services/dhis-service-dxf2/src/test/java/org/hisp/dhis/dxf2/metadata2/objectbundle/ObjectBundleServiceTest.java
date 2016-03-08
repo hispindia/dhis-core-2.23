@@ -42,6 +42,7 @@ import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.node.NodeService;
 import org.hisp.dhis.option.Option;
@@ -151,33 +152,37 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertFalse( validate.getErrorReports().isEmpty() );
+        assertFalse( validate.getObjectErrorReportsMap().isEmpty() );
 
-        Map<ErrorCode, List<ErrorReport>> dataElementErrorReport = validate.getErrorReports().get( DataElement.class );
-        assertFalse( dataElementErrorReport.isEmpty() );
+        List<ObjectErrorReport> objectErrorReports = validate.getAllObjectErrorReports( DataElement.class );
+        assertFalse( objectErrorReports.isEmpty() );
 
-        for ( ErrorCode errorCode : dataElementErrorReport.keySet() )
+        for ( ObjectErrorReport objectErrorReport : objectErrorReports )
         {
-            List<ErrorReport> errorReports = dataElementErrorReport.get( errorCode );
-            assertFalse( errorReports.isEmpty() );
-
-            for ( ErrorReport errorReport : errorReports )
+            for ( ErrorCode errorCode : objectErrorReport.getErrorCodes() )
             {
-                assertTrue( PreheatErrorReport.class.isInstance( errorReport ) );
-                PreheatErrorReport preheatErrorReport = (PreheatErrorReport) errorReport;
-                assertEquals( PreheatIdentifier.UID, preheatErrorReport.getPreheatIdentifier() );
+                List<ErrorReport> errorReports = objectErrorReport.getErrorReportsByCode().get( errorCode );
 
-                if ( DataElementCategoryCombo.class.isInstance( preheatErrorReport.getValue() ) )
+                assertFalse( errorReports.isEmpty() );
+
+                for ( ErrorReport errorReport : errorReports )
                 {
-                    assertEquals( "p0KPaWEg3cf", preheatErrorReport.getObjectReference().getUid() );
-                }
-                else if ( User.class.isInstance( preheatErrorReport.getValue() ) )
-                {
-                    assertEquals( "GOLswS44mh8", preheatErrorReport.getObjectReference().getUid() );
-                }
-                else if ( OptionSet.class.isInstance( preheatErrorReport.getValue() ) )
-                {
-                    assertEquals( "pQYCiuosBnZ", preheatErrorReport.getObjectReference().getUid() );
+                    assertTrue( PreheatErrorReport.class.isInstance( errorReport ) );
+                    PreheatErrorReport preheatErrorReport = (PreheatErrorReport) errorReport;
+                    assertEquals( PreheatIdentifier.UID, preheatErrorReport.getPreheatIdentifier() );
+
+                    if ( DataElementCategoryCombo.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertEquals( "p0KPaWEg3cf", preheatErrorReport.getObjectReference().getUid() );
+                    }
+                    else if ( User.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertEquals( "GOLswS44mh8", preheatErrorReport.getObjectReference().getUid() );
+                    }
+                    else if ( OptionSet.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertEquals( "pQYCiuosBnZ", preheatErrorReport.getObjectReference().getUid() );
+                    }
                 }
             }
         }
@@ -204,33 +209,37 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertFalse( validate.getErrorReports().isEmpty() );
+        assertFalse( validate.getObjectErrorReportsMap().isEmpty() );
 
-        Map<ErrorCode, List<ErrorReport>> dataElementErrorReport = validate.getErrorReports().get( DataElement.class );
-        assertFalse( dataElementErrorReport.isEmpty() );
+        List<ObjectErrorReport> objectErrorReports = validate.getAllObjectErrorReports( DataElement.class );
+        assertFalse( objectErrorReports.isEmpty() );
 
-        for ( ErrorCode errorCode : dataElementErrorReport.keySet() )
+        for ( ObjectErrorReport objectErrorReport : objectErrorReports )
         {
-            List<ErrorReport> errorReports = dataElementErrorReport.get( errorCode );
-            assertFalse( errorReports.isEmpty() );
-
-            for ( ErrorReport errorReport : errorReports )
+            for ( ErrorCode errorCode : objectErrorReport.getErrorCodes() )
             {
-                assertTrue( PreheatErrorReport.class.isInstance( errorReport ) );
-                PreheatErrorReport preheatErrorReport = (PreheatErrorReport) errorReport;
-                assertEquals( PreheatIdentifier.UID, preheatErrorReport.getPreheatIdentifier() );
+                List<ErrorReport> errorReports = objectErrorReport.getErrorReportsByCode().get( errorCode );
 
-                if ( DataElementCategoryCombo.class.isInstance( preheatErrorReport.getValue() ) )
+                assertFalse( errorReports.isEmpty() );
+
+                for ( ErrorReport errorReport : errorReports )
                 {
-                    assertFalse( true );
-                }
-                else if ( User.class.isInstance( preheatErrorReport.getValue() ) )
-                {
-                    assertEquals( "GOLswS44mh8", preheatErrorReport.getObjectReference().getUid() );
-                }
-                else if ( OptionSet.class.isInstance( preheatErrorReport.getValue() ) )
-                {
-                    assertFalse( true );
+                    assertTrue( PreheatErrorReport.class.isInstance( errorReport ) );
+                    PreheatErrorReport preheatErrorReport = (PreheatErrorReport) errorReport;
+                    assertEquals( PreheatIdentifier.UID, preheatErrorReport.getPreheatIdentifier() );
+
+                    if ( DataElementCategoryCombo.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertFalse( true );
+                    }
+                    else if ( User.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertEquals( "GOLswS44mh8", preheatErrorReport.getObjectReference().getUid() );
+                    }
+                    else if ( OptionSet.class.isInstance( preheatErrorReport.getValue() ) )
+                    {
+                        assertFalse( true );
+                    }
                 }
             }
         }
@@ -249,8 +258,9 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports().isEmpty() );
-        assertEquals( 2, validate.getErrorReports().get( DataElement.class ).size() );
+        assertFalse( validate.getObjectErrorReportsMap().isEmpty() );
+        assertEquals( 7, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E4000 ).size() );
     }
 
     @Test
@@ -268,7 +278,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertEquals( 3, validate.getObjectErrorReports( DataElement.class ).size() );
     }
 
     @Test
@@ -287,8 +297,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 1, validate.getErrorReports( DataElement.class ).get( ErrorCode.E5001 ).size() );
-        assertFalse( validate.getErrorReports( DataElement.class ).get( ErrorCode.E4000 ).isEmpty() );
+        assertEquals( 1, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getErrorReportsByCode( DataElement.class, ErrorCode.E4000 ).isEmpty() );
         assertEquals( 0, bundle.getObjects().get( DataElement.class ).size() );
     }
 
@@ -307,8 +317,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getObjectErrorReports( DataElement.class ).isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -326,8 +336,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getObjectErrorReports( DataElement.class ).isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -345,8 +355,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getObjectErrorReports( DataElement.class ).isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -364,8 +374,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getObjectErrorReports( DataElement.class ).isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -383,8 +393,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getErrorReports( DataElement.class ).isEmpty() );
-        assertEquals( 3, validate.getErrorReports( DataElement.class, ErrorCode.E5001 ).size() );
+        assertFalse( validate.getObjectErrorReports( DataElement.class ).isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test

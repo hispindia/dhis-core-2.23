@@ -35,6 +35,7 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -437,12 +438,29 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<List<PreheatErrorReport>> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public List<ObjectErrorReport> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
-        List<List<PreheatErrorReport>> preheatErrorReports = new ArrayList<>();
-        objects.forEach( object -> preheatErrorReports.add( checkReferences( object, preheat, identifier ) ) );
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
 
-        return preheatErrorReports;
+        if ( objects.isEmpty() )
+        {
+            return objectErrorReports;
+        }
+
+        for ( int i = 0; i < objects.size(); i++ )
+        {
+            IdentifiableObject object = objects.get( i );
+            List<PreheatErrorReport> errorReports = checkReferences( object, preheat, identifier );
+
+            if ( errorReports.isEmpty() ) continue;
+
+            ObjectErrorReport objectErrorReport = new ObjectErrorReport( object.getClass(), i );
+            objectErrorReport.addErrorReports( errorReports );
+            objectErrorReports.add( objectErrorReport );
+
+        }
+
+        return objectErrorReports;
     }
 
     @Override
