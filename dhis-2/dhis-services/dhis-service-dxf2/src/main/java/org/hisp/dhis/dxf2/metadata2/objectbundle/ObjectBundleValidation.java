@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
@@ -121,5 +122,13 @@ public class ObjectBundleValidation
     public Map<Class<?>, Map<Integer, ObjectErrorReport>> getObjectErrorReportsMap()
     {
         return objectErrorReportsMap;
+    }
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "objectErrorReportsMap", objectErrorReportsMap )
+            .toString();
     }
 }
