@@ -1,14 +1,5 @@
 package org.hisp.dhis.sms.incoming;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.setting.SettingKey;
-import org.hisp.dhis.setting.SystemSettingManager;
-import org.hisp.dhis.sms.SmsPublisher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextRefreshedEvent;
-
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -37,6 +28,15 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.hisp.dhis.setting.SettingKey;
+import org.hisp.dhis.setting.SystemSettingManager;
+import org.hisp.dhis.sms.SmsPublisher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+
 public class DefaultSmsConsumerService
     implements ApplicationListener<ContextRefreshedEvent>, SmsConsumerService
 {
@@ -57,11 +57,20 @@ public class DefaultSmsConsumerService
     // -------------------------------------------------------------------------
 
     @Override
+    public void onApplicationEvent( ContextRefreshedEvent event )
+    {
+        if ( isSmsConsumerRunning() )
+        {
+            startSmsConsumer();
+        }  
+    }
+
+    @Override
     public void startSmsConsumer()
     {
         smsPublisher.start();
 
-        log.info( "SMS Consumer Stared" );
+        log.info( "SMS consumer started" );
 
         saveSmsConsumerState( true );
     }
@@ -71,21 +80,12 @@ public class DefaultSmsConsumerService
     {
         smsPublisher.stop();
 
-        log.info( "SMS Consumer Stopped !!! " );
+        log.info( "SMS consumer stopped" );
 
         saveSmsConsumerState( false );
     }
 
-    @Override
-    public void onApplicationEvent( ContextRefreshedEvent event )
-    {
-        if ( getSmsConsumerState() )
-        {
-            startSmsConsumer();
-        }  
-    }
-
-    private boolean getSmsConsumerState()
+    private boolean isSmsConsumerRunning()
     {
         return (boolean) systemSettingManager.getSystemSetting( SettingKey.SMS_CONSUMER_STATE );
     }
@@ -94,5 +94,4 @@ public class DefaultSmsConsumerService
     {
         systemSettingManager.saveSystemSetting( SettingKey.SMS_CONSUMER_STATE, state );
     }
-
 }
