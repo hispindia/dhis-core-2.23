@@ -30,14 +30,11 @@ package org.hisp.dhis.schema;
 
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.CaseFormat;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.system.util.AnnotationUtils;
 import org.hisp.dhis.system.util.ReflectionUtils;
-import org.hisp.dhis.translation.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
@@ -49,8 +46,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -66,12 +61,6 @@ public class DefaultSchemaService
 
     private Map<Class<?>, Schema> dynamicClassSchemaMap = new HashMap<>();
 
-    private static Cache<Class<?>, Boolean> IS_TRANSLATED_CACHE = CacheBuilder.newBuilder()
-        .expireAfterAccess( 15, TimeUnit.MINUTES )
-        .initialCapacity( 100 )
-        .maximumSize( 200 )
-        .build();
-
     @Autowired
     private PropertyIntrospectorService propertyIntrospectorService;
 
@@ -80,9 +69,6 @@ public class DefaultSchemaService
 
     @Autowired
     private SessionFactory sessionFactory;
-
-    @Autowired
-    private TranslationService translationService;
 
     @Override
     public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
@@ -227,20 +213,6 @@ public class DefaultSchemaService
         Collections.sort( schemas, OrderComparator.INSTANCE );
 
         return schemas;
-    }
-
-    @Override
-    public boolean isTranslated( final Class<?> klass )
-    {
-        try
-        {
-            return IS_TRANSLATED_CACHE.get( klass, () -> translationService.hasTranslations( klass.getSimpleName() ) );
-        }
-        catch ( ExecutionException ignored )
-        {
-        }
-
-        return true;
     }
 
     private void updateSelf( Schema schema )

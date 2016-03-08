@@ -93,6 +93,4 @@ public interface SchemaService
      * @return List of all available metadata schemas
      */
     List<Schema> getMetadataSchemas();
-
-    boolean isTranslated( Class<?> klass );
 }

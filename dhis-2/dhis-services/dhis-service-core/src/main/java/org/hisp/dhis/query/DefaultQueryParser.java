@@ -32,6 +32,7 @@ import org.hisp.dhis.query.operators.MatchMode;
 import org.hisp.dhis.schema.Property;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
+import org.hisp.dhis.translation.TranslationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
@@ -44,6 +45,9 @@ public class DefaultQueryParser implements QueryParser
 {
     @Autowired
     private SchemaService schemaService;
+    
+    @Autowired
+    private TranslationService translationService;
 
     @Override
     public Query parse( Class<?> klass, List<String> filters ) throws QueryParserException
@@ -77,7 +81,7 @@ public class DefaultQueryParser implements QueryParser
     private Restriction getRestriction( Schema schema, String path, String operator, Object arg ) throws QueryParserException
     {
         // optimize if not translated
-        if ( !schemaService.isTranslated( schema.getKlass() ) )
+        if ( !translationService.isTranslated( schema.getKlass() ) )
         {
             if ( path.startsWith( "displayName:" ) && schema.havePersistedProperty( "name" ) )
             {

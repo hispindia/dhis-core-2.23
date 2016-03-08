@@ -152,4 +152,12 @@ public interface TranslationService
      * @return true if translations exist.
      */
     boolean hasTranslations( String className );
+
+    /**
+     * Indicates whether translations exist for the given class.
+     * 
+     * @param klass the class.
+     * @return true if translations exist.
+     */
+    boolean isTranslated( Class<?> klass );
 }

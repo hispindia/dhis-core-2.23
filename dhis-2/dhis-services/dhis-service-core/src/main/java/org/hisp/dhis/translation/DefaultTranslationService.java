@@ -31,9 +31,14 @@ package org.hisp.dhis.translation;
 import org.hisp.dhis.system.util.LocaleUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author Lars Helge Overland
@@ -43,6 +48,12 @@ import java.util.Locale;
 public class DefaultTranslationService
     implements TranslationService
 {
+    private static Cache<Class<?>, Boolean> IS_TRANSLATED_CACHE = CacheBuilder.newBuilder()
+        .expireAfterAccess( 15, TimeUnit.MINUTES )
+        .initialCapacity( 100 )
+        .maximumSize( 200 )
+        .build();
+
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
@@ -160,5 +171,19 @@ public class DefaultTranslationService
     public boolean hasTranslations( String className )
     {
         return translationStore.hasTranslations( className );
+    }
+
+    @Override
+    public boolean isTranslated( final Class<?> klass )
+    {
+        try
+        {
+            return IS_TRANSLATED_CACHE.get( klass, () -> hasTranslations( klass.getSimpleName() ) );
+        }
+        catch ( ExecutionException ignored )
+        {
+        }
+
+        return true;
     }
 }
