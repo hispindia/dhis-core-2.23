@@ -431,7 +431,7 @@ public class DefaultDataSetService
             return true;
         }
 
-        DataSet dataSet = dataElement.getDataSet();
+        DataSet dataSet = dataElement.getApprovalDataSet();
 
         if ( dataSet == null || dataSet.getWorkflow() == null )
         {
