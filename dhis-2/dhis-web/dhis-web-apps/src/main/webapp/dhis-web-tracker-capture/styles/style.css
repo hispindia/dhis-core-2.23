@@ -637,11 +637,11 @@ table.table-striped tr td.optionset {
 }
 
 .widget-link {
-    color: #104E8B;
+    font-weight: normal !important;
 }
 
 .widget-link-active {
-    color: #551A8B;
+    font-weight: bold !important;
 }
 
 .empty-dashboard-container{

@@ -42,8 +42,7 @@ trackerCapture.controller('NotesController',
             //that can be used for communication
             var continueLoop = true;
             for(var i=0; i<$scope.selectedTei.attributes.length && continueLoop; i++){
-                if( ($scope.selectedTei.attributes[i].type === 'phoneNumber' && $scope.selectedTei.attributes[i].show) || 
-                    ($scope.selectedTei.attributes[i].type === 'email' && $scope.selectedTei.attributes[i].show) ){
+                if( $scope.selectedTei.attributes[i].valueType === 'PHONE_NUMBER' || $scope.selectedTei.attributes[i].valueType === 'EMAIL' ){
                     $scope.messagingPossible = true;
                     continueLoop = false;
                 }
