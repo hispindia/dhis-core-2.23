@@ -268,6 +268,7 @@ public class InMemoryQueryEngine<T extends IdentifiableObject>
         throw new QueryException( "No values found for path " + path );
     }
 
+    @SuppressWarnings( { "unchecked", "rawtypes" } )
     private Object collect( Object object, Property property )
     {
         object = HibernateUtils.unwrap( object );

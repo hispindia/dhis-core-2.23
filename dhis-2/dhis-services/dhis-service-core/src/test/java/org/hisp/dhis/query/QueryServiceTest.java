@@ -353,6 +353,7 @@ public class QueryServiceTest
     }
 
     @Test
+    @SuppressWarnings("rawtypes")
     public void resultTransformerTest()
     {
         Query query = Query.from( schemaService.getDynamicSchema( DataElement.class ) );
