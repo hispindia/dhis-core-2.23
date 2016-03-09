@@ -842,10 +842,10 @@ public class ObjectBundleServiceTest
         assertNotNull( section1.getDataSet() );
         assertNotNull( section2.getDataSet() );
 
-        Section section = manager.get( Section.class, "JwcV2ZifEQf" );
+        Section section = manager.get( Section.class, "C50M0WxaI7y" );
         assertNotNull( section.getDataSet() );
         assertNotNull( section.getCategoryCombo() );
-        // assertEquals( 1, section.getGreyedFields().size() );
+        assertEquals( 1, section.getGreyedFields().size() );
     }
 
     private void defaultSetup()
