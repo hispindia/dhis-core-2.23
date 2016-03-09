@@ -360,7 +360,7 @@ public class HibernateProgramStageInstanceStore
             + "               and psi.executiondate is null "
             + "               and (  DATE(now()) - DATE(psi.duedate) ) = prm.daysallowedsendmessage "
             + "               and prm.whentosend is null and prm.sendto = "
-            + +TrackedEntityInstanceReminder.SEND_TO_ORGUGNIT_REGISTERED;
+            + +TrackedEntityInstanceReminder.SEND_TO_REGISTERED_ORGUNIT;
     }
 
     private String sendMessageToUsersSql()
@@ -392,7 +392,7 @@ public class HibernateProgramStageInstanceStore
             + "       and psi.executiondate is null "
             + "       and (  DATE(now()) - DATE(psi.duedate) ) = prm.daysallowedsendmessage "
             + "       and prm.whentosend is null and prm.sendto = "
-            + TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED;
+            + TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT;
     }
 
     private String sendMessageToUserGroupsSql()

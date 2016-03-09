@@ -1,5 +1,7 @@
 package org.hisp.dhis.trackedentity;
 
+import org.apache.commons.lang.StringUtils;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -46,8 +48,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 
-import static org.hisp.dhis.trackedentity.TrackedEntityInstanceReminder.ATTRIBUTE;
-import static org.hisp.dhis.trackedentity.TrackedEntityInstanceReminder.ATTRIBUTE_PATTERN;
+import static org.hisp.dhis.trackedentity.TrackedEntityInstanceReminder.*;
 
 /**
  * @author Chau Thu Tran
@@ -104,25 +105,19 @@ public class DefaultTrackedEntityInstanceReminderService
         String incidentDate = format.formatDate( programInstance.getIncidentDate() );
         String erollmentDate = format.formatDate( programInstance.getEnrollmentDate() );
 
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_PROGRAM_NAME,
-            programName );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_ORGUNIT_NAME,
-            organisationunitName );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_INCIDENT_DATE,
-            incidentDate );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_ENROLLMENT_DATE,
-            erollmentDate );
-        templateMessage = templateMessage.replace(
-            TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_DAYS_SINCE_ENROLLMENT_DATE, daysSinceEnrollementDate );
-        templateMessage = templateMessage.replace(
-            TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_DAYS_SINCE_INCIDENT_DATE, daysSinceIncidentDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_PROGRAM_NAME, programName );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_ORGUNIT_NAME, organisationunitName );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_INCIDENT_DATE, incidentDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_ENROLLMENT_DATE, erollmentDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_DAYS_SINCE_ENROLLMENT_DATE, daysSinceEnrollementDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_DAYS_SINCE_INCIDENT_DATE, daysSinceIncidentDate );
 
         Matcher matcher = ATTRIBUTE_PATTERN.matcher( template );
 
         while ( matcher.find() )
         {
             String match = matcher.group();
-            String value = "";
+            String value = StringUtils.EMPTY;
 
             if ( matcher.group( 1 ).equals( ATTRIBUTE ) )
             {
@@ -155,15 +150,11 @@ public class DefaultTrackedEntityInstanceReminderService
         String daysSinceDueDate = DateUtils.daysBetween( new Date(), programStageInstance.getDueDate() ) + "";
         String dueDate = format.formatDate( programStageInstance.getDueDate() );
 
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_PROGRAM_NAME,
-            programName );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_PROGAM_STAGE_NAME,
-            programStageName );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_DUE_DATE, dueDate );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_ORGUNIT_NAME,
-            organisationunitName );
-        templateMessage = templateMessage.replace( TrackedEntityInstanceReminder.TEMPLATE_MESSSAGE_DAYS_SINCE_DUE_DATE,
-            daysSinceDueDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_PROGRAM_NAME, programName );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_PROGAM_STAGE_NAME, programStageName );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_DUE_DATE, dueDate );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_ORGUNIT_NAME, organisationunitName );
+        templateMessage = templateMessage.replace( TEMPLATE_MESSSAGE_DAYS_SINCE_DUE_DATE, daysSinceDueDate );
 
         Matcher matcher = ATTRIBUTE_PATTERN.matcher( templateMessage );
 
@@ -212,64 +203,69 @@ public class DefaultTrackedEntityInstanceReminderService
     public Set<String> getPhoneNumbers( TrackedEntityInstanceReminder reminder, TrackedEntityInstance entityInstance )
     {
         Set<String> phoneNumbers = new HashSet<>();
-        switch ( reminder.getSendTo() )
+        
+        int sendTo = reminder.getSendTo();
+        
+        if ( SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT == sendTo )
         {
-            case TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED:
-                Collection<User> users = entityInstance.getOrganisationUnit().getUsers();
+            Collection<User> users = entityInstance.getOrganisationUnit().getUsers();
 
-                for ( User user : users )
+            for ( User user : users )
+            {
+                if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
                 {
-                    if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
-                    {
-                        phoneNumbers.add( user.getPhoneNumber() );
-                    }
+                    phoneNumbers.add( user.getPhoneNumber() );
                 }
-                break;
-            case TrackedEntityInstanceReminder.SEND_TO_ATTRIBUTE_TYPE_USERS:
-                if ( entityInstance.getTrackedEntityAttributeValues() != null )
+            }
+        }
+        else if ( SEND_TO_ATTRIBUTE_TYPE_USERS == sendTo )
+        {
+            if ( entityInstance.getTrackedEntityAttributeValues() != null )
+            {
+                for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
                 {
-                    for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
+                    if ( ValueType.USERNAME == attributeValue.getAttribute().getValueType() )
                     {
-                        if ( ValueType.USERNAME == attributeValue.getAttribute().getValueType() )
-                        {
-                            User user = userService.getUser( Integer.parseInt( attributeValue.getValue() ) );
+                        User user = userService.getUser( Integer.parseInt( attributeValue.getValue() ) );
 
-                            if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
-                            {
-                                phoneNumbers.add( user.getPhoneNumber() );
-                            }
+                        if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
+                        {
+                            phoneNumbers.add( user.getPhoneNumber() );
                         }
                     }
                 }
-                break;
-            case TrackedEntityInstanceReminder.SEND_TO_ORGUGNIT_REGISTERED:
-                if ( entityInstance.getOrganisationUnit().getPhoneNumber() != null
-                    && !entityInstance.getOrganisationUnit().getPhoneNumber().isEmpty() )
+            }
+        }
+        else if ( SEND_TO_REGISTERED_ORGUNIT == sendTo )
+        {
+            if ( entityInstance.getOrganisationUnit().getPhoneNumber() != null
+                && !entityInstance.getOrganisationUnit().getPhoneNumber().isEmpty() )
+            {
+                phoneNumbers.add( entityInstance.getOrganisationUnit().getPhoneNumber() );
+            }
+        }
+        else if ( SEND_TO_USER_GROUP == sendTo )
+        {
+            for ( User user : reminder.getUserGroup().getMembers() )
+            {
+                if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
                 {
-                    phoneNumbers.add( entityInstance.getOrganisationUnit().getPhoneNumber() );
+                    phoneNumbers.add( user.getPhoneNumber() );
                 }
-                break;
-            case TrackedEntityInstanceReminder.SEND_TO_USER_GROUP:
-                for ( User user : reminder.getUserGroup().getMembers() )
+            }
+        }
+        else
+        {
+            if ( entityInstance.getTrackedEntityAttributeValues() != null )
+            {
+                for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
                 {
-                    if ( user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty() )
+                    if ( ValueType.PHONE_NUMBER == attributeValue.getAttribute().getValueType() )
                     {
-                        phoneNumbers.add( user.getPhoneNumber() );
+                        phoneNumbers.add( attributeValue.getValue() );
                     }
                 }
-                break;
-            default:
-                if ( entityInstance.getTrackedEntityAttributeValues() != null )
-                {
-                    for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
-                    {
-                        if ( ValueType.PHONE_NUMBER == attributeValue.getAttribute().getValueType() )
-                        {
-                            phoneNumbers.add( attributeValue.getValue() );
-                        }
-                    }
-                }
-                break;
+            }
         }
 
         return phoneNumbers;
@@ -279,33 +275,34 @@ public class DefaultTrackedEntityInstanceReminderService
     public Set<User> getUsers( TrackedEntityInstanceReminder reminder, TrackedEntityInstance entityInstance )
     {
         Set<User> users = new HashSet<>();
+        
+        int sendTo = reminder.getSendTo();
 
-        switch ( reminder.getSendTo() )
+        if ( SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT == sendTo )
         {
-            case TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED:
-                users.addAll( entityInstance.getOrganisationUnit().getUsers() );
-                break;
-            case TrackedEntityInstanceReminder.SEND_TO_ATTRIBUTE_TYPE_USERS:
-                if ( entityInstance.getTrackedEntityAttributeValues() != null )
+            users.addAll( entityInstance.getOrganisationUnit().getUsers() );
+        }
+        else if ( SEND_TO_ATTRIBUTE_TYPE_USERS == sendTo )
+        {
+            if ( entityInstance.getTrackedEntityAttributeValues() != null )
+            {
+                for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
                 {
-                    for ( TrackedEntityAttributeValue attributeValue : entityInstance.getTrackedEntityAttributeValues() )
+                    if ( ValueType.USERNAME == attributeValue.getAttribute().getValueType() )
                     {
-                        if ( ValueType.USERNAME == attributeValue.getAttribute().getValueType() )
-                        {
-                            users.add( userService.getUser( Integer.parseInt( attributeValue.getValue() ) ) );
-                        }
+                        users.add( userService.getUser( Integer.parseInt( attributeValue.getValue() ) ) );
                     }
                 }
-                break;
-            case TrackedEntityInstanceReminder.SEND_TO_USER_GROUP:
-                if ( reminder.getUserGroup().getMembers().size() > 0 )
-                {
-                    users.addAll( reminder.getUserGroup().getMembers() );
-                }
-                break;
-            default:
-                break;
+            }
         }
+        else if ( SEND_TO_USER_GROUP == sendTo )
+        {
+            if ( reminder.getUserGroup().getMembers().size() > 0 )
+            {
+                users.addAll( reminder.getUserGroup().getMembers() );
+            }
+        }
+        
         return users;
     }
 }

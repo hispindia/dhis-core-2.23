@@ -499,7 +499,7 @@ public class HibernateProgramInstanceStore
             + "      and prm.templatemessage is not NULL and prm.templatemessage != '' "
             + "      and pg.type='" + ProgramType.WITH_REGISTRATION.name() + "' and prm.daysallowedsendmessage is not null " + "      and ( DATE(now()) - DATE( pi."
             + dateToCompare + " ) ) = prm.daysallowedsendmessage " + "      and prm.dateToCompare='" + dateToCompare
-            + "'     and prm.whenToSend is null and prm.sendto =  " + TrackedEntityInstanceReminder.SEND_TO_ORGUGNIT_REGISTERED;
+            + "'     and prm.whenToSend is null and prm.sendto =  " + TrackedEntityInstanceReminder.SEND_TO_REGISTERED_ORGUNIT;
     }
 
     private String sendMessageToUsersSql( String dateToCompare )
@@ -525,7 +525,7 @@ public class HibernateProgramInstanceStore
             + "         and prm.dateToCompare='"
             + dateToCompare
             + "'        and prm.sendto = "
-            + TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED;
+            + TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT;
     }
 
     private String sendMessageToUserGroupsSql( String dateToCompare )

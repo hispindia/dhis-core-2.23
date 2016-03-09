@@ -61,43 +61,27 @@ public class TrackedEntityInstanceReminder
     public static final String INCIDENT_DATE_TO_COMPARE = "incidentdate";
 
     public static final String TEMPLATE_MESSSAGE_PROGRAM_NAME = "{program-name}";
-
     public static final String TEMPLATE_MESSSAGE_PROGAM_STAGE_NAME = "{program-stage-name}";
-
     public static final String TEMPLATE_MESSSAGE_DUE_DATE = "{due-date}";
-
     public static final String TEMPLATE_MESSSAGE_ORGUNIT_NAME = "{orgunit-name}";
-
     public static final String TEMPLATE_MESSSAGE_DAYS_SINCE_DUE_DATE = "{days-since-due-date}";
-
     public static final String TEMPLATE_MESSSAGE_INCIDENT_DATE = "{incident-date}";
-
     public static final String TEMPLATE_MESSSAGE_ENROLLMENT_DATE = "{enrollement-date}";
-
     public static final String TEMPLATE_MESSSAGE_DAYS_SINCE_ENROLLMENT_DATE = "{days-since-enrollment-date}";
-
     public static final String TEMPLATE_MESSSAGE_DAYS_SINCE_INCIDENT_DATE = "{days-since-incident-date}";
 
     public static final int SEND_TO_TRACKED_ENTITY_INSTANCE = 1;
-
     public static final int SEND_TO_ATTRIBUTE_TYPE_USERS = 2;
-
-    public static final int SEND_TO_ORGUGNIT_REGISTERED = 3;
-
-    public static final int SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED = 4;
-
+    public static final int SEND_TO_REGISTERED_ORGUNIT = 3;
+    public static final int SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT = 4;
     public static final int SEND_TO_USER_GROUP = 5;
 
     public static final int SEND_WHEN_TO_ENROLLMENT = 1;
-
     public static final int SEND_WHEN_TO_C0MPLETED_EVENT = 2;
-
     public static final int SEND_WHEN_TO_COMPLETED_PROGRAM = 3;
 
     public static final int MESSAGE_TYPE_DIRECT_SMS = 1;
-
     public static final int MESSAGE_TYPE_DHIS_MESSAGE = 2;
-
     public static final int MESSAGE_TYPE_BOTH = 3;
 
     private Integer daysAllowedSendMessage;

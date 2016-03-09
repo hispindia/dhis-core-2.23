@@ -156,7 +156,7 @@ public class TrackedEntityInstanceReminderServiceTest
         ProgramStage stageB = new ProgramStage( "B", program );
         reminderC = new TrackedEntityInstanceReminder( "C", 0, "Test event template",
             TrackedEntityInstanceReminder.DUE_DATE_TO_COMPARE,
-            TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_IN_ORGUGNIT_REGISTERED,
+            TrackedEntityInstanceReminder.SEND_TO_ALL_USERS_AT_REGISTERED_ORGUNIT,
             TrackedEntityInstanceReminder.SEND_WHEN_TO_C0MPLETED_EVENT,
             TrackedEntityInstanceReminder.MESSAGE_TYPE_DIRECT_SMS );
         reminders = new HashSet<>();
