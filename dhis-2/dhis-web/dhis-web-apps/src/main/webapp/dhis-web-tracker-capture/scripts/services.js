@@ -1427,22 +1427,22 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         
         if(enrollment){
             var q = '';
-            if(enrollment.operator === OperatorFactory.defaultOperators[0]){
-                if(enrollment.programExactDate && enrollment.programExactDate !== ''){
-                    query.hasValue = true;
-                    q += '&programStartDate=' + DateUtils.formatFromUserToApi(enrollment.programExactDate) + '&programEndDate=' + DateUtils.formatFromUserToApi(enrollment.programExactDate);
-                }
+            if(enrollment.programEnrollmentStartDate && enrollment.programEnrollmentStartDate !== ''){                
+                query.hasValue = true;
+                q += '&programEnrollmentStartDate=' + DateUtils.formatFromUserToApi(enrollment.programEnrollmentStartDate);
             }
-            if(enrollment.operator === OperatorFactory.defaultOperators[1]){
-                if(enrollment.programStartDate && enrollment.programStartDate !== ''){                
-                    query.hasValue = true;
-                    q += '&programStartDate=' + DateUtils.formatFromUserToApi(enrollment.programStartDate);
-                }
-                if(enrollment.programEndDate && enrollment.programEndDate !== ''){
-                    query.hasValue = true;
-                    q += '&programEndDate=' + DateUtils.formatFromUserToApi(enrollment.programEndDate);
-                }
-            }            
+            if(enrollment.programEnrollmentEndDate && enrollment.programEnrollmentEndDate !== ''){
+                query.hasValue = true;
+                q += '&programEnrollmentEndDate=' + DateUtils.formatFromUserToApi(enrollment.programEnrollmentEndDate);
+            }
+            if(enrollment.programIncidentStartDate && enrollment.programIncidentStartDate !== ''){                
+                query.hasValue = true;
+                q += '&programIncidentStartDate=' + DateUtils.formatFromUserToApi(enrollment.programIncidentStartDate);
+            }
+            if(enrollment.programIncidentEndDate && enrollment.programIncidentEndDate !== ''){
+                query.hasValue = true;
+                q += '&programIncidentEndDate=' + DateUtils.formatFromUserToApi(enrollment.programIncidentEndDate);
+            }
             if(q){
                 if(query.url){
                     query.url = query.url + q;

@@ -14,24 +14,28 @@
                 </td>
             </tr>
             <tr ng-if="selectedProgram">
-                <td>{{'enrollment_date'| translate}}</td>
+                <td>{{selectedProgram.enrollmentDateLabel}}</td>
                 <td>
                     <div class="dataelement-filter">
-                        <div class="filter-operator">
-                            <select ng-model="enrollment.operator" class="form-control-select2" ng-options="operator | translate for operator in defaultOperators">
-                            </select>
+                        <div class="container-1-2">
+                            <input type="text" placeholder="{{'start_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programEnrollmentStartDate"/>
                         </div>
-                        <div class="filter-value" ng-show="enrollment.operator === defaultOperators[0]">
-                            <input type="text" placeholder="{{'exact_date'| translate}}" class="form-control-select2" d2-date max-date="0" ng-model="enrollment.programExactDate"/>
+                        <div class="container-1-2">
+                            <input type="text" placeholder="{{'end_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programEnrollmentEndDate"/>                
+                        </div>             
+                    </div>                
+                </td>
+            </tr>
+            <tr ng-if="selectedProgram && selectedProgram.displayIncidentDate">
+                <td>{{selectedProgram.incidentDateLabel}}</td>
+                <td>
+                    <div class="dataelement-filter">
+                        <div class="container-1-2">
+                            <input type="text" placeholder="{{'start_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programIncidentStartDate"/>
                         </div>
-                        <div class="filter-value" ng-show="enrollment.operator === defaultOperators[1]">
-                            <div class="container-1-2">
-                                <input type="text" placeholder="{{'start_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programStartDate"/>
-                            </div>
-                            <div class="container-1-2">
-                                <input type="text" placeholder="{{'end_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programEndDate"/>                
-                            </div>
-                        </div>                    
+                        <div class="container-1-2">
+                            <input type="text" placeholder="{{'end_date'| translate}}" class="form-control-select2" d2-date ng-model="enrollment.programIncidentEndDate"/>                
+                        </div>             
                     </div>                
                 </td>
             </tr>
