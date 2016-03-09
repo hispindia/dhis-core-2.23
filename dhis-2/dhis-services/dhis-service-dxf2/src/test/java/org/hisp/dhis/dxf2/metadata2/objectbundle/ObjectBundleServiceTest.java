@@ -43,12 +43,10 @@ import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.Section;
-import org.hisp.dhis.dxf2.metadata2.MetadataExportService;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.importexport.ImportStrategy;
-import org.hisp.dhis.node.NodeService;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -910,21 +908,23 @@ public class ObjectBundleServiceTest
         assertEquals( 1, dataElementOperands.size() );
 
         DataSet dataSet = dataSets.get( 0 );
+        assertEquals( "Updated Data Set", dataSet.getName() );
         assertEquals( 2, dataSet.getSections().size() );
+        assertNotNull( dataSet.getUser() );
 
-        Section section1 = sections.get( 0 );
-        Section section2 = sections.get( 1 );
-
-        assertEquals( 1, section1.getDataElements().size() );
-        assertEquals( 1, section2.getDataElements().size() );
-
+        Section section1 = manager.get( Section.class, "JwcV2ZifEQf" );
         assertNotNull( section1.getDataSet() );
-        assertNotNull( section2.getDataSet() );
+        assertNotNull( section1.getCategoryCombo() );
+        assertEquals( 1, section1.getGreyedFields().size() );
+        assertEquals( 1, section1.getDataElements().size() );
+        assertNotNull( section1.getDataSet() );
 
-        Section section = manager.get( Section.class, "JwcV2ZifEQf" );
-        assertNotNull( section.getDataSet() );
-        assertNotNull( section.getCategoryCombo() );
-        assertEquals( 1, section.getGreyedFields().size() );
+        Section section2 = manager.get( Section.class, "C50M0WxaI7y" );
+        assertNotNull( section2.getDataSet() );
+        assertNotNull( section2.getCategoryCombo() );
+        assertTrue( section2.getGreyedFields().isEmpty() );
+        assertEquals( 1, section2.getDataElements().size() );
+        assertNotNull( section2.getDataSet() );
     }
 
     private void defaultSetup()
