@@ -34,6 +34,9 @@ import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.Set;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
@@ -43,10 +46,7 @@ public class SectionObjectBundleHook extends AbstractObjectBundleHook
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !Section.class.isInstance( identifiableObject ) )
-        {
-            return;
-        }
+        if ( !Section.class.isInstance( identifiableObject ) ) return;
 
         Section section = (Section) identifiableObject;
 
@@ -55,5 +55,34 @@ public class SectionObjectBundleHook extends AbstractObjectBundleHook
             preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
             sessionFactory.getCurrentSession().save( dataElementOperand );
         }
+    }
+
+    @Override
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !Section.class.isInstance( identifiableObject ) ) return;
+
+        Section section = (Section) identifiableObject;
+        section.getGreyedFields().clear();
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !Section.class.isInstance( identifiableObject ) ) return;
+
+        Section section = (Section) identifiableObject;
+        Map<String, Object> references = objectBundle.getObjectReferences( Section.class ).get( section.getUid() );
+        Set<DataElementOperand> dataElementOperands = (Set<DataElementOperand>) references.get( "greyedFields" );
+
+        for ( DataElementOperand dataElementOperand : dataElementOperands )
+        {
+            preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+            sessionFactory.getCurrentSession().save( dataElementOperand );
+            section.getGreyedFields().add( dataElementOperand );
+        }
+
+        sessionFactory.getCurrentSession().update( section );
     }
 }

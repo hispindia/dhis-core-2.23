@@ -28,6 +28,7 @@ package org.hisp.dhis.preheat;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import javassist.util.proxy.ProxyFactory;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
@@ -139,16 +140,19 @@ public class Preheat
         return isEmpty( identifier ) || !map.get( identifier ).containsKey( klass ) || map.get( identifier ).get( klass ).isEmpty();
     }
 
+    @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> Preheat put( PreheatIdentifier identifier, T object )
     {
         if ( object == null ) return this;
 
+        Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) getRealClass( object.getClass() );
+
         if ( PreheatIdentifier.UID == identifier || PreheatIdentifier.AUTO == identifier )
         {
             if ( !map.containsKey( PreheatIdentifier.UID ) ) map.put( PreheatIdentifier.UID, new HashMap<>() );
-            if ( !map.get( PreheatIdentifier.UID ).containsKey( object.getClass() ) ) map.get( PreheatIdentifier.UID ).put( object.getClass(), new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.UID ).containsKey( klass ) ) map.get( PreheatIdentifier.UID ).put( klass, new HashMap<>() );
 
-            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.UID ).get( object.getClass() );
+            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.UID ).get( klass );
             String key = PreheatIdentifier.UID.getIdentifier( object );
             identifierMap.put( key, object );
         }
@@ -156,9 +160,9 @@ public class Preheat
         if ( PreheatIdentifier.CODE == identifier || PreheatIdentifier.AUTO == identifier )
         {
             if ( !map.containsKey( PreheatIdentifier.CODE ) ) map.put( PreheatIdentifier.CODE, new HashMap<>() );
-            if ( !map.get( PreheatIdentifier.CODE ).containsKey( object.getClass() ) ) map.get( PreheatIdentifier.CODE ).put( object.getClass(), new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.CODE ).containsKey( klass ) ) map.get( PreheatIdentifier.CODE ).put( klass, new HashMap<>() );
 
-            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.CODE ).get( object.getClass() );
+            Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.CODE ).get( klass );
             String key = PreheatIdentifier.CODE.getIdentifier( object );
             identifierMap.put( key, object );
         }
@@ -262,5 +266,15 @@ public class Preheat
     public static boolean isDefault( IdentifiableObject object )
     {
         return isDefaultClass( object ) && "default".equals( object.getName() );
+    }
+
+    public static Class<?> getRealClass( Class<?> klass )
+    {
+        if ( ProxyFactory.isProxyClass( klass ) )
+        {
+            klass = klass.getSuperclass();
+        }
+
+        return klass;
     }
 }

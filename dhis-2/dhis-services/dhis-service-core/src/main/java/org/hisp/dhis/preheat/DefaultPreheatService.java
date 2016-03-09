@@ -33,6 +33,7 @@ import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ObjectErrorReport;
@@ -259,9 +260,9 @@ public class DefaultPreheatService implements PreheatService
             if ( !uidMap.containsKey( objectClass ) ) uidMap.put( objectClass, new HashSet<>() );
             if ( !codeMap.containsKey( objectClass ) ) codeMap.put( objectClass, new HashSet<>() );
 
-            properties.forEach( p -> {
-                for ( IdentifiableObject object : identifiableObjects )
-                {
+            for ( IdentifiableObject object : identifiableObjects )
+            {
+                properties.forEach( p -> {
                     if ( !p.isCollection() )
                     {
                         Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getKlass();
@@ -301,42 +302,43 @@ public class DefaultPreheatService implements PreheatService
                         }
                     }
 
-                    if ( !uidMap.containsKey( Attribute.class ) ) uidMap.put( Attribute.class, new HashSet<>() );
-                    if ( !codeMap.containsKey( Attribute.class ) ) codeMap.put( Attribute.class, new HashSet<>() );
+                } );
 
-                    object.getAttributeValues().forEach( av -> {
-                        Attribute attribute = av.getAttribute();
+                if ( !uidMap.containsKey( Attribute.class ) ) uidMap.put( Attribute.class, new HashSet<>() );
+                if ( !codeMap.containsKey( Attribute.class ) ) codeMap.put( Attribute.class, new HashSet<>() );
 
-                        if ( attribute != null )
-                        {
-                            if ( !StringUtils.isEmpty( attribute.getUid() ) ) uidMap.get( Attribute.class ).add( attribute.getUid() );
-                            if ( !StringUtils.isEmpty( attribute.getCode() ) ) codeMap.get( Attribute.class ).add( attribute.getCode() );
-                        }
-                    } );
+                object.getAttributeValues().forEach( av -> {
+                    Attribute attribute = av.getAttribute();
 
-                    if ( !uidMap.containsKey( UserGroup.class ) ) uidMap.put( UserGroup.class, new HashSet<>() );
-                    if ( !codeMap.containsKey( UserGroup.class ) ) codeMap.put( UserGroup.class, new HashSet<>() );
+                    if ( attribute != null )
+                    {
+                        if ( !StringUtils.isEmpty( attribute.getUid() ) ) uidMap.get( Attribute.class ).add( attribute.getUid() );
+                        if ( !StringUtils.isEmpty( attribute.getCode() ) ) codeMap.get( Attribute.class ).add( attribute.getCode() );
+                    }
+                } );
 
-                    object.getUserGroupAccesses().forEach( uga -> {
-                        UserGroup userGroup = uga.getUserGroup();
+                if ( !uidMap.containsKey( UserGroup.class ) ) uidMap.put( UserGroup.class, new HashSet<>() );
+                if ( !codeMap.containsKey( UserGroup.class ) ) codeMap.put( UserGroup.class, new HashSet<>() );
 
-                        if ( userGroup != null )
-                        {
-                            if ( !StringUtils.isEmpty( userGroup.getUid() ) ) uidMap.get( UserGroup.class ).add( userGroup.getUid() );
-                            if ( !StringUtils.isEmpty( userGroup.getCode() ) ) codeMap.get( UserGroup.class ).add( userGroup.getCode() );
-                        }
-                    } );
+                object.getUserGroupAccesses().forEach( uga -> {
+                    UserGroup userGroup = uga.getUserGroup();
 
-                    if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
-                    if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
+                    if ( userGroup != null )
+                    {
+                        if ( !StringUtils.isEmpty( userGroup.getUid() ) ) uidMap.get( UserGroup.class ).add( userGroup.getUid() );
+                        if ( !StringUtils.isEmpty( userGroup.getCode() ) ) codeMap.get( UserGroup.class ).add( userGroup.getCode() );
+                    }
+                } );
 
-                    if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
-                    if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
+                if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
+                if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
 
-                    if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
-                    if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
-                }
-            } );
+                if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
+                if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
+
+                if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
+                if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
+            }
         }
 
         return map;

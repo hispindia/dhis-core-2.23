@@ -56,10 +56,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !User.class.isInstance( identifiableObject ) || ((User) identifiableObject).getUserCredentials() == null )
-        {
-            return;
-        }
+        if ( !User.class.isInstance( identifiableObject ) || ((User) identifiableObject).getUserCredentials() == null ) return;
 
         User user = (User) identifiableObject;
         userCredentials = user.getUserCredentials();
@@ -81,10 +78,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     @Override
     public void postCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !User.class.isInstance( identifiableObject ) || userCredentials == null )
-        {
-            return;
-        }
+        if ( !User.class.isInstance( identifiableObject ) || userCredentials == null ) return;
 
         User user = (User) identifiableObject;
         userCredentials.setUserInfo( user );
@@ -99,10 +93,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     @SuppressWarnings( "unchecked" )
     public void postImport( ObjectBundle objectBundle )
     {
-        if ( !objectBundle.getObjects().containsKey( User.class ) )
-        {
-            return;
-        }
+        if ( !objectBundle.getObjects().containsKey( User.class ) ) return;
 
         List<IdentifiableObject> objects = objectBundle.getObjects().get( User.class );
         Map<String, Map<String, Object>> references = objectBundle.getObjectReferences( User.class );
@@ -114,6 +105,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
 
         for ( IdentifiableObject identifiableObject : objects )
         {
+            identifiableObject = objectBundle.getPreheat().get( objectBundle.getPreheatIdentifier(), identifiableObject );
             Map<String, Object> referenceMap = references.get( identifiableObject.getUid() );
 
             if ( referenceMap.isEmpty() )

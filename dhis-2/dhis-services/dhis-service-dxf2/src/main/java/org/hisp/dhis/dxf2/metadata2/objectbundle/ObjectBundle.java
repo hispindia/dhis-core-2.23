@@ -64,7 +64,7 @@ public class ObjectBundle
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
-    private Map<Class<?>, Map<String, Map<String, Object>>> objectReferences;
+    private Map<Class<?>, Map<String, Map<String, Object>>> objectReferences = new HashMap<>();
 
     public ObjectBundle( ObjectBundleParams params )
     {

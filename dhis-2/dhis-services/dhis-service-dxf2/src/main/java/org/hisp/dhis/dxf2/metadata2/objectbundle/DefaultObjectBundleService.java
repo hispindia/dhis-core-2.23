@@ -49,7 +49,8 @@ import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -61,7 +62,8 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@Component
+@Service
+@Transactional
 public class DefaultObjectBundleService implements ObjectBundleService
 {
     private static final Log log = LogFactory.getLog( DefaultObjectBundleService.class );
@@ -110,6 +112,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         bundle.setPreheat( preheatService.preheat( preheatParams ) );
+        bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
         if ( !(bundle.getImportMode().isCreate() || bundle.getImportMode().isCreateAndUpdate()) )
         {
@@ -162,8 +165,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
             }
         }
 
-        bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
-
         return bundle;
     }
 
@@ -211,6 +212,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
                     if ( object == null )
                     {
+                        if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
+
                         ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
                         objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                             bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
@@ -339,6 +342,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
+
+            sessionFactory.getCurrentSession().flush();
         }
     }
 
@@ -355,6 +360,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
             IdentifiableObject persistedObject = bundle.getPreheat().get( bundle.getPreheatIdentifier(), object );
+
             persistedObject.mergeWith( object, bundle.getMergeMode() );
             persistedObject.mergeSharingWith( object );
 
@@ -367,6 +373,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
                 log.debug( msg );
             }
+
+            sessionFactory.getCurrentSession().flush();
         }
     }
 
@@ -388,6 +396,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
+
+            sessionFactory.getCurrentSession().flush();
         }
     }
 
