@@ -60,6 +60,15 @@
                 <!-- App management -->
                 <artifactItem>
                   <groupId>org.hisp.dhis</groupId>
+                  <artifactId>dhis-app-pivot</artifactId>
+                  <version>${apps.version}</version>
+                  <overWrite>true</overWrite>
+                  <outputDirectory>${project.build.directory}/${project.artifactId}/dhis-web-pivot</outputDirectory>
+                  <includes>**/*.*</includes>
+                </artifactItem>
+                <!-- App management -->
+                <artifactItem>
+                  <groupId>org.hisp.dhis</groupId>
                   <artifactId>dhis-app-mapping</artifactId>
                   <version>${apps.version}</version>
                   <overWrite>true</overWrite>
