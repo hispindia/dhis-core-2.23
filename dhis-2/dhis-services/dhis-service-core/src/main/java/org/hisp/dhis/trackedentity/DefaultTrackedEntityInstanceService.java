@@ -306,16 +306,26 @@ public class DefaultTrackedEntityInstanceService
             violation = "Program must be defined when follow up status is defined";
         }
 
-        if ( params.hasProgramStartDate() && !params.hasProgram() )
+        if ( params.hasProgramEnrollmentStartDate() && !params.hasProgram() )
         {
-            violation = "Program must be defined when program start date is specified";
+            violation = "Program must be defined when program enrollment start date is specified";
         }
 
-        if ( params.hasProgramEndDate() && !params.hasProgram() )
+        if ( params.hasProgramEnrollmentEndDate() && !params.hasProgram() )
         {
-            violation = "Program must be defined when program end date is specified";
+            violation = "Program must be defined when program enrollment end date is specified";
         }
 
+        if ( params.hasProgramIncidentStartDate() && !params.hasProgram() )
+        {
+            violation = "Program must be defined when program incident start date is specified";
+        }
+
+        if ( params.hasProgramIncidentEndDate() && !params.hasProgram() )
+        {
+            violation = "Program must be defined when program incident end date is specified";
+        }
+        
         if ( params.hasEventStatus() && (!params.hasEventStartDate() || !params.hasEventEndDate()) )
         {
             violation = "Event start and end date must be specified when event status is specified";
@@ -347,7 +357,7 @@ public class DefaultTrackedEntityInstanceService
     @Override
     public TrackedEntityInstanceQueryParams getFromUrl( String query, Set<String> attribute, Set<String> filter,
         Set<String> ou, OrganisationUnitSelectionMode ouMode, String program, ProgramStatus programStatus,
-        Boolean followUp, Date programStartDate, Date programEndDate, String trackedEntity, EventStatus eventStatus,
+        Boolean followUp, Date programEnrollmentStartDate, Date programEnrollmentEndDate, Date programIncidentStartDate, Date programIncidentEndDate, String trackedEntity, EventStatus eventStatus,
         Date eventStartDate, Date eventEndDate, boolean skipMeta, Integer page, Integer pageSize, boolean totalPages, boolean skipPaging )
     {
         TrackedEntityInstanceQueryParams params = new TrackedEntityInstanceQueryParams();
@@ -407,8 +417,10 @@ public class DefaultTrackedEntityInstanceService
         params.setProgram( pr );
         params.setProgramStatus( programStatus );
         params.setFollowUp( followUp );
-        params.setProgramStartDate( programStartDate );
-        params.setProgramEndDate( programEndDate );
+        params.setProgramEnrollmentStartDate( programEnrollmentStartDate );
+        params.setProgramEnrollmentEndDate( programEnrollmentEndDate );
+        params.setProgramIncidentStartDate( programIncidentStartDate );
+        params.setProgramIncidentEndDate( programIncidentEndDate );
         params.setTrackedEntity( te );
         params.setOrganisationUnitMode( ouMode );
         params.setEventStatus( eventStatus );

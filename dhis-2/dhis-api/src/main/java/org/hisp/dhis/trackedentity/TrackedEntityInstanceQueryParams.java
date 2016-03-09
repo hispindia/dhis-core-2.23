@@ -112,12 +112,22 @@ public class TrackedEntityInstanceQueryParams
     /**
      * Start date for enrollment in the given program.
      */
-    private Date programStartDate;
+    private Date programEnrollmentStartDate;
     
     /**
      * End date for enrollment in the given program.
      */
-    private Date programEndDate;
+    private Date programEnrollmentEndDate;
+        
+    /**
+     * Start date for incident in the given program.
+     */
+    private Date programIncidentStartDate;
+    
+    /**
+     * End date for incident in the given program.
+     */
+    private Date programIncidentEndDate;
     
     /**
      * Tracked entity of the instances in the response.
@@ -433,19 +443,35 @@ public class TrackedEntityInstanceQueryParams
     }
     
     /**
-     * Indicates whether this params specifies a program start date.
+     * Indicates whether this params specifies a program enrollment start date.
      */
-    public boolean hasProgramStartDate()
+    public boolean hasProgramEnrollmentStartDate()
     {
-        return programStartDate != null;
+        return programEnrollmentStartDate != null;
     }
     
     /**
-     * Indicates whether this params specifies a program end date.
+     * Indicates whether this params specifies a program enrollment end date.
      */
-    public boolean hasProgramEndDate()
+    public boolean hasProgramEnrollmentEndDate()
     {
-        return programEndDate != null;
+        return programEnrollmentEndDate != null;
+    }
+    
+    /**
+     * Indicates whether this params specifies a program incident start date.
+     */
+    public boolean hasProgramIncidentStartDate()
+    {
+        return programIncidentStartDate != null;
+    }
+    
+    /**
+     * Indicates whether this params specifies a program incident end date.
+     */
+    public boolean hasProgramIncidentEndDate()
+    {
+        return programIncidentEndDate != null;
     }
     
     /**
@@ -548,7 +574,8 @@ public class TrackedEntityInstanceQueryParams
     {
         return "[Query: " + query + ", Attributes: " + attributes + ", filters: " + filters + 
             ", program: " + program + ", program status " + programStatus + ", follow up: " + followUp + 
-            ", program start date: " + programStartDate + ", program end date: " + programEndDate + 
+            ", program enrollemnt start date: " + programEnrollmentStartDate + ", program enrollment end date: " + programEnrollmentEndDate + 
+            ", program incident start date: " + programIncidentStartDate + ", program incident end date: " + programIncidentEndDate + 
             ", tracked entity: " + trackedEntity + ", org unit mode: " + organisationUnitMode + 
             ", event start date: " + eventStartDate + ", event end date: " + eventEndDate + 
             ", event status: " + eventStatus + "]";
@@ -638,24 +665,44 @@ public class TrackedEntityInstanceQueryParams
         this.followUp = followUp;
     }
 
-    public Date getProgramStartDate()
+    public Date getProgramEnrollmentStartDate()
     {
-        return programStartDate;
+        return programEnrollmentStartDate;
     }
 
-    public void setProgramStartDate( Date programStartDate )
+    public void setProgramEnrollmentStartDate( Date programEnrollmentStartDate )
     {
-        this.programStartDate = programStartDate;
+        this.programEnrollmentStartDate = programEnrollmentStartDate;
     }
 
-    public Date getProgramEndDate()
+    public Date getProgramEnrollmentEndDate()
     {
-        return programEndDate;
+        return programEnrollmentEndDate;
     }
 
-    public void setProgramEndDate( Date programEndDate )
+    public void setProgramEnrollmentEndDate( Date programEnrollmentEndDate )
     {
-        this.programEndDate = programEndDate;
+        this.programEnrollmentEndDate = programEnrollmentEndDate;
+    }
+
+    public Date getProgramIncidentStartDate()
+    {
+        return programIncidentStartDate;
+    }
+
+    public void setProgramIncidentStartDate( Date programIncidentStartDate )
+    {
+        this.programIncidentStartDate = programIncidentStartDate;
+    }
+
+    public Date getProgramIncidentEndDate()
+    {
+        return programIncidentEndDate;
+    }
+
+    public void setProgramIncidentEndDate( Date programIncidentEndDate )
+    {
+        this.programIncidentEndDate = programIncidentEndDate;
     }
 
     public TrackedEntity getTrackedEntity()

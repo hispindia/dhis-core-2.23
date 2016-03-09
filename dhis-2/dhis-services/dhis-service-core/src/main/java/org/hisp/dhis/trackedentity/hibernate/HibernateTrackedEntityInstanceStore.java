@@ -197,14 +197,24 @@ public class HibernateTrackedEntityInstanceStore
                 hql += hlp.whereAnd() + "pi.followup = " + params.getFollowUp();
             }
 
-            if ( params.hasProgramStartDate() )
+            if ( params.hasProgramEnrollmentStartDate() )
             {
-                hql += hlp.whereAnd() + "pi.enrollmentDate >= '" + getMediumDateString( params.getProgramStartDate() ) + "'";
+                hql += hlp.whereAnd() + "pi.enrollmentDate >= '" + getMediumDateString( params.getProgramEnrollmentStartDate() ) + "'";
             }
 
-            if ( params.hasProgramEndDate() )
+            if ( params.hasProgramEnrollmentEndDate() )
             {
-                hql += hlp.whereAnd() + "pi.enrollmentDate <= '" + getMediumDateString( params.getProgramEndDate() ) + "'";
+                hql += hlp.whereAnd() + "pi.enrollmentDate <= '" + getMediumDateString( params.getProgramEnrollmentEndDate() ) + "'";
+            }
+            
+            if ( params.hasProgramIncidentStartDate() )
+            {
+                hql += hlp.whereAnd() + "pi.incidentDate >= '" + getMediumDateString( params.getProgramIncidentStartDate() ) + "'";
+            }
+
+            if ( params.hasProgramIncidentEndDate() )
+            {
+                hql += hlp.whereAnd() + "pi.incidentDate <= '" + getMediumDateString( params.getProgramIncidentEndDate() ) + "'";
             }
 
             hql += ")";
@@ -403,14 +413,24 @@ public class HibernateTrackedEntityInstanceStore
                 sql += "and pi.followup = " + params.getFollowUp() + " ";
             }
 
-            if ( params.hasProgramStartDate() )
+            if ( params.hasProgramEnrollmentStartDate() )
             {
-                sql += "and pi.enrollmentdate >= '" + getMediumDateString( params.getProgramStartDate() ) + "' ";
+                sql += "and pi.enrollmentdate >= '" + getMediumDateString( params.getProgramEnrollmentStartDate() ) + "' ";
             }
 
-            if ( params.hasProgramEndDate() )
+            if ( params.hasProgramEnrollmentEndDate() )
             {
-                sql += "and pi.enrollmentdate <= '" + getMediumDateString( params.getProgramEndDate() ) + "' ";
+                sql += "and pi.enrollmentdate <= '" + getMediumDateString( params.getProgramEnrollmentEndDate() ) + "' ";
+            }
+            
+            if ( params.hasProgramIncidentStartDate() )
+            {
+                sql += "and pi.incidentdate >= '" + getMediumDateString( params.getProgramIncidentStartDate() ) + "' ";
+            }
+
+            if ( params.hasProgramIncidentEndDate() )
+            {
+                sql += "and pi.incidentdate <= '" + getMediumDateString( params.getProgramIncidentEndDate() ) + "' ";
             }
 
             if ( params.hasEventStatus() )

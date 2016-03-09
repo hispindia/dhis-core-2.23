@@ -29,6 +29,8 @@ package org.hisp.dhis.webapi.controller.event;
  */
 
 import com.google.common.collect.Lists;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.common.Grid;
 import org.hisp.dhis.common.OrganisationUnitSelectionMode;
@@ -80,6 +82,12 @@ import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
+ * 
+ * 
+ * The following statements are added not to cause api break. 
+ * They need to be remove say in 2.26 or so once users are aware of the changes.
+ * programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+ * programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
  */
 @Controller
 @RequestMapping( value = TrackedEntityInstanceSchemaDescriptor.API_ENDPOINT )
@@ -122,7 +130,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) ProgramStatus programStatus,
         @RequestParam( required = false ) Boolean followUp,
         @RequestParam( required = false ) Date programStartDate,
+        @RequestParam( required = false ) Date programEnrollmentStartDate,
         @RequestParam( required = false ) Date programEndDate,
+        @RequestParam( required = false ) Date programEnrollmentEndDate,
+        @RequestParam( required = false ) Date programIncidentStartDate,
+        @RequestParam( required = false ) Date programIncidentEndDate,
         @RequestParam( required = false ) String trackedEntity,
         @RequestParam( required = false ) EventStatus eventStatus,
         @RequestParam( required = false ) Date eventStartDate,
@@ -133,6 +145,8 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) boolean totalPages,
         @RequestParam( required = false ) boolean skipPaging ) throws Exception
     {
+        programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+        programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
         List<String> fields = Lists.newArrayList( contextService.getParameterValues( "fields" ) );
 
         if ( fields.isEmpty() )
@@ -143,7 +157,7 @@ public class TrackedEntityInstanceController
         Set<String> orgUnits = TextUtils.splitToArray( ou, TextUtils.SEMICOLON );
 
         TrackedEntityInstanceQueryParams params = instanceService.getFromUrl( query, attribute, filter, orgUnits, ouMode,
-            program, programStatus, followUp, programStartDate, programEndDate, trackedEntity,
+            program, programStatus, followUp, programEnrollmentStartDate, programEnrollmentEndDate, programIncidentStartDate, programIncidentEndDate, trackedEntity,
             eventStatus, eventStartDate, eventEndDate, skipMeta, page, pageSize, totalPages, skipPaging );
 
         List<TrackedEntityInstance> trackedEntityInstances = trackedEntityInstanceService.getTrackedEntityInstances( params );
@@ -173,7 +187,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) ProgramStatus programStatus,
         @RequestParam( required = false ) Boolean followUp,
         @RequestParam( required = false ) Date programStartDate,
+        @RequestParam( required = false ) Date programEnrollmentStartDate,
         @RequestParam( required = false ) Date programEndDate,
+        @RequestParam( required = false ) Date programEnrollmentEndDate,
+        @RequestParam( required = false ) Date programIncidentStartDate,
+        @RequestParam( required = false ) Date programIncidentEndDate,
         @RequestParam( required = false ) String trackedEntity,
         @RequestParam( required = false ) EventStatus eventStatus,
         @RequestParam( required = false ) Date eventStartDate,
@@ -186,9 +204,11 @@ public class TrackedEntityInstanceController
         Model model,
         HttpServletResponse response ) throws Exception
     {
+        programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+        programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
         Set<String> orgUnits = TextUtils.splitToArray( ou, TextUtils.SEMICOLON );
         TrackedEntityInstanceQueryParams params = instanceService.getFromUrl( query, attribute, filter, orgUnits, ouMode,
-            program, programStatus, followUp, programStartDate, programEndDate, trackedEntity,
+            program, programStatus, followUp, programEnrollmentStartDate, programEnrollmentEndDate, programIncidentStartDate, programIncidentEndDate, trackedEntity,
             eventStatus, eventStartDate, eventEndDate, skipMeta, page, pageSize, totalPages, skipPaging );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_JSON, CacheStrategy.NO_CACHE );
@@ -211,7 +231,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) ProgramStatus programStatus,
         @RequestParam( required = false ) Boolean followUp,
         @RequestParam( required = false ) Date programStartDate,
+        @RequestParam( required = false ) Date programEnrollmentStartDate,
         @RequestParam( required = false ) Date programEndDate,
+        @RequestParam( required = false ) Date programEnrollmentEndDate,
+        @RequestParam( required = false ) Date programIncidentStartDate,
+        @RequestParam( required = false ) Date programIncidentEndDate,
         @RequestParam( required = false ) String trackedEntity,
         @RequestParam( required = false ) EventStatus eventStatus,
         @RequestParam( required = false ) Date eventStartDate,
@@ -223,9 +247,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) boolean skipPaging,
         HttpServletResponse response ) throws Exception
     {
+        programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+        programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
         Set<String> orgUnits = TextUtils.splitToArray( ou, TextUtils.SEMICOLON );
         TrackedEntityInstanceQueryParams params = instanceService.getFromUrl( query, attribute, filter, orgUnits, ouMode,
-            program, programStatus, followUp, programStartDate, programEndDate, trackedEntity,
+            program, programStatus, followUp, programEnrollmentStartDate, programEnrollmentEndDate, programIncidentStartDate, programIncidentEndDate, trackedEntity,
             eventStatus, eventStartDate, eventEndDate, skipMeta, page, pageSize, totalPages, skipPaging );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_XML, CacheStrategy.NO_CACHE );
@@ -244,7 +270,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) ProgramStatus programStatus,
         @RequestParam( required = false ) Boolean followUp,
         @RequestParam( required = false ) Date programStartDate,
+        @RequestParam( required = false ) Date programEnrollmentStartDate,
         @RequestParam( required = false ) Date programEndDate,
+        @RequestParam( required = false ) Date programEnrollmentEndDate,
+        @RequestParam( required = false ) Date programIncidentStartDate,
+        @RequestParam( required = false ) Date programIncidentEndDate,
         @RequestParam( required = false ) String trackedEntity,
         @RequestParam( required = false ) EventStatus eventStatus,
         @RequestParam( required = false ) Date eventStartDate,
@@ -256,9 +286,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) boolean skipPaging,
         HttpServletResponse response ) throws Exception
     {
+        programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+        programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
         Set<String> orgUnits = TextUtils.splitToArray( ou, TextUtils.SEMICOLON );
         TrackedEntityInstanceQueryParams params = instanceService.getFromUrl( query, attribute, filter, orgUnits, ouMode,
-            program, programStatus, followUp, programStartDate, programEndDate, trackedEntity,
+            program, programStatus, followUp, programEnrollmentStartDate, programEnrollmentEndDate, programIncidentStartDate, programIncidentEndDate, trackedEntity,
             eventStatus, eventStartDate, eventEndDate, skipMeta, page, pageSize, totalPages, skipPaging );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_EXCEL, CacheStrategy.NO_CACHE );
@@ -277,7 +309,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) ProgramStatus programStatus,
         @RequestParam( required = false ) Boolean followUp,
         @RequestParam( required = false ) Date programStartDate,
+        @RequestParam( required = false ) Date programEnrollmentStartDate,
         @RequestParam( required = false ) Date programEndDate,
+        @RequestParam( required = false ) Date programEnrollmentEndDate,
+        @RequestParam( required = false ) Date programIncidentStartDate,
+        @RequestParam( required = false ) Date programIncidentEndDate,
         @RequestParam( required = false ) String trackedEntity,
         @RequestParam( required = false ) EventStatus eventStatus,
         @RequestParam( required = false ) Date eventStartDate,
@@ -289,9 +325,11 @@ public class TrackedEntityInstanceController
         @RequestParam( required = false ) boolean skipPaging,
         HttpServletResponse response ) throws Exception
     {
+        programEnrollmentStartDate= ObjectUtils.firstNonNull( programEnrollmentStartDate, programStartDate );
+        programEnrollmentEndDate= ObjectUtils.firstNonNull( programEnrollmentEndDate, programEndDate );
         Set<String> orgUnits = TextUtils.splitToArray( ou, TextUtils.SEMICOLON );
         TrackedEntityInstanceQueryParams params = instanceService.getFromUrl( query, attribute, filter, orgUnits, ouMode,
-            program, programStatus, followUp, programStartDate, programEndDate, trackedEntity,
+            program, programStatus, followUp, programEnrollmentStartDate, programEnrollmentEndDate, programIncidentStartDate, programIncidentEndDate, trackedEntity,
             eventStatus, eventStartDate, eventEndDate, skipMeta, page, pageSize, totalPages, skipPaging );
 
         contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_CSV, CacheStrategy.NO_CACHE );
