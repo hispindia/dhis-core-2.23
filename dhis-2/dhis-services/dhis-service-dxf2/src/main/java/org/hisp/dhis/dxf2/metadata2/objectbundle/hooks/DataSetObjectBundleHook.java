@@ -30,6 +30,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementOperand;
+import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.springframework.stereotype.Component;
@@ -41,15 +42,15 @@ import java.util.Set;
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @Component
-public class SectionObjectBundleHook extends AbstractObjectBundleHook
+public class DataSetObjectBundleHook extends AbstractObjectBundleHook
 {
     @Override
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !Section.class.isInstance( identifiableObject ) ) return;
-        Section section = (Section) identifiableObject;
+        if ( !DataSet.class.isInstance( identifiableObject ) ) return;
+        DataSet dataSet = (DataSet) identifiableObject;
 
-        for ( DataElementOperand dataElementOperand : section.getGreyedFields() )
+        for ( DataElementOperand dataElementOperand : dataSet.getCompulsoryDataElementOperands() )
         {
             preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
             sessionFactory.getCurrentSession().save( dataElementOperand );
@@ -59,31 +60,31 @@ public class SectionObjectBundleHook extends AbstractObjectBundleHook
     @Override
     public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !Section.class.isInstance( identifiableObject ) ) return;
-        Section section = (Section) identifiableObject;
-        section.getGreyedFields().clear();
+        if ( !DataSet.class.isInstance( identifiableObject ) ) return;
+        DataSet dataSet = (DataSet) identifiableObject;
+        dataSet.getCompulsoryDataElementOperands().clear();
     }
 
     @Override
     @SuppressWarnings( "unchecked" )
     public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        if ( !Section.class.isInstance( identifiableObject ) ) return;
-        Section section = (Section) identifiableObject;
+        if ( !DataSet.class.isInstance( identifiableObject ) ) return;
+        DataSet dataSet = (DataSet) identifiableObject;
 
-        Map<String, Object> references = objectBundle.getObjectReferences( Section.class ).get( section.getUid() );
+        Map<String, Object> references = objectBundle.getObjectReferences( Section.class ).get( dataSet.getUid() );
         if ( references == null ) return;
 
-        Set<DataElementOperand> dataElementOperands = (Set<DataElementOperand>) references.get( "greyedFields" );
+        Set<DataElementOperand> dataElementOperands = (Set<DataElementOperand>) references.get( "compulsoryDataElementOperands" );
         if ( dataElementOperands == null || dataElementOperands.isEmpty() ) return;
 
         for ( DataElementOperand dataElementOperand : dataElementOperands )
         {
             preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
             sessionFactory.getCurrentSession().save( dataElementOperand );
-            section.getGreyedFields().add( dataElementOperand );
+            dataSet.getCompulsoryDataElementOperands().add( dataElementOperand );
         }
 
-        sessionFactory.getCurrentSession().update( section );
+        sessionFactory.getCurrentSession().update( dataSet );
     }
 }

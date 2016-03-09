@@ -927,6 +927,45 @@ public class ObjectBundleServiceTest
         assertNotNull( section2.getDataSet() );
     }
 
+    @Test
+    public void testCreateDataSetWithCompulsoryDataElements() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/dataset_with_compulsory.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<DataElementOperand> dataElementOperands = manager.getAll( DataElementOperand.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 1, dataElementOperands.size() );
+
+        DataSet dataSet = dataSets.get( 0 );
+        assertEquals( "DataSetA", dataSet.getName() );
+        assertTrue( dataSet.getSections().isEmpty() );
+        assertNotNull( dataSet.getUser() );
+        assertEquals( 1, dataSet.getCompulsoryDataElementOperands().size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
