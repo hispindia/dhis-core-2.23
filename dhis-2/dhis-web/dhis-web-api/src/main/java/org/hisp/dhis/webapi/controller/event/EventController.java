@@ -29,7 +29,9 @@ package org.hisp.dhis.webapi.controller.event;
  */
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.google.common.io.ByteSource;
+
 import org.apache.commons.io.IOUtils;
 import org.hisp.dhis.common.IdSchemes;
 import org.hisp.dhis.common.OrganisationUnitSelectionMode;
@@ -38,6 +40,7 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.dxf2.common.ImportOptions;
+import org.hisp.dhis.dxf2.common.OrderParams;
 import org.hisp.dhis.dxf2.events.event.DataValue;
 import org.hisp.dhis.dxf2.events.event.Event;
 import org.hisp.dhis.dxf2.events.event.EventSearchParams;
@@ -51,6 +54,7 @@ import org.hisp.dhis.dxf2.events.report.EventRows;
 import org.hisp.dhis.dxf2.importsummary.ImportStatus;
 import org.hisp.dhis.dxf2.importsummary.ImportSummaries;
 import org.hisp.dhis.dxf2.importsummary.ImportSummary;
+import org.hisp.dhis.query.Order;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.dxf2.utils.InputUtils;
 import org.hisp.dhis.dxf2.webmessage.WebMessage;
@@ -71,6 +75,8 @@ import org.hisp.dhis.program.ProgramStageInstanceService;
 import org.hisp.dhis.program.ProgramStatus;
 import org.hisp.dhis.scheduling.TaskCategory;
 import org.hisp.dhis.scheduling.TaskId;
+import org.hisp.dhis.schema.Schema;
+import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.scheduling.Scheduler;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.webapi.service.ContextService;
@@ -92,6 +98,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -156,7 +163,22 @@ public class EventController
 
     @Autowired
     private ContextService contextService;
+    
+    @Autowired
+    private SchemaService schemaService;
+    
+    private Schema schema;
 
+    protected Schema getSchema()
+    {
+        if ( schema == null )
+        {
+            schema = schemaService.getDynamicSchema( Event.class );
+        }
+
+        return schema;
+    }
+        
     // -------------------------------------------------------------------------
     // READ
     // -------------------------------------------------------------------------
@@ -182,18 +204,19 @@ public class EventController
         @RequestParam( required = false ) Integer pageSize,
         @RequestParam( required = false ) boolean totalPages,
         @RequestParam( required = false ) boolean skipPaging,
+        @RequestParam( required = false ) String order,
         @RequestParam( required = false ) String attachment,
         @RequestParam Map<String, String> parameters, IdSchemes idSchemes, Model model, HttpServletResponse response, HttpServletRequest request )
         throws WebMessageException
     {
         WebOptions options = new WebOptions( parameters );
         List<String> fields = Lists.newArrayList( contextService.getParameterValues( "fields" ) );
-
+        	
         if ( fields.isEmpty() )
         {
             fields.addAll( Preset.ALL.getFields() );
         }
-
+        
         DataElementCategoryOptionCombo attributeOptionCombo = inputUtils.getAttributeOptionCombo( attributeCc, attributeCos );
 
         if ( attributeOptionCombo == null )
@@ -202,7 +225,7 @@ public class EventController
         }
 
         EventSearchParams params = eventService.getFromUrl( program, programStage, programStatus, followUp, orgUnit, ouMode,
-            trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo, idSchemes, page, pageSize, totalPages, skipPaging, false );
+            trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo, idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams(order), false );
 
         Events events = eventService.getEvents( params );
 
@@ -256,6 +279,7 @@ public class EventController
         @RequestParam( required = false ) Integer pageSize,
         @RequestParam( required = false ) boolean totalPages,
         @RequestParam( required = false ) boolean skipPaging,
+        @RequestParam( required = false ) String order,
         @RequestParam( required = false ) String attachment,
         @RequestParam( required = false, defaultValue = "false" ) boolean skipHeader,
         IdSchemes idSchemes, HttpServletResponse response, HttpServletRequest request ) throws IOException, WebMessageException
@@ -268,7 +292,7 @@ public class EventController
         }
 
         EventSearchParams params = eventService.getFromUrl( program, programStage, programStatus, followUp, orgUnit, ouMode,
-            trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo, idSchemes, page, pageSize, totalPages, skipPaging, false );
+            trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo, idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams(order), false );
 
         Events events = eventService.getEvents( params );
 
@@ -304,6 +328,7 @@ public class EventController
         @RequestParam( required = false ) String attributeCos,
         @RequestParam( required = false ) boolean totalPages,
         @RequestParam( required = false ) boolean skipPaging,
+        @RequestParam( required = false ) String order,
         @RequestParam Map<String, String> parameters, Model model )
         throws WebMessageException
 
@@ -318,7 +343,7 @@ public class EventController
         }
 
         EventSearchParams params = eventService.getFromUrl( program, null, programStatus, null,
-            orgUnit, ouMode, null, startDate, endDate, eventStatus, null, attributeOptionCombo, null, null, null, totalPages, skipPaging, true );
+            orgUnit, ouMode, null, startDate, endDate, eventStatus, null, attributeOptionCombo, null, null, null, totalPages, skipPaging, getOrderParams(order), true );
 
         EventRows eventRows = eventRowService.getEventRows( params );
 
@@ -347,6 +372,16 @@ public class EventController
         model.addAttribute( "viewClass", options.getViewClass( "detailed" ) );
 
         return "event";
+    }
+    
+    private List<Order> getOrderParams(String order)
+    {
+        if( order != null && !StringUtils.isEmpty(order) ) 
+        {
+        	OrderParams op = new OrderParams( Sets.newHashSet(order.split(",")) );
+        	return op.getOrders(getSchema());
+        }
+        return null;
     }
 
     private Map<Object, Object> getMetaData( Program program )

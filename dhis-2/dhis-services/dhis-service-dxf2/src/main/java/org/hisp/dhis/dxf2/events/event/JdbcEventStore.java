@@ -30,6 +30,8 @@ package org.hisp.dhis.dxf2.events.event;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.IdSchemes;
@@ -42,6 +44,7 @@ import org.hisp.dhis.event.EventStatus;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.ProgramStatus;
 import org.hisp.dhis.program.ProgramType;
+import org.hisp.dhis.query.Order;
 import org.hisp.dhis.system.util.DateUtils;
 import org.hisp.dhis.util.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -337,7 +340,7 @@ public class JdbcEventStore
 
         sql += ") as cm on event.psi_id=cm.psic_id ";
 
-        sql += "order by psi_uid desc ";
+        sql += getOrderQuery( params.getOrders() );
 
         return sql;
     }
@@ -467,6 +470,98 @@ public class JdbcEventStore
             "inner join trackedentitycomment psinote on psic.trackedentitycommentid=psinote.trackedentitycommentid ";
 
         return sql;
+    }
+    
+    private String getOrderQuery(List<Order> orders)
+    {
+    	if( orders != null ) 
+        {	
+        	ArrayList<String> orderFields = new ArrayList<String>();
+        	
+        	for( Order order : orders )
+        	{
+        		boolean validForOrdering = false;
+        		
+        		//Simple name conversion:
+        		String orderText = "psi_" + order.getProperty().getName().toLowerCase();
+        		        		
+        		//Handling parameters that is not named with the simple convension, or not possible to sort on:
+        		switch( order.getProperty().getName() ) 
+        		{
+        		case "event":
+        			orderText = "psi_uid";
+        			validForOrdering = true;
+        			break;
+        		case "program":
+        			orderText = "p_uid";
+        			validForOrdering = true;
+        			break;
+        		case "programStage":
+        			orderText = "ps_uid";
+        			validForOrdering = true;
+        			break;
+        		case "enrollment":
+        			orderText = "pi_uid";
+        			validForOrdering = true;
+        			break;
+        		case "enrollmentStatus":
+        			orderText = "pi_status";
+        			validForOrdering = true;
+        			break;
+        		case "orgUnit":
+        			orderText = "ou_uid";
+        			validForOrdering = true;
+        			break;
+        		case "orgUnitName":
+        			orderText = "ou_name";
+        			validForOrdering = true;
+        			break;
+        		case "trackedEntityInstance":
+        			orderText = "tei_uid";
+        			validForOrdering = true;
+        			break;
+        		case "eventDate":
+        			orderText = "psi_executiondate";
+        			validForOrdering = true;
+        			break;
+        		case "followup":
+        			orderText = "pi_followup";
+        			validForOrdering = true;
+        			break;
+        		case "status":
+        		case "dueDate":
+        		case "storedBy":
+        		case "created":
+        		case "lastUpdated":
+        		case "completedBy":
+        		case "completedDate":
+        			validForOrdering = true;
+        			break;
+        		default:
+        			validForOrdering = false;
+        			break;
+        		}
+        		
+        		if( validForOrdering ) {
+	        		if( order.isAscending() )
+	        		{
+	        			orderText += " asc";
+	        		}
+	        		else
+	        		{
+	        			orderText += " desc";
+	        		}
+	        		
+	        		orderFields.add( orderText );
+        		}
+        	}
+        	
+        	if( !orderFields.isEmpty() ) {
+        		return "order by " + StringUtils.join(orderFields, ',') + " ";
+        	}
+        }
+    	
+        return "order by psi_lastupdated desc ";
     }
 
     private String getAttributeValueQuery()

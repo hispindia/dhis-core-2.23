@@ -70,14 +70,21 @@ public class OrderParams
         {
             String[] split = o.split( ":" );
 
-            if ( split.length <= 1 )
+            //Using ascending as default direction. 
+            String direction = "asc";
+            
+            if ( split.length < 1 )
             {
                 continue;
+            }
+            else if ( split.length == 2 )
+            {
+            	direction = split[1].toLowerCase();
             }
 
             String propertyName = split[0];
             Property property = schema.getProperty( propertyName );
-            String direction = split[1].toLowerCase();
+            
 
             if ( orders.containsKey( propertyName ) || !schema.haveProperty( propertyName )
                 || !validProperty( property ) || !validDirection( direction ) )

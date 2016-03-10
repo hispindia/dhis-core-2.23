@@ -29,6 +29,7 @@ package org.hisp.dhis.dxf2.events.event;
  */
 
 import java.util.Date;
+import java.util.List;
 
 import org.hisp.dhis.common.OrganisationUnitSelectionMode;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
@@ -38,6 +39,7 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStatus;
+import org.hisp.dhis.query.Order;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
 
 /**
@@ -82,6 +84,8 @@ public class EventSearchParams
     private boolean totalPages;
 
     private boolean skipPaging;
+    
+    private List<Order> orders;
 
     private boolean includeAttributes;
 
@@ -300,7 +304,17 @@ public class EventSearchParams
     {
         this.includeAttributes = includeAttributes;
     }
+    
+    public List<Order> getOrders() 
+    {
+    	return this.orders;
+    }
 
+    public void setOrders( List<Order> orders )
+    {
+        this.orders = orders;
+    }
+    
     public DataElementCategoryOptionCombo getCategoryOptionCombo()
     {
         return categoryOptionCombo;
