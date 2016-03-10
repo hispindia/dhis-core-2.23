@@ -47,6 +47,7 @@ import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.importexport.ImportStrategy;
+import org.hisp.dhis.indicator.Indicator;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -61,6 +62,7 @@ import org.hisp.dhis.trackedentity.TrackedEntity;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
+import org.hisp.dhis.validation.ValidationRule;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -964,6 +966,70 @@ public class ObjectBundleServiceTest
         assertTrue( dataSet.getSections().isEmpty() );
         assertNotNull( dataSet.getUser() );
         assertEquals( 1, dataSet.getCompulsoryDataElementOperands().size() );
+    }
+
+    @Test
+    public void testCreateMetadataWithIndicator() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_with_indicators.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<Indicator> indicators = manager.getAll( Indicator.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertEquals( 3, dataElements.size() );
+        assertEquals( 1, indicators.size() );
+    }
+
+    @Test
+    public void testCreateMetadataWithValidationRules() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_with_vr.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<ValidationRule> validationRules = manager.getAll( ValidationRule.class );
+
+        assertFalse( dataSets.isEmpty() );
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+        assertEquals( 1, validationRules.size() );
+
+        ValidationRule validationRule = validationRules.get( 0 );
+        assertNotNull( validationRule.getLeftSide() );
+        assertNotNull( validationRule.getRightSide() );
+        assertFalse( validationRule.getLeftSide().getDataElementsInExpression().isEmpty() );
+        assertFalse( validationRule.getRightSide().getDataElementsInExpression().isEmpty() );
     }
 
     private void defaultSetup()

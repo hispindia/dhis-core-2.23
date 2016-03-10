@@ -33,6 +33,7 @@ import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ObjectErrorReport;
@@ -48,6 +49,7 @@ import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.hisp.dhis.user.UserGroup;
+import org.hisp.dhis.validation.ValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -303,6 +305,35 @@ public class DefaultPreheatService implements PreheatService
 
                 } );
 
+                if ( ValidationRule.class.isInstance( object ) )
+                {
+                    ValidationRule validationRule = (ValidationRule) object;
+
+                    if ( !uidMap.containsKey( DataElement.class ) ) uidMap.put( DataElement.class, new HashSet<>() );
+                    if ( !codeMap.containsKey( DataElement.class ) ) codeMap.put( DataElement.class, new HashSet<>() );
+
+                    if ( validationRule.getLeftSide() != null && !validationRule.getLeftSide().getDataElementsInExpression().isEmpty() )
+                    {
+                        validationRule.getLeftSide().getDataElementsInExpression().stream()
+                            .forEach( de -> {
+                                if ( !StringUtils.isEmpty( de.getUid() ) ) uidMap.get( DataElement.class ).add( de.getUid() );
+                                if ( !StringUtils.isEmpty( de.getCode() ) ) codeMap.get( DataElement.class ).add( de.getCode() );
+                            } );
+                    }
+
+                    if ( validationRule.getRightSide() != null && !validationRule.getRightSide().getDataElementsInExpression().isEmpty() )
+                    {
+                        validationRule.getRightSide().getDataElementsInExpression().stream()
+                            .forEach( de -> {
+                                if ( !StringUtils.isEmpty( de.getUid() ) ) uidMap.get( DataElement.class ).add( de.getUid() );
+                                if ( !StringUtils.isEmpty( de.getCode() ) ) codeMap.get( DataElement.class ).add( de.getCode() );
+                            } );
+                    }
+
+                    if ( uidMap.get( DataElement.class ).isEmpty() ) uidMap.remove( DataElement.class );
+                    if ( codeMap.get( DataElement.class ).isEmpty() ) codeMap.remove( DataElement.class );
+                }
+
                 if ( !uidMap.containsKey( Attribute.class ) ) uidMap.put( Attribute.class, new HashSet<>() );
                 if ( !codeMap.containsKey( Attribute.class ) ) codeMap.put( Attribute.class, new HashSet<>() );
 
@@ -541,7 +572,7 @@ public class DefaultPreheatService implements PreheatService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> void connectReferences( T object, Preheat preheat, PreheatIdentifier identifier )
+    public void connectReferences( Object object, Preheat preheat, PreheatIdentifier identifier )
     {
         if ( object == null )
         {
@@ -561,12 +592,12 @@ public class DefaultPreheatService implements PreheatService
 
                 if ( !p.isCollection() )
                 {
-                    T refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-                    T ref = preheat.get( identifier, refObject );
+                    IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
+                    IdentifiableObject ref = preheat.get( identifier, refObject );
 
                     if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
                     {
-                        ref = (T) defaults.get( refObject.getClass() );
+                        ref = defaults.get( refObject.getClass() );
                     }
 
                     if ( ref != null && ref.getId() == 0 )
@@ -580,16 +611,16 @@ public class DefaultPreheatService implements PreheatService
                 }
                 else
                 {
-                    Collection<T> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
+                    Collection<IdentifiableObject> objects = ReflectionUtils.newCollectionInstance( p.getKlass() );
                     Collection<IdentifiableObject> refObjects = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
 
                     for ( IdentifiableObject refObject : refObjects )
                     {
-                        T ref = preheat.get( identifier, (T) refObject );
+                        IdentifiableObject ref = preheat.get( identifier, refObject );
 
                         if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
                         {
-                            ref = (T) defaults.get( refObject.getClass() );
+                            ref = defaults.get( refObject.getClass() );
                         }
 
                         if ( ref != null && ref.getId() != 0 ) objects.add( ref );

@@ -83,7 +83,8 @@ public interface PreheatService
 
     /**
      * Checks but does not connect any references, returns check report
-     *  @param objects    Object to check
+     *
+     * @param objects    Object to check
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */
@@ -91,6 +92,7 @@ public interface PreheatService
 
     /**
      * Checks but does not connect any references, returns check report
+     *
      * @param object     Object to check
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
@@ -104,5 +106,5 @@ public interface PreheatService
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to attach references
      */
-    <T extends IdentifiableObject> void connectReferences( T object, Preheat preheat, PreheatIdentifier identifier );
+    void connectReferences( Object object, Preheat preheat, PreheatIdentifier identifier );
 }
