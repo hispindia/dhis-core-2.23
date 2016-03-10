@@ -1023,13 +1023,19 @@ public class ObjectBundleServiceTest
         assertFalse( dataElements.isEmpty() );
         assertFalse( users.isEmpty() );
         assertFalse( userRoles.isEmpty() );
-        assertEquals( 1, validationRules.size() );
+        assertEquals( 2, validationRules.size() );
 
-        ValidationRule validationRule = validationRules.get( 0 );
-        assertNotNull( validationRule.getLeftSide() );
-        assertNotNull( validationRule.getRightSide() );
-        assertFalse( validationRule.getLeftSide().getDataElementsInExpression().isEmpty() );
-        assertFalse( validationRule.getRightSide().getDataElementsInExpression().isEmpty() );
+        ValidationRule validationRule1 = validationRules.get( 0 );
+        assertNotNull( validationRule1.getLeftSide() );
+        assertNotNull( validationRule1.getRightSide() );
+        assertFalse( validationRule1.getLeftSide().getDataElementsInExpression().isEmpty() );
+        assertFalse( validationRule1.getRightSide().getDataElementsInExpression().isEmpty() );
+
+        ValidationRule validationRule2 = validationRules.get( 1 );
+        assertNotNull( validationRule2.getLeftSide() );
+        assertNotNull( validationRule2.getRightSide() );
+        assertFalse( validationRule2.getLeftSide().getDataElementsInExpression().isEmpty() );
+        assertFalse( validationRule2.getRightSide().getDataElementsInExpression().isEmpty() );
     }
 
     private void defaultSetup()

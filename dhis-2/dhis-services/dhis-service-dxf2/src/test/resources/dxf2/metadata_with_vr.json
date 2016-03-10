@@ -339,6 +339,37 @@
       "description": "ValidationRuleA",
       "operator": "equal_to",
       "ruleType": "VALIDATION"
+    },
+    {
+      "leftSide": {
+        "description": "Left Side",
+        "expression": "#{jocQSivF2ry.NQigT2ThzgD}",
+        "dataElements": [
+          {
+            "id": "jocQSivF2ry"
+          }
+        ],
+        "missingValueStrategy": "SKIP_IF_ANY_VALUE_MISSING"
+      },
+      "importance": "MEDIUM",
+      "rightSide": {
+        "description": "Right Side",
+        "expression": "#{X0ypiOyoDbw.NQigT2ThzgD}",
+        "dataElements": [
+          {
+            "id": "X0ypiOyoDbw"
+          }
+        ],
+        "missingValueStrategy": "SKIP_IF_ANY_VALUE_MISSING"
+      },
+      "name": "ValidationRuleB",
+      "lastUpdated": "2016-03-10T05:09:40.689+0000",
+      "periodType": "Monthly",
+      "id": "TGvH4Hiyduc",
+      "created": "2016-03-10T05:09:40.688+0000",
+      "description": "ValidationRuleB",
+      "operator": "equal_to",
+      "ruleType": "VALIDATION"
     }
   ]
 }
