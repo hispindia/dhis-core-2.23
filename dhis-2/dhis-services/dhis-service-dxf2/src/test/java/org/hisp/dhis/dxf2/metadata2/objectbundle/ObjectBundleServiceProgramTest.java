@@ -38,6 +38,7 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageDataElement;
+import org.hisp.dhis.program.ProgramStageSection;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
@@ -113,5 +114,49 @@ public class ObjectBundleServiceProgramTest
 
         ProgramStage programStage = programStages.get( 0 );
         assertEquals( 3, programStage.getProgramStageDataElements().size() );
+    }
+
+    @Test
+    public void testCreateSimpleProgramWithSectionsNoReg() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/program_noreg_sections.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<ValidationRule> validationRules = manager.getAll( ValidationRule.class );
+        List<Program> programs = manager.getAll( Program.class );
+        List<ProgramStage> programStages = manager.getAll( ProgramStage.class );
+        List<ProgramStageDataElement> programStageDataElements = manager.getAll( ProgramStageDataElement.class );
+        List<ProgramStageSection> programStageSections = manager.getAll( ProgramStageSection.class );
+
+        assertFalse( dataSets.isEmpty() );
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+        assertEquals( 1, validationRules.size() );
+        assertEquals( 1, programs.size() );
+        assertEquals( 1, programStages.size() );
+        assertEquals( 3, programStageDataElements.size() );
+        assertEquals( 2, programStageSections.size() );
+
+        ProgramStage programStage = programStages.get( 0 );
+        assertEquals( 3, programStage.getProgramStageDataElements().size() );
+        assertEquals( 2, programStage.getProgramStageSections().size() );
     }
 }
