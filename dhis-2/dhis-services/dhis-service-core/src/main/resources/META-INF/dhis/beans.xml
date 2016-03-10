@@ -51,15 +51,25 @@
 
   <bean class="org.hisp.dhis.node.converters.SizeNodePropertyConverter" />
 
-  <bean class="org.hisp.dhis.node.serializers.CsvNodeSerializer" />
+  <bean class="org.hisp.dhis.node.serializers.CsvNodeSerializer" scope="prototype">
+    <aop:scoped-proxy proxy-target-class="false" />
+  </bean>
 
-  <bean class="org.hisp.dhis.node.serializers.ExcelNodeSerializer" />
+  <bean class="org.hisp.dhis.node.serializers.ExcelNodeSerializer" scope="prototype">
+    <aop:scoped-proxy proxy-target-class="false" />
+  </bean>
 
-  <bean class="org.hisp.dhis.node.serializers.Jackson2JsonNodeSerializer" />
+  <bean class="org.hisp.dhis.node.serializers.Jackson2JsonNodeSerializer" scope="prototype">
+    <aop:scoped-proxy proxy-target-class="false" />
+  </bean>
 
-  <bean class="org.hisp.dhis.node.serializers.PdfNodeSerializer" />
+  <bean class="org.hisp.dhis.node.serializers.PdfNodeSerializer" scope="prototype">
+    <aop:scoped-proxy proxy-target-class="false" />
+  </bean>
 
-  <bean class="org.hisp.dhis.node.serializers.StAXNodeSerializer" />
+  <bean class="org.hisp.dhis.node.serializers.StAXNodeSerializer" scope="prototype">
+    <aop:scoped-proxy proxy-target-class="false" />
+  </bean>
 
   <bean id="org.hisp.dhis.fieldfilter.FieldParser" class="org.hisp.dhis.fieldfilter.DefaultFieldParser" />
 
