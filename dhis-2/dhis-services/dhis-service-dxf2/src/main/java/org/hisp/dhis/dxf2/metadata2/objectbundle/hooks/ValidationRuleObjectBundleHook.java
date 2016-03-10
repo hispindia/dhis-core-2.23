@@ -30,7 +30,6 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
-import org.hisp.dhis.expression.Expression;
 import org.hisp.dhis.validation.ValidationRule;
 import org.springframework.stereotype.Component;
 
@@ -46,17 +45,11 @@ public class ValidationRuleObjectBundleHook extends AbstractObjectBundleHook
         if ( !ValidationRule.class.isInstance( identifiableObject ) ) return;
         ValidationRule validationRule = (ValidationRule) identifiableObject;
 
-        Expression leftSide = validationRule.getLeftSide();
-        Expression rightSide = validationRule.getRightSide();
+        preheatService.connectReferences( validationRule.getLeftSide(), objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+        preheatService.connectReferences( validationRule.getRightSide(), objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
 
-        preheatService.connectReferences( leftSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-        preheatService.connectReferences( rightSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-
-        sessionFactory.getCurrentSession().save( leftSide );
-        sessionFactory.getCurrentSession().save( rightSide );
-
-        validationRule.setLeftSide( leftSide );
-        validationRule.setRightSide( rightSide );
+        sessionFactory.getCurrentSession().save( validationRule.getLeftSide() );
+        sessionFactory.getCurrentSession().save( validationRule.getRightSide() );
     }
 
     @Override
@@ -65,16 +58,10 @@ public class ValidationRuleObjectBundleHook extends AbstractObjectBundleHook
         if ( !ValidationRule.class.isInstance( identifiableObject ) ) return;
         ValidationRule validationRule = (ValidationRule) identifiableObject;
 
-        Expression leftSide = validationRule.getLeftSide();
-        Expression rightSide = validationRule.getRightSide();
+        preheatService.connectReferences( validationRule.getLeftSide(), objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+        preheatService.connectReferences( validationRule.getRightSide(), objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
 
-        preheatService.connectReferences( leftSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-        preheatService.connectReferences( rightSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-
-        sessionFactory.getCurrentSession().save( leftSide );
-        sessionFactory.getCurrentSession().save( rightSide );
-
-        validationRule.setLeftSide( leftSide );
-        validationRule.setRightSide( rightSide );
+        sessionFactory.getCurrentSession().save( validationRule.getLeftSide() );
+        sessionFactory.getCurrentSession().save( validationRule.getRightSide() );
     }
 }
