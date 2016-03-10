@@ -28,7 +28,11 @@ package org.hisp.dhis.feedback;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.MoreObjects;
+import org.hisp.dhis.common.DxfNamespaces;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +42,7 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
+@JacksonXmlRootElement( localName = "objectErrorReport", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectErrorReport
 {
     private final Class<?> objectClass;
@@ -57,11 +62,15 @@ public class ObjectErrorReport
         this.objectIndex = objectIndex;
     }
 
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public Class<?> getObjectClass()
     {
         return objectClass;
     }
 
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public Integer getObjectIndex()
     {
         return objectIndex;
@@ -87,6 +96,8 @@ public class ObjectErrorReport
         return new ArrayList<>( errorReportsByCode.keySet() );
     }
 
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public List<ErrorReport> getErrorReports()
     {
         List<ErrorReport> errorReports = new ArrayList<>();
