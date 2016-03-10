@@ -39,7 +39,7 @@
                         template="dataelement-details.html"
                         trigger="click"
                         placement="right">
-                        <a href >{{eventGridColumn.displayName}}</a>
+                        <a href title="{{'details'| translate}}">{{eventGridColumn.displayName}}</a>
                     </span>
                     <span ng-if="eventGridColumn.compulsory" class="required">*</span>                    
                 </td>                
@@ -297,7 +297,7 @@
                             template="dataelement-details.html"
                             trigger="click"
                             placement="right">
-                            <a href >{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}</a>
+                            <a href title="{{'details'| translate}}">{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}</a>
                         </span>
                         <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>                        
                     </td>                    

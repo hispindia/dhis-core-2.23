@@ -27,7 +27,7 @@
                 template="attribute-details.html"
                 trigger="click"
                 placement="right">
-                <a href >{{attribute.displayName}}</a>
+                <a href title="{{'details'| translate}}">{{attribute.displayName}}</a>
             </span>
             <span ng-if="attribute.mandatory || attribute.unique" class="required">*</span>
         </td>
