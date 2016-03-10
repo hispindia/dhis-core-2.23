@@ -28,6 +28,8 @@ package org.hisp.dhis.feedback;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.hisp.dhis.common.DxfNamespaces;
 
@@ -37,12 +39,71 @@ import org.hisp.dhis.common.DxfNamespaces;
 @JacksonXmlRootElement( localName = "stats", namespace = DxfNamespaces.DXF_2_0 )
 public class Stats
 {
+    private int created;
+
+    private int updated;
+
+    private int deleted;
+
+    private int ignored;
+
     public Stats()
     {
     }
 
     public void merge( Stats stats )
     {
+        created += stats.getCreated();
+        updated += stats.getUpdated();
+        deleted += stats.getDeleted();
+        ignored += stats.getIgnored();
+    }
 
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getCreated()
+    {
+        return created;
+    }
+
+    public void incCreated()
+    {
+        created++;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getUpdated()
+    {
+        return updated;
+    }
+
+    public void incUpdated()
+    {
+        updated++;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getDeleted()
+    {
+        return deleted;
+    }
+
+    public void incDeleted()
+    {
+        deleted++;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getIgnored()
+    {
+        return ignored;
+    }
+
+    public void incIgnored()
+    {
+        ignored++;
     }
 }
