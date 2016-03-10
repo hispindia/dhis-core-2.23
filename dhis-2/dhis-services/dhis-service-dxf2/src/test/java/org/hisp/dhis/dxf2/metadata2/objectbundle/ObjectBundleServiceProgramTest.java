@@ -89,7 +89,7 @@ public class ObjectBundleServiceProgramTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
 
         objectBundleService.commit( bundle );
 
@@ -130,7 +130,7 @@ public class ObjectBundleServiceProgramTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
 
         objectBundleService.commit( bundle );
 
@@ -175,8 +175,8 @@ public class ObjectBundleServiceProgramTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        System.err.println( validate.getObjectErrorReportsMap() );
-        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+        System.err.println( validate.getObjectErrorReports() );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
 
         objectBundleService.commit( bundle );
 

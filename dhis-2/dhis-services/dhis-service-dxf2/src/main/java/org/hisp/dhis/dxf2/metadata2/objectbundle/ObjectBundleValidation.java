@@ -32,6 +32,7 @@ import com.google.common.base.MoreObjects;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
+import org.hisp.dhis.feedback.ObjectErrorReports;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -44,7 +45,7 @@ import java.util.Map;
  */
 public class ObjectBundleValidation
 {
-    private Map<Class<?>, Map<Integer, ObjectErrorReport>> objectErrorReportsMap = new HashMap<>();
+    private Map<Class<?>, ObjectErrorReports> objectErrorReportsMap = new HashMap<>();
 
     public ObjectBundleValidation()
     {
@@ -66,31 +67,23 @@ public class ObjectBundleValidation
 
         if ( !objectErrorReportsMap.containsKey( objectClass ) )
         {
-            objectErrorReportsMap.put( objectClass, new HashMap<>() );
+            objectErrorReportsMap.put( objectClass, new ObjectErrorReports() );
         }
 
-        Map<Integer, ObjectErrorReport> indexMap = objectErrorReportsMap.get( objectClass );
-
-        if ( !indexMap.containsKey( objectErrorReport.getObjectIndex() ) )
-        {
-            indexMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
-        }
-        else
-        {
-            indexMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
-        }
+        ObjectErrorReports objectErrorReports = objectErrorReportsMap.get( objectClass );
+        objectErrorReports.addObjectErrorReport( objectErrorReport );
     }
 
     public List<ObjectErrorReport> getAllObjectErrorReports( Class<?> klass )
     {
         List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
-        Map<Integer, ObjectErrorReport> errorReportMap = objectErrorReportsMap.get( klass );
-        errorReportMap.values().forEach( objectErrorReports::add );
+        ObjectErrorReports errorReports = objectErrorReportsMap.get( klass );
+        errorReports.getObjectErrorReports().forEach( objectErrorReports::add );
 
         return objectErrorReports;
     }
 
-    public Map<Integer, ObjectErrorReport> getObjectErrorReports( Class<?> klass )
+    public ObjectErrorReports getObjectErrorReports( Class<?> klass )
     {
         return objectErrorReportsMap.get( klass );
     }
@@ -104,7 +97,7 @@ public class ObjectBundleValidation
             return errorReports;
         }
 
-        Collection<ObjectErrorReport> objectErrorReports = objectErrorReportsMap.get( klass ).values();
+        Collection<ObjectErrorReport> objectErrorReports = objectErrorReportsMap.get( klass ).getObjectErrorReports();
 
         for ( ObjectErrorReport objectErrorReport : objectErrorReports )
         {
@@ -119,7 +112,7 @@ public class ObjectBundleValidation
         return errorReports;
     }
 
-    public Map<Class<?>, Map<Integer, ObjectErrorReport>> getObjectErrorReportsMap()
+    public Map<Class<?>, ObjectErrorReports> getObjectErrorReports()
     {
         return objectErrorReportsMap;
     }

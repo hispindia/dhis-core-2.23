@@ -74,9 +74,9 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundle bundle = objectBundleService.create( bundleParams );
 
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
-        report.setObjectErrorReports( validation.getObjectErrorReportsMap() );
+        report.setObjectErrorReports( validation.getObjectErrorReports() );
 
-        if ( !(bundleParams.getImportMode().isAtomic() && !validation.getObjectErrorReportsMap().isEmpty()) )
+        if ( !(bundleParams.getImportMode().isAtomic() && !validation.getObjectErrorReports().isEmpty()) )
         {
             objectBundleService.commit( bundle );
         }

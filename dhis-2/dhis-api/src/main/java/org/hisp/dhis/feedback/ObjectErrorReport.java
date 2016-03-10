@@ -29,6 +29,7 @@ package org.hisp.dhis.feedback;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.MoreObjects;
@@ -63,14 +64,14 @@ public class ObjectErrorReport
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( isAttribute = true )
     public Class<?> getObjectClass()
     {
         return objectClass;
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( isAttribute = true )
     public Integer getObjectIndex()
     {
         return objectIndex;
@@ -97,7 +98,8 @@ public class ObjectErrorReport
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlElementWrapper( localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
     public List<ErrorReport> getErrorReports()
     {
         List<ErrorReport> errorReports = new ArrayList<>();

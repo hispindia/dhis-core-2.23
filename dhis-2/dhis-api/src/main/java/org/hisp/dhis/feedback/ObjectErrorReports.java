@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2.feedback;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -29,44 +29,55 @@ package org.hisp.dhis.dxf2.metadata2.feedback;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.feedback.ObjectErrorReports;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "importReport", namespace = DxfNamespaces.DXF_2_0 )
-public class ImportReport
+@JacksonXmlRootElement( localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
+public class ObjectErrorReports
 {
-    private ImportStats stats = new ImportStats();
+    private Map<Integer, ObjectErrorReport> objectErrorReportsMap = new HashMap<>();
 
-    private Map<Class<?>, ObjectErrorReports> objectErrorReports = new HashMap<>();
-
-    public ImportReport()
+    public ObjectErrorReports()
     {
+    }
+
+    public void addObjectErrorReports( ObjectErrorReports objectErrorReports )
+    {
+        objectErrorReports.getObjectErrorReports().forEach( this::addObjectErrorReport );
+    }
+
+    public void addObjectErrorReport( ObjectErrorReport objectErrorReport )
+    {
+        if ( !objectErrorReportsMap.containsKey( objectErrorReport.getObjectIndex() ) )
+        {
+            objectErrorReportsMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
+        }
+        else
+        {
+            objectErrorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
+        }
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public ImportStats getStats()
+    @JacksonXmlElementWrapper( useWrapping = false, localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( localName = "objectErrorReport", namespace = DxfNamespaces.DXF_2_0 )
+    public List<ObjectErrorReport> getObjectErrorReports()
     {
-        return stats;
+        return new ArrayList<>( objectErrorReportsMap.values() );
     }
 
-    @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public Map<Class<?>, ObjectErrorReports> getObjectErrorReports()
+    public Map<Integer, ObjectErrorReport> getObjectErrorReportsMap()
     {
-        return objectErrorReports;
-    }
-
-    public void setObjectErrorReports( Map<Class<?>, ObjectErrorReports> objectErrorReports )
-    {
-        this.objectErrorReports = objectErrorReports;
+        return objectErrorReportsMap;
     }
 }
