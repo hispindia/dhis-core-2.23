@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2.feedback;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -34,7 +34,15 @@ import org.hisp.dhis.common.DxfNamespaces;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "importStats", namespace = DxfNamespaces.DXF_2_0 )
-public class ImportStats
+@JacksonXmlRootElement( localName = "stats", namespace = DxfNamespaces.DXF_2_0 )
+public class Stats
 {
+    public Stats()
+    {
+    }
+
+    public void merge( Stats stats )
+    {
+
+    }
 }

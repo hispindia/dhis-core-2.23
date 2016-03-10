@@ -45,6 +45,8 @@ import java.util.Map;
 @JacksonXmlRootElement( localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectErrorReports
 {
+    private Stats stats = new Stats();
+
     private Map<Integer, ObjectErrorReport> objectErrorReportsMap = new HashMap<>();
 
     public ObjectErrorReports()
@@ -66,6 +68,13 @@ public class ObjectErrorReports
         {
             objectErrorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
         }
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public Stats getStats()
+    {
+        return stats;
     }
 
     @JsonProperty

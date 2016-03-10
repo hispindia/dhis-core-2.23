@@ -33,6 +33,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.feedback.ObjectErrorReports;
+import org.hisp.dhis.feedback.Stats;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,8 +44,6 @@ import java.util.Map;
 @JacksonXmlRootElement( localName = "importReport", namespace = DxfNamespaces.DXF_2_0 )
 public class ImportReport
 {
-    private ImportStats stats = new ImportStats();
-
     private Map<Class<?>, ObjectErrorReports> objectErrorReports = new HashMap<>();
 
     public ImportReport()
@@ -53,8 +52,10 @@ public class ImportReport
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public ImportStats getStats()
+    public Stats getStats()
     {
+        Stats stats = new Stats();
+        objectErrorReports.values().forEach( errorReports -> stats.merge( errorReports.getStats() ) );
         return stats;
     }
 
