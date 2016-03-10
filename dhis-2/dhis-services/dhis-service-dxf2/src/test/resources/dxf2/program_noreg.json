@@ -81,30 +81,6 @@
       "trackedEntityInstanceReminders": [ ]
     }
   ],
-  "trackedEntityAttributes": [
-    {
-      "searchScope": "SEARCH_ORG_UNITS",
-      "confidential": false,
-      "unique": false,
-      "displayOnVisitSchedule": false,
-      "displayInListNoProgram": false,
-      "shortName": "TrackedEntityAttributeA",
-      "attributeValues": [ ],
-      "lastUpdated": "2016-03-10T07:26:32.131+0000",
-      "user": {
-        "id": "ZK1wkC59FCw"
-      },
-      "inherit": false,
-      "name": "TrackedEntityAttributeA",
-      "id": "CXsesjOaSzr",
-      "programScope": false,
-      "publicAccess": "rw------",
-      "orgunitScope": false,
-      "userGroupAccesses": [ ],
-      "valueType": "TEXT",
-      "created": "2016-03-10T07:25:57.406+0000"
-    }
-  ],
   "validationRules": [
     {
       "rightSide": {
@@ -307,20 +283,6 @@
       "publicAccess": "rw------",
       "attributeValues": [ ],
       "shortName": "DataElementShortF"
-    }
-  ],
-  "trackedEntityAttributeGroups": [
-    {
-      "trackedEntityAttributes": [
-        {
-          "id": "CXsesjOaSzr"
-        }
-      ],
-      "name": "TrackedEntityAttributeGroupA",
-      "lastUpdated": "2016-03-10T07:26:43.665+0000",
-      "created": "2016-03-10T07:26:43.664+0000",
-      "id": "VUd5jP8cbjQ",
-      "description": "TrackedEntityAttributeGroupA"
     }
   ],
   "users": [

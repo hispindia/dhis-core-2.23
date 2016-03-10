@@ -37,6 +37,7 @@ import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
+import org.hisp.dhis.program.ProgramStageDataElement;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
@@ -98,6 +99,7 @@ public class ObjectBundleServiceProgramTest
         List<ValidationRule> validationRules = manager.getAll( ValidationRule.class );
         List<Program> programs = manager.getAll( Program.class );
         List<ProgramStage> programStages = manager.getAll( ProgramStage.class );
+        List<ProgramStageDataElement> programStageDataElements = manager.getAll( ProgramStageDataElement.class );
 
         assertFalse( dataSets.isEmpty() );
         assertFalse( organisationUnits.isEmpty() );
@@ -107,5 +109,9 @@ public class ObjectBundleServiceProgramTest
         assertEquals( 1, validationRules.size() );
         assertEquals( 1, programs.size() );
         assertEquals( 1, programStages.size() );
+        assertEquals( 3, programStageDataElements.size() );
+
+        ProgramStage programStage = programStages.get( 0 );
+        assertEquals( 3, programStage.getProgramStageDataElements().size() );
     }
 }
