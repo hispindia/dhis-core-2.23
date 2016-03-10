@@ -64,7 +64,17 @@ public class ValidationRuleObjectBundleHook extends AbstractObjectBundleHook
     {
         if ( !ValidationRule.class.isInstance( identifiableObject ) ) return;
         ValidationRule validationRule = (ValidationRule) identifiableObject;
-        validationRule.setLeftSide( null );
-        validationRule.setRightSide( null );
+
+        Expression leftSide = validationRule.getLeftSide();
+        Expression rightSide = validationRule.getRightSide();
+
+        preheatService.connectReferences( leftSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+        preheatService.connectReferences( rightSide, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+
+        sessionFactory.getCurrentSession().save( leftSide );
+        sessionFactory.getCurrentSession().save( rightSide );
+
+        validationRule.setLeftSide( leftSide );
+        validationRule.setRightSide( rightSide );
     }
 }

@@ -70,6 +70,7 @@ public class DataSetObjectBundleHook extends AbstractObjectBundleHook
     public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
         if ( !DataSet.class.isInstance( identifiableObject ) ) return;
+        if ( !objectBundle.getObjectReferences().containsKey( Section.class ) ) return;
         DataSet dataSet = (DataSet) identifiableObject;
 
         Map<String, Object> references = objectBundle.getObjectReferences( Section.class ).get( dataSet.getUid() );

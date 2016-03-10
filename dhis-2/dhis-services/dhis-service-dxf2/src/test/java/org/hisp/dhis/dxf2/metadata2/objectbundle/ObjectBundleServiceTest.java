@@ -1025,17 +1025,21 @@ public class ObjectBundleServiceTest
         assertFalse( userRoles.isEmpty() );
         assertEquals( 2, validationRules.size() );
 
-        ValidationRule validationRule1 = validationRules.get( 0 );
+        ValidationRule validationRule1 = manager.get( ValidationRule.class, "ztzsVjSIWg7" );
         assertNotNull( validationRule1.getLeftSide() );
         assertNotNull( validationRule1.getRightSide() );
         assertFalse( validationRule1.getLeftSide().getDataElementsInExpression().isEmpty() );
         assertFalse( validationRule1.getRightSide().getDataElementsInExpression().isEmpty() );
+        assertEquals( "jocQSivF2ry", validationRule1.getLeftSide().getDataElementsInExpression().iterator().next().getUid() );
+        assertEquals( "X0ypiOyoDbw", validationRule1.getRightSide().getDataElementsInExpression().iterator().next().getUid() );
 
-        ValidationRule validationRule2 = validationRules.get( 1 );
+        ValidationRule validationRule2 = manager.get( ValidationRule.class, "TGvH4Hiyduc" );
         assertNotNull( validationRule2.getLeftSide() );
         assertNotNull( validationRule2.getRightSide() );
         assertFalse( validationRule2.getLeftSide().getDataElementsInExpression().isEmpty() );
         assertFalse( validationRule2.getRightSide().getDataElementsInExpression().isEmpty() );
+        assertEquals( "jocQSivF2ry", validationRule2.getLeftSide().getDataElementsInExpression().iterator().next().getUid() );
+        assertEquals( "X0ypiOyoDbw", validationRule2.getRightSide().getDataElementsInExpression().iterator().next().getUid() );
     }
 
     @Test
@@ -1054,6 +1058,49 @@ public class ObjectBundleServiceTest
         assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
 
         objectBundleService.commit( bundle );
+
+        metadata = renderService.fromMetadata( new ClassPathResource( "dxf2/metadata_with_vr_update.json" ).getInputStream(), RenderFormat.JSON );
+
+        params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        bundle = objectBundleService.create( params );
+        validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<ValidationRule> validationRules = manager.getAll( ValidationRule.class );
+
+        assertFalse( dataSets.isEmpty() );
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+        assertEquals( 2, validationRules.size() );
+
+        ValidationRule validationRule1 = manager.get( ValidationRule.class, "ztzsVjSIWg7" );
+        assertNotNull( validationRule1.getLeftSide() );
+        assertNotNull( validationRule1.getRightSide() );
+        assertFalse( validationRule1.getLeftSide().getDataElementsInExpression().isEmpty() );
+        assertFalse( validationRule1.getRightSide().getDataElementsInExpression().isEmpty() );
+        assertEquals( "vAczVs4mxna", validationRule1.getLeftSide().getDataElementsInExpression().iterator().next().getUid() );
+        assertEquals( "X0ypiOyoDbw", validationRule1.getRightSide().getDataElementsInExpression().iterator().next().getUid() );
+
+        ValidationRule validationRule2 = manager.get( ValidationRule.class, "TGvH4Hiyduc" );
+        assertNotNull( validationRule2.getLeftSide() );
+        assertNotNull( validationRule2.getRightSide() );
+        assertFalse( validationRule2.getLeftSide().getDataElementsInExpression().isEmpty() );
+        assertFalse( validationRule2.getRightSide().getDataElementsInExpression().isEmpty() );
+        assertEquals( "jocQSivF2ry", validationRule2.getLeftSide().getDataElementsInExpression().iterator().next().getUid() );
+        assertEquals( "vAczVs4mxna", validationRule2.getRightSide().getDataElementsInExpression().iterator().next().getUid() );
     }
 
     private void defaultSetup()

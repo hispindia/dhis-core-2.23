@@ -342,8 +342,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
-
-            sessionFactory.getCurrentSession().flush();
         }
     }
 
@@ -373,8 +371,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
                 log.debug( msg );
             }
-
-            sessionFactory.getCurrentSession().flush();
         }
     }
 
@@ -396,8 +392,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
-
-            sessionFactory.getCurrentSession().flush();
         }
     }
 
