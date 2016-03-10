@@ -1038,6 +1038,24 @@ public class ObjectBundleServiceTest
         assertFalse( validationRule2.getRightSide().getDataElementsInExpression().isEmpty() );
     }
 
+    @Test
+    public void testUpdateMetadataWithValidationRules() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_with_vr.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReportsMap().isEmpty() );
+
+        objectBundleService.commit( bundle );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
