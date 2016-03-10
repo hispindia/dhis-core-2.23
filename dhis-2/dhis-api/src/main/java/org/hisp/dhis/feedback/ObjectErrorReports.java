@@ -80,4 +80,14 @@ public class ObjectErrorReports
     {
         return objectErrorReportsMap;
     }
+
+    public boolean isEmpty()
+    {
+        return objectErrorReportsMap.isEmpty();
+    }
+
+    public int size()
+    {
+        return objectErrorReportsMap.size();
+    }
 }
