@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -58,6 +59,8 @@ public class ObjectBundleParams
     private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
 
     private MergeMode mergeMode = MergeMode.MERGE;
+
+    private FlushMode flushMode = FlushMode.OBJECTS;
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
@@ -126,6 +129,16 @@ public class ObjectBundleParams
     public void setMergeMode( MergeMode mergeMode )
     {
         this.mergeMode = mergeMode;
+    }
+
+    public FlushMode getFlushMode()
+    {
+        return flushMode;
+    }
+
+    public void setFlushMode( FlushMode flushMode )
+    {
+        this.flushMode = flushMode;
     }
 
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()

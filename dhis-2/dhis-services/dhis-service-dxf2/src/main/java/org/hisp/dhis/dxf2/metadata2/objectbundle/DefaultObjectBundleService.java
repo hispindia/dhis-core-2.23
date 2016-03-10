@@ -30,12 +30,14 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dbms.DbmsManager;
+import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -266,6 +268,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
+        Session session = sessionFactory.getCurrentSession();
 
         objectBundleHooks.forEach( hook -> hook.preImport( bundle ) );
 
@@ -281,46 +284,53 @@ public class DefaultObjectBundleService implements ObjectBundleService
             switch ( bundle.getImportMode() )
             {
                 case CREATE_AND_UPDATE:
+                case ATOMIC_CREATE_AND_UPDATE:
                 case NEW_AND_UPDATES:
                 {
-                    handleCreatesAndUpdates( objects, bundle );
+                    handleCreatesAndUpdates( session, objects, bundle );
                     break;
                 }
                 case CREATE:
+                case ATOMIC_CREATE:
                 case NEW:
                 {
-                    handleCreates( objects, bundle );
+                    handleCreates( session, objects, bundle );
                     break;
                 }
                 case UPDATE:
+                case ATOMIC_UPDATE:
                 case UPDATES:
                 {
-                    handleUpdates( objects, bundle );
+                    handleUpdates( session, objects, bundle );
                     break;
                 }
                 case DELETE:
+                case ATOMIC_DELETE:
                 case DELETES:
                 {
-                    handleDeletes( objects, bundle );
+                    handleDeletes( session, objects, bundle );
                     break;
                 }
             }
-
-            sessionFactory.getCurrentSession().flush();
         }
 
         objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );
+
+        if ( FlushMode.DONE == bundle.getFlushMode() )
+        {
+            session.flush();
+        }
 
         dbmsManager.clearSession();
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
     }
 
-    private void handleCreatesAndUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleCreatesAndUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
 
     }
 
-    private void handleCreates( List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleCreates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         log.info( "Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -342,10 +352,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
+
+            if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
+
+        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
-    private void handleUpdates( List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         log.info( "Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -371,10 +385,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
                 log.debug( msg );
             }
+
+            if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
+
+        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
-    private void handleDeletes( List<IdentifiableObject> objects, ObjectBundle bundle )
+    private void handleDeletes( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         log.info( "Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -392,7 +410,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 String msg = "Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
+
+            if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
+
+        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
     @SuppressWarnings( "unchecked" )

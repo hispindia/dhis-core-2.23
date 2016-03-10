@@ -30,6 +30,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -58,6 +59,8 @@ public class ObjectBundle
 
     private final MergeMode mergeMode;
 
+    private final FlushMode flushMode;
+
     private ObjectBundleStatus objectBundleStatus = ObjectBundleStatus.CREATED;
 
     private Preheat preheat = new Preheat();
@@ -74,6 +77,7 @@ public class ObjectBundle
         this.importMode = params.getImportMode();
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();
+        this.flushMode = params.getFlushMode();
     }
 
     public User getUser()
@@ -104,6 +108,11 @@ public class ObjectBundle
     public MergeMode getMergeMode()
     {
         return mergeMode;
+    }
+
+    public FlushMode getFlushMode()
+    {
+        return flushMode;
     }
 
     public ObjectBundleStatus getObjectBundleStatus()

@@ -60,6 +60,8 @@ public class MetadataImportParams
 
     private MergeMode mergeMode = MergeMode.MERGE;
 
+    private FlushMode flushMode = FlushMode.OBJECTS;
+
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public MetadataImportParams()
@@ -126,6 +128,16 @@ public class MetadataImportParams
         this.mergeMode = mergeMode;
     }
 
+    public FlushMode getFlushMode()
+    {
+        return flushMode;
+    }
+
+    public void setFlushMode( FlushMode flushMode )
+    {
+        this.flushMode = flushMode;
+    }
+
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
     {
         return objects;
@@ -181,6 +193,7 @@ public class MetadataImportParams
         params.setPreheatMode( preheatMode );
         params.setObjectBundleMode( objectBundleMode );
         params.setMergeMode( mergeMode );
+        params.setFlushMode( flushMode );
 
         return params;
     }
