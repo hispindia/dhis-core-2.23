@@ -5,13 +5,27 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
-  <context:component-scan base-package="org.hisp.dhis.schema.descriptors, org.hisp.dhis.calendar, org.hisp.dhis.node" />
+  <context:component-scan base-package="org.hisp.dhis.schema.descriptors" />
 
   <bean id="org.hisp.dhis.preheat.PreheatService" class="org.hisp.dhis.preheat.DefaultPreheatService" scope="prototype">
     <aop:scoped-proxy proxy-target-class="false" />
   </bean>
 
   <bean id="org.hisp.dhis.calendar.CalendarService" class="org.hisp.dhis.calendar.DefaultCalendarService" />
+
+  <bean class="org.hisp.dhis.calendar.impl.Iso8601Calendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.CopticCalendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.EthiopianCalendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.GregorianCalendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.IslamicCalendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.NepaliCalendar" />
+
+  <bean class="org.hisp.dhis.calendar.impl.ThaiCalendar" />
 
   <bean id="org.hisp.dhis.schema.SchemaService" class="org.hisp.dhis.schema.DefaultSchemaService" />
 
@@ -28,6 +42,24 @@
   <bean id="org.hisp.dhis.security.acl.AclService" class="org.hisp.dhis.security.acl.DefaultAclService" />
 
   <bean id="org.hisp.dhis.node.NodeService" class="org.hisp.dhis.node.DefaultNodeService" />
+
+  <bean class="org.hisp.dhis.node.transformers.RenameNodeTransformer" />
+
+  <bean class="org.hisp.dhis.node.converters.IsEmptyNodePropertyConverter" />
+
+  <bean class="org.hisp.dhis.node.converters.IsNotEmptyNodePropertyConverter" />
+
+  <bean class="org.hisp.dhis.node.converters.SizeNodePropertyConverter" />
+
+  <bean class="org.hisp.dhis.node.serializers.CsvNodeSerializer" />
+
+  <bean class="org.hisp.dhis.node.serializers.ExcelNodeSerializer" />
+
+  <bean class="org.hisp.dhis.node.serializers.Jackson2JsonNodeSerializer" />
+
+  <bean class="org.hisp.dhis.node.serializers.PdfNodeSerializer" />
+
+  <bean class="org.hisp.dhis.node.serializers.StAXNodeSerializer" />
 
   <bean id="org.hisp.dhis.fieldfilter.FieldParser" class="org.hisp.dhis.fieldfilter.DefaultFieldParser" />
 
