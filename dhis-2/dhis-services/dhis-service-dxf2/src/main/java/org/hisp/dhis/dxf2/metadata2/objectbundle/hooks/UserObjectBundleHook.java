@@ -108,7 +108,7 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
             identifiableObject = objectBundle.getPreheat().get( objectBundle.getPreheatIdentifier(), identifiableObject );
             Map<String, Object> referenceMap = references.get( identifiableObject.getUid() );
 
-            if ( referenceMap.isEmpty() )
+            if ( referenceMap == null || referenceMap.isEmpty() )
             {
                 continue;
             }
