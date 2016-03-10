@@ -5,7 +5,7 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
-  <context:component-scan base-package="org.hisp.dhis.schema, org.hisp.dhis.calendar, org.hisp.dhis.node" />
+  <context:component-scan base-package="org.hisp.dhis.schema.descriptors, org.hisp.dhis.calendar, org.hisp.dhis.node" />
 
   <bean id="org.hisp.dhis.preheat.PreheatService" class="org.hisp.dhis.preheat.DefaultPreheatService" scope="prototype">
     <aop:scoped-proxy proxy-target-class="false" />
@@ -272,7 +272,7 @@
     <property name="clazz" value="org.hisp.dhis.user.User" />
     <property name="cacheable" value="true" />
   </bean>
-  
+
   <bean id="org.hisp.dhis.user.CurrentUserStore" class="org.hisp.dhis.user.hibernate.HibernateCurrentUserStore" />
 
   <bean id="org.hisp.dhis.user.UserSettingStore" class="org.hisp.dhis.user.hibernate.HibernateUserSettingStore">
@@ -1097,9 +1097,8 @@
   <bean id="org.hisp.dhis.sms.SmsPublisher" class="org.hisp.dhis.sms.SmsPublisher" />
 
   <bean id="org.hisp.dhis.sms.config.SmsConfigurationManager" class="org.hisp.dhis.sms.config.DefaultSmsConfigurationManager" />
-  
+
   <bean id="org.hisp.dhis.sms.incoming.SmsConsumerService" class="org.hisp.dhis.sms.incoming.DefaultSmsConsumerService" />
-  
 
 
   <bean id="org.hisp.dhis.sms.incoming.IncomingSmsService" class="org.hisp.dhis.sms.incoming.DefaultIncomingSmsService">
@@ -1108,15 +1107,15 @@
   </bean>
 
   <bean id="org.smslib.IInboundMessageNotification" class="org.hisp.dhis.sms.incoming.SMPPInboundNotification" />
-  
+
   <bean id="org.smslib.IOutboundMessageNotification" class="org.hisp.dhis.sms.outbound.DefaultOutboundNotification" />
-  
+
   <bean id="org.hisp.dhis.sms.outbound.OutboundSmsService" class="org.hisp.dhis.sms.outbound.DefaultOutboundSmsService">
     <property name="outboundSmsStore" ref="org.hisp.dhis.sms.hibernate.OutboundSmsStore" />
   </bean>
 
   <bean id="org.hisp.dhis.sms.outbound.OutboundSmsTransportService" class="org.hisp.dhis.sms.outbound.DefaultOutboundSmsTransportService">
-    <property name="smppInboundMessageNotification" ref="org.smslib.IInboundMessageNotification" />  
+    <property name="smppInboundMessageNotification" ref="org.smslib.IInboundMessageNotification" />
     <property name="outboundMessageNotification" ref="org.smslib.IOutboundMessageNotification" />
     <property name="outboundSmsService" ref="org.hisp.dhis.sms.outbound.OutboundSmsService" />
   </bean>
