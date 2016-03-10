@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.springframework.org/schema/beans"
-  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:aop="http://www.springframework.org/schema/aop"
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
-  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+  http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
-  <context:component-scan base-package="org.hisp.dhis.dxf2.metadata2" />
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.IdentifiableObjectBundleHook" />
+
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.UserObjectBundleHook" />
+
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.DataSetObjectBundleHook" />
+
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.SectionObjectBundleHook" />
+
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ValidationRuleObjectBundleHook" />
+
+  <bean id="org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleService" class="org.hisp.dhis.dxf2.metadata2.objectbundle.DefaultObjectBundleService" />
+
+  <bean id="org.hisp.dhis.dxf2.metadata2.MetadataExportService" class="org.hisp.dhis.dxf2.metadata2.DefaultMetadataExportService" />
+
+  <bean id="org.hisp.dhis.dxf2.metadata2.MetadataImportService" class="org.hisp.dhis.dxf2.metadata2.DefaultMetadataImportService" />
 
   <bean id="org.hisp.dhis.dxf2.metadata.MergeService" class="org.hisp.dhis.dxf2.metadata.DefaultMergeService" />
 
