@@ -42,6 +42,5 @@ public interface GatewayAdministratonService
 
     SmsGatewayConfig getGatewayConfiguration( String uid );
 
-    String addOrUpdateGateway( SmsGatewayConfig config, Class<?> klass );
-
+    boolean addOrUpdateGateway( SmsGatewayConfig config, Class<?> klass );
 }
