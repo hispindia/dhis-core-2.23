@@ -12,7 +12,7 @@
                 <table class="listTable dhis2-table-striped-border">
                     <tr>
                         <th ng-if="model.type==='dataElement'" colspan="4">{{'data_element' | translate}}</th>
-                        <th ng-if="model.type==='attribute'" colspan="4">Attribute</th>
+                        <th ng-if="model.type==='attribute'" colspan="4">{{'attribute' | translate}}</th>
                         <th colspan="4"> {{'audit_date' | translate}}</th>
                         <th colspan="4"> {{'audit_value' | translate}}</th>
                         <th colspan="4"> {{'audit_modified' | translate}}</th>
@@ -41,7 +41,7 @@
         </div>
         <div class="modal-body">
             <div class="alert alert-warning">
-                Audit history unavailable
+                {{'audit_history_unavailable'| translate}}
             </div>
             <button type="button" class="btn btn-default" data-ng-click="close()">{{'close'| translate}}</button>
         </div>
