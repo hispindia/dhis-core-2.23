@@ -466,6 +466,11 @@ div#orgUnitTree {
     margin-left: 2px;
 }
 
+.scroll {
+    height: 400px;
+    overflow: auto;
+}
+
 .radio-display-none {
     display: none;
 }

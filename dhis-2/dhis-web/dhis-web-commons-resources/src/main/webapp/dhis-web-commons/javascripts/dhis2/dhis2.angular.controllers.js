@@ -52,7 +52,7 @@ var d2Controllers = angular.module('d2Controllers', [])
     };
         })
 
-//Controller for audit history
+////Controller for audit history
 .controller('AuditHistoryController', function ($scope, $modalInstance, $modal, AuditHistoryDataService, DateUtils,
                                                     eventId, dataType, nameIdMap) {
 
@@ -69,7 +69,7 @@ var d2Controllers = angular.module('d2Controllers', [])
     });
 
     $scope.searchTheList = function () {
-        var searchStr = $scope.searchText;
+        var searchStr = $scope.model.searchText;
         var filteredItemList = {};
         for (var item in $scope.itemList) {
             for (var index = 0; index < $scope.itemList[item].length; index++) {
@@ -84,6 +84,9 @@ var d2Controllers = angular.module('d2Controllers', [])
             }
         }
         $scope.listInDisplay = filteredItemList;
+    }
+    $scope.isListEmpty = function() {
+        return Object.keys($scope.listInDisplay).length === 0;
     }
 
     function isSubString(str, subStr) {

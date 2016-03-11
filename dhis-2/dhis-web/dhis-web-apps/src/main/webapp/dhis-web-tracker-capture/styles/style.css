@@ -1921,6 +1921,11 @@ a.disable-link-effects:focus {
     margin-left: 5px;
 }
 
+.scroll {
+    height: 400px;
+    overflow: auto;
+}
+
 .row-with-go-button {
     margin-top: 46%;
     margin-left: 1%;
