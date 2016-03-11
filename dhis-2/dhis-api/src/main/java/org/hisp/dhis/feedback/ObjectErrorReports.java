@@ -29,6 +29,7 @@ package org.hisp.dhis.feedback;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -45,8 +46,6 @@ import java.util.Map;
 @JacksonXmlRootElement( localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectErrorReports
 {
-    private Stats stats = new Stats();
-
     private Map<Integer, ObjectErrorReport> objectErrorReportsMap = new HashMap<>();
 
     public ObjectErrorReports()
@@ -71,13 +70,7 @@ public class ObjectErrorReports
     }
 
     @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public Stats getStats()
-    {
-        return stats;
-    }
-
-    @JsonProperty
+    @JsonValue
     @JacksonXmlElementWrapper( useWrapping = false, localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
     @JacksonXmlProperty( localName = "objectErrorReport", namespace = DxfNamespaces.DXF_2_0 )
     public List<ObjectErrorReport> getObjectErrorReports()

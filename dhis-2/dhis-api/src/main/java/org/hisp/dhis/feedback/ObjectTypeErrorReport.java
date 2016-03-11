@@ -1,4 +1,4 @@
-package org.hisp.dhis.dxf2.metadata2.feedback;
+package org.hisp.dhis.feedback;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -29,39 +29,46 @@ package org.hisp.dhis.dxf2.metadata2.feedback;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.feedback.ObjectTypeErrorReport;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "importReport", namespace = DxfNamespaces.DXF_2_0 )
-public class ImportReport
+@JacksonXmlRootElement( localName = "objectTypeErrorReport", namespace = DxfNamespaces.DXF_2_0 )
+public class ObjectTypeErrorReport
 {
-    private final Map<Class<?>, ObjectTypeErrorReport> importTypeReportMap = new HashMap<>();
+    private final Class<?> klass;
 
-    public ImportReport()
+    private final ObjectErrorReports objectErrorReports;
+
+    private final ObjectTypeStats objectTypeStats = new ObjectTypeStats();
+
+    public ObjectTypeErrorReport( Class<?> klass, ObjectErrorReports objectErrorReports )
     {
+        this.klass = klass;
+        this.objectErrorReports = objectErrorReports;
     }
 
     @JsonProperty
-    @JacksonXmlElementWrapper( localName = "importTypeReports", namespace = DxfNamespaces.DXF_2_0 )
-    @JacksonXmlProperty( localName = "importTypeReport", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ObjectTypeErrorReport> getImportTypeReports()
+    @JacksonXmlProperty( isAttribute = true )
+    public Class<?> getKlass()
     {
-        return new ArrayList<>( importTypeReportMap.values() );
+        return klass;
     }
 
-    public Map<Class<?>, ObjectTypeErrorReport> getImportTypeReportMap()
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public ObjectErrorReports getObjectErrorReports()
     {
-        return importTypeReportMap;
+        return objectErrorReports;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public ObjectTypeStats getObjectTypeStats()
+    {
+        return objectTypeStats;
     }
 }

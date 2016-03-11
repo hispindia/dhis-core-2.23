@@ -72,7 +72,6 @@ public class ObjectBundleValidation
 
         ObjectErrorReports objectErrorReports = objectErrorReportsMap.get( objectClass );
         objectErrorReports.addObjectErrorReport( objectErrorReport );
-        objectErrorReports.getStats().incIgnored();
     }
 
     public List<ObjectErrorReport> getAllObjectErrorReports( Class<?> klass )

@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2;
 import com.google.common.base.Enums;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
+import org.hisp.dhis.feedback.ObjectTypeErrorReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
@@ -74,7 +75,19 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundle bundle = objectBundleService.create( bundleParams );
 
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
-        report.setObjectErrorReports( validation.getObjectErrorReports() );
+        validation.getObjectErrorReports().forEach( ( klass, objectErrorReports ) -> {
+            if ( !report.getImportTypeReportMap().containsKey( klass ) )
+            {
+                ObjectTypeErrorReport objectTypeErrorReport = new ObjectTypeErrorReport( klass, objectErrorReports );
+                report.getImportTypeReportMap().put( klass, objectTypeErrorReport );
+            }
+            else
+            {
+                ObjectTypeErrorReport objectTypeErrorReport = report.getImportTypeReportMap().get( klass );
+                objectTypeErrorReport.getObjectErrorReports().addObjectErrorReports( objectErrorReports );
+            }
+
+        } );
 
         if ( !(bundleParams.getImportMode().isAtomic() && !validation.getObjectErrorReports().isEmpty()) )
         {

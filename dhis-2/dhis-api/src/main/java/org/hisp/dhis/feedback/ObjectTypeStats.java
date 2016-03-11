@@ -37,7 +37,7 @@ import org.hisp.dhis.common.DxfNamespaces;
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @JacksonXmlRootElement( localName = "stats", namespace = DxfNamespaces.DXF_2_0 )
-public class Stats
+public class ObjectTypeStats
 {
     private int created;
 
@@ -47,11 +47,11 @@ public class Stats
 
     private int ignored;
 
-    public Stats()
+    public ObjectTypeStats()
     {
     }
 
-    public void merge( Stats stats )
+    public void merge( ObjectTypeStats stats )
     {
         created += stats.getCreated();
         updated += stats.getUpdated();
