@@ -39,6 +39,7 @@ import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageDataElement;
 import org.hisp.dhis.program.ProgramStageSection;
+import org.hisp.dhis.program.ProgramTrackedEntityAttribute;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.User;
@@ -175,7 +176,6 @@ public class ObjectBundleServiceProgramTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        System.err.println( validate.getObjectErrorReports() );
         assertTrue( validate.getObjectErrorReports().isEmpty() );
 
         objectBundleService.commit( bundle );
@@ -188,6 +188,7 @@ public class ObjectBundleServiceProgramTest
         List<Program> programs = manager.getAll( Program.class );
         List<ProgramStage> programStages = manager.getAll( ProgramStage.class );
         List<ProgramStageDataElement> programStageDataElements = manager.getAll( ProgramStageDataElement.class );
+        List<ProgramTrackedEntityAttribute> programTrackedEntityAttributes = manager.getAll( ProgramTrackedEntityAttribute.class );
 
         assertFalse( dataSets.isEmpty() );
         assertFalse( organisationUnits.isEmpty() );
@@ -197,5 +198,6 @@ public class ObjectBundleServiceProgramTest
         assertEquals( 1, programs.size() );
         assertEquals( 1, programStages.size() );
         assertEquals( 4, programStageDataElements.size() );
+        assertEquals( 2, programTrackedEntityAttributes.size() );
     }
 }
