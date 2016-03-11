@@ -492,26 +492,25 @@ public class JdbcEventStore
         return sql;
     }
     
-    private String getOrderQuery(List<Order> orders)
+    private String getOrderQuery( List<Order> orders )
     {
-        if( orders != null ) 
+        if ( orders != null ) 
         {    
             ArrayList<String> orderFields = new ArrayList<String>();
             
-            for( Order order : orders )
+            for ( Order order : orders )
             {                   
-                if( QUERY_PARAM_COL_MAP.containsKey( order.getProperty().getName() ) )
+                if ( QUERY_PARAM_COL_MAP.containsKey( order.getProperty().getName() ) )
                 {
                     String orderText = QUERY_PARAM_COL_MAP.get( order.getProperty().getName() );
-                    orderText += order.isAscending() ? " asc" : " desc";
-                    
+                    orderText += order.isAscending() ? " asc" : " desc";                    
                     orderFields.add( orderText );
                 }
             }
             
-            if( !orderFields.isEmpty() ) 
+            if ( !orderFields.isEmpty() ) 
             {
-                return "order by " + StringUtils.join(orderFields, ',') + " ";
+                return "order by " + StringUtils.join( orderFields, ',' ) + " ";
             }
         }
         

@@ -119,7 +119,6 @@ import java.util.zip.GZIPOutputStream;
 public class EventController
 {
     public static final String RESOURCE_PATH = "/events";
-
     private static final String META_DATA_KEY_DE = "de";
 
     //--------------------------------------------------------------------------
@@ -375,13 +374,14 @@ public class EventController
         return "event";
     }
     
-    private List<Order> getOrderParams(String order)
+    private List<Order> getOrderParams( String order )
     {
-        if( order != null && !StringUtils.isEmpty(order) ) 
+        if ( order != null && !StringUtils.isEmpty( order ) ) 
         {
-            OrderParams op = new OrderParams( Sets.newLinkedHashSet( Arrays.asList( order.split(",") ) ) );
-            return op.getOrders(getSchema());
+            OrderParams op = new OrderParams( Sets.newLinkedHashSet( Arrays.asList( order.split( "," ) ) ) );
+            return op.getOrders( getSchema() );
         }
+        
         return null;
     }
 
@@ -457,13 +457,14 @@ public class EventController
 
         if ( fileResource.getStorageStatus() != FileResourceStorageStatus.STORED )
         {
-            // Special case:
-            //  The FileResource exists and has been tied to this DataValue, however, the underlying file
-            //  content is still not stored to the (most likely external) file store provider.
-
-            // HTTP 409, for lack of a more suitable status code
+            // -----------------------------------------------------------------
+            // The FileResource exists and is tied to DataValue, however the 
+            // underlying file content still not stored to external file store
+            // -----------------------------------------------------------------
+            
             WebMessage webMessage = WebMessageUtils.conflict( "The content is being processed and is not available yet. Try again later.",
                 "The content requested is in transit to the file store and will be available at a later time." );
+            
             webMessage.setResponse( new FileResourceWebMessageResponse( fileResource ) );
 
             throw new WebMessageException( webMessage );
@@ -513,7 +514,7 @@ public class EventController
         {
             throw new WebMessageException( WebMessageUtils.error( "Failed fetching the file from storage",
                 "There was an exception when trying to fetch the file from the storage backend. " +
-                    "Depending on the provider the root cause could be network or file system related." ) );
+                "Depending on the provider the root cause could be network or file system related." ) );
         }
         finally
         {
