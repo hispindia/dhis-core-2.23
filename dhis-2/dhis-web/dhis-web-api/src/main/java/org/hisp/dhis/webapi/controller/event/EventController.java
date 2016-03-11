@@ -103,6 +103,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -211,7 +212,7 @@ public class EventController
     {
         WebOptions options = new WebOptions( parameters );
         List<String> fields = Lists.newArrayList( contextService.getParameterValues( "fields" ) );
-        	
+            
         if ( fields.isEmpty() )
         {
             fields.addAll( Preset.ALL.getFields() );
@@ -378,8 +379,8 @@ public class EventController
     {
         if( order != null && !StringUtils.isEmpty(order) ) 
         {
-        	OrderParams op = new OrderParams( Sets.newHashSet(order.split(",")) );
-        	return op.getOrders(getSchema());
+            OrderParams op = new OrderParams( Sets.newLinkedHashSet( Arrays.asList( order.split(",") ) ) );
+            return op.getOrders(getSchema());
         }
         return null;
     }

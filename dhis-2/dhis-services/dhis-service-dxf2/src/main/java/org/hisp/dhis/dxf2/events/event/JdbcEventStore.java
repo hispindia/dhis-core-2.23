@@ -30,7 +30,7 @@ package org.hisp.dhis.dxf2.events.event;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
+import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,6 +55,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static org.hisp.dhis.common.IdentifiableObjectUtils.getIdentifiers;
@@ -69,6 +70,25 @@ public class JdbcEventStore
 {
     private static final Log log = LogFactory.getLog( JdbcEventStore.class );
 
+    private static final Map<String, String> QUERY_PARAM_COL_MAP = ImmutableMap.<String, String>builder().
+        put( "event", "psi_uid" ).
+        put( "program", "p_uid" ).
+        put( "programStage", "ps_uid" ).
+        put( "enrollment", "pi_uid" ).
+        put( "enrollmentStatus", "pi_status" ).
+        put( "orgUnit", "ou_uid" ).
+        put( "orgUnitName", "ou_name" ).
+        put( "trackedEntityInstance", "tei_uid" ).
+        put( "eventDate", "psi_executiondate" ).
+        put( "followup", "pi_followup" ).
+        put( "status", "psi_status" ).
+        put( "dueDate", "psi_duedate" ).
+        put( "storedBy", "psi_storedby" ).
+        put( "created", "psi_created" ).
+        put( "lastUpdated", "psi_lastupdated" ).
+        put( "completedBy", "psi_completedby" ).
+        put( "completedDate", "psi_completeddate" ).build();
+    
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -474,93 +494,27 @@ public class JdbcEventStore
     
     private String getOrderQuery(List<Order> orders)
     {
-    	if( orders != null ) 
-        {	
-        	ArrayList<String> orderFields = new ArrayList<String>();
-        	
-        	for( Order order : orders )
-        	{
-        		boolean validForOrdering = false;
-        		
-        		//Simple name conversion:
-        		String orderText = "psi_" + order.getProperty().getName().toLowerCase();
-        		        		
-        		//Handling parameters that is not named with the simple convension, or not possible to sort on:
-        		switch( order.getProperty().getName() ) 
-        		{
-        		case "event":
-        			orderText = "psi_uid";
-        			validForOrdering = true;
-        			break;
-        		case "program":
-        			orderText = "p_uid";
-        			validForOrdering = true;
-        			break;
-        		case "programStage":
-        			orderText = "ps_uid";
-        			validForOrdering = true;
-        			break;
-        		case "enrollment":
-        			orderText = "pi_uid";
-        			validForOrdering = true;
-        			break;
-        		case "enrollmentStatus":
-        			orderText = "pi_status";
-        			validForOrdering = true;
-        			break;
-        		case "orgUnit":
-        			orderText = "ou_uid";
-        			validForOrdering = true;
-        			break;
-        		case "orgUnitName":
-        			orderText = "ou_name";
-        			validForOrdering = true;
-        			break;
-        		case "trackedEntityInstance":
-        			orderText = "tei_uid";
-        			validForOrdering = true;
-        			break;
-        		case "eventDate":
-        			orderText = "psi_executiondate";
-        			validForOrdering = true;
-        			break;
-        		case "followup":
-        			orderText = "pi_followup";
-        			validForOrdering = true;
-        			break;
-        		case "status":
-        		case "dueDate":
-        		case "storedBy":
-        		case "created":
-        		case "lastUpdated":
-        		case "completedBy":
-        		case "completedDate":
-        			validForOrdering = true;
-        			break;
-        		default:
-        			validForOrdering = false;
-        			break;
-        		}
-        		
-        		if( validForOrdering ) {
-	        		if( order.isAscending() )
-	        		{
-	        			orderText += " asc";
-	        		}
-	        		else
-	        		{
-	        			orderText += " desc";
-	        		}
-	        		
-	        		orderFields.add( orderText );
-        		}
-        	}
-        	
-        	if( !orderFields.isEmpty() ) {
-        		return "order by " + StringUtils.join(orderFields, ',') + " ";
-        	}
+        if( orders != null ) 
+        {    
+            ArrayList<String> orderFields = new ArrayList<String>();
+            
+            for( Order order : orders )
+            {                   
+                if( QUERY_PARAM_COL_MAP.containsKey( order.getProperty().getName() ) )
+                {
+                    String orderText = QUERY_PARAM_COL_MAP.get( order.getProperty().getName() );
+                    orderText += order.isAscending() ? " asc" : " desc";
+                    
+                    orderFields.add( orderText );
+                }
+            }
+            
+            if( !orderFields.isEmpty() ) 
+            {
+                return "order by " + StringUtils.join(orderFields, ',') + " ";
+            }
         }
-    	
+        
         return "order by psi_lastupdated desc ";
     }
 

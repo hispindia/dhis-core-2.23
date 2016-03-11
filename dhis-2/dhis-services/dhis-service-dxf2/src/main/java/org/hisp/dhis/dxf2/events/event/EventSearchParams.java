@@ -307,7 +307,7 @@ public class EventSearchParams
     
     public List<Order> getOrders() 
     {
-    	return this.orders;
+        return this.orders;
     }
 
     public void setOrders( List<Order> orders )
@@ -324,5 +324,4 @@ public class EventSearchParams
     {
         this.categoryOptionCombo = categoryOptionCombo;
     }
-
 }
