@@ -39,6 +39,8 @@ import org.hisp.dhis.common.DxfNamespaces;
 @JacksonXmlRootElement( localName = "stats", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectTypeStats
 {
+    private int total;
+
     private int created;
 
     private int updated;
@@ -53,10 +55,18 @@ public class ObjectTypeStats
 
     public void merge( ObjectTypeStats stats )
     {
+        total += stats.getTotal();
         created += stats.getCreated();
         updated += stats.getUpdated();
         deleted += stats.getDeleted();
         ignored += stats.getIgnored();
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getTotal()
+    {
+        return total;
     }
 
     @JsonProperty
@@ -68,6 +78,7 @@ public class ObjectTypeStats
 
     public void incCreated()
     {
+        total++;
         created++;
     }
 
@@ -80,6 +91,7 @@ public class ObjectTypeStats
 
     public void incUpdated()
     {
+        total++;
         updated++;
     }
 
@@ -92,6 +104,7 @@ public class ObjectTypeStats
 
     public void incDeleted()
     {
+        total++;
         deleted++;
     }
 
@@ -104,6 +117,7 @@ public class ObjectTypeStats
 
     public void incIgnored()
     {
+        total++;
         ignored++;
     }
 }

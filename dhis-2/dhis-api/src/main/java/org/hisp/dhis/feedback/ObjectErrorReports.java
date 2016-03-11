@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
 
 import java.util.ArrayList;
@@ -91,5 +92,14 @@ public class ObjectErrorReports
     public int size()
     {
         return objectErrorReportsMap.size();
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "objectErrorReports", getObjectErrorReports() )
+            .toString();
     }
 }
