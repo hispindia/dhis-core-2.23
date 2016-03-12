@@ -315,11 +315,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );
-
-        if ( FlushMode.DONE == bundle.getFlushMode() )
-        {
-            session.flush();
-        }
+        session.flush();
 
         dbmsManager.clearSession();
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
