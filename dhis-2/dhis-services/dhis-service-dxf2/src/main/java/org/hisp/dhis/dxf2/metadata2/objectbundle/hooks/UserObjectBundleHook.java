@@ -66,13 +66,6 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         {
             // Username exists, throw validation error
         }
-
-        if ( !StringUtils.isEmpty( userCredentials.getPassword() ) )
-        {
-            userService.encodeAndSetPassword( userCredentials, userCredentials.getPassword() );
-        }
-
-        preheatService.connectReferences( userCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
     }
 
     @Override
@@ -81,11 +74,41 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         if ( !User.class.isInstance( identifiableObject ) || userCredentials == null ) return;
 
         User user = (User) identifiableObject;
-        userCredentials.setUserInfo( user );
+
+        if ( !StringUtils.isEmpty( userCredentials.getPassword() ) )
+        {
+            userService.encodeAndSetPassword( userCredentials, userCredentials.getPassword() );
+        }
+
+        preheatService.connectReferences( userCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
         sessionFactory.getCurrentSession().save( userCredentials );
         user.setUserCredentials( userCredentials );
-        sessionFactory.getCurrentSession().update( userCredentials );
+        sessionFactory.getCurrentSession().update( user );
+        userCredentials = null;
+    }
 
+    @Override
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !User.class.isInstance( identifiableObject ) || ((User) identifiableObject).getUserCredentials() == null ) return;
+        User user = (User) identifiableObject;
+        userCredentials = user.getUserCredentials();
+    }
+
+    @Override
+    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !User.class.isInstance( identifiableObject ) || userCredentials == null ) return;
+
+        User user = (User) identifiableObject;
+        UserCredentials persistedUserCredentials = objectBundle.getPreheat().get( objectBundle.getPreheatIdentifier(), UserCredentials.class, user );
+        persistedUserCredentials.mergeWith( userCredentials, objectBundle.getMergeMode() );
+        preheatService.connectReferences( persistedUserCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+
+        persistedUserCredentials.setUserInfo( user );
+        user.setUserCredentials( persistedUserCredentials );
+
+        sessionFactory.getCurrentSession().update( user.getUserCredentials() );
         userCredentials = null;
     }
 

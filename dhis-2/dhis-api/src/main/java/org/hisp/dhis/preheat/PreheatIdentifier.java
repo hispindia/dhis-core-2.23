@@ -30,6 +30,7 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
@@ -55,9 +56,16 @@ public enum PreheatIdentifier
      */
     AUTO;
 
-    @SuppressWarnings( "incomplete-switch" )
+    @SuppressWarnings( { "incomplete-switch", "unchecked" } )
     public <T extends IdentifiableObject> String getIdentifier( T object )
     {
+        object = UserCredentials.class.isInstance( object ) ? (T) ((UserCredentials) object).getUserInfo() : object;
+
+        if ( object == null )
+        {
+            return null;
+        }
+
         switch ( this )
         {
             case UID:

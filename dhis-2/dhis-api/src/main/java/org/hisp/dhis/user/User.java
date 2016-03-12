@@ -111,7 +111,7 @@ public class User
      */
     @Scanned
     private Set<OrganisationUnit> dataViewOrganisationUnits = new HashSet<>();
-    
+
     /**
      * Organisation units for tracked entity instance search operations.
      */
@@ -211,7 +211,7 @@ public class User
     // -------------------------------------------------------------------------
     // Logic - data view organisation unit
     // -------------------------------------------------------------------------
-    
+
     public boolean hasDataViewOrganisationUnit()
     {
         return !CollectionUtils.isEmpty( dataViewOrganisationUnits );
@@ -244,11 +244,11 @@ public class User
     {
         return hasDataViewOrganisationUnit() ? dataViewOrganisationUnits : organisationUnits;
     }
-    
+
     // -------------------------------------------------------------------------
     // Logic - tei search organisation unit
     // -------------------------------------------------------------------------
-    
+
     public boolean hasTeiSearchOrganisationUnit()
     {
         return !CollectionUtils.isEmpty( teiSearchOrganisationUnits );
@@ -281,7 +281,7 @@ public class User
     {
         return hasTeiSearchOrganisationUnit() ? teiSearchOrganisationUnits : organisationUnits;
     }
-    
+
 
     public String getOrganisationUnitsName()
     {
@@ -657,7 +657,7 @@ public class User
     public void setDataViewOrganisationUnits( Set<OrganisationUnit> dataViewOrganisationUnits )
     {
         this.dataViewOrganisationUnits = dataViewOrganisationUnits;
-    }   
+    }
 
     @JsonProperty
     @JsonSerialize( contentAs = BaseIdentifiableObject.class )
@@ -735,7 +735,7 @@ public class User
 
             dataViewOrganisationUnits.clear();
             dataViewOrganisationUnits.addAll( user.getDataViewOrganisationUnits() );
-            
+
             teiSearchOrganisationUnits.clear();
             teiSearchOrganisationUnits.addAll( user.getTeiSearchOrganisationUnits() );
         }

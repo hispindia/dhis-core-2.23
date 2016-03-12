@@ -312,6 +312,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     break;
                 }
             }
+
+            session.flush();
         }
 
         objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );
@@ -351,8 +353,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
-
-        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
     private void handleUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
@@ -376,6 +376,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
 
+            bundle.getPreheat().put( bundle.getPreheatIdentifier(), persistedObject );
+
             if ( log.isDebugEnabled() )
             {
                 String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
@@ -384,8 +386,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
-
-        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
     private void handleDeletes( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
@@ -409,8 +409,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( FlushMode.OBJECT == bundle.getFlushMode() ) session.flush();
         }
-
-        if ( FlushMode.OBJECTS == bundle.getFlushMode() ) session.flush();
     }
 
     @SuppressWarnings( "unchecked" )
