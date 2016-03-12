@@ -96,9 +96,10 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         if ( !objectBundle.getObjects().containsKey( User.class ) ) return;
 
         List<IdentifiableObject> objects = objectBundle.getObjects().get( User.class );
-        Map<String, Map<String, Object>> references = objectBundle.getObjectReferences( User.class );
+        Map<String, Map<String, Object>> userReferences = objectBundle.getObjectReferences( User.class );
+        Map<String, Map<String, Object>> userCredentialsReferences = objectBundle.getObjectReferences( UserCredentials.class );
 
-        if ( references == null || references.isEmpty() )
+        if ( userReferences == null || userReferences.isEmpty() || userCredentialsReferences == null || userCredentialsReferences.isEmpty() )
         {
             return;
         }
@@ -106,19 +107,31 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         for ( IdentifiableObject identifiableObject : objects )
         {
             identifiableObject = objectBundle.getPreheat().get( objectBundle.getPreheatIdentifier(), identifiableObject );
-            Map<String, Object> referenceMap = references.get( identifiableObject.getUid() );
+            Map<String, Object> userReferenceMap = userReferences.get( identifiableObject.getUid() );
 
-            if ( referenceMap == null || referenceMap.isEmpty() )
+            if ( userReferenceMap == null || userReferenceMap.isEmpty() )
             {
                 continue;
             }
 
             User user = (User) identifiableObject;
-            user.setOrganisationUnits( (Set<OrganisationUnit>) referenceMap.get( "organisationUnits" ) );
-            user.setDataViewOrganisationUnits( (Set<OrganisationUnit>) referenceMap.get( "dataViewOrganisationUnits" ) );
+            Map<String, Object> userCredentialsReferenceMap = userCredentialsReferences.get( user.getUserCredentials().getUid() );
 
-            preheatService.connectReferences( identifiableObject, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-            sessionFactory.getCurrentSession().update( identifiableObject );
+            if ( userCredentialsReferenceMap == null || userCredentialsReferenceMap.isEmpty() )
+            {
+                continue;
+            }
+
+            user.setOrganisationUnits( (Set<OrganisationUnit>) userReferenceMap.get( "organisationUnits" ) );
+            user.setDataViewOrganisationUnits( (Set<OrganisationUnit>) userReferenceMap.get( "dataViewOrganisationUnits" ) );
+
+            user.getUserCredentials().setUser( (User) userCredentialsReferenceMap.get( "user" ) );
+
+            preheatService.connectReferences( user, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+            preheatService.connectReferences( user.getUserCredentials(), objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+
+            sessionFactory.getCurrentSession().update( user.getUserCredentials() );
+            sessionFactory.getCurrentSession().update( user );
         }
     }
 }

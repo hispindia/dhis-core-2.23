@@ -1103,6 +1103,44 @@ public class ObjectBundleServiceTest
         assertEquals( "vAczVs4mxna", validationRule2.getRightSide().getDataElementsInExpression().iterator().next().getUid() );
     }
 
+    @Test
+    public void testCreateUsers() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/users.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        List<User> users = manager.getAll( User.class );
+        assertEquals( 3, users.size() );
+
+        User userA = manager.get( User.class, "sPWjoHSY03y" );
+        User userB = manager.get( User.class, "MwhEJUnTHkn" );
+
+        assertNotNull( userA );
+        assertNotNull( userB );
+
+        assertNotNull( userA.getUserCredentials().getUserInfo() );
+        assertNotNull( userB.getUserCredentials().getUserInfo() );
+        assertNotNull( userA.getUserCredentials().getUserInfo().getUserCredentials() );
+        assertNotNull( userB.getUserCredentials().getUserInfo().getUserCredentials() );
+        assertEquals( "UserA", userA.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
+        assertEquals( "UserB", userB.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
+
+        assertNotNull( userA.getUserCredentials().getUser() );
+        assertNotNull( userB.getUserCredentials().getUser() );
+        assertEquals( "admin", userA.getUserCredentials().getUser().getUserCredentials().getUsername() );
+        assertEquals( "admin", userB.getUserCredentials().getUser().getUserCredentials().getUsername() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
