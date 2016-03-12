@@ -50,22 +50,22 @@ public enum ImportStrategy
 
     public boolean isCreate()
     {
-        return this == NEW || this == CREATE;
+        return this == NEW || this == CREATE || this == ATOMIC_CREATE;
     }
 
     public boolean isUpdate()
     {
-        return this == UPDATES || this == UPDATE;
+        return this == UPDATES || this == UPDATE || this == ATOMIC_UPDATE;
     }
 
     public boolean isCreateAndUpdate()
     {
-        return this == NEW_AND_UPDATES || this == CREATE_AND_UPDATE;
+        return this == NEW_AND_UPDATES || this == CREATE_AND_UPDATE || this == ATOMIC_CREATE_AND_UPDATE;
     }
 
     public boolean isDelete()
     {
-        return this == DELETE || this == DELETES;
+        return this == DELETE || this == DELETES || this == ATOMIC_DELETE;
     }
 
     public boolean isAtomic()
