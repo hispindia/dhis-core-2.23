@@ -98,7 +98,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundle create( ObjectBundleParams params )
     {
         ObjectBundle bundle = new ObjectBundle( params );
-        bundle.putObjects( params.getObjects() );
+        bundle.addObjects( params.getObjects() );
 
         if ( params.getUser() == null )
         {
@@ -313,7 +313,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 }
             }
 
-            session.flush();
+            if ( FlushMode.AUTO == bundle.getFlushMode() ) session.flush();
         }
 
         objectBundleHooks.forEach( hook -> hook.postImport( bundle ) );

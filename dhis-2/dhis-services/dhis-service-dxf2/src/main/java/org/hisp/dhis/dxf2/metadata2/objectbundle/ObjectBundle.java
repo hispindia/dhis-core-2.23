@@ -136,7 +136,7 @@ public class ObjectBundle
     }
 
     @SuppressWarnings( "unchecked" )
-    public <T extends IdentifiableObject> void addObject( T object )
+    public void addObject( IdentifiableObject object )
     {
         if ( object == null )
         {
@@ -149,25 +149,21 @@ public class ObjectBundle
         }
 
         objects.get( object.getClass() ).add( object );
-        preheat.put( preheatIdentifier, object );
+
+        if ( preheat.get( preheatIdentifier, object ) == null )
+        {
+            preheat.put( preheatIdentifier, object );
+        }
     }
 
-    public <T extends IdentifiableObject> void addObjects( List<T> objects )
+    public void addObjects( List<IdentifiableObject> objects )
     {
         objects.forEach( this::addObject );
     }
 
-    public void putObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    public void addObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
-        for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
-        {
-            if ( !this.objects.containsKey( klass ) )
-            {
-                this.objects.put( klass, new ArrayList<>() );
-            }
-
-            this.objects.get( klass ).addAll( objects.get( klass ) );
-        }
+        objects.keySet().forEach( klass -> addObjects( objects.get( klass ) ) );
     }
 
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()

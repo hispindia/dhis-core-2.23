@@ -106,7 +106,7 @@ public class DefaultMetadataImportService implements MetadataImportService
         params.setPreheatIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
         params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.CREATE_AND_UPDATE ) );
         params.setMergeMode( getEnumWithDefault( MergeMode.class, parameters, "mergeMode", MergeMode.MERGE ) );
-        params.setFlushMode( getEnumWithDefault( FlushMode.class, parameters, "flushMode", FlushMode.OBJECTS ) );
+        params.setFlushMode( getEnumWithDefault( FlushMode.class, parameters, "flushMode", FlushMode.AUTO ) );
 
         return params;
     }

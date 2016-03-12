@@ -60,7 +60,7 @@ public class ObjectBundleParams
 
     private MergeMode mergeMode = MergeMode.MERGE;
 
-    private FlushMode flushMode = FlushMode.OBJECTS;
+    private FlushMode flushMode = FlushMode.AUTO;
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 

@@ -34,22 +34,12 @@ package org.hisp.dhis.dxf2.metadata2;
 public enum FlushMode
 {
     /**
-     * Flush for every db write (create, update)
+     * Flush for every db write.
      */
     OBJECT,
 
     /**
-     * Flush when done with all db writes for a class type
+     * Let the importer decide the flushing.
      */
-    OBJECTS,
-
-    /**
-     * Flush when import is done
-     */
-    DONE,
-
-    /**
-     * Don't flush (not recommended)
-     */
-    NONE
+    AUTO,
 }
