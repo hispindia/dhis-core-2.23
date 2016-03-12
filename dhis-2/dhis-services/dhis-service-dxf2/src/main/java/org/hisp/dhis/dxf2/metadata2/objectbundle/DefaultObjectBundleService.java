@@ -97,13 +97,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
     @Override
     public ObjectBundle create( ObjectBundleParams params )
     {
-        ObjectBundle bundle = new ObjectBundle( params );
-        bundle.addObjects( params.getObjects() );
-
         if ( params.getUser() == null )
         {
             params.setUser( currentUserService.getCurrentUser() );
         }
+
+        ObjectBundle bundle = new ObjectBundle( params );
+        bundle.addObjects( params.getObjects() );
 
         PreheatParams preheatParams = params.getPreheatParams();
         preheatParams.setUser( params.getUser() );
@@ -116,7 +116,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         bundle.setPreheat( preheatService.preheat( preheatParams ) );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
-        if ( !(bundle.getImportMode().isCreate() || bundle.getImportMode().isCreateAndUpdate()) )
+        if ( !bundle.getImportMode().isCreate() )
         {
             return bundle;
         }
@@ -126,27 +126,12 @@ public class DefaultObjectBundleService implements ObjectBundleService
         {
             Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> map = bundle.getPreheat().getMap();
 
-            if ( !map.containsKey( PreheatIdentifier.UID ) )
-            {
-                map.put( PreheatIdentifier.UID, new HashMap<>() );
-            }
+            if ( !map.containsKey( PreheatIdentifier.UID ) ) map.put( PreheatIdentifier.UID, new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.UID ).containsKey( klass ) ) map.get( PreheatIdentifier.UID ).put( klass, new HashMap<>() );
+            if ( !map.containsKey( PreheatIdentifier.CODE ) ) map.put( PreheatIdentifier.CODE, new HashMap<>() );
+            if ( !map.get( PreheatIdentifier.CODE ).containsKey( klass ) ) map.get( PreheatIdentifier.CODE ).put( klass, new HashMap<>() );
 
-            if ( !map.get( PreheatIdentifier.UID ).containsKey( klass ) )
-            {
-                map.get( PreheatIdentifier.UID ).put( klass, new HashMap<>() );
-            }
-
-            if ( !map.containsKey( PreheatIdentifier.CODE ) )
-            {
-                map.put( PreheatIdentifier.CODE, new HashMap<>() );
-            }
-
-            if ( !map.get( PreheatIdentifier.CODE ).containsKey( klass ) )
-            {
-                map.get( PreheatIdentifier.CODE ).put( klass, new HashMap<>() );
-            }
-
-            for ( IdentifiableObject identifiableObject : bundle.getObjects().get( klass ) )
+            for ( IdentifiableObject identifiableObject : bundle.getObjects( klass, false ) )
             {
                 if ( Preheat.isDefault( identifiableObject ) ) continue;
 
@@ -274,43 +259,25 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
-            List<IdentifiableObject> objects = bundle.getObjects().get( klass );
+            List<IdentifiableObject> persistedObjects = bundle.getObjects( klass, true );
+            List<IdentifiableObject> nonPersistedObjects = bundle.getObjects( klass, false );
 
-            if ( objects.isEmpty() )
+            if ( bundle.getImportMode().isCreateAndUpdate() )
             {
-                continue;
+                handleCreates( session, nonPersistedObjects, bundle );
+                handleUpdates( session, persistedObjects, bundle );
             }
-
-            switch ( bundle.getImportMode() )
+            else if ( bundle.getImportMode().isCreate() )
             {
-                case CREATE_AND_UPDATE:
-                case ATOMIC_CREATE_AND_UPDATE:
-                case NEW_AND_UPDATES:
-                {
-                    handleCreatesAndUpdates( session, objects, bundle );
-                    break;
-                }
-                case CREATE:
-                case ATOMIC_CREATE:
-                case NEW:
-                {
-                    handleCreates( session, objects, bundle );
-                    break;
-                }
-                case UPDATE:
-                case ATOMIC_UPDATE:
-                case UPDATES:
-                {
-                    handleUpdates( session, objects, bundle );
-                    break;
-                }
-                case DELETE:
-                case ATOMIC_DELETE:
-                case DELETES:
-                {
-                    handleDeletes( session, objects, bundle );
-                    break;
-                }
+                handleCreates( session, nonPersistedObjects, bundle );
+            }
+            else if ( bundle.getImportMode().isUpdate() )
+            {
+                handleUpdates( session, persistedObjects, bundle );
+            }
+            else if ( bundle.getImportMode().isDelete() )
+            {
+                handleDeletes( session, persistedObjects, bundle );
             }
 
             if ( FlushMode.AUTO == bundle.getFlushMode() ) session.flush();
@@ -323,13 +290,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
     }
 
-    private void handleCreatesAndUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
-    {
-
-    }
-
     private void handleCreates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        if ( objects.isEmpty() ) return;
         log.info( "Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
@@ -357,6 +320,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleUpdates( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        if ( objects.isEmpty() ) return;
         log.info( "Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
@@ -390,6 +354,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void handleDeletes( Session session, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
+        if ( objects.isEmpty() ) return;
         log.info( "Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );

@@ -1195,6 +1195,64 @@ public class ObjectBundleServiceTest
         assertEquals( "admin", userB.getUserCredentials().getUser().getUserCredentials().getUsername() );
     }
 
+    @Test
+    public void testCreateAndUpdateMetadata1() throws IOException
+    {
+        defaultSetup();
+
+        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
+        UserGroup userGroup = manager.get( UserGroup.class, "ugabcdefghA" );
+        assertEquals( 4, dataElementMap.size() );
+        assertNotNull( userGroup );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_update1.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        DataElement dataElementA = dataElementMap.get( "deabcdefghA" );
+        DataElement dataElementB = dataElementMap.get( "deabcdefghB" );
+        DataElement dataElementC = dataElementMap.get( "deabcdefghC" );
+        DataElement dataElementD = dataElementMap.get( "deabcdefghD" );
+
+        assertNotNull( dataElementA );
+        assertNotNull( dataElementB );
+        assertNotNull( dataElementC );
+        assertNotNull( dataElementD );
+
+        assertEquals( "DEA", dataElementA.getName() );
+        assertEquals( "DEB", dataElementB.getName() );
+        assertEquals( "DEC", dataElementC.getName() );
+        assertEquals( "DED", dataElementD.getName() );
+
+        assertEquals( "DECA", dataElementA.getCode() );
+        assertEquals( "DECB", dataElementB.getCode() );
+        assertEquals( "DECC", dataElementC.getCode() );
+        assertEquals( "DECD", dataElementD.getCode() );
+
+        assertEquals( "DESA", dataElementA.getShortName() );
+        assertEquals( "DESB", dataElementB.getShortName() );
+        assertEquals( "DESC", dataElementC.getShortName() );
+        assertEquals( "DESD", dataElementD.getShortName() );
+
+        assertEquals( "DEDA", dataElementA.getDescription() );
+        assertEquals( "DEDB", dataElementB.getDescription() );
+        assertEquals( "DEDC", dataElementC.getDescription() );
+        assertEquals( "DEDD", dataElementD.getDescription() );
+
+        assertEquals( 1, dataElementA.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
+        assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );

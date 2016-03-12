@@ -171,6 +171,26 @@ public class ObjectBundle
         return objects;
     }
 
+    public List<IdentifiableObject> getObjects( Class<? extends IdentifiableObject> klass, boolean persisted )
+    {
+        List<IdentifiableObject> objectMap = new ArrayList<>();
+
+        if ( !objects.containsKey( klass ) )
+        {
+            return objectMap;
+        }
+
+        objects.get( klass ).forEach( object -> {
+            IdentifiableObject cachedObject = preheat.get( preheatIdentifier, object );
+            boolean isPersisted = !(cachedObject == null || cachedObject.getId() == 0);
+
+            if ( persisted && isPersisted ) objectMap.add( object );
+            if ( !persisted && !isPersisted ) objectMap.add( object );
+        } );
+
+        return objectMap;
+    }
+
     public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
         this.objects = objects;
