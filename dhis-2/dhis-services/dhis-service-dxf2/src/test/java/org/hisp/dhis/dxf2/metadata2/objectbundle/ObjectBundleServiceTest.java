@@ -1137,6 +1137,8 @@ public class ObjectBundleServiceTest
 
         assertNotNull( userA.getUserCredentials().getUser() );
         assertNotNull( userB.getUserCredentials().getUser() );
+        assertNotNull( userA.getUserCredentials().getUser().getUserCredentials() );
+        assertNotNull( userB.getUserCredentials().getUser().getUserCredentials() );
         assertEquals( "admin", userA.getUserCredentials().getUser().getUserCredentials().getUsername() );
         assertEquals( "admin", userB.getUserCredentials().getUser().getUserCredentials().getUsername() );
     }
