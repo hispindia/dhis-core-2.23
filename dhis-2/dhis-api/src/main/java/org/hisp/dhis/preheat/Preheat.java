@@ -168,8 +168,7 @@ public class Preheat
                 User user = (User) object;
 
                 Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.UID ).get( UserCredentials.class );
-                String key = PreheatIdentifier.UID.getIdentifier( user );
-                identifierMap.put( key, user.getUserCredentials() );
+                identifierMap.put( user.getUid(), user.getUserCredentials() );
             }
 
             Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.UID ).get( klass );
@@ -192,8 +191,7 @@ public class Preheat
                 User user = (User) object;
 
                 Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.CODE ).get( UserCredentials.class );
-                String key = PreheatIdentifier.CODE.getIdentifier( user );
-                identifierMap.put( key, user.getUserCredentials() );
+                identifierMap.put( user.getCode(), user.getUserCredentials() );
             }
 
             Map<String, IdentifiableObject> identifierMap = map.get( PreheatIdentifier.CODE ).get( klass );
