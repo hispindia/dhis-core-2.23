@@ -32,12 +32,12 @@ import org.amplecode.quick.StatementHolder;
 import org.amplecode.quick.StatementManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.jdbc.StatementBuilder;
 import org.hisp.dhis.program.ProgramExpression;
 import org.hisp.dhis.program.ProgramStageService;
 import org.hisp.dhis.system.startup.AbstractStartupRoutine;
+import org.hisp.dhis.system.util.DateUtils;
 import org.hisp.dhis.system.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -45,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -256,7 +257,7 @@ public class TableAlteror
         executeSql( "update trackedentityattribute set aggregationype='AVERAGE' where aggregationtype is null" );
 
         executeSql( "UPDATE trackedentityattribute SET valuetype='string' WHERE valuetype='localId';" );
-        executeSql( "UPDATE trackedentityattribute SET valuetype='number' WHERE valuetype='age'" );        
+        executeSql( "UPDATE trackedentityattribute SET valuetype='number' WHERE valuetype='age'" );
 
         executeSql( "update trackedentityattribute set searchscope='NOT_SEARCHABLE' where confidential=true" );
         executeSql( "update trackedentityattribute set searchscope='SEARCH_ORG_UNITS' where searchscope is null" );
@@ -380,10 +381,13 @@ public class TableAlteror
 
         if ( exist == 0 )
         {
-            String id = statementBuilder.getAutoIncrementValue();
 
-            jdbcTemplate.execute( "INSERT INTO trackedentity(trackedentityid,uid, name, description) values(" + id
-                + ",'" + CodeGenerator.generateCode() + "','Person','Person')" );
+            String id = statementBuilder.getAutoIncrementValue();
+            String uid = "MCPQUTHX1Ze";
+            String date = DateUtils.getSqlDateString( new Date() );
+
+            jdbcTemplate.execute( "INSERT INTO trackedentity(trackedentityid,uid, code, created, lastupdated,name, description) values("
+                + id + ",'" + uid + "','Person','" + date + "','" + date + "','Person','Person')" );
 
             jdbcTemplate.execute( "UPDATE program SET trackedentityid="
                 + "  (SELECT trackedentityid FROM trackedentity where name='Person') where trackedentityid is null" );
