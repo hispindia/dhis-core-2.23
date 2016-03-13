@@ -1229,7 +1229,7 @@ public class ObjectBundleServiceTest
         assertNotNull( userGroup );
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/de_update1.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/de_create_and_update1.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
@@ -1274,6 +1274,94 @@ public class ObjectBundleServiceTest
         assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
         assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
         assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
+    }
+
+    @Test
+    public void testCreateAndUpdateMetadata2() throws IOException
+    {
+        defaultSetup();
+
+        Map<String, DataElement> dataElementMap = manager.getIdMap( DataElement.class, IdScheme.UID );
+        UserGroup userGroup = manager.get( UserGroup.class, "ugabcdefghA" );
+        assertEquals( 4, dataElementMap.size() );
+        assertNotNull( userGroup );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_create_and_update2.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertTrue( objectBundleService.validate( bundle ).getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        DataElement dataElementA = manager.get( DataElement.class, "deabcdefghA" );
+        DataElement dataElementB = manager.get( DataElement.class, "deabcdefghB" );
+        DataElement dataElementC = manager.get( DataElement.class, "deabcdefghC" );
+        DataElement dataElementD = manager.get( DataElement.class, "deabcdefghD" );
+        DataElement dataElementE = manager.get( DataElement.class, "deabcdefghE" );
+
+        assertNotNull( dataElementA );
+        assertNotNull( dataElementB );
+        assertNotNull( dataElementC );
+        assertNotNull( dataElementD );
+        assertNotNull( dataElementE );
+
+        assertEquals( "DEA", dataElementA.getName() );
+        assertEquals( "DEB", dataElementB.getName() );
+        assertEquals( "DEC", dataElementC.getName() );
+        assertEquals( "DED", dataElementD.getName() );
+        assertEquals( "DEE", dataElementE.getName() );
+
+        assertEquals( "DECA", dataElementA.getCode() );
+        assertEquals( "DECB", dataElementB.getCode() );
+        assertEquals( "DECC", dataElementC.getCode() );
+        assertEquals( "DECD", dataElementD.getCode() );
+        assertEquals( "DECE", dataElementE.getCode() );
+
+        assertEquals( "DESA", dataElementA.getShortName() );
+        assertEquals( "DESB", dataElementB.getShortName() );
+        assertEquals( "DESC", dataElementC.getShortName() );
+        assertEquals( "DESD", dataElementD.getShortName() );
+        assertEquals( "DESE", dataElementE.getShortName() );
+
+        assertEquals( "DEDA", dataElementA.getDescription() );
+        assertEquals( "DEDB", dataElementB.getDescription() );
+        assertEquals( "DEDC", dataElementC.getDescription() );
+        assertEquals( "DEDD", dataElementD.getDescription() );
+        assertEquals( "DEDE", dataElementE.getDescription() );
+
+        assertEquals( 1, dataElementA.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementB.getUserGroupAccesses().size() );
+        assertEquals( 1, dataElementC.getUserGroupAccesses().size() );
+        assertEquals( 0, dataElementD.getUserGroupAccesses().size() );
+    }
+
+    @Test
+    public void testCreateAndUpdateMetadata3() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_create_and_update3.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertTrue( objectBundleService.validate( bundle ).getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        DataElement dataElementE = manager.get( DataElement.class, "deabcdefghE" );
+
+        assertNotNull( dataElementE );
+        assertEquals( "DEE", dataElementE.getName() );
+        assertEquals( "DECE", dataElementE.getCode() );
+        assertEquals( "DESE", dataElementE.getShortName() );
+        assertEquals( "DEDE", dataElementE.getDescription() );
     }
 
     private void defaultSetup()
