@@ -32,8 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hisp.dhis.common.BaseIdentifiableObject;
-import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dbms.DbmsManager;
@@ -43,8 +41,6 @@ import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.preheat.Preheat;
-import org.hisp.dhis.preheat.PreheatIdentifier;
-import org.hisp.dhis.preheat.PreheatMode;
 import org.hisp.dhis.preheat.PreheatParams;
 import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.SchemaService;
@@ -53,13 +49,10 @@ import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -109,32 +102,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
-
-        // add preheat placeholders for objects that will be created
-        for ( Class<? extends IdentifiableObject> klass : bundle.getObjectMap().keySet() )
-        {
-            Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> map = bundle.getPreheat().getMap();
-
-            if ( !map.containsKey( PreheatIdentifier.UID ) ) map.put( PreheatIdentifier.UID, new HashMap<>() );
-            if ( !map.get( PreheatIdentifier.UID ).containsKey( klass ) ) map.get( PreheatIdentifier.UID ).put( klass, new HashMap<>() );
-            if ( !map.containsKey( PreheatIdentifier.CODE ) ) map.put( PreheatIdentifier.CODE, new HashMap<>() );
-            if ( !map.get( PreheatIdentifier.CODE ).containsKey( klass ) ) map.get( PreheatIdentifier.CODE ).put( klass, new HashMap<>() );
-
-            for ( IdentifiableObject identifiableObject : bundle.getObjects( klass, false ) )
-            {
-                if ( Preheat.isDefault( identifiableObject ) ) continue;
-
-                if ( !StringUtils.isEmpty( identifiableObject.getUid() ) )
-                {
-                    map.get( PreheatIdentifier.UID ).get( klass ).put( identifiableObject.getUid(), identifiableObject );
-                }
-
-                if ( !StringUtils.isEmpty( identifiableObject.getCode() ) )
-                {
-                    map.get( PreheatIdentifier.CODE ).get( klass ).put( identifiableObject.getCode(), identifiableObject );
-                }
-            }
-        }
 
         return bundle;
     }
@@ -380,7 +347,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             manager.save( object, bundle.getUser(), false );
 
-            bundle.getPreheat().put( bundle.getPreheatIdentifier(), object );
+            bundle.getPreheat().replace( bundle.getPreheatIdentifier(), object );
 
             objectBundleHooks.forEach( hook -> hook.postCreate( object, bundle ) );
 
@@ -416,7 +383,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
 
-            bundle.getPreheat().put( bundle.getPreheatIdentifier(), persistedObject );
+            bundle.getPreheat().replace( bundle.getPreheatIdentifier(), persistedObject );
 
             if ( log.isDebugEnabled() )
             {

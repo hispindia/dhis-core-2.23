@@ -194,6 +194,13 @@ public class DefaultPreheatService implements PreheatService
 
         preheat.setUniquenessMap( collectUniqueness( uniqueCollectionMap ) );
 
+        // add preheat placeholders for objects that will be created
+        for ( Class<? extends IdentifiableObject> klass : params.getObjects().keySet() )
+        {
+            List<IdentifiableObject> objects = params.getObjects().get( klass );
+            preheat.put( params.getPreheatIdentifier(), objects );
+        }
+
         return preheat;
     }
 

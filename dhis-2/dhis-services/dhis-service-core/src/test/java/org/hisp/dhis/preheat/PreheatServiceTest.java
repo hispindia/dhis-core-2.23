@@ -426,7 +426,7 @@ public class PreheatServiceTest
         assertFalse( preheat.isEmpty() );
         assertFalse( preheat.isEmpty( PreheatIdentifier.UID ) );
         assertFalse( preheat.isEmpty( PreheatIdentifier.UID, DataElement.class ) );
-        assertTrue( preheat.isEmpty( PreheatIdentifier.UID, DataElementGroup.class ) );
+        assertFalse( preheat.isEmpty( PreheatIdentifier.UID, DataElementGroup.class ) );
         assertFalse( preheat.isEmpty( PreheatIdentifier.UID, User.class ) );
 
         assertTrue( preheat.containsKey( PreheatIdentifier.UID, DataElement.class, "deabcdefghA" ) );
