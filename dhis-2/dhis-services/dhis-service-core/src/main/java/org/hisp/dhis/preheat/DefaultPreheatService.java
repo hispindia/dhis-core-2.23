@@ -374,8 +374,6 @@ public class DefaultPreheatService implements PreheatService
             uniqueMap.put( objectClass, handleUniqueProperties( schema, identifiableObjects ) );
         }
 
-        System.err.println( "uniqueMap: " + uniqueMap );
-
         return map;
     }
 
@@ -392,11 +390,7 @@ public class DefaultPreheatService implements PreheatService
             uniqueProperties.forEach( property -> {
                 if ( !map.containsKey( property.getName() ) ) map.put( property.getName(), new HashMap<>() );
                 Object value = ReflectionUtils.invokeMethod( object, property.getGetterMethod() );
-
-                if ( value != null )
-                {
-                    map.get( property.getName() ).put( value, object.getUid() );
-                }
+                if ( value != null ) map.get( property.getName() ).put( value, object.getUid() );
             } );
         }
 
