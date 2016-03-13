@@ -216,19 +216,7 @@ public class DefaultUserSettingService
             return new ArrayList<>();
         }
 
-        List<UserSetting> list = userSettingStore.getAllUserSettings( user );
-
-        return list.stream().map( userSetting -> {
-            if ( userSetting.getValue() == null )
-            {
-                return new UserSetting( userSetting.getUser(), userSetting.getName(),
-                    systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( userSetting.getName() ) ) );
-            }
-            else
-            {
-                return userSetting;
-            }
-        } ).collect( Collectors.toList() );
+        return userSettingStore.getAllUserSettings( user );
     }
 
     @Override
@@ -266,7 +254,6 @@ public class DefaultUserSettingService
             {
                 return result;
             }
-
         }
         catch ( ExecutionException ignored )
         {
