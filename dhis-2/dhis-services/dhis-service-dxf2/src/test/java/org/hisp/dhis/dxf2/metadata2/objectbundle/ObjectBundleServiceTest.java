@@ -62,7 +62,9 @@ import org.hisp.dhis.trackedentity.TrackedEntity;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
+import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.validation.ValidationRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -88,10 +90,14 @@ public class ObjectBundleServiceTest
     @Autowired
     private RenderService _renderService;
 
+    @Autowired
+    private UserService _userService;
+
     @Override
     protected void setUpTest() throws Exception
     {
         renderService = _renderService;
+        userService = _userService;
     }
 
     @Test
@@ -1362,6 +1368,25 @@ public class ObjectBundleServiceTest
         assertEquals( "DECE", dataElementE.getCode() );
         assertEquals( "DESE", dataElementE.getShortName() );
         assertEquals( "DEDE", dataElementE.getDescription() );
+    }
+
+    @Test
+    @Ignore
+    public void testCreateMetadataWithSuperuserRoleInjected() throws IOException
+    {
+        createUserAndInjectSecurityContext( true );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_superuser_bug.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertTrue( objectBundleService.validate( bundle ).getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
     }
 
     private void defaultSetup()
