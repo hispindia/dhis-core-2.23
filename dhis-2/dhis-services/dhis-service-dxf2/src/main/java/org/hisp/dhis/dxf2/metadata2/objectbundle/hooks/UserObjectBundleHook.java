@@ -102,6 +102,12 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
 
         User user = (User) identifiableObject;
         UserCredentials persistedUserCredentials = objectBundle.getPreheat().get( objectBundle.getPreheatIdentifier(), UserCredentials.class, user );
+
+        if ( !StringUtils.isEmpty( userCredentials.getPassword() ) )
+        {
+            userService.encodeAndSetPassword( userCredentials, userCredentials.getPassword() );
+        }
+
         persistedUserCredentials.mergeWith( userCredentials, objectBundle.getMergeMode() );
         preheatService.connectReferences( persistedUserCredentials, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
 
