@@ -107,18 +107,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
         preheatParams.setUser( params.getUser() );
         preheatParams.setObjects( params.getObjects() );
 
-        if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
-        {
-            preheatParams.setReferences( preheatService.collectReferences( params.getObjects() ) );
-        }
-
-        for ( Class<? extends IdentifiableObject> klass : params.getObjects().keySet() )
-        {
-            params.getObjects().get( klass ).stream()
-                .filter( identifiableObject -> StringUtils.isEmpty( identifiableObject.getUid() ) )
-                .forEach( identifiableObject -> ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() ) );
-        }
-
         ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 

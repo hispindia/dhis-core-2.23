@@ -51,8 +51,6 @@ public class PreheatParams
 
     private Set<Class<? extends IdentifiableObject>> classes = new HashSet<>();
 
-    private Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> references = new HashMap<>();
-
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public PreheatParams()
@@ -112,17 +110,6 @@ public class PreheatParams
         this.objects = objects;
     }
 
-    public Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> getReferences()
-    {
-        return references;
-    }
-
-    public PreheatParams setReferences( Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> references )
-    {
-        this.references = references;
-        return this;
-    }
-
     @Override
     public String toString()
     {
@@ -131,7 +118,7 @@ public class PreheatParams
             .add( "preheatMode", preheatMode )
             .add( "preheatIdentifier", preheatIdentifier )
             .add( "classes", classes )
-            .add( "references", references )
+            .add( "objects", objects )
             .toString();
     }
 }

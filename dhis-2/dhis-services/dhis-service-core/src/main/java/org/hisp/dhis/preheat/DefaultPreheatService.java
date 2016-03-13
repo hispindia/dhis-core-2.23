@@ -30,6 +30,8 @@ package org.hisp.dhis.preheat;
 
 import com.google.common.collect.Lists;
 import org.hisp.dhis.attribute.Attribute;
+import org.hisp.dhis.common.BaseIdentifiableObject;
+import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
@@ -96,6 +98,16 @@ public class DefaultPreheatService implements PreheatService
             preheat.setUser( currentUserService.getCurrentUser() );
         }
 
+        for ( Class<? extends IdentifiableObject> klass : params.getObjects().keySet() )
+        {
+            params.getObjects().get( klass ).stream()
+                .filter( identifiableObject -> StringUtils.isEmpty( identifiableObject.getUid() ) )
+                .forEach( identifiableObject -> ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() ) );
+        }
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> uniqueCollectionMap = new HashMap<>();
+        Set<Class<? extends IdentifiableObject>> klasses = new HashSet<>( params.getObjects().keySet() );
+
         if ( PreheatMode.ALL == params.getPreheatMode() )
         {
             if ( params.getClasses().isEmpty() )
@@ -119,12 +131,19 @@ public class DefaultPreheatService implements PreheatService
                 {
                     preheat.put( PreheatIdentifier.CODE, objects );
                 }
+
+                if ( klasses.contains( klass ) && !objects.isEmpty() )
+                {
+                    uniqueCollectionMap.put( klass, new ArrayList<>( objects ) );
+                }
             }
         }
         else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
         {
-            Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = params.getReferences().get( PreheatIdentifier.UID );
-            Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = params.getReferences().get( PreheatIdentifier.CODE );
+            Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> references = collectReferences( params.getObjects() );
+
+            Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = references.get( PreheatIdentifier.UID );
+            Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = references.get( PreheatIdentifier.CODE );
 
             if ( uidMap != null && (PreheatIdentifier.UID == params.getPreheatIdentifier() || PreheatIdentifier.AUTO == params.getPreheatIdentifier()) )
             {
@@ -159,32 +178,17 @@ public class DefaultPreheatService implements PreheatService
                     }
                 }
             }
-        }
 
-        Set<Class<? extends IdentifiableObject>> klasses = new HashSet<>();
-
-        if ( params.getReferences().containsKey( PreheatIdentifier.UID ) )
-        {
-            klasses.addAll( params.getReferences().get( PreheatIdentifier.UID ).keySet() );
-        }
-
-        if ( params.getReferences().containsKey( PreheatIdentifier.CODE ) )
-        {
-            klasses.addAll( params.getReferences().get( PreheatIdentifier.CODE ).keySet() );
-        }
-
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> uniqueCollectionMap = new HashMap<>();
-
-        // TODO fix this, should be part of main preheat process, this will slow things down.. but we need all objects to check for uniqueness
-        for ( Class<? extends IdentifiableObject> klass : klasses )
-        {
-            Query query = Query.from( schemaService.getDynamicSchema( klass ) );
-            query.setUser( preheat.getUser() );
-            List<? extends IdentifiableObject> objects = queryService.query( query );
-
-            if ( !objects.isEmpty() )
+            for ( Class<? extends IdentifiableObject> klass : klasses )
             {
-                uniqueCollectionMap.put( klass, new ArrayList<>( objects ) );
+                Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+                query.setUser( preheat.getUser() );
+                List<? extends IdentifiableObject> objects = queryService.query( query );
+
+                if ( !objects.isEmpty() )
+                {
+                    uniqueCollectionMap.put( klass, new ArrayList<>( objects ) );
+                }
             }
         }
 
@@ -202,9 +206,9 @@ public class DefaultPreheatService implements PreheatService
         }
         else if ( PreheatMode.REFERENCE == params.getPreheatMode() )
         {
-            if ( params.getReferences().isEmpty() )
+            if ( params.getObjects().isEmpty() )
             {
-                throw new PreheatException( "PreheatMode.REFERENCE, but no references was provided." );
+                throw new PreheatException( "PreheatMode.REFERENCE, but no objects were provided." );
             }
         }
         else
