@@ -161,6 +161,35 @@ public class DefaultPreheatService implements PreheatService
             }
         }
 
+        Set<Class<? extends IdentifiableObject>> klasses = new HashSet<>();
+
+        if ( params.getReferences().containsKey( PreheatIdentifier.UID ) )
+        {
+            klasses.addAll( params.getReferences().get( PreheatIdentifier.UID ).keySet() );
+        }
+
+        if ( params.getReferences().containsKey( PreheatIdentifier.CODE ) )
+        {
+            klasses.addAll( params.getReferences().get( PreheatIdentifier.CODE ).keySet() );
+        }
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> uniqueCollectionMap = new HashMap<>();
+
+        // TODO fix this, should be part of main preheat process, this will slow things down.. but we need all objects to check for uniqueness
+        for ( Class<? extends IdentifiableObject> klass : klasses )
+        {
+            Query query = Query.from( schemaService.getDynamicSchema( klass ) );
+            query.setUser( preheat.getUser() );
+            List<? extends IdentifiableObject> objects = queryService.query( query );
+
+            if ( !objects.isEmpty() )
+            {
+                uniqueCollectionMap.put( klass, new ArrayList<>( objects ) );
+            }
+        }
+
+        preheat.setUniquenessMap( collectUniqueness( uniqueCollectionMap ) );
+
         return preheat;
     }
 
@@ -370,11 +399,51 @@ public class DefaultPreheatService implements PreheatService
                 if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
                 if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
             }
-
-            uniqueMap.put( objectClass, handleUniqueProperties( schema, identifiableObjects ) );
         }
 
         return map;
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
+    public Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> collectUniqueness( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    {
+        Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> uniqueMap = new HashMap<>();
+
+        if ( objects.isEmpty() )
+        {
+            return uniqueMap;
+        }
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> scanObjects = new HashMap<>();
+        scanObjects.putAll( objects ); // clone objects list, we don't want to modify it
+
+        if ( scanObjects.containsKey( User.class ) )
+        {
+            List<IdentifiableObject> users = scanObjects.get( User.class );
+            List<IdentifiableObject> userCredentials = new ArrayList<>();
+
+            for ( IdentifiableObject identifiableObject : users )
+            {
+                User user = (User) identifiableObject;
+
+                if ( user.getUserCredentials() != null )
+                {
+                    userCredentials.add( user.getUserCredentials() );
+                }
+            }
+
+            scanObjects.put( UserCredentials.class, userCredentials );
+        }
+
+        for ( Class<? extends IdentifiableObject> objectClass : scanObjects.keySet() )
+        {
+            Schema schema = schemaService.getDynamicSchema( objectClass );
+            List<IdentifiableObject> identifiableObjects = scanObjects.get( objectClass );
+            uniqueMap.put( objectClass, handleUniqueProperties( schema, identifiableObjects ) );
+        }
+
+        return uniqueMap;
     }
 
     private Map<String, Map<Object, String>> handleUniqueProperties( Schema schema, List<IdentifiableObject> objects )
@@ -594,7 +663,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ObjectErrorReport> checkUniqueness( List<IdentifiableObject> objects, Preheat preheat )
+    public List<ObjectErrorReport> checkUniqueness( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
 
@@ -606,7 +675,7 @@ public class DefaultPreheatService implements PreheatService
         for ( int i = 0; i < objects.size(); i++ )
         {
             IdentifiableObject object = objects.get( i );
-            List<ErrorReport> errorReports = checkUniqueness( object, preheat );
+            List<ErrorReport> errorReports = checkUniqueness( object, preheat, identifier );
 
             if ( errorReports.isEmpty() ) continue;
 
@@ -620,14 +689,41 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ErrorReport> checkUniqueness( IdentifiableObject object, Preheat preheat )
+    public List<ErrorReport> checkUniqueness( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( object == null )
-        {
-            return errorReports;
-        }
+        if ( object == null || Preheat.isDefault( object ) ) return errorReports;
+
+        Map<String, Map<Object, String>> uniquenessMap = preheat.getUniquenessMap().get( object.getClass() );
+
+        if ( uniquenessMap == null ) return errorReports;
+
+        Schema schema = schemaService.getDynamicSchema( object.getClass() );
+        List<Property> uniqueProperties = schema.getProperties().stream()
+            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() )
+            .collect( Collectors.toList() );
+
+        uniqueProperties.forEach( property -> {
+            Object value = ReflectionUtils.invokeMethod( object, property.getGetterMethod() );
+
+            if ( value != null )
+            {
+                if ( uniquenessMap.containsKey( property.getName() ) && !uniquenessMap.get( property.getName() ).isEmpty() )
+                {
+                    String persistedUid = uniquenessMap.get( property.getName() ).get( value );
+
+                    if ( persistedUid != null )
+                    {
+                        if ( !object.getUid().equals( persistedUid ) )
+                        {
+                            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E5003, property.getName(), value,
+                                identifier.getIdentifiersWithName( object ), persistedUid ) );
+                        }
+                    }
+                }
+            }
+        } );
 
         return errorReports;
     }

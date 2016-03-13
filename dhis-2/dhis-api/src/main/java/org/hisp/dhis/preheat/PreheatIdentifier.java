@@ -97,9 +97,9 @@ public enum PreheatIdentifier
 
         if ( name == null )
         {
-            return identifiers.toString();
+            return identifiers.toString() + " (" + object.getClass().getSimpleName() + ")";
         }
 
-        return name + " " + identifiers.toString();
+        return name + " " + identifiers.toString() + " (" + object.getClass().getSimpleName() + ")";
     }
 }

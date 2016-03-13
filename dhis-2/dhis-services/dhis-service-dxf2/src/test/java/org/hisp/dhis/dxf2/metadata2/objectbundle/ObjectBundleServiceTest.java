@@ -64,7 +64,6 @@ import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.validation.ValidationRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -1371,7 +1370,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    @Ignore
     public void testCreateMetadataWithSuperuserRoleInjected() throws IOException
     {
         createUserAndInjectSecurityContext( true );
@@ -1385,8 +1383,10 @@ public class ObjectBundleServiceTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        assertTrue( objectBundleService.validate( bundle ).getObjectErrorReports().isEmpty() );
-        objectBundleService.commit( bundle );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertFalse( validate.getObjectErrorReports().isEmpty() );
+        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
     }
 
     private void defaultSetup()

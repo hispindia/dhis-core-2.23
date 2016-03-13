@@ -55,6 +55,8 @@ public class Preheat
 
     private Map<String, UserCredentials> usernames = new HashMap<>();
 
+    private Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> uniquenessMap = new HashMap<>();
+
     public Preheat()
     {
     }
@@ -308,5 +310,15 @@ public class Preheat
         }
 
         return klass;
+    }
+
+    public void setUniquenessMap( Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> uniquenessMap )
+    {
+        this.uniquenessMap = uniquenessMap;
+    }
+
+    public Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> getUniquenessMap()
+    {
+        return uniquenessMap;
     }
 }

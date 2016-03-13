@@ -105,6 +105,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         }
 
         preheatParams.setUser( params.getUser() );
+        preheatParams.setObjects( params.getObjects() );
 
         if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
         {
@@ -164,7 +165,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjectMap().get( klass ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isCreate() )
@@ -173,7 +175,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isUpdate() )
@@ -182,7 +185,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isDelete() )
