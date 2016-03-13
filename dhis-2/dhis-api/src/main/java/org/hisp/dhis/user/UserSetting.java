@@ -104,6 +104,16 @@ public class UserSetting
 
         return result;
     }
+    
+    @Override
+    public String toString()
+    {
+        return "{" +
+            "\"user\":\"" + user.getUsername() + "\", " +
+            "\"name:\":\"" + name + "\", " +
+            "\"value\":\"" + value + "\" " +
+            "}";
+    }
 
     public void mergeWith( UserSetting other )
     {
