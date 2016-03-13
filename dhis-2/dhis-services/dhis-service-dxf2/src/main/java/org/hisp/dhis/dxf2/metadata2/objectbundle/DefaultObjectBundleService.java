@@ -111,6 +111,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
             preheatParams.setReferences( preheatService.collectReferences( params.getObjects() ) );
         }
 
+        for ( Class<? extends IdentifiableObject> klass : params.getObjects().keySet() )
+        {
+            params.getObjects().get( klass ).stream()
+                .filter( identifiableObject -> StringUtils.isEmpty( identifiableObject.getUid() ) )
+                .forEach( identifiableObject -> ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() ) );
+        }
+
         ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
@@ -127,11 +134,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
             for ( IdentifiableObject identifiableObject : bundle.getObjects( klass, false ) )
             {
                 if ( Preheat.isDefault( identifiableObject ) ) continue;
-
-                if ( StringUtils.isEmpty( identifiableObject.getUid() ) )
-                {
-                    ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() );
-                }
 
                 if ( !StringUtils.isEmpty( identifiableObject.getUid() ) )
                 {
@@ -162,6 +164,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjectMap().get( klass ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
             }
 
             if ( bundle.getImportMode().isCreate() )
@@ -170,6 +173,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
             }
 
             if ( bundle.getImportMode().isUpdate() )
@@ -178,6 +182,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat() ) );
             }
 
             if ( bundle.getImportMode().isDelete() )

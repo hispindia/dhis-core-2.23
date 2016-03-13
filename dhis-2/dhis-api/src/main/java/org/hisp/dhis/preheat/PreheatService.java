@@ -29,6 +29,7 @@ package org.hisp.dhis.preheat;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
 
 import java.util.Collection;
@@ -98,6 +99,22 @@ public interface PreheatService
      * @param identifier Use this identifier type to check references
      */
     List<PreheatErrorReport> checkReferences( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier );
+
+    /**
+     * Check for properties that are unique.
+     *
+     * @param objects Object to check
+     * @param preheat Preheat Cache to use
+     */
+    List<ObjectErrorReport> checkUniqueness( List<IdentifiableObject> objects, Preheat preheat );
+
+    /**
+     * Check for properties that are unique.
+     *
+     * @param object  Object to check
+     * @param preheat Preheat Cache to use
+     */
+    List<ErrorReport> checkUniqueness( IdentifiableObject object, Preheat preheat );
 
     /**
      * Connects id object references on a given object using a given identifier + a preheated Preheat cache.
