@@ -116,9 +116,9 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
     @SuppressWarnings( "unchecked" )
     public void postImport( ObjectBundle objectBundle )
     {
-        if ( !objectBundle.getObjects().containsKey( User.class ) ) return;
+        if ( !objectBundle.getObjectMap().containsKey( User.class ) ) return;
 
-        List<IdentifiableObject> objects = objectBundle.getObjects().get( User.class );
+        List<IdentifiableObject> objects = objectBundle.getObjectMap().get( User.class );
         Map<String, Map<String, Object>> userReferences = objectBundle.getObjectReferences( User.class );
         Map<String, Map<String, Object>> userCredentialsReferences = objectBundle.getObjectReferences( UserCredentials.class );
 

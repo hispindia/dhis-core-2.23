@@ -97,15 +97,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
     @Override
     public ObjectBundle create( ObjectBundleParams params )
     {
+        PreheatParams preheatParams = params.getPreheatParams();
+
         if ( params.getUser() == null )
         {
             params.setUser( currentUserService.getCurrentUser() );
         }
 
-        ObjectBundle bundle = new ObjectBundle( params );
-        bundle.addObjects( params.getObjects() );
-
-        PreheatParams preheatParams = params.getPreheatParams();
         preheatParams.setUser( params.getUser() );
 
         if ( PreheatMode.REFERENCE == preheatParams.getPreheatMode() )
@@ -113,16 +111,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
             preheatParams.setReferences( preheatService.collectReferences( params.getObjects() ) );
         }
 
-        bundle.setPreheat( preheatService.preheat( preheatParams ) );
+        ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
-        if ( !bundle.getImportMode().isCreate() )
-        {
-            return bundle;
-        }
-
         // add preheat placeholders for objects that will be created
-        for ( Class<? extends IdentifiableObject> klass : bundle.getObjects().keySet() )
+        for ( Class<? extends IdentifiableObject> klass : bundle.getObjectMap().keySet() )
         {
             Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Map<String, IdentifiableObject>>> map = bundle.getPreheat().getMap();
 
@@ -164,83 +157,169 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
+            if ( bundle.getImportMode().isCreateAndUpdate() )
+            {
+                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjectMap().get( klass ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
+                    bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+            }
+
             if ( bundle.getImportMode().isCreate() )
             {
-                Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
-                int idx = 0;
-
-                while ( iterator.hasNext() )
-                {
-                    IdentifiableObject identifiableObject = iterator.next();
-                    IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
-
-                    if ( object != null && object.getId() > 0 )
-                    {
-                        ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
-                        objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
-                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-                        objectBundleValidation.addObjectErrorReport( objectErrorReport );
-
-                        iterator.remove();
-                    }
-
-                    idx++;
-                }
-            }
-            else if ( bundle.getImportMode().isUpdate() || bundle.getImportMode().isDelete() )
-            {
-                Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
-                int idx = 0;
-
-                while ( iterator.hasNext() )
-                {
-                    IdentifiableObject identifiableObject = iterator.next();
-                    IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
-
-                    if ( object == null )
-                    {
-                        if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
-
-                        ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
-                        objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
-                            bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-                        objectBundleValidation.addObjectErrorReport( objectErrorReport );
-                        iterator.remove();
-                    }
-
-                    idx++;
-                }
+                objectBundleValidation.addObjectErrorReports( validateForCreate( klass, bundle.getObjects( klass, true ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
+                    bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
             }
 
-            List<ObjectErrorReport> objectErrorReports = preheatService.checkReferences( bundle.getObjects().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            objectBundleValidation.addObjectErrorReports( objectErrorReports );
-
-            if ( !bundle.getImportMode().isDelete() )
+            if ( bundle.getImportMode().isUpdate() )
             {
-                Iterator<IdentifiableObject> iterator = bundle.getObjects().get( klass ).iterator();
-                int idx = 0;
+                objectBundleValidation.addObjectErrorReports( validateForUpdate( klass, bundle.getObjects( klass, false ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
+                    bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+            }
 
-                while ( iterator.hasNext() )
-                {
-                    IdentifiableObject object = iterator.next();
-                    List<ErrorReport> validationErrorReports = schemaValidator.validate( object );
-                    ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
-
-                    if ( !validationErrorReports.isEmpty() )
-                    {
-                        objectErrorReport.addErrorReports( validationErrorReports );
-                        iterator.remove();
-                    }
-
-                    objectBundleValidation.addObjectErrorReport( objectErrorReport );
-                    idx++;
-                }
+            if ( bundle.getImportMode().isDelete() )
+            {
+                objectBundleValidation.addObjectErrorReports( validateForDelete( klass, bundle.getObjects( klass, false ), bundle ) );
             }
         }
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );
 
         return objectBundleValidation;
+    }
+
+    public List<ObjectErrorReport> validateForCreate( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+
+        if ( objects == null || objects.isEmpty() )
+        {
+            return objectErrorReports;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject identifiableObject = iterator.next();
+            IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+
+            if ( object != null && object.getId() > 0 )
+            {
+                ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
+                objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                    bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
+                objectErrorReports.add( objectErrorReport );
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return objectErrorReports;
+    }
+
+    public List<ObjectErrorReport> validateForUpdate( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+
+        if ( objects == null || objects.isEmpty() )
+        {
+            return objectErrorReports;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject identifiableObject = iterator.next();
+            IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+
+            if ( object == null || object.getId() == 0 )
+            {
+                if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
+
+                ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
+                objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
+                    bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
+                objectErrorReports.add( objectErrorReport );
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return objectErrorReports;
+    }
+
+    public List<ObjectErrorReport> validateForDelete( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+
+        if ( objects == null || objects.isEmpty() )
+        {
+            return objectErrorReports;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject identifiableObject = iterator.next();
+            IdentifiableObject object = bundle.getPreheat().get( bundle.getPreheatIdentifier(), identifiableObject );
+
+            if ( object == null || object.getId() == 0 )
+            {
+                if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
+
+                ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
+                objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
+                    bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
+                objectErrorReports.add( objectErrorReport );
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return objectErrorReports;
+    }
+
+    public List<ObjectErrorReport> validateBySchemas( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
+    {
+        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+
+        if ( objects == null || objects.isEmpty() )
+        {
+            return objectErrorReports;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject identifiableObject = iterator.next();
+            List<ErrorReport> validationErrorReports = schemaValidator.validate( identifiableObject );
+
+            if ( !validationErrorReports.isEmpty() )
+            {
+                ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
+                objectErrorReport.addErrorReports( validationErrorReports );
+                objectErrorReports.add( objectErrorReport );
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return objectErrorReports;
     }
 
     @Override
@@ -384,7 +463,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         schemaService.getMetadataSchemas().forEach( schema -> {
             Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) schema.getKlass();
 
-            if ( bundle.getObjects().containsKey( klass ) )
+            if ( bundle.getObjectMap().containsKey( klass ) )
             {
                 klasses.add( klass );
             }

@@ -39,8 +39,10 @@ import org.hisp.dhis.user.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -61,16 +63,19 @@ public class ObjectBundle
 
     private final FlushMode flushMode;
 
+    private final Preheat preheat;
+
     private ObjectBundleStatus objectBundleStatus = ObjectBundleStatus.CREATED;
 
-    private Preheat preheat = new Preheat();
-
-    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
+    private Map<Boolean, Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>>> objects = new HashMap<>();
 
     private Map<Class<?>, Map<String, Map<String, Object>>> objectReferences = new HashMap<>();
 
-    public ObjectBundle( ObjectBundleParams params )
+    public ObjectBundle( ObjectBundleParams params, Preheat preheat, Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap )
     {
+        if ( !objects.containsKey( Boolean.TRUE ) ) objects.put( Boolean.TRUE, new HashMap<>() );
+        if ( !objects.containsKey( Boolean.FALSE ) ) objects.put( Boolean.FALSE, new HashMap<>() );
+
         this.user = params.getUser();
         this.objectBundleMode = params.getObjectBundleMode();
         this.preheatIdentifier = params.getPreheatIdentifier();
@@ -78,6 +83,9 @@ public class ObjectBundle
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();
         this.flushMode = params.getFlushMode();
+        this.preheat = preheat;
+
+        addObject( objectMap );
     }
 
     public User getUser()
@@ -130,70 +138,81 @@ public class ObjectBundle
         return preheat;
     }
 
-    public void setPreheat( Preheat preheat )
-    {
-        this.preheat = preheat;
-    }
-
-    @SuppressWarnings( "unchecked" )
-    public void addObject( IdentifiableObject object )
+    private void addObject( IdentifiableObject object )
     {
         if ( object == null )
         {
             return;
         }
 
-        if ( !objects.containsKey( object.getClass() ) )
+        if ( !objects.get( Boolean.TRUE ).containsKey( object.getClass() ) )
         {
-            objects.put( object.getClass(), new ArrayList<>() );
+            objects.get( Boolean.TRUE ).put( object.getClass(), new ArrayList<>() );
         }
 
-        objects.get( object.getClass() ).add( object );
-
-        if ( preheat.get( preheatIdentifier, object ) == null )
+        if ( !objects.get( Boolean.FALSE ).containsKey( object.getClass() ) )
         {
-            preheat.put( preheatIdentifier, object );
+            objects.get( Boolean.FALSE ).put( object.getClass(), new ArrayList<>() );
+        }
+
+        if ( isPersisted( object ) )
+        {
+            objects.get( Boolean.TRUE ).get( object.getClass() ).add( object );
+        }
+        else
+        {
+            objects.get( Boolean.FALSE ).get( object.getClass() ).add( object );
+
         }
     }
 
-    public void addObjects( List<IdentifiableObject> objects )
+    private void addObject( List<IdentifiableObject> objects )
     {
         objects.forEach( this::addObject );
     }
 
-    public void addObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    private void addObject( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
-        objects.keySet().forEach( klass -> addObjects( objects.get( klass ) ) );
+        objects.keySet().forEach( klass -> addObject( objects.get( klass ) ) );
     }
 
-    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjectMap()
     {
-        return objects;
-    }
+        Set<Class<? extends IdentifiableObject>> klasses = new HashSet<>();
+        klasses.addAll( objects.get( Boolean.TRUE ).keySet() );
+        klasses.addAll( objects.get( Boolean.FALSE ).keySet() );
 
-    public List<IdentifiableObject> getObjects( Class<? extends IdentifiableObject> klass, boolean persisted )
-    {
-        List<IdentifiableObject> objectMap = new ArrayList<>();
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objectMap = new HashMap<>();
 
-        if ( !objects.containsKey( klass ) )
-        {
-            return objectMap;
-        }
-
-        objects.get( klass ).forEach( object -> {
-            IdentifiableObject cachedObject = preheat.get( preheatIdentifier, object );
-            boolean isPersisted = !(cachedObject == null || cachedObject.getId() == 0);
-
-            if ( persisted && isPersisted ) objectMap.add( object );
-            if ( !persisted && !isPersisted ) objectMap.add( object );
+        klasses.forEach( klass -> {
+            objectMap.put( klass, new ArrayList<>() );
+            objectMap.get( klass ).addAll( objects.get( Boolean.TRUE ).get( klass ) );
+            objectMap.get( klass ).addAll( objects.get( Boolean.FALSE ).get( klass ) );
         } );
 
         return objectMap;
     }
 
-    public void setObjects( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
+    public List<IdentifiableObject> getObjects( Class<? extends IdentifiableObject> klass, boolean persisted )
     {
-        this.objects = objects;
+        List<IdentifiableObject> identifiableObjects = null;
+
+        if ( persisted )
+        {
+            if ( objects.get( Boolean.TRUE ).containsKey( klass ) )
+            {
+                identifiableObjects = objects.get( Boolean.TRUE ).get( klass );
+            }
+        }
+        else
+        {
+            if ( objects.get( Boolean.FALSE ).containsKey( klass ) )
+            {
+                identifiableObjects = objects.get( Boolean.FALSE ).get( klass );
+            }
+        }
+
+        return identifiableObjects != null ? identifiableObjects : new ArrayList<>();
     }
 
     public Map<String, Map<String, Object>> getObjectReferences( Class<?> klass )
@@ -209,5 +228,11 @@ public class ObjectBundle
     public void setObjectReferences( Map<Class<?>, Map<String, Map<String, Object>>> objectReferences )
     {
         this.objectReferences = objectReferences;
+    }
+
+    public boolean isPersisted( IdentifiableObject object )
+    {
+        IdentifiableObject cachedObject = preheat.get( preheatIdentifier, object );
+        return !(cachedObject == null || cachedObject.getId() == 0);
     }
 }

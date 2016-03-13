@@ -128,15 +128,16 @@ public class ObjectBundleServiceTest
     @Test
     public void testObjectBundleShouldAddToObjectAndPreheat()
     {
+        DataElementGroup dataElementGroup = fromJson( "dxf2/degAUidRef.json", DataElementGroup.class );
+
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.addObject( dataElementGroup );
 
         ObjectBundle bundle = objectBundleService.create( params );
+        bundle.getPreheat().put( bundle.getPreheatIdentifier(), dataElementGroup );
 
-        DataElementGroup dataElementGroup = fromJson( "dxf2/degAUidRef.json", DataElementGroup.class );
-        bundle.addObject( dataElementGroup );
-
-        assertTrue( bundle.getObjects().get( DataElementGroup.class ).contains( dataElementGroup ) );
+        assertTrue( bundle.getObjectMap().get( DataElementGroup.class ).contains( dataElementGroup ) );
         assertTrue( bundle.getPreheat().containsKey( PreheatIdentifier.UID, DataElementGroup.class, dataElementGroup.getUid() ) );
     }
 
@@ -148,6 +149,7 @@ public class ObjectBundleServiceTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setImportMode( ImportStrategy.CREATE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -205,6 +207,7 @@ public class ObjectBundleServiceTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setImportMode( ImportStrategy.CREATE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -246,21 +249,41 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    public void testPreheatValidationsInvalidObjects() throws IOException
+    public void testCreatePreheatValidationsInvalidObjects() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
             new ClassPathResource( "dxf2/de_validate2.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setImportMode( ImportStrategy.CREATE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
         assertFalse( validate.getObjectErrorReports().isEmpty() );
-        assertEquals( 5, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
+
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5002 ).size() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E4000 ).size() );
+    }
+
+    @Test
+    public void testUpdatePreheatValidationsInvalidObjects() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_validate2.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+
+        assertFalse( validate.getObjectErrorReports().isEmpty() );
+        assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
     @Test
@@ -299,7 +322,7 @@ public class ObjectBundleServiceTest
 
         assertEquals( 1, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
         assertFalse( validate.getErrorReportsByCode( DataElement.class, ErrorCode.E4000 ).isEmpty() );
-        assertEquals( 0, bundle.getObjects().get( DataElement.class ).size() );
+        assertEquals( 0, bundle.getObjectMap().get( DataElement.class ).size() );
     }
 
     @Test
@@ -1214,7 +1237,7 @@ public class ObjectBundleServiceTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
+        assertTrue( objectBundleService.validate( bundle ).getObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
         DataElement dataElementA = dataElementMap.get( "deabcdefghA" );
