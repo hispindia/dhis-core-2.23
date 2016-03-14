@@ -35,7 +35,11 @@ import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.util.SystemUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -47,9 +51,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
+ * Declare transactions on individual methods. The get-methods do not have
+ * transactions declared, instead a programmatic transaction is initiated on
+ * cache miss in order to reduce the number of transactions to improve performance.
+ * 
  * @author Torgeir Lorange Ostby
  */
-@Transactional
 public class DefaultUserSettingService
     implements UserSettingService
 {
@@ -102,11 +109,15 @@ public class DefaultUserSettingService
         this.systemSettingManager = systemSettingManager;
     }
 
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
     // -------------------------------------------------------------------------
     // UserSettingService implementation
     // -------------------------------------------------------------------------
 
     @Override
+    @Transactional
     public void saveUserSetting( UserSettingKey key, Serializable value, String username )
     {
         UserCredentials credentials = userService.getUserCredentialsByUsername( username );
@@ -118,6 +129,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public void saveUserSetting( UserSettingKey key, Serializable value )
     {
         User currentUser = currentUserService.getCurrentUser();
@@ -126,6 +138,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public void saveUserSetting( UserSettingKey key, Serializable value, User user )
     {
         if ( user == null )
@@ -152,6 +165,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public void deleteUserSetting( UserSetting userSetting )
     {
         SETTING_CACHE.invalidate( getCacheKey( userSetting.getName(), userSetting.getUser().getUsername() ) );
@@ -160,6 +174,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public void deleteUserSetting( UserSettingKey key )
     {
         User currentUser = currentUserService.getCurrentUser();
@@ -176,6 +191,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public void deleteUserSetting( UserSettingKey key, User user )
     {
         UserSetting setting = userSettingStore.getUserSetting( user, key.getName() );
@@ -186,12 +202,20 @@ public class DefaultUserSettingService
         }
     }
 
+    /**
+     * No transaction for this method, transaction is initiated in 
+     * {@link getUserSettingOptional}.
+     */
     @Override
     public Serializable getUserSetting( UserSettingKey key )
     {
         return getUserSetting( key, Optional.empty() ).orElse( null );
     }
 
+    /**
+     * No transaction for this method, transaction is initiated in 
+     * {@link getUserSettingOptional}.
+     */
     @Override
     public Serializable getUserSetting( UserSettingKey key, User user )
     {
@@ -199,6 +223,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public List<UserSetting> getAllUserSettings()
     {
         User currentUser = currentUserService.getCurrentUser();
@@ -207,6 +232,7 @@ public class DefaultUserSettingService
     }
 
     @Override
+    @Transactional
     public List<UserSetting> getUserSettings( User user )
     {
         if ( user == null )
@@ -259,6 +285,14 @@ public class DefaultUserSettingService
         }
     }
 
+    /**
+     * Get user setting optional. The database call is executed in a 
+     * programmatic transaction.
+     * 
+     * @param key the user setting key.
+     * @param username the username of the user.
+     * @return an optional user setting value.
+     */
     private Optional<Serializable> getUserSettingOptional( UserSettingKey key, String username )
     {
         UserCredentials userCredentials = userService.getUserCredentialsByUsername( username );
@@ -268,7 +302,13 @@ public class DefaultUserSettingService
             return Optional.empty();
         }
 
-        UserSetting setting = userSettingStore.getUserSetting( userCredentials.getUserInfo(), key.getName() );
+        UserSetting setting = transactionTemplate.execute( new TransactionCallback<UserSetting>()
+        {
+            public UserSetting doInTransaction( TransactionStatus status )
+            {
+                return userSettingStore.getUserSetting( userCredentials.getUserInfo(), key.getName() );
+            }
+        } );
 
         return setting != null && setting.hasValue() ?
             Optional.of( setting.getValue() ) : Optional.empty();

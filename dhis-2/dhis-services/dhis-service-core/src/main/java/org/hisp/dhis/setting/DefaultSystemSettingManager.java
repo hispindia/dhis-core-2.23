@@ -202,8 +202,8 @@ public class DefaultSystemSettingManager
     }
 
     /**
-     * Get system setting. The database call is executed in a programmatic 
-     * transaction.
+     * Get system setting optional. The database call is executed in a 
+     * programmatic transaction.
      * 
      * @param name the system setting name.
      * @param defaultValue the default value for the system setting.
@@ -213,7 +213,7 @@ public class DefaultSystemSettingManager
     {
         SystemSetting setting = transactionTemplate.execute( new TransactionCallback<SystemSetting>()
         {
-            public SystemSetting doInTransaction( TransactionStatus status) 
+            public SystemSetting doInTransaction( TransactionStatus status ) 
             {
                 return systemSettingStore.getByName( name );
             }
@@ -235,9 +235,9 @@ public class DefaultSystemSettingManager
     @Transactional
     public List<SystemSetting> getAllSystemSettings()
     {
-        return systemSettingStore.getAll().stream()
-            .filter( systemSetting -> !isConfidential( systemSetting.getName() ) )
-            .collect( Collectors.toList() );
+        return systemSettingStore.getAll().stream().
+            filter( systemSetting -> !isConfidential( systemSetting.getName() ) ).
+            collect( Collectors.toList() );
     }
 
     @Override
