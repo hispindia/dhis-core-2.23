@@ -46,6 +46,7 @@ import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.user.CurrentUserService;
+import org.hisp.dhis.user.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -102,6 +103,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
+
+        System.err.println( "O: " + bundle.getObjectReferences().get( UserCredentials.class ) );
 
         return bundle;
     }

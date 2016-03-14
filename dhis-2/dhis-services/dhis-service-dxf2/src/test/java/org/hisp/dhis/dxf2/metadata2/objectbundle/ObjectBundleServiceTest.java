@@ -64,7 +64,6 @@ import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.validation.ValidationRule;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -1415,7 +1414,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    @Ignore
     public void testCreateMetadataWithDuplicateUsername() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
@@ -1429,6 +1427,8 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         objectBundleService.validate( bundle );
         objectBundleService.commit( bundle );
+
+        assertEquals( 1, manager.getAll( User.class ).size() );
     }
 
     private void defaultSetup()

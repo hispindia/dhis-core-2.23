@@ -103,7 +103,14 @@ public class DefaultPreheatService implements PreheatService
         {
             params.getObjects().get( klass ).stream()
                 .filter( identifiableObject -> StringUtils.isEmpty( identifiableObject.getUid() ) )
-                .forEach( identifiableObject -> ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() ) );
+                .forEach( identifiableObject -> {
+                    ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() );
+
+                    if ( User.class.isInstance( identifiableObject ) )
+                    {
+                        ((User) identifiableObject).getUserCredentials().setUid( identifiableObject.getUid() );
+                    }
+                } );
         }
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> uniqueCollectionMap = new HashMap<>();
@@ -285,6 +292,7 @@ public class DefaultPreheatService implements PreheatService
 
                 if ( user.getUserCredentials() != null )
                 {
+                    user.getUserCredentials().setUid( user.getUid() );
                     userCredentials.add( user.getUserCredentials() );
                 }
             }
@@ -690,8 +698,19 @@ public class DefaultPreheatService implements PreheatService
         while ( iterator.hasNext() )
         {
             IdentifiableObject object = iterator.next();
+            List<ErrorReport> errorReports = new ArrayList<>();
 
-            List<ErrorReport> errorReports = checkUniqueness( object, preheat, identifier );
+            if ( User.class.isInstance( object ) )
+            {
+                User user = (User) object;
+                errorReports.addAll( checkUniqueness( user, preheat, identifier ) );
+                errorReports.addAll( checkUniqueness( user.getUserCredentials(), preheat, identifier ) );
+            }
+            else
+            {
+                errorReports = checkUniqueness( object, preheat, identifier );
+            }
+
 
             if ( !errorReports.isEmpty() )
             {

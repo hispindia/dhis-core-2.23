@@ -1,4 +1,22 @@
 {
+  "organisationUnits": [
+    {
+      "path": "/inVD5SdytkT",
+      "openingDate": "2016-03-11T17:00:00.000+0000",
+      "lastUpdated": "2016-03-12T06:19:49.665+0000",
+      "created": "2016-03-12T06:19:49.649+0000",
+      "shortName": "Country",
+      "user": {
+        "id": "enHApD3I6Ho"
+      },
+      "attributeValues": [ ],
+      "id": "inVD5SdytkT",
+      "name": "Country",
+      "description": "",
+      "featureType": "NONE",
+      "uuid": "0f2d7a85-3b6e-4cae-9d5a-e2903331629b"
+    }
+  ],
   "userRoles": [
     {
       "dataSets": [ ],
@@ -132,48 +150,6 @@
         "passwordLastUpdated": "2016-03-12T06:20:43.407+0000"
       },
       "teiSearchOrganisationUnits": [ ]
-    },
-    {
-      "surname": "admin",
-      "firstName": "admin",
-      "organisationUnits": [
-        {
-          "id": "inVD5SdytkT"
-        }
-      ],
-      "dataViewOrganisationUnits": [
-        {
-          "id": "inVD5SdytkT"
-        }
-      ],
-      "userCredentials": {
-        "externalAuth": false,
-        "disabled": false,
-        "invitation": false,
-        "userRoles": [
-          {
-            "id": "tHEWGwIMsJk"
-          }
-        ],
-        "username": "admin",
-        "passwordLastUpdated": "2016-03-12T06:18:41.403+0000",
-        "userInfo": {
-          "id": "enHApD3I6Ho"
-        },
-        "created": "2016-03-12T06:18:41.505+0000",
-        "lastLogin": "2016-03-12T06:18:41.401+0000",
-        "catDimensionConstraints": [ ],
-        "selfRegistered": false,
-        "user": {
-          "id": "enHApD3I6Ho"
-        },
-        "cogsDimensionConstraints": [ ]
-      },
-      "lastUpdated": "2016-03-12T06:20:18.336+0000",
-      "created": "2016-03-12T06:18:41.374+0000",
-      "teiSearchOrganisationUnits": [ ],
-      "id": "enHApD3I6Ho",
-      "attributeValues": [ ]
     }
   ]
 }
