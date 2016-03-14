@@ -152,6 +152,7 @@
         }
       ],
       "userCredentials": {
+        "id": "yqJHNnkF3SJ",
         "user": {
           "id": "enHApD3I6Ho"
         },
@@ -197,6 +198,7 @@
         }
       ],
       "userCredentials": {
+        "id": "m3ww4DWJtMf",
         "username": "UserAA",
         "userRoles": [
           {
@@ -235,6 +237,7 @@
         }
       ],
       "userCredentials": {
+        "id": "EgBSdwGi7rr",
         "externalAuth": false,
         "disabled": false,
         "invitation": false,

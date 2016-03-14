@@ -1431,6 +1431,26 @@ public class ObjectBundleServiceTest
         assertEquals( 1, manager.getAll( User.class ).size() );
     }
 
+    @Test
+    public void testCreateMetadataWithDuplicateUsernameAndInjectedUser() throws IOException
+    {
+        createUserAndInjectSecurityContext( true );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/user_duplicate_username.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+
+        objectBundleService.commit( bundle );
+        assertEquals( 2, manager.getAll( User.class ).size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );

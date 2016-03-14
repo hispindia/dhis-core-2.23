@@ -299,6 +299,7 @@
       ],
       "teiSearchOrganisationUnits": [ ],
       "userCredentials": {
+        "id": "m3ww4DWJtMf",
         "selfRegistered": false,
         "externalAuth": false,
         "invitation": false,

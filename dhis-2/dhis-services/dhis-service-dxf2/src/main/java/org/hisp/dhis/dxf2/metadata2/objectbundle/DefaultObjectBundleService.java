@@ -104,8 +104,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
         ObjectBundle bundle = new ObjectBundle( params, preheatService.preheat( preheatParams ), params.getObjects() );
         bundle.setObjectReferences( preheatService.collectObjectReferences( params.getObjects() ) );
 
-        System.err.println( "O: " + bundle.getObjectReferences().get( UserCredentials.class ) );
-
         return bundle;
     }
 

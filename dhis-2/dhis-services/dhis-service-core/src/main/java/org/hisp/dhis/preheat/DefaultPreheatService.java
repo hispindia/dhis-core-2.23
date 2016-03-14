@@ -103,14 +103,7 @@ public class DefaultPreheatService implements PreheatService
         {
             params.getObjects().get( klass ).stream()
                 .filter( identifiableObject -> StringUtils.isEmpty( identifiableObject.getUid() ) )
-                .forEach( identifiableObject -> {
-                    ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() );
-
-                    if ( User.class.isInstance( identifiableObject ) )
-                    {
-                        ((User) identifiableObject).getUserCredentials().setUid( identifiableObject.getUid() );
-                    }
-                } );
+                .forEach( identifiableObject -> ((BaseIdentifiableObject) identifiableObject).setUid( CodeGenerator.generateCode() ) );
         }
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> uniqueCollectionMap = new HashMap<>();
@@ -200,6 +193,23 @@ public class DefaultPreheatService implements PreheatService
             }
         }
 
+        if ( uniqueCollectionMap.containsKey( User.class ) )
+        {
+            List<IdentifiableObject> userCredentials = new ArrayList<>();
+
+            for ( IdentifiableObject identifiableObject : uniqueCollectionMap.get( User.class ) )
+            {
+                User user = (User) identifiableObject;
+
+                if ( user.getUserCredentials() != null )
+                {
+                    userCredentials.add( user.getUserCredentials() );
+                }
+            }
+
+            uniqueCollectionMap.put( UserCredentials.class, userCredentials );
+        }
+
         preheat.setUniquenessMap( collectUniqueness( uniqueCollectionMap ) );
 
         // add preheat placeholders for objects that will be created
@@ -271,7 +281,6 @@ public class DefaultPreheatService implements PreheatService
 
         Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = map.get( PreheatIdentifier.UID );
         Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = map.get( PreheatIdentifier.CODE );
-        Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> uniqueMap = new HashMap<>();
 
         if ( objects.isEmpty() )
         {
@@ -280,25 +289,6 @@ public class DefaultPreheatService implements PreheatService
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> scanObjects = new HashMap<>();
         scanObjects.putAll( objects ); // clone objects list, we don't want to modify it
-
-        if ( scanObjects.containsKey( User.class ) )
-        {
-            List<IdentifiableObject> users = scanObjects.get( User.class );
-            List<IdentifiableObject> userCredentials = new ArrayList<>();
-
-            for ( IdentifiableObject identifiableObject : users )
-            {
-                User user = (User) identifiableObject;
-
-                if ( user.getUserCredentials() != null )
-                {
-                    user.getUserCredentials().setUid( user.getUid() );
-                    userCredentials.add( user.getUserCredentials() );
-                }
-            }
-
-            scanObjects.put( UserCredentials.class, userCredentials );
-        }
 
         for ( Class<? extends IdentifiableObject> objectClass : scanObjects.keySet() )
         {
@@ -435,31 +425,10 @@ public class DefaultPreheatService implements PreheatService
             return uniqueMap;
         }
 
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> scanObjects = new HashMap<>();
-        scanObjects.putAll( objects ); // clone objects list, we don't want to modify it
-
-        if ( scanObjects.containsKey( User.class ) )
-        {
-            List<IdentifiableObject> users = scanObjects.get( User.class );
-            List<IdentifiableObject> userCredentials = new ArrayList<>();
-
-            for ( IdentifiableObject identifiableObject : users )
-            {
-                User user = (User) identifiableObject;
-
-                if ( user.getUserCredentials() != null )
-                {
-                    userCredentials.add( user.getUserCredentials() );
-                }
-            }
-
-            scanObjects.put( UserCredentials.class, userCredentials );
-        }
-
-        for ( Class<? extends IdentifiableObject> objectClass : scanObjects.keySet() )
+        for ( Class<? extends IdentifiableObject> objectClass : objects.keySet() )
         {
             Schema schema = schemaService.getDynamicSchema( objectClass );
-            List<IdentifiableObject> identifiableObjects = scanObjects.get( objectClass );
+            List<IdentifiableObject> identifiableObjects = objects.get( objectClass );
             uniqueMap.put( objectClass, handleUniqueProperties( schema, identifiableObjects ) );
         }
 
@@ -747,30 +716,27 @@ public class DefaultPreheatService implements PreheatService
             .collect( Collectors.toList() );
 
         uniqueProperties.forEach( property -> {
+            if ( !uniquenessMap.containsKey( property.getName() ) )
+            {
+                uniquenessMap.put( property.getName(), new HashMap<>() );
+            }
+
             Object value = ReflectionUtils.invokeMethod( object, property.getGetterMethod() );
 
             if ( value != null )
             {
-                if ( uniquenessMap.containsKey( property.getName() ) && !uniquenessMap.get( property.getName() ).isEmpty() )
-                {
-                    String persistedUid = uniquenessMap.get( property.getName() ).get( value );
+                String persistedUid = uniquenessMap.get( property.getName() ).get( value );
 
-                    if ( persistedUid != null )
+                if ( persistedUid != null )
+                {
+                    if ( !object.getUid().equals( persistedUid ) )
                     {
-                        if ( !object.getUid().equals( persistedUid ) )
-                        {
-                            errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E5003, property.getName(), value,
-                                identifier.getIdentifiersWithName( object ), persistedUid ) );
-                        }
+                        errorReports.add( new ErrorReport( object.getClass(), ErrorCode.E5003, property.getName(), value,
+                            identifier.getIdentifiersWithName( object ), persistedUid ) );
                     }
                 }
                 else
                 {
-                    if ( !uniquenessMap.containsKey( property.getName() ) )
-                    {
-                        uniquenessMap.put( property.getName(), new HashMap<>() );
-                    }
-
                     uniquenessMap.get( property.getName() ).put( value, object.getUid() );
                 }
             }
