@@ -41,10 +41,6 @@
         </div>
         <!-- default registration form ends -->
 
-        <div class="hideInPrint" ng-if="formEmpty && outerForm.submitted">
-            <div class="alert alert-warning">{{'form_is_empty_fill_at_least_one'| translate}}</div> 
-        </div>
-
         <div ng-if="!editingDisabled && registrationMode === 'PROFILE'" class="vertical-spacing">
             <button type="button" class="btn btn-primary small-horizonal-spacing" ng-click="registerEntity(null)">{{'save'| translate}}</button>        
             <button type="button" class="btn btn-default small-horizonal-spacing" ng-click="cancelRegistrationWarning(cancel)">{{'cancel'| translate}}</button>

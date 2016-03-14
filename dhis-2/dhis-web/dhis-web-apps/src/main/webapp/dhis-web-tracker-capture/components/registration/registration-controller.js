@@ -6,6 +6,7 @@ trackerCapture.controller('RegistrationController',
                 $location,
                 $timeout,
                 $modal,
+                $translate,
                 AttributesFactory,
                 DHIS2EventFactory,
                 TEService,
@@ -257,13 +258,17 @@ trackerCapture.controller('RegistrationController',
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value        
-        
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
         
         if($scope.formEmpty){//registration form is empty
-            return false;
+            var dialogOptions = {
+                    headerText: 'error',
+                    bodyText: $translate.instant('form_is_empty_fill_at_least_one')
+                };
+            DialogService.showDialog({}, dialogOptions);
+            return;
         }        
         performRegistration(destination);
     }; 
@@ -272,8 +277,7 @@ trackerCapture.controller('RegistrationController',
         var flag = {debug: true, verbose: false};
         
         //repopulate attributes with updated values
-        $scope.selectedTei.attributes = [];
-        
+        $scope.selectedTei.attributes = [];        
         angular.forEach($scope.attributes, function(metaAttribute){
             var newAttributeInArray = {attribute:metaAttribute.id,
                 code:metaAttribute.code,
@@ -312,7 +316,6 @@ trackerCapture.controller('RegistrationController',
         $scope.warningMessages = effectResult.warningMessages;
     });
 
-
     $scope.interacted = function(field) {
         var status = false;
         if(field){            
@@ -321,8 +324,7 @@ trackerCapture.controller('RegistrationController',
         return status;        
     };
     
-    $scope.getTrackerAssociate = function(selectedAttribute, existingAssociateUid){        
-
+    $scope.getTrackerAssociate = function(selectedAttribute, existingAssociateUid){
         var modalInstance = $modal.open({
             templateUrl: 'components/teiadd/tei-add.html',
             controller: 'TEIAddController',
@@ -354,13 +356,13 @@ trackerCapture.controller('RegistrationController',
                 }
             }
         });
-
         modalInstance.result.then(function (res) {
             if(res && res.id){
                 $scope.selectedTei[selectedAttribute.id] = res.id;
             }
         });
     };
+    
     $scope.cancelRegistrationWarning = function(cancelFunction){
         
         var modalOptions = {
