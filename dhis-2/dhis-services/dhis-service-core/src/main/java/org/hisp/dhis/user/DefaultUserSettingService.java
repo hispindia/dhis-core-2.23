@@ -35,7 +35,6 @@ import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.util.SystemUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -75,14 +74,6 @@ public class DefaultUserSettingService
     // Dependencies
     // -------------------------------------------------------------------------
 
-    @Autowired
-    private SystemSettingManager systemSettingManager;
-
-    public void setSystemSettingManager( SystemSettingManager systemSettingManager )
-    {
-        this.systemSettingManager = systemSettingManager;
-    }
-
     private CurrentUserService currentUserService;
 
     public void setCurrentUserService( CurrentUserService currentUserService )
@@ -102,6 +93,13 @@ public class DefaultUserSettingService
     public void setUserService( UserService userService )
     {
         this.userService = userService;
+    }
+
+    private SystemSettingManager systemSettingManager;
+
+    public void setSystemSettingManager( SystemSettingManager systemSettingManager )
+    {
+        this.systemSettingManager = systemSettingManager;
     }
 
     // -------------------------------------------------------------------------
