@@ -1553,7 +1553,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
             var entityList = {own: [], other: []};
             
-            var attributes = CurrentSelection.getAttributesById();
+            var attributesById = CurrentSelection.getAttributesById();
             
             angular.forEach(grid.rows, function(row){
                 if(invalidTeis.indexOf(row[0]) === -1 ){
@@ -1574,14 +1574,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                             isEmpty = false;
                             var val = row[i];
 
-                            if(attributes[grid.headers[i].name] && 
-                                    attributes[grid.headers[i].name].optionSetValue && 
+                            if(attributesById[grid.headers[i].name] && 
+                                    attributesById[grid.headers[i].name].optionSetValue && 
                                     optionSets &&    
-                                    attributes[grid.headers[i].name].optionSet &&
-                                    optionSets[attributes[grid.headers[i].name].optionSet.id] ){
-                                val = OptionSetService.getName(optionSets[attributes[grid.headers[i].name].optionSet.id].options, val);
+                                    attributesById[grid.headers[i].name].optionSet &&
+                                    optionSets[attributesById[grid.headers[i].name].optionSet.id] ){
+                                val = OptionSetService.getName(optionSets[attributesById[grid.headers[i].name].optionSet.id].options, val);
                             }
-                            if(attributes[grid.headers[i].name] && attributes[grid.headers[i].name].valueType === 'date'){                                    
+                            if(attributesById[grid.headers[i].name] && attributesById[grid.headers[i].name].valueType === 'date'){                                    
                                 val = DateUtils.formatFromApiToUser( val );
                             }
 
