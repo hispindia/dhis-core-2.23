@@ -30,11 +30,13 @@ package org.hisp.dhis.webapi.controller;
 
 import org.apache.commons.io.IOUtils;
 import org.hisp.dhis.common.Grid;
+import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.cache.CacheStrategy;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.DataSetService;
 import org.hisp.dhis.dataset.FormType;
 import org.hisp.dhis.datasetreport.DataSetReportService;
+import org.hisp.dhis.dxf2.webmessage.WebMessage;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.i18n.I18nManager;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -50,9 +52,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
@@ -89,50 +93,43 @@ public class DataSetReportController
     @Autowired
     WebMessageService webMessageService;
 
-    @RequestMapping( value = "", method = RequestMethod.GET )
-    public void getDataSetReport( HttpServletRequest request, HttpServletResponse response )
-        throws WebMessageException
+    @Autowired
+    IdentifiableObjectManager idObjectManager;
+
+    @RequestMapping( method = RequestMethod.GET )
+    public void getDataSetReport( HttpServletResponse response,
+        @RequestParam String ds,
+        @RequestParam String pe,
+        @RequestParam String ou,
+        @RequestParam( required = false ) Set<String> dimension,
+        @RequestParam( required = false ) boolean selectedUnitOnly,
+        @RequestParam( required = false ) String type
+    )
+        throws Exception
     {
-        Map<String, String[]> params = request.getParameterMap();
-        OrganisationUnit selectedOrgunit;
-        DataSet selectedDataSet;
-        Period selectedPeriod;
+        OrganisationUnit selectedOrgunit = idObjectManager.get(OrganisationUnit.class, ou);
+        DataSet selectedDataSet = dataSetService.getDataSet( ds );
+        Period selectedPeriod = PeriodType.getPeriodFromIsoString( pe );
+        selectedPeriod = periodService.reloadPeriod( selectedPeriod );
+
+        if(selectedOrgunit == null) {
+            throw new WebMessageException( WebMessageUtils.conflict( "Illegal organisation unit identifier: " + ou ) );
+        }
+
+        if(selectedDataSet == null) {
+            throw new WebMessageException( WebMessageUtils.conflict( "Illegal data set identifier: " + ds ) );
+        }
+
+        if(selectedPeriod == null) {
+            throw new WebMessageException( WebMessageUtils.conflict( "Illegal period identifier: " + pe ) );
+        }
+
+
+
         String customDataEntryFormCode = null;
         List<Grid> grids = new ArrayList<>();
-        FormType formType;
-        Set<String> dimension = new HashSet<>();
-        boolean selectedUnitOnly = false;
-        String type = null;
 
-        // Make sure all required parameters are present
-        if ( !params.containsKey( "ds" ) || !params.containsKey( "pe" ) || !params.containsKey( "ou" ) )
-        {
-            throw new WebMessageException( WebMessageUtils.badRequest( "Missing required parameters" ) );
-        }
-
-        // Fetch required data
-        selectedDataSet = dataSetService.getDataSetNoAcl( params.get( "ds" )[0] );
-        selectedPeriod = PeriodType.getPeriodFromIsoString( params.get( "pe" )[0] );
-        selectedPeriod = periodService.reloadPeriod( selectedPeriod );
-        selectedOrgunit = organisationUnitService.getOrganisationUnit( params.get( "ou" )[0] );
-
-        // Fetch optional parameters
-        if ( params.containsKey( "dimension" ) )
-        {
-            dimension.addAll( Arrays.asList( params.get( "dimension" ) ) );
-        }
-
-        if ( params.containsKey( "selectedUnitOnly" ) )
-        {
-            selectedUnitOnly = Boolean.parseBoolean( params.get( "selectedUnitOnly" )[0] );
-        }
-
-        if ( params.containsKey( "type" ) )
-        {
-            type = params.get( "type" )[0];
-        }
-
-        formType = selectedDataSet.getFormType();
+        FormType formType = selectedDataSet.getFormType();
 
         // ---------------------------------------------------------------------
         // Configure response
@@ -178,33 +175,18 @@ public class DataSetReportController
         // Write response
         // ---------------------------------------------------------------------
 
-        try
+        Writer output = response.getWriter();
+
+        if ( formType.isCustom() && type == null )
         {
-            Writer w = response.getWriter();
-
-            if ( formType.isCustom() && type == null )
-            {
-                IOUtils.write( customDataEntryFormCode, w );
-            }
-            else
-            {
-                grids.forEach( grid -> {
-                    try
-                    {
-                        GridUtils.toHtmlCss( grid, w );
-                    }
-                    catch ( Exception e )
-                    {
-                        e.printStackTrace();
-                    }
-                } );
-            }
-
-            w.close();
+            IOUtils.write( customDataEntryFormCode, output );
         }
-        catch ( Exception e )
+        else
         {
-            e.printStackTrace();
+            for ( Grid grid : grids )
+            {
+                GridUtils.toHtmlCss( grid, output );
+            }
         }
     }
 }
