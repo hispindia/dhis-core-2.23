@@ -52,10 +52,12 @@ public class IdentityPopulator
     private static final Map<String, String> TABLE_ID_MAP = DimensionalObjectUtils.asMap(
         "dataelementcategoryoption", "categoryoptionid",
         "dataelementcategory", "categoryid",
-        "program_attributes", "programtrackedentityattributeid" );
+        "program_attributes", "programtrackedentityattributeid",
+        "users", "userid"
+    );
 
     private List<String> tables = new ArrayList<>();
-    
+
     public void setTables( List<String> tables )
     {
         this.tables = tables;
@@ -177,7 +179,7 @@ public class IdentityPopulator
 
     private String getIdColumn( String table )
     {
-        return TABLE_ID_MAP.getOrDefault( table, ( table + "id" ) );
+        return TABLE_ID_MAP.getOrDefault( table, (table + "id") );
     }
 
     private void createOrgUnitUuids()
