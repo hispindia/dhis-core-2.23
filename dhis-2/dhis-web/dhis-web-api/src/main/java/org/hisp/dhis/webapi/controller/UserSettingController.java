@@ -28,9 +28,12 @@ package org.hisp.dhis.webapi.controller;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Sets;
 import org.hisp.dhis.render.RenderService;
 
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
+import org.hisp.dhis.setting.SettingKey;
+import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
@@ -56,9 +59,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -70,18 +71,25 @@ public class UserSettingController
 {
     @Autowired
     private UserSettingService userSettingService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private CurrentUserService currentUserService;
 
     @Autowired
     private WebMessageService webMessageService;
-    
+
     @Autowired
     private RenderService renderService;
+
+    @Autowired
+    private SystemSettingManager systemSettingManager;
+
+    private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
+        SettingKey.values() ).stream().collect( Collectors.toMap( SettingKey::getName, s -> s ) );
+
 
     // -------------------------------------------------------------------------
     // Resources
@@ -93,7 +101,8 @@ public class UserSettingController
         @RequestParam( value = "user", required = false ) String username,
         @RequestParam( value = "value", required = false ) String value,
         @RequestBody( required = false ) String valuePayload,
-        HttpServletResponse response, HttpServletRequest request ) throws WebMessageException
+        HttpServletResponse response, HttpServletRequest request )
+        throws WebMessageException
     {
         if ( key == null )
         {
@@ -102,20 +111,21 @@ public class UserSettingController
 
         if ( value == null && valuePayload == null )
         {
-            throw new WebMessageException( WebMessageUtils.conflict( "Value must be specified as query param or as payload" ) );
+            throw new WebMessageException(
+                WebMessageUtils.conflict( "Value must be specified as query param or as payload" ) );
         }
 
         value = ObjectUtils.firstNonNull( value, valuePayload );
 
         Optional<UserSettingKey> keyEnum = UserSettingKey.getByName( key );
-        
+
         if ( !keyEnum.isPresent() )
         {
             throw new WebMessageException( WebMessageUtils.conflict( "Key is not supported: " + key ) );
         }
-        
+
         Serializable valueObject = UserSettingKey.getAsRealClass( key, value );
-        
+
         if ( username == null )
         {
             userSettingService.saveUserSetting( keyEnum.get(), valueObject );
@@ -129,24 +139,25 @@ public class UserSettingController
     }
 
     @RequestMapping( value = "/{key}", method = RequestMethod.GET )
-    public void getUserSetting( 
+    public void getUserSetting(
         @PathVariable( "key" ) String key,
         @RequestParam( value = "user", required = false ) String username,
-        HttpServletRequest request, HttpServletResponse response ) throws IOException, WebMessageException
+        HttpServletRequest request, HttpServletResponse response )
+        throws IOException, WebMessageException
     {
         Optional<UserSettingKey> keyEnum = UserSettingKey.getByName( key );
-        
+
         if ( !keyEnum.isPresent() )
         {
             throw new WebMessageException( WebMessageUtils.conflict( "Key is not supported: " + key ) );
         }
-        
+
         User user = null;
-        
+
         if ( username != null )
         {
             UserCredentials credentials = userService.getUserCredentialsByUsername( username );
-            
+
             if ( credentials != null )
             {
                 user = credentials.getUser();
@@ -156,7 +167,7 @@ public class UserSettingController
                 throw new WebMessageException( WebMessageUtils.conflict( "User does not exist: " + username ) );
             }
         }
-        
+
         Serializable value = userSettingService.getUserSetting( keyEnum.get(), user );
 
         if ( value == null )
@@ -165,7 +176,7 @@ public class UserSettingController
         }
 
         String stringVal = String.valueOf( value );
-        
+
         String contentType = null;
 
         if ( request.getHeader( "Accept" ) == null || "*/*".equals( request.getHeader( "Accept" ) ) )
@@ -180,39 +191,51 @@ public class UserSettingController
         response.setContentType( contentType );
         response.getWriter().println( stringVal );
     }
-    
+
     @RequestMapping( method = RequestMethod.GET, produces = ContextUtils.CONTENT_TYPE_JSON )
-    public void getUserSettingsByUser( @RequestParam( required = false ) String user, 
+    public void getUserSettingsByUser( @RequestParam( required = false ) String user,
         HttpServletRequest request, HttpServletResponse response )
-            throws WebMessageException, IOException
+        throws WebMessageException, IOException
     {
         UserCredentials credentials = userService.getUserCredentialsByUsername( user );
 
         User us = credentials != null ? credentials.getUser() : null;
-        
+
         if ( us == null )
         {
             us = currentUserService.getCurrentUser();
         }
-        
-        List<UserSetting> settings = userSettingService.getUserSettings( us );
-        
-        Map<String, Serializable> map = asMap( settings );
-        
-        renderService.toJson( response.getOutputStream(), map );
+
+        Map<String, Serializable> settings = new HashMap<>();
+
+        // Find fallback for missing userSettings; Creating new objects to separate from hibernate
+        userSettingService.getUserSettings( us ).stream().filter( UserSetting::hasValue )
+            .forEach( userSetting -> settings.put( userSetting.getName(), userSetting.getValue() ) );
+
+        // Add remaining userSettings user doesn't have set yet
+        for ( UserSettingKey userSettingKey : UserSettingKey.values() )
+        {
+            if ( !settings.containsKey( userSettingKey.getName() ) )
+            {
+                settings.put( userSettingKey.getName(),
+                    systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( userSettingKey.getName() ) ) );
+            }
+        }
+
+        renderService.toJson( response.getOutputStream(), settings );
     }
-    
+
     @RequestMapping( value = "/{key}", method = RequestMethod.DELETE )
     public void removeSystemSetting( @PathVariable( "key" ) String key )
         throws WebMessageException
     {
         Optional<UserSettingKey> keyEnum = UserSettingKey.getByName( key );
-        
+
         if ( !keyEnum.isPresent() )
         {
             throw new WebMessageException( WebMessageUtils.conflict( "Key is not supported: " + key ) );
         }
-        
+
         userSettingService.deleteUserSetting( keyEnum.get() );
     }
 
