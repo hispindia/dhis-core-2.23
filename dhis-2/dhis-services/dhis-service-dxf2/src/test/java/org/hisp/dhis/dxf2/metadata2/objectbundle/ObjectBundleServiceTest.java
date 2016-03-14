@@ -64,6 +64,7 @@ import org.hisp.dhis.user.UserAuthorityGroup;
 import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.validation.ValidationRule;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -1411,6 +1412,23 @@ public class ObjectBundleServiceTest
         DataElement dataElement = manager.getByCode( DataElement.class, "DataElementCodeA" );
         assertEquals( "SG4HuKlNEFH", dataElement.getUid() );
         assertEquals( "DataElementA", dataElement.getName() );
+    }
+
+    @Test
+    @Ignore
+    public void testCreateMetadataWithDuplicateUsername() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/user_duplicate_username.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
     }
 
     private void defaultSetup()
