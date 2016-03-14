@@ -66,7 +66,7 @@ trackerCapture.controller('TEIAddController',
     $scope.orgUnitLabel = $translate.instant('org_unit');
     
     $scope.selectedRelationship = {};
-    $scope.relationship = {};
+    $scope.relationship = {selected: null};
     
     var invalidTeis = [];
     invalidTeis.push($scope.mainTei.trackedEntityInstance);

@@ -13,7 +13,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" ng-if="addingRelationship && relationship.selected || addingTeiAssociate">
         <hr ng-if="addingRelationship">
         <h3 ng-if="!addingRelationship && selectedTeiForDisplay">
             <span class='col-sm-12'>
