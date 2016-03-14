@@ -1389,6 +1389,30 @@ public class ObjectBundleServiceTest
         assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
     }
 
+    @Test
+    public void testCreateMetadataWithDuplicateDataElementCode() throws IOException
+    {
+        createUserAndInjectSecurityContext( true );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/de_duplicate_code.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        objectBundleService.validate( bundle );
+        objectBundleService.commit( bundle );
+
+        assertEquals( 1, manager.getAll( DataElement.class ).size() );
+
+        DataElement dataElement = manager.getByCode( DataElement.class, "DataElementCodeA" );
+        assertEquals( "SG4HuKlNEFH", dataElement.getUid() );
+        assertEquals( "DataElementA", dataElement.getName() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );

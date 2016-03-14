@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -683,17 +684,25 @@ public class DefaultPreheatService implements PreheatService
             return objectErrorReports;
         }
 
-        for ( int i = 0; i < objects.size(); i++ )
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
         {
-            IdentifiableObject object = objects.get( i );
+            IdentifiableObject object = iterator.next();
+
             List<ErrorReport> errorReports = checkUniqueness( object, preheat, identifier );
 
-            if ( errorReports.isEmpty() ) continue;
+            if ( !errorReports.isEmpty() )
+            {
+                ObjectErrorReport objectErrorReport = new ObjectErrorReport( object.getClass(), idx );
+                objectErrorReport.addErrorReports( errorReports );
+                objectErrorReports.add( objectErrorReport );
 
-            ObjectErrorReport objectErrorReport = new ObjectErrorReport( object.getClass(), i );
-            objectErrorReport.addErrorReports( errorReports );
-            objectErrorReports.add( objectErrorReport );
+                iterator.remove();
+            }
 
+            idx++;
         }
 
         return objectErrorReports;
@@ -706,9 +715,12 @@ public class DefaultPreheatService implements PreheatService
 
         if ( object == null || Preheat.isDefault( object ) ) return errorReports;
 
-        Map<String, Map<Object, String>> uniquenessMap = preheat.getUniquenessMap().get( object.getClass() );
+        if ( !preheat.getUniquenessMap().containsKey( object.getClass() ) )
+        {
+            preheat.getUniquenessMap().put( object.getClass(), new HashMap<>() );
+        }
 
-        if ( uniquenessMap == null ) return errorReports;
+        Map<String, Map<Object, String>> uniquenessMap = preheat.getUniquenessMap().get( object.getClass() );
 
         Schema schema = schemaService.getDynamicSchema( object.getClass() );
         List<Property> uniqueProperties = schema.getProperties().stream()
@@ -732,6 +744,15 @@ public class DefaultPreheatService implements PreheatService
                                 identifier.getIdentifiersWithName( object ), persistedUid ) );
                         }
                     }
+                }
+                else
+                {
+                    if ( !uniquenessMap.containsKey( property.getName() ) )
+                    {
+                        uniquenessMap.put( property.getName(), new HashMap<>() );
+                    }
+
+                    uniquenessMap.get( property.getName() ).put( value, object.getUid() );
                 }
             }
         } );

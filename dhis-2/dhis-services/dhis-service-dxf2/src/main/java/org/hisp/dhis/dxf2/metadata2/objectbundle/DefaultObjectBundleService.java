@@ -117,11 +117,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
         {
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
-                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjectMap().get( klass ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
+                objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
+
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
+
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
-                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isCreate() )
