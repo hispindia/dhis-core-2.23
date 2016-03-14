@@ -1174,7 +1174,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
     })
 
     /* service for executing tracker rules and broadcasting results */
-    .service('TrackerRulesExecutionService', function(VariableService, DateUtils, DHIS2EventFactory, CalendarService, $rootScope, $log, $filter, orderByFilter){
+    .service('TrackerRulesExecutionService', function(VariableService, DateUtils, DialogService, DHIS2EventFactory, CalendarService, $rootScope, $log, $filter, orderByFilter){
 
         var replaceVariables = function(expression, variablesHash){
             //replaces the variables in an expression with actual variable values.
@@ -1957,6 +1957,63 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                     return true;
                 }
+            },
+            processRuleEffectAttribute: function(context, selectedTei, tei, attributesById, hiddenFields, warningMessages){
+                angular.forEach($rootScope.ruleeffects[context], function (effect) {
+                    if (effect.trackedEntityAttribute) {
+                        //in the data entry controller we only care about the "hidefield", showerror and showwarning actions
+                        if (effect.action === "HIDEFIELD") {
+                            if (effect.trackedEntityAttribute) {
+                                if (effect.ineffect && selectedTei[effect.trackedEntityAttribute.id]) {
+                                    //If a field is going to be hidden, but contains a value, we need to take action;
+                                    if (effect.content) {
+                                        //TODO: Alerts is going to be replaced with a proper display mecanism.
+                                        alert(effect.content);
+                                    }
+                                    else {
+                                        //TODO: Alerts is going to be replaced with a proper display mecanism.
+                                        alert(attributesById[effect.trackedEntityAttribute.id].displayName + "Was blanked out and hidden by your last action");
+                                    }
+
+                                    //Blank out the value:
+                                    selectedTei[effect.trackedEntityAttribute.id] = "";
+                                }
+
+                                hiddenFields[effect.trackedEntityAttribute.id] = effect.ineffect;
+                            }
+                            else {
+                                $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have an attribute defined");
+                            }
+                        } else if (effect.action === "SHOWERROR") {
+                            if (effect.trackedEntityAttribute) {                        
+                                if(effect.ineffect) {
+                                    var dialogOptions = {
+                                        headerText: 'validation_error',
+                                        bodyText: effect.content + (effect.data ? effect.data : "")
+                                    };
+                                    DialogService.showDialog({}, dialogOptions);
+                                    selectedTei[effect.trackedEntityAttribute.id] = tei[effect.trackedEntityAttribute.id];
+                                }
+                            }
+                            else {
+                                $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have an attribute defined");
+                            }
+                        } else if (effect.action === "SHOWWARNING") {
+                            if (effect.trackedEntityAttribute) {
+                                if(effect.ineffect) {
+                                    var message = effect.content + (angular.isDefined(effect.data) ? effect.data : "");
+                                    warningMessages.push(message);
+                                    warningMessages[effect.trackedEntityAttribute.id] = message;
+                                }
+                            }
+                            else {
+                                $log.warn("ProgramRuleAction " + effect.id + " is of type HIDEFIELD, bot does not have an attribute defined");
+                            }
+                        }
+                    }
+                });
+                
+                return {selectedTei: selectedTei, hiddenFields: hiddenFields, warningMessages: warningMessages};
             }
         };
     })
