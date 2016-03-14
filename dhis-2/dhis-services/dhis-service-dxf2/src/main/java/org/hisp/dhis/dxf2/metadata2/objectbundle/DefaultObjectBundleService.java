@@ -123,6 +123,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() ) );
 
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
+
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
             }
@@ -144,7 +147,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectBundleValidation.addObjectErrorReports( validateForUpdate( klass, bundle.getObjects( klass, false ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
 
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() ) );
 
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
