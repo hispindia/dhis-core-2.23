@@ -36,11 +36,9 @@ import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.DataSetService;
 import org.hisp.dhis.dataset.FormType;
 import org.hisp.dhis.datasetreport.DataSetReportService;
-import org.hisp.dhis.dxf2.webmessage.WebMessage;
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
 import org.hisp.dhis.i18n.I18nManager;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
-import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
@@ -54,9 +52,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
@@ -67,7 +63,6 @@ import java.util.*;
 @RequestMapping( value = "/datasetreport" )
 public class DataSetReportController
 {
-
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
@@ -77,9 +72,6 @@ public class DataSetReportController
 
     @Autowired
     private DataSetService dataSetService;
-
-    @Autowired
-    private OrganisationUnitService organisationUnitService;
 
     @Autowired
     private PeriodService periodService;
@@ -103,28 +95,29 @@ public class DataSetReportController
         @RequestParam String ou,
         @RequestParam( required = false ) Set<String> dimension,
         @RequestParam( required = false ) boolean selectedUnitOnly,
-        @RequestParam( required = false ) String type
-    )
+        @RequestParam( required = false ) String type )
         throws Exception
     {
         OrganisationUnit selectedOrgunit = idObjectManager.get(OrganisationUnit.class, ou);
         DataSet selectedDataSet = dataSetService.getDataSet( ds );
-        Period selectedPeriod = PeriodType.getPeriodFromIsoString( pe );
-        selectedPeriod = periodService.reloadPeriod( selectedPeriod );
+        Period selectedPeriod = PeriodType.getPeriodFromIsoString( pe );        
 
-        if(selectedOrgunit == null) {
+        if ( selectedOrgunit == null )
+        {
             throw new WebMessageException( WebMessageUtils.conflict( "Illegal organisation unit identifier: " + ou ) );
         }
 
-        if(selectedDataSet == null) {
+        if ( selectedDataSet == null )
+        {
             throw new WebMessageException( WebMessageUtils.conflict( "Illegal data set identifier: " + ds ) );
         }
 
-        if(selectedPeriod == null) {
+        if ( selectedPeriod == null )
+        {
             throw new WebMessageException( WebMessageUtils.conflict( "Illegal period identifier: " + pe ) );
         }
 
-
+        selectedPeriod = periodService.reloadPeriod( selectedPeriod );
 
         String customDataEntryFormCode = null;
         List<Grid> grids = new ArrayList<>();
@@ -135,9 +128,7 @@ public class DataSetReportController
         // Configure response
         // ---------------------------------------------------------------------
 
-        contextUtils
-            .configureResponse( response, ContextUtils.CONTENT_TYPE_HTML, CacheStrategy.RESPECT_SYSTEM_SETTING, null,
-                false );
+        contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_HTML, CacheStrategy.RESPECT_SYSTEM_SETTING );
 
         // ---------------------------------------------------------------------
         // Assemble report
@@ -147,28 +138,28 @@ public class DataSetReportController
         {
             if ( type != null )
             {
-                grids = dataSetReportService
-                    .getCustomDataSetReportAsGrid( selectedDataSet, selectedPeriod, selectedOrgunit, dimension,
-                        selectedUnitOnly, i18nManager.getI18nFormat() );
+                grids = dataSetReportService.getCustomDataSetReportAsGrid( 
+                    selectedDataSet, selectedPeriod, selectedOrgunit, dimension,
+                    selectedUnitOnly, i18nManager.getI18nFormat() );
             }
             else
             {
-                customDataEntryFormCode = dataSetReportService
-                    .getCustomDataSetReport( selectedDataSet, selectedPeriod, selectedOrgunit, dimension,
-                        selectedUnitOnly, i18nManager.getI18nFormat() );
+                customDataEntryFormCode = dataSetReportService.getCustomDataSetReport( 
+                    selectedDataSet, selectedPeriod, selectedOrgunit, dimension,
+                    selectedUnitOnly, i18nManager.getI18nFormat() );
             }
         }
         else if ( formType.isSection() )
         {
-            grids = dataSetReportService
-                .getSectionDataSetReport( selectedDataSet, selectedPeriod, selectedOrgunit, dimension, selectedUnitOnly,
-                    i18nManager.getI18nFormat(), i18nManager.getI18n() );
+            grids = dataSetReportService.getSectionDataSetReport( 
+                selectedDataSet, selectedPeriod, selectedOrgunit, dimension, selectedUnitOnly,
+                i18nManager.getI18nFormat(), i18nManager.getI18n() );
         }
         else
         {
-            grids = dataSetReportService
-                .getDefaultDataSetReport( selectedDataSet, selectedPeriod, selectedOrgunit, dimension, selectedUnitOnly,
-                    i18nManager.getI18nFormat(), i18nManager.getI18n() );
+            grids = dataSetReportService.getDefaultDataSetReport( 
+                selectedDataSet, selectedPeriod, selectedOrgunit, dimension, selectedUnitOnly,
+                i18nManager.getI18nFormat(), i18nManager.getI18n() );
         }
 
         // ---------------------------------------------------------------------
