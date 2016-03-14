@@ -131,20 +131,24 @@ public class DefaultObjectBundleService implements ObjectBundleService
             {
                 objectBundleValidation.addObjectErrorReports( validateForCreate( klass, bundle.getObjects( klass, true ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
+
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
+
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
-                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isUpdate() )
             {
                 objectBundleValidation.addObjectErrorReports( validateForUpdate( klass, bundle.getObjects( klass, false ), bundle ) );
                 objectBundleValidation.addObjectErrorReports( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
+
+                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
+                    bundle.getPreheatIdentifier() ) );
+
                 objectBundleValidation.addObjectErrorReports( preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                objectBundleValidation.addObjectErrorReports( preheatService.checkUniqueness( bundle.getObjectMap().get( klass ), bundle.getPreheat(),
-                    bundle.getPreheatIdentifier() ) );
             }
 
             if ( bundle.getImportMode().isDelete() )
