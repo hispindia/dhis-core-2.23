@@ -1,4 +1,4 @@
-package org.hisp.dhis.schema.descriptors;
+package org.hisp.dhis.webapi.controller.user;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,30 +28,35 @@ package org.hisp.dhis.schema.descriptors;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.schema.Schema;
-import org.hisp.dhis.schema.SchemaDescriptor;
+import org.hisp.dhis.dxf2.common.ImportOptions;
+import org.hisp.dhis.schema.descriptors.UserCredentialsSchemaDescriptor;
 import org.hisp.dhis.user.UserCredentials;
-import org.springframework.stereotype.Component;
+import org.hisp.dhis.webapi.controller.AbstractCrudController;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.client.HttpServerErrorException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@Component
-public class UserCredentialsSchemaDescriptor implements SchemaDescriptor
+@Controller
+@RequestMapping( value = UserCredentialsSchemaDescriptor.API_ENDPOINT )
+public class UserCredentialsController
+    extends AbstractCrudController<UserCredentials>
 {
-    public static final String SINGULAR = "userCredentials";
-
-    public static final String PLURAL = "userCredentials";
-
-    public static final String API_ENDPOINT = "/" + PLURAL;
+    @Override
+    public void postXmlObject( ImportOptions importOptions, HttpServletRequest request, HttpServletResponse response ) throws Exception
+    {
+        throw new HttpServerErrorException( HttpStatus.BAD_REQUEST );
+    }
 
     @Override
-    public Schema getSchema()
+    public void postJsonObject( ImportOptions importOptions, HttpServletRequest request, HttpServletResponse response ) throws Exception
     {
-        Schema schema = new Schema( UserCredentials.class, SINGULAR, PLURAL );
-        schema.setMetadata( false );
-        schema.setOrder( 2000 );
-
-        return schema;
+        throw new HttpServerErrorException( HttpStatus.BAD_REQUEST );
     }
 }
