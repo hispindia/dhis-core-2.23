@@ -2152,7 +2152,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
         };
     })
 
-    .service('AuditHistoryDataService', function( $http, DialogService) {
+    .service('AuditHistoryDataService', function( $http, $translate, DialogService) {
         this.getAuditHistoryData = function(dataId, dataType ) {
             var url="";
             if (dataType === "attribute") {
