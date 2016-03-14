@@ -162,7 +162,7 @@
 	<table>
 		<tr>
 			<td>
-				<button type="button" id="labelsButton" onclick="insertElement( 'lbl' )"/>$i18n.getString( 'insert_labels' )</button>
+				<button type="button" id="labelsButton" onclick="insertElement( 'lbl' )"/>$i18n.getString( 'insert_label' )</button>
                 <button type="button" id="attributesButton" onclick="attributesOnClick()">$i18n.getString( "attributes" )</button>				
 				#if($!program)
 					<button type="button" id="programAttrButton" onclick="programAttrOnClick()">$i18n.getString( "program" )</button>
