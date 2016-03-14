@@ -72,7 +72,6 @@ public class Preheat
         this.user = user;
     }
 
-    @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> T get( PreheatIdentifier identifier, Class<? extends IdentifiableObject> klass, IdentifiableObject object )
     {
         return get( identifier, klass, identifier.getIdentifier( object ) );

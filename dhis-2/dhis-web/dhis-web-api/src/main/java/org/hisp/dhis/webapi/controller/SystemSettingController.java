@@ -73,8 +73,7 @@ public class SystemSettingController
     @Autowired
     private WebMessageService webMessageService;
 
-    @RequestMapping( value = "/{key}", method = RequestMethod.POST, consumes = { ContextUtils.CONTENT_TYPE_TEXT,
-        ContextUtils.CONTENT_TYPE_HTML } )
+    @RequestMapping( value = "/{key}", method = RequestMethod.POST, consumes = { ContextUtils.CONTENT_TYPE_TEXT, ContextUtils.CONTENT_TYPE_HTML } )
     @PreAuthorize( "hasRole('ALL') or hasRole('F_SYSTEM_SETTING')" )
     public void setSystemSetting(
         @PathVariable( value = "key" ) String key,
@@ -119,9 +118,7 @@ public class SystemSettingController
     }
 
     @RequestMapping( value = "/{key}", method = RequestMethod.GET, produces = ContextUtils.CONTENT_TYPE_TEXT )
-    public
-    @ResponseBody
-    String getSystemSettingAsText( @PathVariable( "key" ) String key )
+    public @ResponseBody String getSystemSettingAsText( @PathVariable( "key" ) String key )
     {
         if ( systemSettingManager.isConfidential( key ) )
         {
@@ -135,14 +132,16 @@ public class SystemSettingController
         }
     }
 
-    @RequestMapping( method = RequestMethod.GET, produces = { ContextUtils.CONTENT_TYPE_JSON,
-        ContextUtils.CONTENT_TYPE_HTML } )
+    @RequestMapping( method = RequestMethod.GET, produces = { ContextUtils.CONTENT_TYPE_JSON, ContextUtils.CONTENT_TYPE_HTML } )
     public void getSystemSettingsJson( @RequestParam( value = "key", required = false ) Set<String> key,
         HttpServletResponse response )
         throws IOException
     {
         if ( key != null )
+        {
             key.removeIf( systemSettingManager::isConfidential );
+        }
+        
         response.setContentType( MediaType.APPLICATION_JSON_VALUE );
         renderService.toJson( response.getOutputStream(), getSystemSettings( key ) );
     }

@@ -69,6 +69,9 @@ import java.util.stream.Collectors;
 @RequestMapping( "/userSettings" )
 public class UserSettingController
 {
+    private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
+        SettingKey.values() ).stream().collect( Collectors.toMap( SettingKey::getName, s -> s ) );
+
     @Autowired
     private UserSettingService userSettingService;
 
@@ -86,10 +89,6 @@ public class UserSettingController
 
     @Autowired
     private SystemSettingManager systemSettingManager;
-
-    private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
-        SettingKey.values() ).stream().collect( Collectors.toMap( SettingKey::getName, s -> s ) );
-
 
     // -------------------------------------------------------------------------
     // Resources
@@ -208,11 +207,13 @@ public class UserSettingController
 
         Map<String, Serializable> settings = new HashMap<>();
 
-        // Find fallback for missing userSettings; Creating new objects to separate from hibernate
+        // Find fall-back for missing users settings
+        
         userSettingService.getUserSettings( us ).stream().filter( UserSetting::hasValue )
             .forEach( userSetting -> settings.put( userSetting.getName(), userSetting.getValue() ) );
 
-        // Add remaining userSettings user doesn't have set yet
+        // Add missing user settings
+        
         for ( UserSettingKey userSettingKey : UserSettingKey.values() )
         {
             if ( !settings.containsKey( userSettingKey.getName() ) )
@@ -237,16 +238,5 @@ public class UserSettingController
         }
 
         userSettingService.deleteUserSetting( keyEnum.get() );
-    }
-
-    // -------------------------------------------------------------------------
-    // Supportive methods
-    // -------------------------------------------------------------------------
-
-    private Map<String, Serializable> asMap( List<UserSetting> settings )
-    {
-        return settings.stream().
-            filter( s -> s.getName() != null && s.getValue() != null ).
-            collect( Collectors.toMap( UserSetting::getName, UserSetting::getValue ) );
     }
 }
