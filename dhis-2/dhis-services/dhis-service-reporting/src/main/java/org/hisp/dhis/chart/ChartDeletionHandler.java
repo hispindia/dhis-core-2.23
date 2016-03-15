@@ -57,7 +57,7 @@ public class ChartDeletionHandler
     {
         return chartService;
     }
-    
+
     @Override
     public String getClassName()
     {

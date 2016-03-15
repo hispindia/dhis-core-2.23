@@ -58,7 +58,7 @@ public class ReportDeletionHandler
     {
         return ReportTable.class.getSimpleName();
     }
-    
+
     @Override
     public String allowDeleteReportTable( ReportTable reportTable )
     {
@@ -69,7 +69,7 @@ public class ReportDeletionHandler
                 return report.getName();
             }
         }
-        
+
         return null;
     }
 }

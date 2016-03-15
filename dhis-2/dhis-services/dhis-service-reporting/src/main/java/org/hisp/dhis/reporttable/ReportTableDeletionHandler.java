@@ -57,7 +57,7 @@ public class ReportTableDeletionHandler
     {
         return reportTableService;
     }
-    
+
     @Override
     public String getClassName()
     {
