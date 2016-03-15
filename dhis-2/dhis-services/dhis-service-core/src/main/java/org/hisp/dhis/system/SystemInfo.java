@@ -103,8 +103,6 @@ public class SystemInfo
     private String memoryInfo;
 
     private Integer cpuCores;
-
-    private boolean spatialSupport;
     
     private String systemId;
 
@@ -133,7 +131,6 @@ public class SystemInfo
         this.databaseInfo = null;
         this.memoryInfo = null;
         this.cpuCores = null;
-        this.spatialSupport = false;
         this.systemId = null;
     }
     
@@ -427,18 +424,6 @@ public class SystemInfo
     public void setCpuCores( Integer cpuCores )
     {
         this.cpuCores = cpuCores;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public boolean isSpatialSupport()
-    {
-        return spatialSupport;
-    }
-
-    public void setSpatialSupport( boolean spatialSupport )
-    {
-        this.spatialSupport = spatialSupport;
     }
 
     @JsonProperty

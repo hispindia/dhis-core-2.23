@@ -53,6 +53,8 @@ public class DatabaseInfo
     
     private String url;
     
+    private boolean spatialSupport;
+    
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
@@ -139,6 +141,18 @@ public class DatabaseInfo
     public void setUrl( String url )
     {
         this.url = url;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public boolean isSpatialSupport()
+    {
+        return spatialSupport;
+    }
+
+    public void setSpatialSupport( boolean spatialSupport )
+    {
+        this.spatialSupport = spatialSupport;
     }
 
     // -------------------------------------------------------------------------

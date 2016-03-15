@@ -30,6 +30,7 @@ package org.hisp.dhis.system.database;
 
 import org.hibernate.cfg.Configuration;
 import org.hisp.dhis.hibernate.HibernateConfigurationProvider;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @author Lars Helge Overland
@@ -64,9 +65,18 @@ public class HibernateDatabaseInfoProvider
         this.hibernateConfigurationProvider = hibernateConfigurationProvider;
     }
 
+    private JdbcTemplate jdbcTemplate;
+    
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+    
     public void init()
     {
         Configuration config = hibernateConfigurationProvider.getConfiguration();
+        
+        boolean spatialSupport = isSpatialSupport();
         
         String dialect = config.getProperty( KEY_DIALECT );
         String driverClass = config.getProperty( KEY_DRIVER_CLASS );
@@ -95,6 +105,7 @@ public class HibernateDatabaseInfoProvider
         info.setDialect( dialect );
         info.setDriverClass( driverClass );
         info.setUrl( url );
+        info.setSpatialSupport( spatialSupport );
     }    
     
     // -------------------------------------------------------------------------
@@ -111,5 +122,22 @@ public class HibernateDatabaseInfoProvider
     public boolean isInMemory()
     {
         return info.getUrl() != null && info.getUrl().contains( ":mem:" );
+    }
+
+    // -------------------------------------------------------------------------
+    // Supportive methods
+    // -------------------------------------------------------------------------
+
+    private boolean isSpatialSupport()
+    {
+        try
+        {
+            String version = jdbcTemplate.queryForObject( "select postgis_full_version()", String.class );
+            return version != null;
+        }
+        catch ( Exception ex )
+        {
+            return false;
+        }
     }
 }

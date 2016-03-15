@@ -12,6 +12,7 @@
 
   <bean id="databaseInfoProvider" class="org.hisp.dhis.system.database.HibernateDatabaseInfoProvider" init-method="init">
     <property name="hibernateConfigurationProvider" ref="hibernateConfigurationProvider" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
   <bean id="taskScheduler" class="org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler">
