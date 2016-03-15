@@ -28,16 +28,16 @@ package org.hisp.dhis.document.impl;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.util.List;
+
+import org.hisp.dhis.common.GenericIdentifiableObjectStore;
 import org.hisp.dhis.document.Document;
 import org.hisp.dhis.document.DocumentService;
-import org.hisp.dhis.document.DocumentStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * @author Lars Helge Overland
+ * @version $Id$
  */
 @Transactional
 public class DefaultDocumentService
@@ -47,8 +47,12 @@ public class DefaultDocumentService
     // Dependencies
     // -------------------------------------------------------------------------
 
-    @Autowired
-    private DocumentStore documentStore;
+    private GenericIdentifiableObjectStore<Document> documentStore;
+
+    public void setDocumentStore( GenericIdentifiableObjectStore<Document> documentStore )
+    {
+        this.documentStore = documentStore;
+    }
 
     // -------------------------------------------------------------------------
     // DocumentService implementation
@@ -113,7 +117,7 @@ public class DefaultDocumentService
     {
         return documentStore.getAllLikeName( name, first, max );
     }
-
+    
     @Override
     public List<Document> getDocumentsByUid( List<String> uids )
     {

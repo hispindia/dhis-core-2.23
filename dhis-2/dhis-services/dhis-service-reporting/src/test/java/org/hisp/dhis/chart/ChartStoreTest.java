@@ -28,7 +28,18 @@ package org.hisp.dhis.chart;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.GenericIdentifiableObjectStore;
 import org.hisp.dhis.indicator.Indicator;
 import org.hisp.dhis.indicator.IndicatorService;
 import org.hisp.dhis.indicator.IndicatorType;
@@ -41,11 +52,6 @@ import org.hisp.dhis.period.PeriodType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
-
 /**
  * @author Lars Helge Overland
  * @version $Id$
@@ -53,9 +59,9 @@ import static org.junit.Assert.*;
 public class ChartStoreTest
     extends DhisSpringTest
 {
-    @Autowired
-    private ChartStore chartStore;
-
+    @Resource(name="org.hisp.dhis.chart.ChartStore")
+    private GenericIdentifiableObjectStore<Chart> chartStore;
+    
     @Autowired
     private IndicatorService indicatorService;
 
@@ -65,6 +71,7 @@ public class ChartStoreTest
     @Autowired
     private OrganisationUnitService organisationUnitService;
 
+    
     private Indicator indicatorA;
     private Indicator indicatorB;
     private Indicator indicatorC;

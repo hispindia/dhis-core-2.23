@@ -54,7 +54,7 @@ public interface QueryService
      * @param transformer ResultTransformer to use for mutating the result
      * @return Matching objects
      */
-    List<? extends IdentifiableObject> query( Query query, ResultTransformer<?> transformer );
+    List<? extends IdentifiableObject> query( Query query, ResultTransformer transformer );
 
     /**
      * Returns how many objects matches the given query.

@@ -28,30 +28,36 @@ package org.hisp.dhis.document;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.DhisSpringTest;
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import javax.annotation.Resource;
+
+import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.GenericIdentifiableObjectStore;
+import org.junit.Test;
 
 /**
  * @author Lars Helge Overland
+ * @version $Id$
  */
 public class DocumentStoreTest
     extends DhisSpringTest
 {
-    @Autowired
-    private DocumentStore documentStore;
-
+    @Resource(name="org.hisp.dhis.document.DocumentStore")
+    private GenericIdentifiableObjectStore<Document> documentStore;
+    
     private Document documentA;
     private Document documentB;
     private Document documentC;
-
+    
     @Override
     public void setUpTest()
-    {
+    {  
         documentA = new Document( "DocumentA", "UrlA", true, null );
         documentB = new Document( "DocumentB", "UrlB", true, null );
         documentC = new Document( "DocumentC", "UrlC", false, null );
@@ -61,7 +67,7 @@ public class DocumentStoreTest
     public void testSaveGet()
     {
         int id = documentStore.save( documentA );
-
+        
         assertEquals( documentA, documentStore.get( id ) );
     }
 
@@ -70,15 +76,15 @@ public class DocumentStoreTest
     {
         int idA = documentStore.save( documentA );
         int idB = documentStore.save( documentB );
-
+        
         assertNotNull( documentStore.get( idA ) );
         assertNotNull( documentStore.get( idB ) );
-
+        
         documentStore.delete( documentA );
-
+        
         assertNull( documentStore.get( idA ) );
         assertNotNull( documentStore.get( idB ) );
-
+        
         documentStore.delete( documentB );
 
         assertNull( documentStore.get( idA ) );
@@ -91,13 +97,13 @@ public class DocumentStoreTest
         documentStore.save( documentA );
         documentStore.save( documentB );
         documentStore.save( documentC );
-
+        
         List<Document> actual = documentStore.getAll();
-
+        
         assertEquals( 3, actual.size() );
         assertTrue( actual.contains( documentA ) );
         assertTrue( actual.contains( documentB ) );
-        assertTrue( actual.contains( documentC ) );
+        assertTrue( actual.contains( documentC ) );        
     }
 
     @Test
@@ -106,7 +112,7 @@ public class DocumentStoreTest
         documentStore.save( documentA );
         documentStore.save( documentB );
         documentStore.save( documentC );
-
+        
         assertEquals( documentA, documentStore.getByName( "DocumentA" ) );
     }
 }

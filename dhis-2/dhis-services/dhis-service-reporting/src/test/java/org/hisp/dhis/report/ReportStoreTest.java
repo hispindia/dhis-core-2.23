@@ -28,15 +28,21 @@ package org.hisp.dhis.report;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.GenericStore;
 import org.hisp.dhis.reporttable.ReportTable;
 import org.hisp.dhis.reporttable.ReportTableService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * @author Lars Helge Overland
@@ -44,12 +50,12 @@ import static org.junit.Assert.*;
 public class ReportStoreTest
     extends DhisSpringTest
 {
-    @Autowired
-    private ReportStore reportStore;
-
+    @Resource(name="org.hisp.dhis.report.ReportStore")
+    private GenericStore<Report> reportStore;
+    
     @Autowired
     private ReportTableService reportTableService;
-
+    
     private ReportTable reportTableA;
 
     // -------------------------------------------------------------------------
@@ -74,10 +80,10 @@ public class ReportStoreTest
     {
         Report reportA = new Report( "ReportA", ReportType.JASPER_REPORT_TABLE, "DesignA", reportTableA );
         Report reportB = new Report( "ReportB", ReportType.JASPER_REPORT_TABLE, "DesignB", reportTableA );
-
+        
         int idA = reportStore.save( reportA );
         int idB = reportStore.save( reportB );
-
+        
         assertEquals( reportA, reportStore.get( idA ) );
         assertEquals( reportB, reportStore.get( idB ) );
     }
@@ -87,22 +93,22 @@ public class ReportStoreTest
     {
         Report reportA = new Report( "ReportA", ReportType.JASPER_REPORT_TABLE, "DesignA", reportTableA );
         Report reportB = new Report( "ReportB", ReportType.JASPER_REPORT_TABLE, "DesignB", reportTableA );
-
+        
         int idA = reportStore.save( reportA );
         int idB = reportStore.save( reportB );
-
+        
         assertEquals( reportA, reportStore.get( idA ) );
         assertEquals( reportB, reportStore.get( idB ) );
-
+        
         reportA.setDesignContent( "UpdatedDesignA" );
         reportB.setDesignContent( "UpdatedDesignB" );
-
+        
         int updatedIdA = reportStore.save( reportA );
         int updatedIdB = reportStore.save( reportB );
-
+        
         assertEquals( idA, updatedIdA );
         assertEquals( idB, updatedIdB );
-
+        
         assertEquals( "UpdatedDesignA", reportStore.get( updatedIdA ).getDesignContent() );
         assertEquals( "UpdatedDesignB", reportStore.get( updatedIdB ).getDesignContent() );
     }
@@ -112,13 +118,13 @@ public class ReportStoreTest
     {
         Report reportA = new Report( "ReportA", ReportType.JASPER_REPORT_TABLE, "DesignA", reportTableA );
         Report reportB = new Report( "ReportB", ReportType.JASPER_REPORT_TABLE, "DesignB", reportTableA );
-
+        
         int idA = reportStore.save( reportA );
         int idB = reportStore.save( reportB );
-
+        
         assertNotNull( reportStore.get( idA ) );
         assertNotNull( reportStore.get( idB ) );
-
+        
         reportStore.delete( reportA );
 
         assertNull( reportStore.get( idA ) );
@@ -135,15 +141,15 @@ public class ReportStoreTest
     {
         Report reportA = new Report( "ReportA", ReportType.JASPER_REPORT_TABLE, "DesignA", reportTableA );
         Report reportB = new Report( "ReportB", ReportType.JASPER_REPORT_TABLE, "DesignB", reportTableA );
-
+        
         reportStore.save( reportA );
         reportStore.save( reportB );
-
+        
         List<Report> reports = reportStore.getAll();
-
+        
         assertNotNull( reports );
         assertEquals( 2, reports.size() );
         assertTrue( reports.contains( reportA ) );
-        assertTrue( reports.contains( reportB ) );
+        assertTrue( reports.contains( reportB ) );        
     }
 }
