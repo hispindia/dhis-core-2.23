@@ -847,6 +847,7 @@ div#searchOuTree h4{
 .section-label{
     font-size: 14pt;
     color: #585D61;
+    padding-bottom: 5px;
     border-bottom: 1px solid #e3e3e3;
 }
 
@@ -1934,4 +1935,8 @@ a.disable-link-effects:focus {
 .select2-hidden-accessible {
     display: none !important; 
     visibility: hidden !important;
+}
+
+.section-spacing {
+    margin-top: 20px;
 }

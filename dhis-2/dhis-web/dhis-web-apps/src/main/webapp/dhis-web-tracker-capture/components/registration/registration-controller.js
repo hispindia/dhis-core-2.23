@@ -27,7 +27,7 @@ trackerCapture.controller('RegistrationController',
     $scope.maxOptionSize = 30;
     $scope.today = DateUtils.getToday();
     $scope.trackedEntityForm = null;
-    $scope.customForm = null;    
+    $scope.customRegistrationForm = null;    
     $scope.selectedTei = {};
     $scope.tei = {};    
     $scope.hiddenFields = {};    
@@ -68,7 +68,7 @@ trackerCapture.controller('RegistrationController',
 
     var getProgramRules = function(){
         $scope.trackedEntityForm = null;
-        $scope.customForm = null;        
+        $scope.customRegistrationForm = null;        
         $scope.allProgramRules = {constants: [], programIndicators: {}, programValidations: [], programVariables: [], programRules: []};
         if( angular.isObject($scope.selectedProgram) && $scope.selectedProgram.id ){
             TrackerRulesFactory.getRules($scope.selectedProgram.id).then(function(rules){                    
@@ -114,17 +114,37 @@ trackerCapture.controller('RegistrationController',
         
     $scope.getAttributes = function(_mode){        
         var mode = _mode ? _mode : 'ENROLLMENT';
+        $scope.customRegistrationFormExists = false;
+        $scope.customForm = null;
+        $scope.schedulingEnabled = true;
         AttributesFactory.getByProgram($scope.selectedProgram).then(function(atts){            
-            $scope.attributes = TEIGridService.generateGridColumns(atts, null,false).columns;
-            $scope.customFormExists = false;
-            if($scope.selectedProgram && $scope.selectedProgram.id && $scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode){
-                $scope.customFormExists = true;
-                $scope.trackedEntityForm = $scope.selectedProgram.dataEntryForm;  
-                $scope.trackedEntityForm.attributes = $scope.attributes;
-                $scope.trackedEntityForm.selectIncidentDatesInFuture = $scope.selectedProgram.selectIncidentDatesInFuture;
-                $scope.trackedEntityForm.selectEnrollmentDatesInFuture = $scope.selectedProgram.selectEnrollmentDatesInFuture;
-                $scope.trackedEntityForm.displayIncidentDate = $scope.selectedProgram.displayIncidentDate;
-                $scope.customForm = CustomFormService.getForTrackedEntity($scope.trackedEntityForm, mode);
+            $scope.attributes = TEIGridService.generateGridColumns(atts, null,false).columns;            
+            if($scope.selectedProgram && $scope.selectedProgram.id ){                
+                if( $scope.selectedProgram.dataEntryForm && $scope.selectedProgram.dataEntryForm.htmlCode){
+                    $scope.customRegistrationFormExists = true;
+                    $scope.trackedEntityForm = $scope.selectedProgram.dataEntryForm;  
+                    $scope.trackedEntityForm.attributes = $scope.attributes;
+                    $scope.trackedEntityForm.selectIncidentDatesInFuture = $scope.selectedProgram.selectIncidentDatesInFuture;
+                    $scope.trackedEntityForm.selectEnrollmentDatesInFuture = $scope.selectedProgram.selectEnrollmentDatesInFuture;
+                    $scope.trackedEntityForm.displayIncidentDate = $scope.selectedProgram.displayIncidentDate;
+                    $scope.customRegistrationForm = CustomFormService.getForTrackedEntity($scope.trackedEntityForm, mode);
+                }
+                
+                if( $scope.selectedProgram.programStages && $scope.selectedProgram.programStages.length === 1 && $scope.registrationMode === 'REGISTRATION'){
+                    $scope.prStDes = [];
+                    $scope.currentEvent = {enrollmentStatus: 'ACTIVE'};
+                    $scope.currentStage = $scope.selectedProgram.programStages[0];
+                    $scope.currentEvent.excecutionDateLabel = $scope.currentStage.excecutionDateLabel;                    
+                    $scope.selectedEnrollment.status = 'ACTIVE';
+                    angular.forEach($scope.currentStage.programStageDataElements, function (prStDe) {
+                        $scope.prStDes[prStDe.dataElement.id] = prStDe;
+                        if(prStDe.allowProvidedElsewhere){
+                            $scope.allowProvidedElsewhereExists[$scope.currentStage.id] = true;
+                        }
+                    });
+                    
+                    $scope.customForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);
+                }                
             }
         });
     }; 
