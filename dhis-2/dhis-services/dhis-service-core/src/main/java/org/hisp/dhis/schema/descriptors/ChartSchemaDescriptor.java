@@ -54,7 +54,7 @@ public class ChartSchemaDescriptor implements SchemaDescriptor
         Schema schema = new Schema( Chart.class, SINGULAR, PLURAL );
         schema.setRelativeApiEndpoint( API_ENDPOINT );
         schema.setShareable( true );
-        schema.setOrder( 1360 );
+        schema.setOrder( 2000 );
 
         schema.getAuthorities().add( new Authority( AuthorityType.CREATE_PUBLIC, Lists.newArrayList( "F_CHART_PUBLIC_ADD" ) ) );
         schema.getAuthorities().add( new Authority( AuthorityType.EXTERNALIZE, Lists.newArrayList( "F_CHART_EXTERNAL" ) ) );

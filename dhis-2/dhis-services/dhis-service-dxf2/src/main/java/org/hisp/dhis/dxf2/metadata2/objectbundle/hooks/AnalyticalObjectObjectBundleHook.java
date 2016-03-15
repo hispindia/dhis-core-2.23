@@ -1,4 +1,4 @@
-package org.hisp.dhis.schema.descriptors;
+package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,37 +28,34 @@ package org.hisp.dhis.schema.descriptors;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.collect.Lists;
-import org.hisp.dhis.mapping.Map;
-import org.hisp.dhis.security.Authority;
-import org.hisp.dhis.security.AuthorityType;
-import org.hisp.dhis.schema.Schema;
-import org.hisp.dhis.schema.SchemaDescriptor;
+import org.hisp.dhis.common.AnalyticalObject;
+import org.hisp.dhis.common.BaseAnalyticalObject;
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
+import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
+@Order( 10 )
 @Component
-public class MapSchemaDescriptor implements SchemaDescriptor
+public class AnalyticalObjectObjectBundleHook
+    extends AbstractObjectBundleHook
 {
-    public static final String SINGULAR = "map";
-
-    public static final String PLURAL = "maps";
-
-    public static final String API_ENDPOINT = "/" + PLURAL;
+    @Override
+    public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    {
+        if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
+        BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
+        analyticalObject.getDataDimensionItems().clear();
+    }
 
     @Override
-    public Schema getSchema()
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
-        Schema schema = new Schema( Map.class, SINGULAR, PLURAL );
-        schema.setRelativeApiEndpoint( API_ENDPOINT );
-        schema.setShareable( true );
-        schema.setOrder( 2000 );
-
-        schema.getAuthorities().add( new Authority( AuthorityType.CREATE_PUBLIC, Lists.newArrayList( "F_MAP_PUBLIC_ADD" ) ) );
-        schema.getAuthorities().add( new Authority( AuthorityType.EXTERNALIZE, Lists.newArrayList( "F_MAP_EXTERNAL" ) ) );
-
-        return schema;
+        if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
+        BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
+        analyticalObject.getDataDimensionItems().clear();
     }
 }

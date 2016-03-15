@@ -39,7 +39,6 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.UserService;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -77,7 +76,6 @@ public class ObjectBundleServiceFavoritesTest
     }
 
     @Test
-    @Ignore
     public void testCreateMetadataWithCharts1() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
