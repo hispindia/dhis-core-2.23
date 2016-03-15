@@ -1134,6 +1134,8 @@ public class ObjectBundleServiceTest
     @Test
     public void testCreateUsers() throws IOException
     {
+        createUserAndInjectSecurityContext( true );
+
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
             new ClassPathResource( "dxf2/users.json" ).getInputStream(), RenderFormat.JSON );
 
@@ -1144,11 +1146,11 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
         objectBundleService.commit( bundle );
 
         List<User> users = manager.getAll( User.class );
-        assertEquals( 3, users.size() );
+        assertEquals( 4, users.size() );
 
         User userA = manager.get( User.class, "sPWjoHSY03y" );
         User userB = manager.get( User.class, "MwhEJUnTHkn" );
@@ -1174,6 +1176,8 @@ public class ObjectBundleServiceTest
     @Test
     public void testUpdateUsers() throws IOException
     {
+        createUserAndInjectSecurityContext( true );
+
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
             new ClassPathResource( "dxf2/users.json" ).getInputStream(), RenderFormat.JSON );
 
@@ -1184,7 +1188,7 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
         objectBundleService.commit( bundle );
 
         metadata = renderService.fromMetadata( new ClassPathResource( "dxf2/users_update.json" ).getInputStream(), RenderFormat.JSON );
@@ -1196,11 +1200,12 @@ public class ObjectBundleServiceTest
 
         bundle = objectBundleService.create( params );
         validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        System.err.println( validate.getObjectErrorReports() );
+        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5001 ).size() );
         objectBundleService.commit( bundle );
 
         List<User> users = manager.getAll( User.class );
-        assertEquals( 3, users.size() );
+        assertEquals( 4, users.size() );
 
         User userA = manager.get( User.class, "sPWjoHSY03y" );
         User userB = manager.get( User.class, "MwhEJUnTHkn" );

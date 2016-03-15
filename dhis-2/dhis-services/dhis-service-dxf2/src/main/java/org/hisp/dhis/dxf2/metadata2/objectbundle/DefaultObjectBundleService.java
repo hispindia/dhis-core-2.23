@@ -32,6 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dbms.DbmsManager;
@@ -51,6 +52,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -355,7 +357,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
             objectBundleHooks.forEach( hook -> hook.preCreate( object, bundle ) );
 
             preheatService.connectReferences( object, bundle.getPreheat(), bundle.getPreheatIdentifier() );
-            manager.save( object, bundle.getUser(), false );
+
+            prepare( object, bundle );
+            session.save( object );
 
             bundle.getPreheat().replace( bundle.getPreheatIdentifier(), object );
 
@@ -389,7 +393,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
             persistedObject.mergeWith( object, bundle.getMergeMode() );
             persistedObject.mergeSharingWith( object );
 
-            manager.update( persistedObject, bundle.getUser() );
+            prepare( persistedObject, bundle );
+            session.update( persistedObject );
 
             objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
 
@@ -444,5 +449,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
         } );
 
         return klasses;
+    }
+
+    private void prepare( IdentifiableObject object, ObjectBundle bundle )
+    {
+        BaseIdentifiableObject identifiableObject = (BaseIdentifiableObject) object;
+
+        if ( identifiableObject.getUser() == null ) identifiableObject.setUser( bundle.getUser() );
+        if ( identifiableObject.getUserGroupAccesses() == null ) identifiableObject.setUserGroupAccesses( new HashSet<>() );
     }
 }
