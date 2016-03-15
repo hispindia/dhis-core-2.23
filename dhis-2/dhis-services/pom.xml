@@ -24,8 +24,8 @@
     <!-- Level 2 -->
     <module>dhis-service-dxf2</module>
     <module>dhis-service-mobile</module>
-    <!-- Level 3 -->
     <module>dhis-service-administration</module>
+    <!-- Level 3 -->
     <module>dhis-service-analytics</module>
     <!-- Level 4 -->
     <module>dhis-service-reporting</module>
