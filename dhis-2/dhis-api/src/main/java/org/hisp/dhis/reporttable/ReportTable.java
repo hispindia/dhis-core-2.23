@@ -404,16 +404,16 @@ public class ReportTable
     }
 
     /**
-     * Generates a pretty column name based on short-names of the argument
-     * objects. Null arguments are ignored in the name.
+     * Generates a pretty column name based on the given display property of the 
+     * argument objects. Null arguments are ignored in the name.
      */
-    public static String getPrettyColumnName( List<DimensionalItemObject> objects )
+    public static String getPrettyColumnName( List<DimensionalItemObject> objects, DisplayProperty displayProperty )
     {
         StringBuilder builder = new StringBuilder();
 
         for ( DimensionalItemObject object : objects )
         {
-            builder.append( object != null ? (object.getDisplayShortName() + SPACE) : EMPTY );
+            builder.append( object != null ? ( object.getDisplayProperty( displayProperty ) + SPACE ) : EMPTY );
         }
 
         return builder.length() > 0 ? builder.substring( 0, builder.lastIndexOf( SPACE ) ) : TOTAL_COLUMN_PRETTY_NAME;
@@ -439,7 +439,7 @@ public class ReportTable
             }
             else
             {
-                buffer.append( object != null ? (object.getShortName() + SEPARATOR) : EMPTY );
+                buffer.append( object != null ? ( object.getShortName() + SEPARATOR ) : EMPTY );
             }
         }
 
@@ -576,7 +576,7 @@ public class ReportTable
 
         for ( List<DimensionalItemObject> column : gridColumns )
         {
-            grid.addHeader( new GridHeader( getPrettyColumnName( column ), getColumnName( column ), Double.class
+            grid.addHeader( new GridHeader( getPrettyColumnName( column, displayProperty ), getColumnName( column ), Double.class
                 .getName(), false, false ) );
         }
 

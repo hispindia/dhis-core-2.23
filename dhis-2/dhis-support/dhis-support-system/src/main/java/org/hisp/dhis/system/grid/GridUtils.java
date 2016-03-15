@@ -303,7 +303,7 @@ public class GridUtils
         
         for ( GridHeader header : headers )
         {
-            sheet.addCell( new Label( columnIndex++, rowNumber, header.getColumn(), XLS_FORMAT_LABEL ) );
+            sheet.addCell( new Label( columnIndex++, rowNumber, header.getName(), XLS_FORMAT_LABEL ) );
         }
 
         rowNumber++;
