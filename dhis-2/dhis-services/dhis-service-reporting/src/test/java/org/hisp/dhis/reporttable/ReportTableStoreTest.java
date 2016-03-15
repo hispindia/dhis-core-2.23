@@ -28,18 +28,7 @@ package org.hisp.dhis.reporttable;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.hisp.dhis.DhisSpringTest;
-import org.hisp.dhis.common.GenericIdentifiableObjectStore;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.dataset.DataSet;
@@ -57,6 +46,11 @@ import org.hisp.dhis.period.RelativePeriods;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.*;
+
 /**
  * @author Lars Helge Overland
  * @version $Id$
@@ -64,8 +58,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class ReportTableStoreTest
     extends DhisSpringTest
 {
-    @Resource( name = "org.hisp.dhis.reporttable.ReportTableStore" )
-    private GenericIdentifiableObjectStore<ReportTable> reportTableStore;
+    @Autowired
+    private ReportTableStore reportTableStore;
 
     @Autowired
     private DataElementService dataElementService;
@@ -80,8 +74,8 @@ public class ReportTableStoreTest
     private PeriodService periodService;
 
     @Autowired
-    private OrganisationUnitService  organisationUnitService ;
-    
+    private OrganisationUnitService organisationUnitService;
+
     private IndicatorType indicatorType;
 
     private List<DataElement> dataElements;
@@ -89,28 +83,28 @@ public class ReportTableStoreTest
     private List<DataSet> dataSets;
     private List<Period> periods;
     private List<OrganisationUnit> units;
-    
+
     private PeriodType periodType;
 
     private DataElement dataElementA;
     private DataElement dataElementB;
-        
+
     private Indicator indicatorA;
     private Indicator indicatorB;
-    
+
     private DataSet dataSetA;
     private DataSet dataSetB;
-    
+
     private Period periodA;
     private Period periodB;
-    
+
     private OrganisationUnit unitA;
     private OrganisationUnit unitB;
 
     private RelativePeriods relativesA;
     private RelativePeriods relativesB;
     private RelativePeriods relativesC;
-        
+
     @Override
     public void setUpTest()
         throws Exception
@@ -120,69 +114,69 @@ public class ReportTableStoreTest
         dataSets = new ArrayList<>();
         periods = new ArrayList<>();
         units = new ArrayList<>();
-       
+
         indicatorType = createIndicatorType( 'A' );
-        
+
         indicatorService.addIndicatorType( indicatorType );
-        
+
         periodType = PeriodType.getPeriodTypeByName( MonthlyPeriodType.NAME );
 
         dataElementA = createDataElement( 'A' );
         dataElementB = createDataElement( 'B' );
-        
+
         dataElementService.addDataElement( dataElementA );
         dataElementService.addDataElement( dataElementB );
-                
+
         dataElements.add( dataElementA );
         dataElements.add( dataElementB );
-        
+
         indicatorA = createIndicator( 'A', indicatorType );
         indicatorB = createIndicator( 'B', indicatorType );
-        
+
         indicatorService.addIndicator( indicatorA );
         indicatorService.addIndicator( indicatorB );
-        
+
         indicators.add( indicatorA );
         indicators.add( indicatorB );
-        
+
         dataSetA = createDataSet( 'A', periodType );
         dataSetB = createDataSet( 'B', periodType );
-        
+
         dataSetService.addDataSet( dataSetA );
         dataSetService.addDataSet( dataSetB );
-        
+
         dataSets.add( dataSetA );
         dataSets.add( dataSetB );
-        
+
         periodA = createPeriod( periodType, getDate( 2000, 1, 1 ), getDate( 2000, 1, 31 ) );
         periodB = createPeriod( periodType, getDate( 2000, 2, 1 ), getDate( 2000, 2, 28 ) );
-        
+
         periodService.addPeriod( periodA );
         periodService.addPeriod( periodB );
-        
+
         periods.add( periodA );
-        periods.add( periodB );        
+        periods.add( periodB );
 
         unitA = createOrganisationUnit( 'A' );
-        unitB = createOrganisationUnit( 'B' );        
-        
+        unitB = createOrganisationUnit( 'B' );
+
         organisationUnitService.addOrganisationUnit( unitA );
         organisationUnitService.addOrganisationUnit( unitB );
-        
+
         units.add( unitA );
         units.add( unitB );
 
-        relativesA = new RelativePeriods();        
+        relativesA = new RelativePeriods();
         relativesA.setLastMonth( true );
         relativesA.setThisYear( true );
 
-        relativesB = new RelativePeriods();        
+        relativesB = new RelativePeriods();
         relativesB.setLastMonth( true );
         relativesB.setThisYear( true );
 
-        relativesC = new RelativePeriods();        
+        relativesC = new RelativePeriods();
         relativesC.setLastMonth( true );
-        relativesC.setThisYear( true );    
+        relativesC.setThisYear( true );
     }
 
     @Test
@@ -190,28 +184,28 @@ public class ReportTableStoreTest
     {
         ReportTable reportTableA = new ReportTable( "Immunization",
             new ArrayList<>(), indicators, new ArrayList<>(), periods, units,
-            true, true, false, relativesA, null, "january_2000" );        
+            true, true, false, relativesA, null, "january_2000" );
         ReportTable reportTableB = new ReportTable( "Prescriptions",
             dataElements, new ArrayList<>(), new ArrayList<>(), periods, units,
             false, false, true, relativesB, null, "january_2000" );
         ReportTable reportTableC = new ReportTable( "Assualt",
             new ArrayList<>(), new ArrayList<>(), dataSets, periods, units,
             false, false, true, relativesC, null, "january_2000" );
-        
+
         int idA = reportTableStore.save( reportTableA );
         int idB = reportTableStore.save( reportTableB );
         int idC = reportTableStore.save( reportTableC );
-        
+
         reportTableA = reportTableStore.get( idA );
         reportTableB = reportTableStore.get( idB );
         reportTableC = reportTableStore.get( idC );
-        
+
         assertEquals( "Immunization", reportTableA.getName() );
         assertEquals( indicators, reportTableA.getIndicators() );
         assertEquals( periods, reportTableA.getPeriods() );
         assertEquals( units, reportTableA.getOrganisationUnits() );
         assertEquals( relativesA, reportTableA.getRelatives() );
-        
+
         assertEquals( "Prescriptions", reportTableB.getName() );
         assertEquals( dataElements, reportTableB.getDataElements() );
         assertEquals( periods, reportTableB.getPeriods() );
@@ -229,22 +223,22 @@ public class ReportTableStoreTest
     {
         ReportTable reportTableA = new ReportTable( "Immunization",
             new ArrayList<>(), indicators, new ArrayList<>(), periods, units,
-            true, true, false, relativesA, null, "january_2000" );        
+            true, true, false, relativesA, null, "january_2000" );
         ReportTable reportTableB = new ReportTable( "Prescriptions",
             dataElements, new ArrayList<>(), new ArrayList<>(), periods, units,
             false, false, true, relativesB, null, "january_2000" );
-        
+
         int idA = reportTableStore.save( reportTableA );
         int idB = reportTableStore.save( reportTableB );
-        
+
         assertNotNull( reportTableStore.get( idA ) );
         assertNotNull( reportTableStore.get( idB ) );
-        
+
         reportTableStore.delete( reportTableA );
 
         assertNull( reportTableStore.get( idA ) );
         assertNotNull( reportTableStore.get( idB ) );
-        
+
         reportTableStore.delete( reportTableB );
 
         assertNull( reportTableStore.get( idA ) );
@@ -256,16 +250,16 @@ public class ReportTableStoreTest
     {
         ReportTable reportTableA = new ReportTable( "Immunization",
             new ArrayList<>(), indicators, new ArrayList<>(), periods, units,
-            true, true, false, relativesA, null, "january_2000" );        
+            true, true, false, relativesA, null, "january_2000" );
         ReportTable reportTableB = new ReportTable( "Prescriptions",
             dataElements, new ArrayList<>(), new ArrayList<>(), periods, units,
             false, false, true, relativesB, null, "january_2000" );
-        
+
         reportTableStore.save( reportTableA );
         reportTableStore.save( reportTableB );
-        
+
         List<ReportTable> reportTables = reportTableStore.getAll();
-        
+
         assertTrue( reportTables.contains( reportTableA ) );
         assertTrue( reportTables.contains( reportTableB ) );
     }
@@ -275,16 +269,16 @@ public class ReportTableStoreTest
     {
         ReportTable reportTableA = new ReportTable( "Immunization",
             new ArrayList<>(), indicators, new ArrayList<>(), periods, units,
-            true, true, false, relativesA, null, "january_2000" );        
+            true, true, false, relativesA, null, "january_2000" );
         ReportTable reportTableB = new ReportTable( "Prescriptions",
             dataElements, new ArrayList<>(), new ArrayList<>(), periods, units,
             false, false, true, relativesB, null, "january_2000" );
-        
+
         reportTableStore.save( reportTableA );
         reportTableStore.save( reportTableB );
-        
+
         ReportTable receivedReportTableA = reportTableStore.getByName( "Immunization" );
-        
+
         assertNotNull( receivedReportTableA );
         assertEquals( reportTableA.getName(), receivedReportTableA.getName() );
     }

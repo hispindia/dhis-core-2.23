@@ -6,7 +6,7 @@
 
   <!-- ReportTable -->
 
-  <bean id="org.hisp.dhis.reporttable.ReportTableStore" class="org.hisp.dhis.common.hibernate.HibernateAnalyticalObjectStore">
+  <bean id="org.hisp.dhis.reporttable.ReportTableStore" class="org.hisp.dhis.reporttable.hibernate.HibernateReportTableStore">
     <property name="clazz" value="org.hisp.dhis.reporttable.ReportTable" />
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="cacheable" value="true" />
@@ -22,14 +22,13 @@
 
   <!-- Report -->
 
-  <bean id="org.hisp.dhis.report.ReportStore" class="org.hisp.dhis.common.hibernate.HibernateIdentifiableObjectStore">
+  <bean id="org.hisp.dhis.report.ReportStore" class="org.hisp.dhis.report.hibernate.HibernateReportStore">
     <property name="clazz" value="org.hisp.dhis.report.Report" />
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="cacheable" value="true" />
   </bean>
 
   <bean id="org.hisp.dhis.report.ReportService" class="org.hisp.dhis.report.impl.DefaultReportService">
-    <property name="reportStore" ref="org.hisp.dhis.report.ReportStore" />
     <property name="reportTableService" ref="org.hisp.dhis.reporttable.ReportTableService" />
     <property name="constantService" ref="org.hisp.dhis.constant.ConstantService" />
     <property name="organisationUnitService" ref="org.hisp.dhis.organisationunit.OrganisationUnitService" />
@@ -39,14 +38,13 @@
 
   <!-- Chart -->
 
-  <bean id="org.hisp.dhis.chart.ChartStore" class="org.hisp.dhis.common.hibernate.HibernateAnalyticalObjectStore">
+  <bean id="org.hisp.dhis.chart.ChartStore" class="org.hisp.dhis.chart.hibernate.HibernateChartStore">
     <property name="clazz" value="org.hisp.dhis.chart.Chart" />
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="cacheable" value="true" />
   </bean>
 
   <bean id="org.hisp.dhis.chart.ChartService" class="org.hisp.dhis.chart.impl.DefaultChartService">
-    <property name="chartStore" ref="org.hisp.dhis.chart.ChartStore" />
     <property name="periodService" ref="org.hisp.dhis.period.PeriodService" />
     <property name="dataValueService" ref="org.hisp.dhis.datavalue.DataValueService" />
     <property name="minMaxDataElementService" ref="org.hisp.dhis.minmax.MinMaxDataElementService" />
@@ -58,15 +56,13 @@
 
   <!-- Document -->
 
-  <bean id="org.hisp.dhis.document.DocumentStore" class="org.hisp.dhis.common.hibernate.HibernateIdentifiableObjectStore">
+  <bean id="org.hisp.dhis.document.DocumentStore" class="org.hisp.dhis.document.hibernate.HibernateDocumentStore">
     <property name="clazz" value="org.hisp.dhis.document.Document" />
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="cacheable" value="true" />
   </bean>
 
-  <bean id="org.hisp.dhis.document.DocumentService" class="org.hisp.dhis.document.impl.DefaultDocumentService">
-    <property name="documentStore" ref="org.hisp.dhis.document.DocumentStore" />
-  </bean>
+  <bean id="org.hisp.dhis.document.DocumentService" class="org.hisp.dhis.document.impl.DefaultDocumentService" />
 
   <!-- DataSetCompleteness -->
 
@@ -178,9 +174,9 @@
         <entry key="analyticsLast3YearsTask" value-ref="analyticsLast3YearsTask" />
         <entry key="monitoringLastDayTask" value-ref="monitoringLastDayTask" />
         <entry key="dataSynchTask" value-ref="dataSynchTask" />
-        <entry key="smsSchedulerTask" value-ref="smsSchedulerTask" />    
-        <entry key="sendScheduledMessageTask" value-ref="sendScheduledMessageTask" />  
-        <entry key="sendScheduledMessageTaskNow" value-ref="sendScheduledMessageTaskNow" />  
+        <entry key="smsSchedulerTask" value-ref="smsSchedulerTask" />
+        <entry key="sendScheduledMessageTask" value-ref="sendScheduledMessageTask" />
+        <entry key="sendScheduledMessageTaskNow" value-ref="sendScheduledMessageTaskNow" />
       </map>
     </property>
   </bean>
@@ -210,7 +206,7 @@
       </list>
     </property>
   </bean>
-    
+
   <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="org.hisp.dhis.system.startup.StartupRoutineExecutor" />
     <property name="targetMethod" value="addStartupRoutines" />
@@ -222,7 +218,7 @@
       </list>
     </property>
   </bean>
-  
+
   <!-- DeletionHandler -->
 
   <bean id="org.hisp.dhis.report.ReportDeletionHandler" class="org.hisp.dhis.report.ReportDeletionHandler">
