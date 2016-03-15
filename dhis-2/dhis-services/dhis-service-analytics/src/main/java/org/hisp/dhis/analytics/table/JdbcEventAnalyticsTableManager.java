@@ -71,7 +71,7 @@ public class JdbcEventAnalyticsTableManager
     @Transactional
     public List<AnalyticsTable> getTables( Date earliest )
     {
-        log.info( "Get tables using earliest: " + earliest );
+        log.info( "Get tables using earliest: " + earliest + ", spatial support: " + databaseInfo.isSpatialSupport() );
 
         return getTables( getDataYears( earliest ) );
     }
@@ -330,12 +330,18 @@ public class JdbcEventAnalyticsTableManager
 
         columns.addAll( Lists.newArrayList( psi, pi, ps, erd, id, ed, dd, cd, longitude, latitude, ou, oun, ouc ) );
 
+        if ( databaseInfo.isSpatialSupport() )
+        {
+            String[] geo = { quote( "geom" ), "geometry(Point, 4326)", "(select ST_SetSRID(ST_MakePoint(psi.longitude, psi.latitude), 4326)) as geom" };
+            columns.add( geo );
+        }
+        
         if ( table.hasProgram() && table.getProgram().isRegistration() )
         {
             String[] tei = { quote( "tei" ), "character(11)", "tei.uid" };
             columns.add( tei );
         }
-        
+                
         return columns;
     }
 
