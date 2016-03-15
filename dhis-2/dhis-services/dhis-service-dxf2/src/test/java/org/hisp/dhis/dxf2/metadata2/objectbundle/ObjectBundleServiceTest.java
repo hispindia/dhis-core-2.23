@@ -1200,7 +1200,6 @@ public class ObjectBundleServiceTest
 
         bundle = objectBundleService.create( params );
         validate = objectBundleService.validate( bundle );
-        System.err.println( validate.getObjectErrorReports() );
         assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5001 ).size() );
         objectBundleService.commit( bundle );
 
