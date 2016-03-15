@@ -30,6 +30,8 @@ package org.hisp.dhis.user;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The main interface for working with user settings. Implementation need to get
@@ -128,6 +130,14 @@ public interface UserSettingService
      * @return all user settings belonging to the current user.
      */
     List<UserSetting> getAllUserSettings();
+
+    /**
+     * Returns all specified user settings. If any user settings have not been set,
+     * system settings will be used as a fallback.
+     * @param names the settings to retrieve
+     * @return a map of setting names and their values
+     */
+    Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names );
     
     /**
      * Invalidates in-memory caches.

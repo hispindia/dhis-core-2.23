@@ -29,18 +29,9 @@ package org.hisp.dhis.webapi.controller;
  */
 
 import com.google.common.collect.Sets;
-import org.hisp.dhis.render.RenderService;
-
 import org.hisp.dhis.dxf2.webmessage.WebMessageException;
-import org.hisp.dhis.setting.SettingKey;
-import org.hisp.dhis.setting.SystemSettingManager;
-import org.hisp.dhis.user.CurrentUserService;
-import org.hisp.dhis.user.User;
-import org.hisp.dhis.user.UserCredentials;
-import org.hisp.dhis.user.UserService;
-import org.hisp.dhis.user.UserSetting;
-import org.hisp.dhis.user.UserSettingKey;
-import org.hisp.dhis.user.UserSettingService;
+import org.hisp.dhis.render.RenderService;
+import org.hisp.dhis.user.*;
 import org.hisp.dhis.util.ObjectUtils;
 import org.hisp.dhis.webapi.service.WebMessageService;
 import org.hisp.dhis.webapi.utils.ContextUtils;
@@ -48,18 +39,15 @@ import org.hisp.dhis.webapi.utils.WebMessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -69,9 +57,6 @@ import java.util.stream.Collectors;
 @RequestMapping( "/userSettings" )
 public class UserSettingController
 {
-    private static final Map<String, SettingKey> NAME_SETTING_KEY_MAP = Sets.newHashSet(
-        SettingKey.values() ).stream().collect( Collectors.toMap( SettingKey::getName, s -> s ) );
-
     @Autowired
     private UserSettingService userSettingService;
 
@@ -87,8 +72,8 @@ public class UserSettingController
     @Autowired
     private RenderService renderService;
 
-    @Autowired
-    private SystemSettingManager systemSettingManager;
+    private static final Set<String> USER_SETTING_NAMES = Sets.newHashSet(
+        UserSettingKey.values() ).stream().map( UserSettingKey::getName ).collect( Collectors.toSet() );
 
     // -------------------------------------------------------------------------
     // Resources
@@ -205,25 +190,10 @@ public class UserSettingController
             us = currentUserService.getCurrentUser();
         }
 
-        Map<String, Serializable> settings = new HashMap<>();
+        Map<String, Serializable> result = userSettingService
+            .getUserSettingsWithFallbackByUserAsMap( us, USER_SETTING_NAMES );
 
-        // Find fall-back for missing users settings
-        
-        userSettingService.getUserSettings( us ).stream().filter( UserSetting::hasValue )
-            .forEach( userSetting -> settings.put( userSetting.getName(), userSetting.getValue() ) );
-
-        // Add missing user settings
-        
-        for ( UserSettingKey userSettingKey : UserSettingKey.values() )
-        {
-            if ( !settings.containsKey( userSettingKey.getName() ) )
-            {
-                settings.put( userSettingKey.getName(),
-                    systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( userSettingKey.getName() ) ) );
-            }
-        }
-
-        renderService.toJson( response.getOutputStream(), settings );
+        renderService.toJson( response.getOutputStream(), result );
     }
 
     @RequestMapping( value = "/{key}", method = RequestMethod.DELETE )

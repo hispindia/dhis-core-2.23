@@ -42,12 +42,10 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -232,6 +230,22 @@ public class DefaultUserSettingService
     }
 
     @Override
+    public Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names )
+    {
+        Map<String, Serializable> result = Sets.newHashSet( getUserSettings(user) ).stream()
+            .collect( Collectors.toMap( UserSetting::getName, UserSetting::getValue ) );
+
+        names.forEach( name -> {
+            if ( !result.containsKey( name ) )
+            {
+                result.put( name, systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( name ) ) );
+            }
+        } );
+
+        return result;
+    }
+
+    @Override
     @Transactional
     public List<UserSetting> getUserSettings( User user )
     {
@@ -263,15 +277,15 @@ public class DefaultUserSettingService
         try
         {
             String username = user.isPresent() ? user.get().getUsername() : currentUserService.getCurrentUsername();
-            
+
             String cacheKey = getCacheKey( key.getName(), username );
-            
+
             Optional<Serializable> result = SETTING_CACHE.
                 get( cacheKey, () -> getUserSettingOptional( key, username ) );
 
             if ( !result.isPresent() && NAME_SETTING_KEY_MAP.containsKey( key.getName() ) )
             {
-                return Optional.ofNullable( 
+                return Optional.ofNullable(
                     systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( key.getName() ) ) );
             }
             else
