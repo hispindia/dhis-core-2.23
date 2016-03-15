@@ -29,12 +29,10 @@ trackerCapture.controller('RegistrationController',
     $scope.trackedEntityForm = null;
     $scope.customForm = null;    
     $scope.selectedTei = {};
-    $scope.tei = {};
-    $scope.registrationMode = 'REGISTRATION';    
-    $scope.hiddenFields = {};
-    
+    $scope.tei = {};    
+    $scope.hiddenFields = {};    
     $scope.helpTexts = {};
-    
+    $scope.registrationMode = 'REGISTRATION';    
 
     $scope.attributesById = CurrentSelection.getAttributesById();
     if(!$scope.attributesById){
@@ -252,7 +250,7 @@ trackerCapture.controller('RegistrationController',
         if(!$scope.selectedTei.trackedEntityInstance){
             $scope.selectedTei.trackedEntity = $scope.tei.trackedEntity = $scope.selectedProgram && $scope.selectedProgram.trackedEntity && $scope.selectedProgram.trackedEntity.id ? $scope.selectedProgram.trackedEntity.id : $scope.trackedEntities.selected.id;
             $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
-            $scope.selectedTei.attributes = $scope.selectedTei.attributes = [];
+            $scope.selectedTei.attributes = $scope.tei.attributes = [];
         }
         
         //get tei attributes and their values

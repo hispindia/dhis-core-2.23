@@ -512,12 +512,23 @@ trackerCapture.controller('TEIAddController',
                 DialogService,
                 CurrentSelection,
                 DateUtils,
+                EventUtils,
+                DHIS2EventFactory,
                 RegistrationService,
-                SessionStorageService) {
+                SessionStorageService,
+                TrackerRulesExecutionService,
+                TEIGridService) {
     $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
     $scope.enrollment = {enrollmentDate: '', incidentDate: ''};    
     $scope.attributesById = CurrentSelection.getAttributesById();
     $scope.maxOptionSize = 30;
+    $scope.today = DateUtils.getToday();
+    $scope.trackedEntityForm = null;
+    $scope.customForm = null;
+    $scope.selectedTei = {};
+    $scope.tei = {};
+    $scope.hiddenFields = {};
+    $scope.editingDisabled = false;
     
     var selections = CurrentSelection.get();
     $scope.programs = selections.prs;
@@ -547,8 +558,8 @@ trackerCapture.controller('TEIAddController',
     }
     
     var assignInheritance = function(){        
+        $scope.selectedTei = {};
         if($scope.addingRelationship){
-            $scope.selectedTei = {};
             var t = angular.copy( CurrentSelection.getRelationshipOwner() );
             angular.forEach(t.attributes, function(att){
                 t[att.attribute] = att.value;
@@ -560,9 +571,6 @@ trackerCapture.controller('TEIAddController',
                 }
             });
             t = {};
-        }
-        else{
-            $scope.selectedTei = {};
         }
     };
     
@@ -579,7 +587,7 @@ trackerCapture.controller('TEIAddController',
     if(angular.isObject($scope.programs) && $scope.programs.length === 1){
         $scope.selectedProgramForRelative = $scope.programs[0];
         AttributesFactory.getByProgram($scope.selectedProgramForRelative).then(function(atts){
-            $scope.attributes = atts;            
+            $scope.attributes = TEIGridService.generateGridColumns(atts, null,false).columns;
             assignInheritance();
             getRules();
         });
@@ -589,10 +597,9 @@ trackerCapture.controller('TEIAddController',
     $scope.$watch('selectedProgramForRelative', function() {        
         $scope.trackedEntityForm = null;
         $scope.customForm = null;
-        $scope.customFormExists = false;
-        
+        $scope.customFormExists = false;        
         AttributesFactory.getByProgram($scope.selectedProgramForRelative).then(function(atts){
-            $scope.attributes = atts;                        
+            $scope.attributes = TEIGridService.generateGridColumns(atts, null,false).columns;                       
             if($scope.selectedProgramForRelative && $scope.selectedProgramForRelative.id && $scope.selectedProgramForRelative.dataEntryForm && $scope.selectedProgramForRelative.dataEntryForm.htmlCode){
                 $scope.customFormExists = true;
                 $scope.trackedEntityForm = $scope.selectedProgramForRelative.dataEntryForm;  
@@ -602,7 +609,6 @@ trackerCapture.controller('TEIAddController',
                 $scope.trackedEntityForm.displayIncidentDate = $scope.selectedProgramForRelative.displayIncidentDate;
                 $scope.customForm = CustomFormService.getForTrackedEntity($scope.trackedEntityForm, 'RELATIONSHIP');
             }
-
             assignInheritance();
             getRules();                
         });
@@ -633,7 +639,10 @@ trackerCapture.controller('TEIAddController',
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value
-        $scope.tei = {trackedEntity: selectedTrackedEntity, orgUnit: $scope.selectedOrgUnit.id};
+        $scope.selectedTei.trackedEntity = $scope.tei.trackedEntity = selectedTrackedEntity; 
+        $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
+        $scope.selectedTei.attributes = $scope.tei.attributes = [];
+        
         var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
@@ -651,15 +660,22 @@ trackerCapture.controller('TEIAddController',
                 if($scope.selectedProgramForRelative){    
                     //enroll TEI
                     var enrollment = {};
-                        enrollment.trackedEntityInstance = $scope.tei.trackedEntityInstance;
-                        enrollment.program = $scope.selectedProgramForRelative.id;
-                        enrollment.status = 'ACTIVE';
-                        enrollment.orgUnit = $scope.selectedOrgUnit.id;
-                        enrollment.enrollmentDate = $scope.selectedEnrollment.enrollmentDate;
-                        enrollment.incidentDate = $scope.selectedEnrollment.incidentDate === '' ? $scope.selectedEnrollment.enrollmentDate : $scope.selectedEnrollment.incidentDate;
+                    enrollment.trackedEntityInstance = $scope.tei.trackedEntityInstance;
+                    enrollment.program = $scope.selectedProgramForRelative.id;
+                    enrollment.status = 'ACTIVE';
+                    enrollment.orgUnit = $scope.selectedOrgUnit.id;
+                    enrollment.enrollmentDate = $scope.selectedEnrollment.enrollmentDate;
+                    enrollment.incidentDate = $scope.selectedEnrollment.incidentDate === '' ? $scope.selectedEnrollment.enrollmentDate : $scope.selectedEnrollment.incidentDate;
                     EnrollmentService.enroll(enrollment).then(function(enrollmentResponse){
                         var en = enrollmentResponse.response && enrollmentResponse.response.importSummaries && enrollmentResponse.response.importSummaries[0] ? enrollmentResponse.response.importSummaries[0] : {};
-                        if(en.reference && en.status === 'SUCCESS'){                            
+                        if(en.reference && en.status === 'SUCCESS'){
+                            enrollment.enrollment = en.reference;
+                            $scope.selectedEnrollment = enrollment;
+                            var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgramForRelative, $scope.selectedOrgUnit, enrollment);
+                            if(dhis2Events.events.length > 0){
+                                DHIS2EventFactory.create(dhis2Events).then(function(){                                    
+                                });
+                            }
                         }
                         else{
                             //enrollment has failed
@@ -709,6 +725,49 @@ trackerCapture.controller('TEIAddController',
             }, 100);
         }        
     };
+    
+    $scope.executeRules = function () {
+        var flag = {debug: true, verbose: false};
+        
+        //repopulate attributes with updated values
+        $scope.selectedTei.attributes = [];        
+        angular.forEach($scope.attributes, function(metaAttribute){
+            var newAttributeInArray = {attribute:metaAttribute.id,
+                code:metaAttribute.code,
+                displayName:metaAttribute.displayName,
+                type:metaAttribute.valueType
+            };
+            if($scope.selectedTei[newAttributeInArray.attribute]){
+                newAttributeInArray.value = $scope.selectedTei[newAttributeInArray.attribute];
+            }
+            
+           $scope.selectedTei.attributes.push(newAttributeInArray);
+        });
+        
+        if($scope.selectedProgram && $scope.selectedProgram.id){
+            TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'registration', null, null, $scope.selectedTei, $scope.selectedEnrollment, flag);
+        }        
+    };
+    
+    //check if field is hidden
+    $scope.isHidden = function (id) {
+        //In case the field contains a value, we cant hide it. 
+        //If we hid a field with a value, it would falsely seem the user was aware that the value was entered in the UI.        
+        return $scope.selectedTei[id] ? false : $scope.hiddenFields[id];
+    };
+    
+    $scope.teiValueUpdated = function(tei, field){
+        $scope.executeRules();
+    };
+    
+    //listen for rule effect changes
+    $scope.$on('ruleeffectsupdated', function(){
+        $scope.warningMessages = [];
+        var effectResult = TrackerRulesExecutionService.processRuleEffectAttribute('registration', $scope.selectedTei, $scope.tei, $scope.attributesById, $scope.hiddenFields, $scope.warningMessages);
+        $scope.selectedTei = effectResult.selectedTei;
+        $scope.hiddenFields = effectResult.hiddenFields;
+        $scope.warningMessages = effectResult.warningMessages;
+    });
     
     $scope.interacted = function(field) {
         var status = false;
