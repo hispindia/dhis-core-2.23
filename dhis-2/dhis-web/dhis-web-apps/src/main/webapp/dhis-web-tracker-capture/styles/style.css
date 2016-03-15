@@ -884,7 +884,7 @@ div#searchOuTree h4{
     font-size: 14px;
     line-height: 1.0;
     color: #555;
-    padding: 6px 6px;
+    padding: 2px;
     margin-bottom: 5px;
     margin-top: 5px;
     vertical-align: middle;
@@ -1474,7 +1474,7 @@ input, button, select, textarea {
 }
 
 .custom-radio-group {
-    margin-left: -8px;
+    /*margin-left: -8px;*/
 }
 
 .custom-radio-container{

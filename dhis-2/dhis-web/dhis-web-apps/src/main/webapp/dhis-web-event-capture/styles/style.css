@@ -406,8 +406,7 @@ div#orgUnitTree {
 }
 
 .form-control{
-    color: black;
-    padding: 5px !important;
+    padding: 2px !important;
 }
 
 .bold {
@@ -505,7 +504,7 @@ div#orgUnitTree {
 }
 
 .custom-radio-group {
-    margin-left: -8px;
+    /*margin-left: -8px;*/
 }
 
 .custom-radio-container{
