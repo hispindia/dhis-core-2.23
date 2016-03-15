@@ -453,6 +453,13 @@ public class DefaultProgramInstanceService
         // ---------------------------------------------------------------------
         // Add program instance
         // ---------------------------------------------------------------------
+        
+        if( program.getTrackedEntity() != trackedEntityInstance.getTrackedEntity() )
+        {
+            log.warn( "Tracked entitiy instance needs to have the same tracked entity as the program" );
+
+            throw new IllegalQueryException( "Tracked entitiy instance needs to have the same tracked entity as the program" );
+        }
 
         ProgramInstance programInstance = new ProgramInstance();
         programInstance.setUid( CodeGenerator.isValidCode( uid ) ? uid : CodeGenerator.generateCode() );
