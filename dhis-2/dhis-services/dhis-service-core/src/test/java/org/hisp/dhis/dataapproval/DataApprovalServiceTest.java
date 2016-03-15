@@ -40,6 +40,8 @@ import static org.junit.Assert.fail;
 import java.util.Date;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.hisp.dhis.DhisTest;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dataapproval.exceptions.DataMayNotBeApprovedException;
@@ -108,7 +110,7 @@ public class DataApprovalServiceTest
     @Autowired
     protected CurrentUserService currentUserService;
 
-    @Autowired
+    @Resource( name = "jdbcTemplate" )
     private JdbcTemplate jdbcTemplate;
     
     // -------------------------------------------------------------------------
@@ -318,17 +320,17 @@ public class DataApprovalServiceTest
         String uidF = organisationUnitF.getUid();
 
         jdbcTemplate.execute(
-                "CREATE TABLE _orgunitstructure "+
-                "(" +
-                "  organisationunitid integer NOT NULL, " +
-                "  organisationunituid character(11) NOT NULL, " +
-                "  level integer, " +
-                "  idlevel1 integer, " +
-                "  idlevel2 integer, " +
-                "  idlevel3 integer, " +
-                "  idlevel4 integer, " +
-                "  CONSTRAINT _orgunitstructure_pkey PRIMARY KEY (organisationunitid)" +
-                ");" );
+            "CREATE TABLE _orgunitstructure "+
+            "(" +
+            "  organisationunitid integer NOT NULL, " +
+            "  organisationunituid character(11) NOT NULL, " +
+            "  level integer, " +
+            "  idlevel1 integer, " +
+            "  idlevel2 integer, " +
+            "  idlevel3 integer, " +
+            "  idlevel4 integer, " +
+            "  CONSTRAINT _orgunitstructure_pkey PRIMARY KEY (organisationunitid)" +
+            ");" );
 
         jdbcTemplate.execute( "INSERT INTO _orgunitstructure VALUES (" + idA + ", '" + uidA + "', 1, " + idA + ", null, null, null);" );
         jdbcTemplate.execute( "INSERT INTO _orgunitstructure VALUES (" + idB + ", '" + uidB + "', 2, " + idA + ", " + idB + ", null, null);" );

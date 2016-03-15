@@ -70,8 +70,12 @@ public class TableAlteror
         this.statementManager = statementManager;
     }
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Autowired
     private StatementBuilder statementBuilder;

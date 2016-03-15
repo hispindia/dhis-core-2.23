@@ -30,7 +30,6 @@ package org.hisp.dhis.sms.command.code;
 
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.system.deletion.DeletionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -41,7 +40,6 @@ public class SMSCodesDeletionHandler
 {
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired
     public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
     {
         this.jdbcTemplate = jdbcTemplate;

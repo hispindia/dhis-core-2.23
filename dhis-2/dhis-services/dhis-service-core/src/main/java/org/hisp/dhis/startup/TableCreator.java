@@ -31,7 +31,6 @@ package org.hisp.dhis.startup;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.system.startup.AbstractStartupRoutine;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -46,9 +45,13 @@ public class TableCreator
     // Dependencies
     // -------------------------------------------------------------------------
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     // -------------------------------------------------------------------------
     // StartupRoutine implementation
     // -------------------------------------------------------------------------

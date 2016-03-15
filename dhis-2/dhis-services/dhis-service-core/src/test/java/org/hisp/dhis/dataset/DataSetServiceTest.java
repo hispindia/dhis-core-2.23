@@ -40,6 +40,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.hisp.dhis.DhisTest;
 import org.hisp.dhis.dataapproval.DataApproval;
 import org.hisp.dhis.dataapproval.DataApprovalLevel;
@@ -85,7 +87,7 @@ public class DataSetServiceTest
     private OrganisationUnit unitE;
     private OrganisationUnit unitF;
 
-    DataElementCategoryOptionCombo attributeOptionCombo;
+    private DataElementCategoryOptionCombo attributeOptionCombo;
 
     private CurrentUserService mockCurrentUserService;
 
@@ -119,7 +121,7 @@ public class DataSetServiceTest
     @Autowired
     private DataApprovalWorkflowService workflowService;
 
-    @Autowired
+    @Resource( name = "jdbcTemplate" )
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -165,15 +167,17 @@ public class DataSetServiceTest
         user.setSurname( "Doe" );
         userService.addUser( mockCurrentUserService.getCurrentUser() );
 
+        // TODO remove dependency on resource tables in approval and remove this
+        
         jdbcTemplate.execute(
             "CREATE TABLE _orgunitstructure " +
-                "(" +
-                "  organisationunitid integer NOT NULL, " +
-                "  organisationunituid character(11) NOT NULL, " +
-                "  level integer, " +
-                "  idlevel1 integer, " +
-                "  CONSTRAINT _orgunitstructure_pkey PRIMARY KEY (organisationunitid)" +
-                ");" );
+            "(" +
+            "  organisationunitid integer NOT NULL, " +
+            "  organisationunituid character(11) NOT NULL, " +
+            "  level integer, " +
+            "  idlevel1 integer, " +
+            "  CONSTRAINT _orgunitstructure_pkey PRIMARY KEY (organisationunitid)" +
+            ");" );
 
         jdbcTemplate.execute( "INSERT INTO _orgunitstructure VALUES (" + unitA.getId() + ", '" + unitA.getUid() + "', 1, " + unitA.getId() + ");" );
         jdbcTemplate.execute( "INSERT INTO _orgunitstructure VALUES (" + unitB.getId() + ", '" + unitB.getUid() + "', 2, " + unitB.getId() + ");" );

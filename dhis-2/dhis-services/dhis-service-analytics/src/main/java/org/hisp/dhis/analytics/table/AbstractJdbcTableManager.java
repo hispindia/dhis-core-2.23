@@ -97,9 +97,13 @@ public abstract class AbstractJdbcTableManager
    
     @Autowired
     protected StatementBuilder statementBuilder;
-    
-    @Autowired
+
     protected JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // -------------------------------------------------------------------------
     // Abstract methods

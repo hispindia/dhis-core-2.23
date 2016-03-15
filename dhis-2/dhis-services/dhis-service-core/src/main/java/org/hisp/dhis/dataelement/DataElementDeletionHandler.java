@@ -49,9 +49,13 @@ public class DataElementDeletionHandler
     @Autowired
     private DataElementCategoryService categoryService;
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
-    
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     // -------------------------------------------------------------------------
     // DeletionHandler implementation
     // -------------------------------------------------------------------------

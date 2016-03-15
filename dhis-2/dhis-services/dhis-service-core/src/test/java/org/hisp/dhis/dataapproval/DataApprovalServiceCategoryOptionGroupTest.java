@@ -42,6 +42,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.Resource;
+
 import org.hisp.dhis.DhisTest;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.CodeGenerator;
@@ -129,7 +131,7 @@ public class DataApprovalServiceCategoryOptionGroupTest
     @Autowired
     protected CurrentUserService currentUserService;
 
-    @Autowired
+    @Resource( name = "jdbcTemplate" )
     private JdbcTemplate jdbcTemplate;
 
     // -------------------------------------------------------------------------

@@ -1454,6 +1454,7 @@
     <property name="name" value="IdentityPopulator" />
     <property name="runlevel" value="4" />
     <property name="skipInTests" value="true" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
     <property name="tables">
       <list>
         <value>constant</value>
@@ -1514,6 +1515,7 @@
   <bean id="org.hisp.dhis.startup.TableCreator" class="org.hisp.dhis.startup.TableCreator">
     <property name="name" value="TableCreator" />
     <property name="runlevel" value="5" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
   <bean id="org.hisp.dhis.startup.TableAlteror" class="org.hisp.dhis.startup.TableAlteror">
@@ -1527,12 +1529,14 @@
     <property name="name" value="TrackedEntityTableAlteror" />
     <property name="runlevel" value="7" />
     <property name="skipInTests" value="true" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
   <bean id="org.hisp.dhis.startup.FavoriteDataItemUpgrader" class="org.hisp.dhis.startup.FavoriteDataItemUpgrader">
     <property name="name" value="FavoriteDataItemUpgrader" />
     <property name="runlevel" value="9" />
     <property name="skipInTests" value="true" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
   <bean id="org.hisp.dhis.dataentryform.DataEntryFormUpgrader" class="org.hisp.dhis.dataentryform.DataEntryFormUpgrader">
@@ -1589,7 +1593,9 @@
     <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
-  <bean id="org.hisp.dhis.dataelement.DataElementDeletionHandler" class="org.hisp.dhis.dataelement.DataElementDeletionHandler" />
+  <bean id="org.hisp.dhis.dataelement.DataElementDeletionHandler" class="org.hisp.dhis.dataelement.DataElementDeletionHandler">
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
+  </bean>
 
   <bean id="org.hisp.dhis.dataelement.DataElementGroupDeletionHandler" class="org.hisp.dhis.dataelement.DataElementGroupDeletionHandler" />
 
@@ -1608,7 +1614,9 @@
   </bean>
 
   <bean id="org.hisp.dhis.dataelement.DataElementCategoryDimensionDeletionHandler"
-    class="org.hisp.dhis.dataelement.DataElementCategoryDimensionDeletionHandler" />
+    class="org.hisp.dhis.dataelement.DataElementCategoryDimensionDeletionHandler">
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
+  </bean>
 
   <bean id="org.hisp.dhis.dataset.DataSetDeletionHandler" class="org.hisp.dhis.dataset.DataSetDeletionHandler" />
 
@@ -1661,7 +1669,9 @@
 
   <bean id="org.hisp.dhis.user.UserDeletionHandler" class="org.hisp.dhis.user.UserDeletionHandler" />
 
-  <bean id="org.hisp.dhis.user.UserGroupDeletionHandler" class="org.hisp.dhis.user.UserGroupDeletionHandler" />
+  <bean id="org.hisp.dhis.user.UserGroupDeletionHandler" class="org.hisp.dhis.user.UserGroupDeletionHandler">
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
+  </bean>
 
   <bean id="org.hisp.dhis.user.UserAuthorityGroupDeletionHandler" class="org.hisp.dhis.user.UserAuthorityGroupDeletionHandler">
     <property name="userService" ref="org.hisp.dhis.user.UserService" />
@@ -1730,6 +1740,7 @@
   <bean id="org.hisp.dhis.trackedentity.TrackedEntityInstanceDeletionHandler"
     class="org.hisp.dhis.trackedentity.TrackedEntityInstanceDeletionHandler">
     <property name="instanceService" ref="org.hisp.dhis.trackedentity.TrackedEntityInstanceService" />
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
 
   <bean id="org.hisp.dhis.program.ProgramStageDataElementDeletionHandler"
@@ -1795,7 +1806,9 @@
     class="org.hisp.dhis.sms.command.SMSCommandDeletionHandler" />
 
   <bean id="org.hisp.dhis.sms.command.code.SMSCodesDeletionHandler"
-    class="org.hisp.dhis.sms.command.code.SMSCodesDeletionHandler" />
+    class="org.hisp.dhis.sms.command.code.SMSCodesDeletionHandler">
+    <property name="jdbcTemplate" ref="jdbcTemplate" />
+  </bean>    
 
   <!-- AOP definitions -->
 

@@ -31,7 +31,6 @@ package org.hisp.dhis.trackedentity;
 import org.hisp.dhis.common.Grid;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.system.deletion.DeletionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -50,9 +49,13 @@ public class TrackedEntityInstanceDeletionHandler
     {
         this.instanceService = instanceService;
     }
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // -------------------------------------------------------------------------
     // DeletionHandler implementation

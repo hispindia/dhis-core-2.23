@@ -42,7 +42,6 @@ import org.hisp.dhis.dxf2.datavalue.DataValue;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.system.util.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
 
@@ -69,8 +68,12 @@ public class SpringDataValueSetStore
 
     private static final char CSV_DELIM = ',';
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     //--------------------------------------------------------------------------
     // DataValueSetStore implementation

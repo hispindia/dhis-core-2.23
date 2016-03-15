@@ -47,9 +47,13 @@ public class UserGroupDeletionHandler
 
     @Autowired
     private IdentifiableObjectManager idObjectManager;
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // -------------------------------------------------------------------------
     // DeletionHandler implementation

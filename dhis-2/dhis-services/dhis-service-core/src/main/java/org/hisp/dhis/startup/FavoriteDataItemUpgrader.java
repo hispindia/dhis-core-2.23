@@ -52,10 +52,14 @@ public class FavoriteDataItemUpgrader
     extends AbstractStartupRoutine
 {
     private static final Log log = LogFactory.getLog( FavoriteDataItemUpgrader.class );
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
-    
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Autowired
     private IdentifiableObjectManager idObjectManager;
 

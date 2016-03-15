@@ -32,7 +32,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.system.startup.AbstractStartupRoutine;
 import org.hisp.dhis.system.util.DateUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -67,8 +66,12 @@ public class IdentityPopulator
     // Dependencies
     // -------------------------------------------------------------------------
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // -------------------------------------------------------------------------
     // Execute
@@ -85,7 +88,7 @@ public class IdentityPopulator
                 log.debug( "Checking table: " + table );
 
                 int count = 0;
-
+                
                 SqlRowSet resultSet = jdbcTemplate.queryForRowSet( "SELECT * from " + table + " WHERE uid IS NULL" );
 
                 while ( resultSet.next() )

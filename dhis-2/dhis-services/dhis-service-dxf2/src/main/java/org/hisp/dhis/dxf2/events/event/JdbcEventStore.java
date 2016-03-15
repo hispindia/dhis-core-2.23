@@ -47,7 +47,6 @@ import org.hisp.dhis.program.ProgramType;
 import org.hisp.dhis.query.Order;
 import org.hisp.dhis.system.util.DateUtils;
 import org.hisp.dhis.util.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
@@ -88,9 +87,13 @@ public class JdbcEventStore
         put( "lastUpdated", "psi_lastupdated" ).
         put( "completedBy", "psi_completedby" ).
         put( "completedDate", "psi_completeddate" ).build();
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 

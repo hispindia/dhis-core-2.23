@@ -29,7 +29,6 @@ package org.hisp.dhis.dataelement;
  */
 
 import org.hisp.dhis.system.deletion.DeletionHandler;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
@@ -38,8 +37,12 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class DataElementCategoryDimensionDeletionHandler
     extends DeletionHandler
 {
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     // -------------------------------------------------------------------------
     // DeletionHandler implementation

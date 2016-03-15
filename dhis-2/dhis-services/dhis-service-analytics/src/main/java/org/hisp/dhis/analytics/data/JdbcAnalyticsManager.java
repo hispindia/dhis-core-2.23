@@ -101,8 +101,12 @@ public class JdbcAnalyticsManager
 
     private static final String COL_APPROVALLEVEL = "approvallevel";
 
-    @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
     @Autowired
     private StatementBuilder statementBuilder;

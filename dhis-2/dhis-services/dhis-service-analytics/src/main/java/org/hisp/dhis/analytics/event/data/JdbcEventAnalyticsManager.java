@@ -89,10 +89,14 @@ public class JdbcEventAnalyticsManager
     private static final String QUERY_ERR_MSG = "Query failed, likely because the requested analytics table does not exist";
     private static final String ITEM_NAME_SEP = ": ";
     private static final String NA = "[N/A]";
-    
-    @Autowired
+
     private JdbcTemplate jdbcTemplate;
-    
+
+    public void setJdbcTemplate( JdbcTemplate jdbcTemplate )
+    {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
     @Autowired
     private StatementBuilder statementBuilder;
     
