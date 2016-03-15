@@ -46,7 +46,6 @@ import org.hisp.dhis.preheat.PreheatService;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
 import org.hisp.dhis.user.CurrentUserService;
-import org.hisp.dhis.user.UserCredentials;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -390,7 +389,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             persistedObject.mergeWith( object, bundle.getMergeMode() );
             persistedObject.mergeSharingWith( object );
 
-            sessionFactory.getCurrentSession().update( persistedObject );
+            manager.update( persistedObject, bundle.getUser() );
 
             objectBundleHooks.forEach( hook -> hook.postUpdate( persistedObject, bundle ) );
 
