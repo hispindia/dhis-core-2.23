@@ -211,7 +211,6 @@ var d2Directives = angular.module('d2Directives', [])
         link: function (scope, elm, attrs) {
             scope.$watch('customDataEntryForm', function () {
                 if (angular.isObject(scope.customDataEntryForm)) {
-                	console.log('the form:  ', scope.customDataEntryForm);
                     elm.html(scope.customDataEntryForm.htmlCode);
                     $compile(elm.contents())(scope);
                 }
