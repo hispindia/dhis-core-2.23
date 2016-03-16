@@ -347,7 +347,7 @@ public class JdbcEventAnalyticsManager
             
             grid.addValue( rowSet.getLong( "count" ) );
             grid.addValue( rowSet.getString( "center" ) );
-            grid.addValue( String.valueOf( rowSet.getObject( "extent" ) ) );
+            grid.addValue( rowSet.getString( "extent" ) );
             grid.addValue( rowSet.getString( "points" ) );         
         }
         
