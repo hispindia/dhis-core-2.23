@@ -50,6 +50,7 @@ import org.hisp.dhis.schema.PropertyType;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
+import org.hisp.dhis.trackedentity.TrackedEntityAttributeDimension;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
@@ -333,6 +334,7 @@ public class DefaultPreheatService implements PreheatService
                     BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) object;
                     List<DataDimensionItem> dataDimensionItems = analyticalObject.getDataDimensionItems();
                     List<DataElementCategoryDimension> categoryDimensions = analyticalObject.getCategoryDimensions();
+                    List<TrackedEntityAttributeDimension> attributeDimensions = analyticalObject.getAttributeDimensions();
 
                     dataDimensionItems.forEach( dataDimensionItem -> {
                         addIdentifiers( map, dataDimensionItem.getIndicator() );
@@ -349,6 +351,11 @@ public class DefaultPreheatService implements PreheatService
                     } );
 
                     categoryDimensions.forEach( categoryDimension -> addIdentifiers( map, categoryDimension.getDimension() ) );
+
+                    attributeDimensions.forEach( trackedEntityAttributeDimension -> {
+                        addIdentifiers( map, trackedEntityAttributeDimension.getAttribute() );
+                        addIdentifiers( map, trackedEntityAttributeDimension.getLegendSet() );
+                    } );
                 }
 
                 if ( ValidationRule.class.isInstance( object ) )
