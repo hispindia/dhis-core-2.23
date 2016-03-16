@@ -222,7 +222,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                     }
                 });
                 
-                $scope.customForm = CustomFormService.getForProgramStage($scope.selectedProgramStage, $scope.prStDes);
+                $scope.customDataEntryForm = CustomFormService.getForProgramStage($scope.selectedProgramStage, $scope.prStDes);
 
                 if($scope.selectedProgramStage.captureCoordinates){
                     $scope.newDhis2Event.coordinate = {};
@@ -506,7 +506,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     };
     
     $scope.showEventRegistration = function(){        
-        $scope.displayCustomForm = $scope.customForm ? true : false;
+        $scope.displayCustomForm = $scope.customDataEntryForm ? true : false;
         $scope.currentEvent = {};
         $scope.fileNames['SINGLE_EVENT'] = [];
         $scope.eventRegistration = !$scope.eventRegistration;          
@@ -535,7 +535,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     
     $scope.showEditEventInFull = function(){       
         $scope.note = {};
-        $scope.displayCustomForm = $scope.customForm ? true:false;
+        $scope.displayCustomForm = $scope.customDataEntryForm ? true:false;
 
         $scope.currentEvent = ContextMenuSelectedItem.getSelectedItem();
         $scope.editingEventInFull = !$scope.editingEventInFull;   

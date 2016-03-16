@@ -116,7 +116,7 @@ trackerCapture.controller('RegistrationController',
     $scope.getAttributes = function(_mode){        
         var mode = _mode ? _mode : 'ENROLLMENT';
         $scope.customRegistrationFormExists = false;
-        $scope.customForm = null;
+        $scope.customDataEntryForm = null;
         $scope.schedulingEnabled = true;
         AttributesFactory.getByProgram($scope.selectedProgram).then(function(atts){            
             $scope.attributes = TEIGridService.generateGridColumns(atts, null,false).columns;            
@@ -144,7 +144,7 @@ trackerCapture.controller('RegistrationController',
                         }
                     });
                     
-                    $scope.customForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);
+                    $scope.customDataEntryForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);
                 }                
             }
         });

@@ -205,16 +205,28 @@ var d2Directives = angular.module('d2Directives', [])
     };
 })
 
-.directive('d2CustomForm', function ($compile) {
+.directive('d2CustomDataEntryForm', function ($compile) {
     return{
         restrict: 'E',
-        scope: {
-            customForm: '='
-        },
         link: function (scope, elm, attrs) {
-            scope.$watch('customForm', function () {
-                if (angular.isObject(scope.customForm)) {
-                    elm.html(scope.customForm.htmlCode);
+            scope.$watch('customDataEntryForm', function () {
+                if (angular.isObject(scope.customDataEntryForm)) {
+                	console.log('the form:  ', scope.customDataEntryForm);
+                    elm.html(scope.customDataEntryForm.htmlCode);
+                    $compile(elm.contents())(scope);
+                }
+            });
+        }
+    };
+})
+
+.directive('d2CustomRegistrationForm', function ($compile) {
+    return{
+        restrict: 'E',
+        link: function (scope, elm, attrs) {
+            scope.$watch('customRegistrationForm', function () {
+                if (angular.isObject(scope.customRegistrationForm)) {
+                    elm.html(scope.customRegistrationForm.htmlCode);
                     $compile(elm.contents())(scope);
                 }
             });

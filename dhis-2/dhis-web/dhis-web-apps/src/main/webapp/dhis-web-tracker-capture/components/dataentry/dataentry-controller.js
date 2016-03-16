@@ -1231,9 +1231,9 @@ trackerCapture.controller('DataEntryController',
         
         $scope.setDisplayTypeForStage($scope.currentStage);
         
-        $scope.customForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);        
+        $scope.customDataEntryForm = CustomFormService.getForProgramStage($scope.currentStage, $scope.prStDes);        
         
-        if ($scope.customForm) {
+        if ($scope.customDataEntryForm) {
             $scope.displayCustomForm = "CUSTOM";
         }
         else if ($scope.currentStage.displayEventsInTable) {

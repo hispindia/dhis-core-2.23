@@ -111,7 +111,7 @@ styles/style.css
 ../icons/function-about-dhis2.png
 
 ../dhis-web-commons/angular-forms/serverside-pagination.html
-../dhis-web-commons/angular-forms/custom-form.html
+../dhis-web-commons/angular-forms/custom-dataentry-form.html
 ../dhis-web-commons/angular-forms/map.html
 ../dhis-web-commons/angular-forms/error-messages.html
 ../dhis-web-commons/angular-forms/audit-history.html
