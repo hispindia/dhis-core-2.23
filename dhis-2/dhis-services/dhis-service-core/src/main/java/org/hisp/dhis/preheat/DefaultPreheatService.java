@@ -52,6 +52,7 @@ import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.trackedentity.TrackedEntityAttributeDimension;
 import org.hisp.dhis.trackedentity.TrackedEntityDataElementDimension;
+import org.hisp.dhis.trackedentity.TrackedEntityProgramIndicatorDimension;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
@@ -337,6 +338,7 @@ public class DefaultPreheatService implements PreheatService
                     List<DataElementCategoryDimension> categoryDimensions = analyticalObject.getCategoryDimensions();
                     List<TrackedEntityDataElementDimension> dataElementDimensions = analyticalObject.getDataElementDimensions();
                     List<TrackedEntityAttributeDimension> attributeDimensions = analyticalObject.getAttributeDimensions();
+                    List<TrackedEntityProgramIndicatorDimension> programIndicatorDimensions = analyticalObject.getProgramIndicatorDimensions();
 
                     dataDimensionItems.forEach( dataDimensionItem -> {
                         addIdentifiers( map, dataDimensionItem.getIndicator() );
@@ -362,6 +364,11 @@ public class DefaultPreheatService implements PreheatService
                     attributeDimensions.forEach( trackedEntityAttributeDimension -> {
                         addIdentifiers( map, trackedEntityAttributeDimension.getAttribute() );
                         addIdentifiers( map, trackedEntityAttributeDimension.getLegendSet() );
+                    } );
+
+                    programIndicatorDimensions.forEach( programIndicatorDimension -> {
+                        addIdentifiers( map, programIndicatorDimension.getProgramIndicator() );
+                        addIdentifiers( map, programIndicatorDimension.getLegendSet() );
                     } );
                 }
 
