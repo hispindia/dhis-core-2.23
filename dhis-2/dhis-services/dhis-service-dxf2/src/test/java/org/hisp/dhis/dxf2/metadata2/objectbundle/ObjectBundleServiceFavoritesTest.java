@@ -100,5 +100,7 @@ public class ObjectBundleServiceFavoritesTest
         assertEquals( 1, organisationUnits.size() );
         assertEquals( 4, dataElements.size() );
         assertEquals( 2, charts.size() );
+        assertEquals( 2, charts.get( 0 ).getDataDimensionItems().size() );
+        assertEquals( 2, charts.get( 1 ).getDataDimensionItems().size() );
     }
 }

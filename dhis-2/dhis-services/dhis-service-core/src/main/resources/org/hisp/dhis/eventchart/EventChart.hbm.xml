@@ -96,28 +96,28 @@
 
     <property name="endDate" />
 
-    <many-to-one name="dataElementValueDimension" class="org.hisp.dhis.dataelement.DataElement" 
+    <many-to-one name="dataElementValueDimension" class="org.hisp.dhis.dataelement.DataElement"
       column="dataelementvaluedimensionid" foreign-key="fk_eventchart_dataelementvaluedimensionid" />
 
-    <many-to-one name="attributeValueDimension" class="org.hisp.dhis.trackedentity.TrackedEntityAttribute" 
+    <many-to-one name="attributeValueDimension" class="org.hisp.dhis.trackedentity.TrackedEntityAttribute"
       column="attributevaluedimensionid" foreign-key="fk_eventchart_attributevaluedimensionid" />
 
     <property name="aggregationType" length="40">
-		<type name="org.hibernate.type.EnumType">
-			<param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
-			<param name="type">12</param>
-		</type> 
-	</property>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
+        <param name="type">12</param>
+      </type>
+    </property>
 
     <property name="completedOnly" column="completedonly" />
-	
+
     <property name="type" length="40" not-null="true">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.chart.ChartType</param>
         <param name="type">12</param>
       </type>
-	</property>
-	
+    </property>
+
     <list name="columnDimensions" table="eventchart_columns">
       <cache usage="read-write" />
       <key column="eventchartid" foreign-key="fk_eventchart_columns_eventchartid" />
@@ -142,7 +142,7 @@
     <property name="showData" />
 
     <property name="hideEmptyRows" />
-    
+
     <property name="hideNaData" />
 
     <property name="rangeAxisMaxValue" />
@@ -154,13 +154,13 @@
     <property name="rangeAxisDecimals" />
 
     <property name="outputType" length="30">
-		<type name="org.hibernate.type.EnumType">
-			<param name="enumClass">org.hisp.dhis.analytics.EventOutputType</param>
-			<param name="type">12</param>
-		</type> 
-	</property>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">org.hisp.dhis.analytics.EventOutputType</param>
+        <param name="type">12</param>
+      </type>
+    </property>
 
-	<property name="collapseDataDimensions" />
+    <property name="collapseDataDimensions" />
 
     <property name="domainAxisLabel" />
 
@@ -173,7 +173,7 @@
     <property name="hideTitle" />
 
     <property name="hideSubtitle" />
-    
+
     <property name="title" />
 
     <property name="targetLineValue" />

@@ -95,27 +95,27 @@
     <property name="startDate" />
 
     <property name="endDate" />
-    
-    <many-to-one name="dataElementValueDimension" class="org.hisp.dhis.dataelement.DataElement" 
+
+    <many-to-one name="dataElementValueDimension" class="org.hisp.dhis.dataelement.DataElement"
       column="dataelementvaluedimensionid" foreign-key="fk_eventreport_dataelementvaluedimensionid" />
 
-    <many-to-one name="attributeValueDimension" class="org.hisp.dhis.trackedentity.TrackedEntityAttribute" 
+    <many-to-one name="attributeValueDimension" class="org.hisp.dhis.trackedentity.TrackedEntityAttribute"
       column="attributevaluedimensionid" foreign-key="fk_eventreport_attributevaluedimensionid" />
 
     <property name="aggregationType" length="40">
-		<type name="org.hibernate.type.EnumType">
-			<param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
-			<param name="type">12</param>
-		</type> 
-	</property>
+      <type name="org.hibernate.type.EnumType">
+        <param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
+        <param name="type">12</param>
+      </type>
+    </property>
 
     <property name="completedOnly" column="completedonly" />
-	
+
     <property name="dataType" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.analytics.EventDataType</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <list name="columnDimensions" table="eventreport_columns">
@@ -140,27 +140,27 @@
     </list>
 
     <property name="rowTotals" />
-	  
-	<property name="colTotals" />
+
+    <property name="colTotals" />
 
     <property name="rowSubTotals" />
 
     <property name="colSubTotals" />
 
     <property name="hideEmptyRows" />
-    
+
     <property name="hideNaData" />
 
     <property name="showHierarchy" />
 
     <property name="outputType" length="30">
-	  <type name="org.hibernate.type.EnumType">
+      <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.analytics.EventOutputType</param>
         <param name="type">12</param>
-      </type> 
-	</property>
+      </type>
+    </property>
 
-	<property name="collapseDataDimensions" />
+    <property name="collapseDataDimensions" />
 
     <property name="showDimensionLabels" />
 
@@ -168,21 +168,21 @@
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.DigitGroupSeparator</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="displayDensity" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.DisplayDensity</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="fontSize" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.FontSize</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="sortOrder" />

@@ -26,8 +26,8 @@
         <param name="enumClass">org.hisp.dhis.chart.ChartType</param>
         <param name="type">12</param>
       </type>
-	</property>
-	
+    </property>
+
     <property name="series" />
 
     <property name="category" />
@@ -46,7 +46,7 @@
     <property name="hideTitle" />
 
     <property name="hideSubtitle" />
-    
+
     <property name="title" />
 
     <property name="targetLineValue" />
@@ -57,14 +57,14 @@
 
     <property name="baseLineLabel" />
 
-	<list name="dataDimensionItems" table="chart_datadimensionitems" cascade="all, delete-orphan">
-	  <cache usage="read-write" />
-	  <key column="chartid" foreign-key="fk_chart_datadimensionitems_chartid" />
-	  <list-index column="sort_order" base="0" />
-	  <many-to-many column="datadimensionitemid" class="org.hisp.dhis.common.DataDimensionItem"
+    <list name="dataDimensionItems" table="chart_datadimensionitems" cascade="all, delete-orphan">
+      <cache usage="read-write" />
+      <key column="chartid" foreign-key="fk_chart_datadimensionitems_chartid" />
+      <list-index column="sort_order" base="0" />
+      <many-to-many column="datadimensionitemid" class="org.hisp.dhis.common.DataDimensionItem"
         foreign-key="fk_chart_datadimensionitems_datadimensionitemid" />
-	</list>
-	
+    </list>
+
     <list name="organisationUnits" table="chart_organisationunits">
       <cache usage="read-write" />
       <key column="chartid" foreign-key="fk_chart_organisationunits_chartid" />
@@ -91,7 +91,7 @@
       <many-to-many column="categorydimensionid" class="org.hisp.dhis.dataelement.DataElementCategoryDimension"
         foreign-key="fk_chart_categorydimensions_categorydimensionid" />
     </list>
-    
+
     <list name="dataElementGroups" table="chart_dataelementgroups">
       <cache usage="read-write" />
       <key column="chartid" foreign-key="fk_chart_dataelementgroups_chartid" />
@@ -107,7 +107,7 @@
       <many-to-many column="orgunitgroupid" class="org.hisp.dhis.organisationunit.OrganisationUnitGroup"
         foreign-key="fk_chart_orgunitgroups_orgunitgroupid" />
     </list>
-    
+
     <list name="categoryOptionGroups" table="chart_categoryoptiongroups">
       <cache usage="read-write" />
       <key column="chartid" foreign-key="fk_chart_categoryoptiongroups_chartid" />
@@ -115,14 +115,14 @@
       <many-to-many column="categoryoptiongroupid" class="org.hisp.dhis.dataelement.CategoryOptionGroup"
         foreign-key="fk_chart_categoryoptiongroups_categoryoptiongroupid" />
     </list>
-    
+
     <list name="organisationUnitLevels" table="chart_orgunitlevels">
       <cache usage="read-write" />
       <key column="chartid" foreign-key="fk_chart_orgunitlevels_chartid" />
       <list-index column="sort_order" base="0" />
       <element column="orgunitlevel" type="integer" />
     </list>
-    
+
     <list name="itemOrganisationUnitGroups" table="chart_itemorgunitgroups">
       <cache usage="read-write" />
       <key column="chartid" foreign-key="fk_chart_itemorgunitunitgroups_chartid" />
@@ -130,7 +130,7 @@
       <many-to-many column="orgunitgroupid" class="org.hisp.dhis.organisationunit.OrganisationUnitGroup"
         foreign-key="fk_chart_itemorgunitgroups_orgunitgroupid" />
     </list>
-    
+
     <property name="userOrganisationUnit" />
 
     <property name="userOrganisationUnitChildren" />
@@ -141,11 +141,11 @@
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
         <param name="type">12</param>
-      </type> 
-	</property>
-	
+      </type>
+    </property>
+
     <property name="completedOnly" column="completedonly" />
-	
+
     <property name="showData" />
 
     <property name="hideEmptyRows" />
@@ -157,7 +157,7 @@
     <property name="rangeAxisSteps" />
 
     <property name="rangeAxisDecimals" />
-    
+
     <property name="sortOrder" />
 
     <!-- Access properties -->

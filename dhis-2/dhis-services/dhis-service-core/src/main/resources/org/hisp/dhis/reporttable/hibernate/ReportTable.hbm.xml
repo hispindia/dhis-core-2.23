@@ -21,13 +21,13 @@
 
     <property name="cumulative" />
 
-	<list name="dataDimensionItems" table="reporttable_datadimensionitems" cascade="all, delete-orphan">
-	  <cache usage="read-write" />
-	  <key column="reporttableid" foreign-key="fk_reporttable_datadimensionitems_reporttableid" />
-	  <list-index column="sort_order" base="0" />
-	  <many-to-many column="datadimensionitemid" class="org.hisp.dhis.common.DataDimensionItem"
+    <list name="dataDimensionItems" table="reporttable_datadimensionitems" cascade="all, delete-orphan">
+      <cache usage="read-write" />
+      <key column="reporttableid" foreign-key="fk_reporttable_datadimensionitems_reporttableid" />
+      <list-index column="sort_order" base="0" />
+      <many-to-many column="datadimensionitemid" class="org.hisp.dhis.common.DataDimensionItem"
         foreign-key="fk_reporttable_datadimensionitems_datadimensionitemid" />
-	</list>
+    </list>
 
     <list name="organisationUnits" table="reporttable_organisationunits">
       <cache usage="read-write" />
@@ -79,7 +79,7 @@
       <many-to-many column="categoryoptiongroupid" class="org.hisp.dhis.dataelement.CategoryOptionGroup"
         foreign-key="fk_reporttable_categoryoptiongroups_categoryoptiongroupid" />
     </list>
-    
+
     <list name="organisationUnitLevels" table="reporttable_orgunitlevels">
       <cache usage="read-write" />
       <key column="reporttableid" foreign-key="fk_reporttable_orgunitlevels_reporttableid" />
@@ -115,7 +115,7 @@
       <list-index column="sort_order" base="0" />
       <element type="string" column="dimension" />
     </list>
-    
+
     <component name="reportParams">
       <property name="paramReportingMonth" />
       <property name="paramGrandParentOrganisationUnit" />
@@ -128,43 +128,43 @@
     <property name="topLimit" />
 
     <property name="rowTotals" />
-	  
-	<property name="colTotals" />
+
+    <property name="colTotals" />
 
     <property name="rowSubTotals" />
-	  
-	<property name="colSubTotals" />
+
+    <property name="colSubTotals" />
 
     <property name="hideEmptyRows" />
-    
+
     <property name="aggregationType" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.analytics.AggregationType</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="completedOnly" column="completedonly" />
-	
+
     <property name="digitGroupSeparator" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.DigitGroupSeparator</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="displayDensity" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.DisplayDensity</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="fontSize" length="40">
       <type name="org.hibernate.type.EnumType">
         <param name="enumClass">org.hisp.dhis.common.FontSize</param>
         <param name="type">12</param>
-      </type> 
+      </type>
     </property>
 
     <property name="userOrganisationUnit" />
@@ -179,7 +179,7 @@
     <property name="showHierarchy" />
 
     <property name="showDimensionLabels" />
-    
+
     <property name="skipRounding" />
 
     <!-- Access properties -->

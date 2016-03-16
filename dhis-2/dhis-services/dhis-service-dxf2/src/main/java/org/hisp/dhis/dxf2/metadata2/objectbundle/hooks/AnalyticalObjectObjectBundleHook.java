@@ -31,8 +31,14 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 import org.hibernate.Session;
 import org.hisp.dhis.common.AnalyticalObject;
 import org.hisp.dhis.common.BaseAnalyticalObject;
+import org.hisp.dhis.common.DataDimensionItem;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
+import org.hisp.dhis.schema.Schema;
+import org.hisp.dhis.trackedentity.TrackedEntityAttributeDimension;
+import org.hisp.dhis.trackedentity.TrackedEntityDataElementDimension;
+import org.hisp.dhis.trackedentity.TrackedEntityProgramIndicatorDimension;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -49,13 +55,14 @@ public class AnalyticalObjectObjectBundleHook
     {
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
+        Schema schema = schemaService.getDynamicSchema( analyticalObject.getClass() );
         Session session = sessionFactory.getCurrentSession();
 
-        handleDataDimensionItems( session, analyticalObject, objectBundle );
-        handleCategoryDimensions( session, analyticalObject, objectBundle );
-        handleDataElementDimensions( session, analyticalObject, objectBundle );
-        handleAttributeDimensions( session, analyticalObject, objectBundle );
-        handleProgramIndicatorDimensions( session, analyticalObject, objectBundle );
+        handleDataDimensionItems( session, schema, analyticalObject, objectBundle );
+        handleCategoryDimensions( session, schema, analyticalObject, objectBundle );
+        handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
+        handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
+        handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
     }
 
     @Override
@@ -63,37 +70,68 @@ public class AnalyticalObjectObjectBundleHook
     {
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
+        Schema schema = schemaService.getDynamicSchema( analyticalObject.getClass() );
         Session session = sessionFactory.getCurrentSession();
 
-        handleDataDimensionItems( session, analyticalObject, objectBundle );
-        handleCategoryDimensions( session, analyticalObject, objectBundle );
-        handleDataElementDimensions( session, analyticalObject, objectBundle );
-        handleAttributeDimensions( session, analyticalObject, objectBundle );
-        handleProgramIndicatorDimensions( session, analyticalObject, objectBundle );
+        handleDataDimensionItems( session, schema, analyticalObject, objectBundle );
+        handleCategoryDimensions( session, schema, analyticalObject, objectBundle );
+        handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
+        handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
+        handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
     }
 
-    private void handleDataDimensionItems( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    private void handleDataDimensionItems( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
     {
-        analyticalObject.getDataDimensionItems().clear();
+        if ( !schema.havePersistedProperty( "dataDimensionItems" ) ) return;
+
+        for ( DataDimensionItem dataDimensionItem : analyticalObject.getDataDimensionItems() )
+        {
+            preheatService.connectReferences( dataDimensionItem, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( dataDimensionItem );
+        }
     }
 
-    private void handleCategoryDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    private void handleCategoryDimensions( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
     {
-        analyticalObject.getCategoryDimensions().clear();
+        if ( !schema.havePersistedProperty( "categoryDimensions" ) ) return;
+
+        for ( DataElementCategoryDimension categoryDimension : analyticalObject.getCategoryDimensions() )
+        {
+            preheatService.connectReferences( categoryDimension, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( categoryDimension );
+        }
     }
 
-    private void handleDataElementDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    private void handleDataElementDimensions( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
     {
-        analyticalObject.getDataElementDimensions().clear();
+        if ( !schema.havePersistedProperty( "dataElementDimensions" ) ) return;
+
+        for ( TrackedEntityDataElementDimension dataElementDimension : analyticalObject.getDataElementDimensions() )
+        {
+            preheatService.connectReferences( dataElementDimension, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( dataElementDimension );
+        }
     }
 
-    private void handleAttributeDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    private void handleAttributeDimensions( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
     {
-        analyticalObject.getAttributeDimensions().clear();
+        if ( !schema.havePersistedProperty( "attributeDimensions" ) ) return;
+
+        for ( TrackedEntityAttributeDimension attributeDimension : analyticalObject.getAttributeDimensions() )
+        {
+            preheatService.connectReferences( attributeDimension, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( attributeDimension );
+        }
     }
 
-    private void handleProgramIndicatorDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    private void handleProgramIndicatorDimensions( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
     {
-        analyticalObject.getProgramIndicatorDimensions().clear();
+        if ( !schema.havePersistedProperty( "programIndicatorDimensions" ) ) return;
+
+        for ( TrackedEntityProgramIndicatorDimension programIndicatorDimension : analyticalObject.getProgramIndicatorDimensions() )
+        {
+            preheatService.connectReferences( programIndicatorDimension, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+            session.save( programIndicatorDimension );
+        }
     }
 }
