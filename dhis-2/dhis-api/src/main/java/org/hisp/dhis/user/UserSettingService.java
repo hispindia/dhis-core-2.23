@@ -36,7 +36,7 @@ import java.util.Set;
 /**
  * The main interface for working with user settings. Implementation need to get
  * the current user from {@link CurrentUserService}.
- * 
+ *
  * @author Torgeir Lorange Ostby
  */
 public interface UserSettingService
@@ -50,7 +50,7 @@ public interface UserSettingService
     /**
      * Saves the key/value pair as a user setting connected to the currently
      * logged in user.
-     * 
+     *
      * @param key the user setting key.
      * @param value the setting value.
      */
@@ -65,7 +65,7 @@ public interface UserSettingService
      * @param username the username of user.
      */
     void saveUserSetting( UserSettingKey key, Serializable value, String username );
-        
+
     /**
      * Saves the name/value pair as a user setting connected to user.
      *
@@ -84,22 +84,22 @@ public interface UserSettingService
 
     /**
      * Deletes the user setting with the given name.
-     * 
+     *
      * @param key the user setting key.
      */
     void deleteUserSetting( UserSettingKey key );
 
     /**
      * Deletes the user setting with the given name for the given user.
-     * 
+     *
      * @param key the user setting key.
      * @user the user.
      */
     void deleteUserSetting( UserSettingKey key, User user );
-    
+
     /**
      * Returns the value of the user setting specified by the given name.
-     * 
+     *
      * @param key the user setting key.
      * @return the value corresponding to the named user setting, or null if
      *         there is no match.
@@ -108,7 +108,7 @@ public interface UserSettingService
 
     /**
      * Returns the value of the user setting specified by the given name.
-     * 
+     *
      * @param key the user setting key.
      * @param user the user.
      * @return the value corresponding to the named user setting, or null if
@@ -126,7 +126,7 @@ public interface UserSettingService
 
     /**
      * Returns all user settings belonging to the current user.
-     * 
+     *
      * @return all user settings belonging to the current user.
      */
     List<UserSetting> getAllUserSettings();
@@ -137,8 +137,8 @@ public interface UserSettingService
      * @param names the settings to retrieve
      * @return a map of setting names and their values
      */
-    Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names );
-    
+    Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names, boolean useFallback );
+
     /**
      * Invalidates in-memory caches.
      */

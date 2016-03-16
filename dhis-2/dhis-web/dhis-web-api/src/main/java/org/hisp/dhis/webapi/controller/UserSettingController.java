@@ -178,6 +178,7 @@ public class UserSettingController
 
     @RequestMapping( method = RequestMethod.GET, produces = ContextUtils.CONTENT_TYPE_JSON )
     public void getUserSettingsByUser( @RequestParam( required = false ) String user,
+        @RequestParam( required = false, defaultValue = "true" ) boolean useFallback,
         HttpServletRequest request, HttpServletResponse response )
         throws WebMessageException, IOException
     {
@@ -190,10 +191,8 @@ public class UserSettingController
             us = currentUserService.getCurrentUser();
         }
 
-        Map<String, Serializable> result = userSettingService
-            .getUserSettingsWithFallbackByUserAsMap( us, USER_SETTING_NAMES );
-
-        renderService.toJson( response.getOutputStream(), result );
+        renderService.toJson( response.getOutputStream(), userSettingService
+            .getUserSettingsWithFallbackByUserAsMap( us, USER_SETTING_NAMES, useFallback ) );
     }
 
     @RequestMapping( value = "/{key}", method = RequestMethod.DELETE )

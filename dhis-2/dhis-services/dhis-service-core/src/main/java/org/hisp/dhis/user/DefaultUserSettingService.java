@@ -52,7 +52,7 @@ import java.util.stream.Collectors;
  * Declare transactions on individual methods. The get-methods do not have
  * transactions declared, instead a programmatic transaction is initiated on
  * cache miss in order to reduce the number of transactions to improve performance.
- * 
+ *
  * @author Torgeir Lorange Ostby
  */
 public class DefaultUserSettingService
@@ -201,7 +201,7 @@ public class DefaultUserSettingService
     }
 
     /**
-     * No transaction for this method, transaction is initiated in 
+     * No transaction for this method, transaction is initiated in
      * {@link getUserSettingOptional}.
      */
     @Override
@@ -211,7 +211,7 @@ public class DefaultUserSettingService
     }
 
     /**
-     * No transaction for this method, transaction is initiated in 
+     * No transaction for this method, transaction is initiated in
      * {@link getUserSettingOptional}.
      */
     @Override
@@ -230,15 +230,23 @@ public class DefaultUserSettingService
     }
 
     @Override
-    public Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names )
+    public Map<String, Serializable> getUserSettingsWithFallbackByUserAsMap( User user, Set<String> names,
+        boolean useFallback )
     {
-        Map<String, Serializable> result = Sets.newHashSet( getUserSettings(user) ).stream()
+        Map<String, Serializable> result = Sets.newHashSet( getUserSettings( user ) ).stream()
             .collect( Collectors.toMap( UserSetting::getName, UserSetting::getValue ) );
 
         names.forEach( name -> {
             if ( !result.containsKey( name ) )
             {
-                result.put( name, systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( name ) ) );
+                if ( useFallback )
+                {
+                    result.put( name, systemSettingManager.getSystemSetting( NAME_SETTING_KEY_MAP.get( name ) ) );
+                }
+                else
+                {
+                    result.put( name, null );
+                }
             }
         } );
 
@@ -300,10 +308,10 @@ public class DefaultUserSettingService
     }
 
     /**
-     * Get user setting optional. The database call is executed in a 
+     * Get user setting optional. The database call is executed in a
      * programmatic transaction.
-     * 
-     * @param key the user setting key.
+     *
+     * @param key      the user setting key.
      * @param username the username of the user.
      * @return an optional user setting value.
      */
