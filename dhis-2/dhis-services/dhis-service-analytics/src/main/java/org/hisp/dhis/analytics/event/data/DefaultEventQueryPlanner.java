@@ -122,17 +122,22 @@ public class DefaultEventQueryPlanner
 
         if ( params.getPage() != null && params.getPage() <= 0 )
         {
-            violation = "Page number must be positive: " + params.getPage();
+            violation = "Page number must be a positive number: " + params.getPage();
         }
         
         if ( params.getPageSize() != null && params.getPageSize() < 0 )
         {
-            violation = "Page size must be zero or positive: " + params.getPageSize();
+            violation = "Page size must be zero or a positive number: " + params.getPageSize();
         }
         
         if ( params.hasLimit() && getMaxLimit() > 0 && params.getLimit() > getMaxLimit() )
         {
             violation = "Limit of: " + params.getLimit() + " is larger than max limit: " + getMaxLimit();
+        }
+        
+        if ( params.hasClusterSize() && params.getClusterSize() <= 0 )
+        {
+            violation = "Cluster size must be a positive number: " + params.getClusterSize();
         }
         
         if ( violation != null )

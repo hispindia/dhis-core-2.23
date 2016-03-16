@@ -528,6 +528,11 @@ public class EventQueryParams
         return program != null && program.isRegistration();
     }
     
+    public boolean hasClusterSize()
+    {
+        return clusterSize != null;
+    }
+    
     public boolean hasBbox()
     {
         return bbox != null && !bbox.isEmpty();
