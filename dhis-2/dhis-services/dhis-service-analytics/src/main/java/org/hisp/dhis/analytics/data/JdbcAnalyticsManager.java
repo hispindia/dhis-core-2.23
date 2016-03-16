@@ -228,45 +228,48 @@ public class JdbcAnalyticsManager
         return sql;
     }
 
+    /**
+     * Returns a aggregate clause for the numeric value column.
+     */
     private String getNumericValueColumn( DataQueryParams params )
     {
         String sql = "";
 
         if ( params.isAggregationType( AVERAGE_SUM_INT ) )
         {
-            sql += "sum(daysxvalue) / " + params.getDaysInFirstPeriod();
+            sql = "sum(daysxvalue) / " + params.getDaysInFirstPeriod();
         }
         else if ( params.isAggregationType( AVERAGE_INT ) || params.isAggregationType( AVERAGE_INT_DISAGGREGATION ) )
         {
-            sql += "avg(value)";
+            sql = "avg(value)";
         }
         else if ( params.isAggregationType( AVERAGE_BOOL ) )
         {
-            sql += "sum(daysxvalue) / sum(daysno) * 100";
+            sql = "sum(daysxvalue) / sum(daysno) * 100";
         }
         else if ( params.isAggregationType( COUNT ) )
         {
-            sql += "count(value)";
+            sql = "count(value)";
         }
         else if ( params.isAggregationType( STDDEV ) )
         {
-            sql += "stddev(value)";
+            sql = "stddev(value)";
         }
         else if ( params.isAggregationType( VARIANCE ) )
         {
-            sql += "variance(value)";
+            sql = "variance(value)";
         }
         else if ( params.isAggregationType( MIN ) )
         {
-            sql += "min(value)";
+            sql = "min(value)";
         }
         else if ( params.isAggregationType( MAX ) )
         {
-            sql += "max(value)";
+            sql = "max(value)";
         }
         else // SUM, AVERAGE_SUM_INT_DISAGGREGATION and undefined //TODO
         {
-            sql += "sum(value)";
+            sql = "sum(value)";
         }
 
         return sql;

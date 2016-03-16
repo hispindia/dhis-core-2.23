@@ -488,6 +488,12 @@ public class JdbcEventAnalyticsManager
         return columns;
     }
     
+    /**
+     * Returns a from and where SQL clause.
+     * 
+     * @param params the event query parameters.
+     * @param fixedColumns the list of fixed column names to include.
+     */
     private String getFromWhereClause( EventQueryParams params, List<String> fixedColumns )
     {
         if ( params.spansMultiplePartitions() )
@@ -499,7 +505,14 @@ public class JdbcEventAnalyticsManager
             return getFromWhereSinglePartitionClause( params, params.getPartitions().getSinglePartition() );
         }
     }
-    
+
+    /**
+     * Returns a from and where SQL clause for all partitions part of the given
+     * query parameters.
+     * 
+     * @param params the event query parameters.
+     * @param fixedColumns the list of fixed column names to include.
+     */
     private String getFromWhereMultiplePartitionsClause( EventQueryParams params, List<String> fixedColumns )
     {
         List<String> cols = ListUtils.distinctUnion( fixedColumns, getAggregateColumns( params ), getPartitionSelectColumns( params ) );
@@ -521,7 +534,14 @@ public class JdbcEventAnalyticsManager
         
         return sql;
     }
-    
+
+    /**
+     * Returns a from and where SQL clause for the given analytics table 
+     * partition.
+     * 
+     * @param params the event query parameters.
+     * @param partition the partition name.
+     */
     private String getFromWhereSinglePartitionClause( EventQueryParams params, String partition )
     {
         String sql = "from " + partition + " ";
