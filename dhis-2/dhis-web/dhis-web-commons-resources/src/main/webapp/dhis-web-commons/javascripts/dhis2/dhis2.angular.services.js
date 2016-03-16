@@ -571,23 +571,22 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 //check if attribute has optionset
                                 if (att.optionSetValue) {
                                     var optionSetId = att.optionSet.id;
-                                    newInputField = '<span ng-controller="InputController"><ui-select theme="select2" ' + commonInputFieldProperty + '  on-select="teiValueUpdated(selectedTei,\'' + attId + '\')" >' +
+                                    newInputField = '<ui-select theme="select2" ' + commonInputFieldProperty + '  on-select="teiValueUpdated(selectedTei,\'' + attId + '\')" >' +
                                         '<ui-select-match style="width:100%;" allow-clear="true" placeholder="' + $translate.instant('select_or_search') + '">{{$select.selected.displayName || $select.selected}}</ui-select-match>' +
                                         '<ui-select-choices ' +
                                         'repeat="option.displayName as option in optionSets.' + optionSetId + '.options | filter: $select.search | limitTo:maxOptionSize">' +
                                         '<span ng-bind-html="option.displayName | highlight: $select.search"></span>' +
                                         '</ui-select-choices>' +
-                                        '</ui-select></span>';
+                                        '</ui-select>';
                                 }
                                 else {
                                     //check attribute type and generate corresponding angular input field
                                     if (att.valueType === "NUMBER" ) {
-                                        newInputField = '<span  ng-controller="InputController"><input type="number"' +
+                                        newInputField = '<input type="number"' +
                                             ' d2-number-validator ' +
                                             ' number-type="' + att.valueType + '" ' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' >' +
-                                            '</span>';
+                                            commonInputFieldProperty + ' >';
                                     }
                                     else if (att.valueType === "BOOLEAN") {
                                     	newInputField = '<d2-radio-button ' +
@@ -601,13 +600,12 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                         ' </d2-radio-button>';
                                     }
                                     else if (att.valueType === "DATE") {
-                                        newInputField = '<span ng-controller="InputController"><input  type="text"' +
+                                        newInputField = '<input  type="text"' +
                                             ' placeholder="{{dhis2CalendarFormat.keyDateFormat}}" ' +
                                             ' max-date=" ' + attMaxDate + ' " ' +
                                             ' d2-date' +
                                             ' blur-or-change="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' >'+
-                                            '</span>';
+                                            commonInputFieldProperty + ' >';
                                     }
                                     else if (att.valueType === "TRUE_ONLY") {
                                         newInputField = '<span><input type="checkbox" ' +
@@ -615,12 +613,12 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             commonInputFieldProperty + ' ></span>';
                                     }
                                     else if (att.valueType === "EMAIL") {
-                                        newInputField = '<span ng-controller="InputController"><input type="email"' +
+                                        newInputField = '<input type="email"' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ></span>';
+                                            commonInputFieldProperty + ' >';
                                     }
                                     else if (att.valueType === "TRACKER_ASSOCIATE") {
-                                        newInputField = '<span ng-controller="InputController"><input type="text"' +
+                                        newInputField = '<input type="text"' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
                                             commonInputFieldProperty + ' ></span>' +
                                             '<span class="hideInPrint"><a href ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="getTrackerAssociate(attributesById.' + attId + ', selectedTei.' + attId + ')" title="{{\'add\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
@@ -628,7 +626,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             '</a> ' +
                                             '<a href ng-if="selectedTei.' + attId + '" ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="selectedTei.' + attId + ' = null" title="{{\'remove\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
                                             '<i class="fa fa-trash-o fa-2x vertical-center"></i> ' +
-                                            '</a></span>';
+                                            '</a>';
                                     }
                                     else if (att.valueType === "LONG_TEXT") {
                                         newInputField = '<span><textarea row ="3" ' +
@@ -636,9 +634,9 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             commonInputFieldProperty + ' ></textarea></span>';
                                     }
                                     else {
-                                        newInputField = '<span ng-controller="InputController"><input type="text" ' +
+                                        newInputField = '<input type="text" ' +
                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + '></span>';
+                                            commonInputFieldProperty + '>';
                                     }
                                 }
                             }
@@ -658,7 +656,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             if (programId === 'enrollmentDate') {
                                 fieldName = 'dateOfEnrollment';
                                 var enMaxDate = trackedEntityForm.selectEnrollmentDatesInFuture ? '' : 0;
-                                newInputField = '<span ng-controller="InputController"><input type="text"' +
+                                newInputField = '<input type="text"' +
                                     ' name="' + fieldName + '"' +
                                     ' element-id="' + i + '"' +
                                     this.getAttributesAsString(attributes) +
@@ -668,12 +666,12 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     ' ng-disabled="\'' + target + '\' === \'PROFILE\'"' +
                                     ' d2-date' +
                                     ' max-date="' + enMaxDate + '"' +
-                                    ' ng-required="true"></span>';
+                                    ' ng-required="true">';
                             }
                             if (programId === 'dateOfIncident' && trackedEntityForm.displayIncidentDate) {
                                 fieldName = 'dateOfIncident';
                                 var inMaxDate = trackedEntityForm.selectIncidentDatesInFuture ? '' : 0;
-                                newInputField = '<span ng-controller="InputController"><input type="text"' +
+                                newInputField = '<input type="text"' +
                                     ' name="' + fieldName + '"' +
                                     ' element-id="' + i + '"' +
                                     this.getAttributesAsString(attributes) +
@@ -682,7 +680,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     ' ng-model="selectedEnrollment.dateOfIncident" ' +
                                     ' ng-disabled="\'' + target + '\' === \'PROFILE\'"' +
                                     ' d2-date ' +
-                                    ' max-date="' + inMaxDate + '"></span>';
+                                    ' max-date="' + inMaxDate + '">';
                             }
                         }
 
