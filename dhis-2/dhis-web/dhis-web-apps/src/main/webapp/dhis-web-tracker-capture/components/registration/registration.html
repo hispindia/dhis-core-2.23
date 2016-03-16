@@ -1,4 +1,23 @@
 <div ng-controller="RegistrationController">
+    <script type="text/ng-template" id="attribute-details.html">
+        <table class="table table-bordered">
+            <tr>
+                <td class="bold">{{'description' | translate}}</td>
+                <td>{{content.description ? content.description : 'not_available' | translate}}</td>
+            </tr>
+            <!--<tr>
+                <td class="bold">{{'url' | translate}}</td>
+                <td>
+                    <span ng-if="content.url">
+                        <a href="{{content.url}}" target="_blank">{{content.url}}</a>
+                    </span>
+                    <span ng-if="!content.url">
+                        {{'not_available' | translate}}
+                    </span>
+                </td>
+            </tr>-->
+        </table>
+    </script>
     <!--registration form starts -->
     <form name="outerForm" novalidate>
         <!-- Entity type begins -->
