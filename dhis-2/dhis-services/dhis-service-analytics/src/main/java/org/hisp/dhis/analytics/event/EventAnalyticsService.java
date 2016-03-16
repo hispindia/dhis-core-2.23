@@ -49,6 +49,7 @@ public interface EventAnalyticsService
     String ITEM_COUNT = "count";
     String ITEM_CENTER = "center";
     String ITEM_EXTENT = "extent";
+    String ITEM_POINTS = "points";
     
     Grid getAggregatedEventData( EventQueryParams params );
     

@@ -344,6 +344,7 @@ public class DefaultEventAnalyticsService
         grid.addHeader( new GridHeader( ITEM_COUNT, "Count", Long.class.getName(), false, true ) );
         grid.addHeader( new GridHeader( ITEM_CENTER, "Center", String.class.getName(), false, true ) );
         grid.addHeader( new GridHeader( ITEM_EXTENT, "Extent", String.class.getName(), false, true ) );
+        grid.addHeader( new GridHeader( ITEM_POINTS, "Points", String.class.getName(), false, true ) );
 
         // ---------------------------------------------------------------------
         // Data
