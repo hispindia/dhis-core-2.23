@@ -49,6 +49,7 @@ public class AnalyticalObjectObjectBundleHook
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
         analyticalObject.getDataDimensionItems().clear();
+        analyticalObject.getCategoryDimensions().clear();
     }
 
     @Override
@@ -57,5 +58,6 @@ public class AnalyticalObjectObjectBundleHook
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
         analyticalObject.getDataDimensionItems().clear();
+        analyticalObject.getCategoryDimensions().clear();
     }
 }

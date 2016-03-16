@@ -29,13 +29,15 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
-import org.hisp.dhis.attribute.Attribute;
+import org.hisp.dhis.common.AnalyticalObject;
+import org.hisp.dhis.common.BaseAnalyticalObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.CodeGenerator;
+import org.hisp.dhis.common.DataDimensionItem;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.MergeMode;
-import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -51,7 +53,6 @@ import org.hisp.dhis.system.util.ReflectionUtils;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
-import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.validation.ValidationRule;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -317,101 +318,85 @@ public class DefaultPreheatService implements PreheatService
                         if ( reference != null )
                         {
                             IdentifiableObject identifiableObject = (IdentifiableObject) reference;
-
-                            String uid = identifiableObject.getUid();
-                            String code = identifiableObject.getCode();
-
-                            if ( !StringUtils.isEmpty( uid ) ) uidMap.get( klass ).add( uid );
-                            if ( !StringUtils.isEmpty( code ) ) codeMap.get( klass ).add( code );
+                            addIdentifiers( map, identifiableObject );
                         }
                     }
                     else
                     {
-                        Class<? extends IdentifiableObject> klass = (Class<? extends IdentifiableObject>) p.getItemKlass();
-
-                        if ( !uidMap.containsKey( klass ) ) uidMap.put( klass, new HashSet<>() );
-                        if ( !codeMap.containsKey( klass ) ) codeMap.put( klass, new HashSet<>() );
-
                         Collection<IdentifiableObject> reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-
-                        for ( IdentifiableObject identifiableObject : reference )
-                        {
-                            String uid = identifiableObject.getUid();
-                            String code = identifiableObject.getCode();
-
-                            if ( !StringUtils.isEmpty( uid ) ) uidMap.get( klass ).add( uid );
-                            if ( !StringUtils.isEmpty( code ) ) codeMap.get( klass ).add( code );
-                        }
+                        reference.forEach( identifiableObject -> addIdentifiers( map, identifiableObject ););
                     }
                 } );
+
+                if ( AnalyticalObject.class.isInstance( object ) )
+                {
+                    BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) object;
+                    List<DataDimensionItem> dataDimensionItems = analyticalObject.getDataDimensionItems();
+                    List<DataElementCategoryDimension> categoryDimensions = analyticalObject.getCategoryDimensions();
+
+                    dataDimensionItems.forEach( dataDimensionItem -> {
+                        addIdentifiers( map, dataDimensionItem.getIndicator() );
+                        addIdentifiers( map, dataDimensionItem.getDataElement() );
+                        addIdentifiers( map, dataDimensionItem.getDataSet() );
+                        addIdentifiers( map, dataDimensionItem.getProgramDataElement() );
+                        addIdentifiers( map, dataDimensionItem.getProgramAttribute() );
+
+                        if ( dataDimensionItem.getDataElementOperand() != null )
+                        {
+                            addIdentifiers( map, dataDimensionItem.getDataElementOperand().getDataElement() );
+                            addIdentifiers( map, dataDimensionItem.getDataElementOperand().getCategoryOptionCombo() );
+                        }
+                    } );
+
+                    categoryDimensions.forEach( categoryDimension -> addIdentifiers( map, categoryDimension.getDimension() ) );
+                }
 
                 if ( ValidationRule.class.isInstance( object ) )
                 {
                     ValidationRule validationRule = (ValidationRule) object;
 
-                    if ( !uidMap.containsKey( DataElement.class ) ) uidMap.put( DataElement.class, new HashSet<>() );
-                    if ( !codeMap.containsKey( DataElement.class ) ) codeMap.put( DataElement.class, new HashSet<>() );
-
                     if ( validationRule.getLeftSide() != null && !validationRule.getLeftSide().getDataElementsInExpression().isEmpty() )
                     {
-                        validationRule.getLeftSide().getDataElementsInExpression().stream()
-                            .forEach( de -> {
-                                if ( !StringUtils.isEmpty( de.getUid() ) ) uidMap.get( DataElement.class ).add( de.getUid() );
-                                if ( !StringUtils.isEmpty( de.getCode() ) ) codeMap.get( DataElement.class ).add( de.getCode() );
-                            } );
+                        validationRule.getLeftSide().getDataElementsInExpression().forEach( de -> addIdentifiers( map, de ) );
                     }
 
                     if ( validationRule.getRightSide() != null && !validationRule.getRightSide().getDataElementsInExpression().isEmpty() )
                     {
-                        validationRule.getRightSide().getDataElementsInExpression().stream()
-                            .forEach( de -> {
-                                if ( !StringUtils.isEmpty( de.getUid() ) ) uidMap.get( DataElement.class ).add( de.getUid() );
-                                if ( !StringUtils.isEmpty( de.getCode() ) ) codeMap.get( DataElement.class ).add( de.getCode() );
-                            } );
+                        validationRule.getRightSide().getDataElementsInExpression().forEach( de -> addIdentifiers( map, de ) );
                     }
-
-                    if ( uidMap.get( DataElement.class ).isEmpty() ) uidMap.remove( DataElement.class );
-                    if ( codeMap.get( DataElement.class ).isEmpty() ) codeMap.remove( DataElement.class );
                 }
 
-                if ( !uidMap.containsKey( Attribute.class ) ) uidMap.put( Attribute.class, new HashSet<>() );
-                if ( !codeMap.containsKey( Attribute.class ) ) codeMap.put( Attribute.class, new HashSet<>() );
+                object.getAttributeValues().forEach( av -> addIdentifiers( map, av.getAttribute() ) );
+                object.getUserGroupAccesses().forEach( uga -> addIdentifiers( map, uga.getUserGroup() ) );
 
-                object.getAttributeValues().forEach( av -> {
-                    Attribute attribute = av.getAttribute();
-
-                    if ( attribute != null )
-                    {
-                        if ( !StringUtils.isEmpty( attribute.getUid() ) ) uidMap.get( Attribute.class ).add( attribute.getUid() );
-                        if ( !StringUtils.isEmpty( attribute.getCode() ) ) codeMap.get( Attribute.class ).add( attribute.getCode() );
-                    }
-                } );
-
-                if ( !uidMap.containsKey( UserGroup.class ) ) uidMap.put( UserGroup.class, new HashSet<>() );
-                if ( !codeMap.containsKey( UserGroup.class ) ) codeMap.put( UserGroup.class, new HashSet<>() );
-
-                object.getUserGroupAccesses().forEach( uga -> {
-                    UserGroup userGroup = uga.getUserGroup();
-
-                    if ( userGroup != null )
-                    {
-                        if ( !StringUtils.isEmpty( userGroup.getUid() ) ) uidMap.get( UserGroup.class ).add( userGroup.getUid() );
-                        if ( !StringUtils.isEmpty( userGroup.getCode() ) ) codeMap.get( UserGroup.class ).add( userGroup.getCode() );
-                    }
-                } );
-
-                if ( !StringUtils.isEmpty( object.getUid() ) ) uidMap.get( objectClass ).add( object.getUid() );
-                if ( !StringUtils.isEmpty( object.getCode() ) ) codeMap.get( objectClass ).add( object.getCode() );
-
-                if ( uidMap.get( Attribute.class ).isEmpty() ) uidMap.remove( Attribute.class );
-                if ( codeMap.get( Attribute.class ).isEmpty() ) codeMap.remove( Attribute.class );
-
-                if ( uidMap.get( UserGroup.class ).isEmpty() ) uidMap.remove( UserGroup.class );
-                if ( codeMap.get( UserGroup.class ).isEmpty() ) codeMap.remove( UserGroup.class );
+                addIdentifiers( map, object );
             }
         }
 
+        cleanEmptyEntries( uidMap );
+        cleanEmptyEntries( codeMap );
+
         return map;
+    }
+
+    private void cleanEmptyEntries( Map<Class<? extends IdentifiableObject>, Set<String>> map )
+    {
+        Set<Class<? extends IdentifiableObject>> classes = new HashSet<>( map.keySet() );
+        classes.stream().filter( klass -> map.get( klass ).isEmpty() ).forEach( map::remove );
+    }
+
+    private void addIdentifiers( Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> map, IdentifiableObject identifiableObject )
+    {
+        if ( identifiableObject == null ) return;
+
+        Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = map.get( PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = map.get( PreheatIdentifier.CODE );
+
+        if ( !uidMap.containsKey( identifiableObject.getClass() ) ) uidMap.put( identifiableObject.getClass(), new HashSet<>() );
+        if ( !codeMap.containsKey( identifiableObject.getClass() ) ) codeMap.put( identifiableObject.getClass(), new HashSet<>() );
+
+        if ( !StringUtils.isEmpty( identifiableObject.getUid() ) ) uidMap.get( identifiableObject.getClass() ).add( identifiableObject.getUid() );
+        if ( !StringUtils.isEmpty( identifiableObject.getCode() ) ) codeMap.get( identifiableObject.getClass() ).add( identifiableObject.getCode() );
     }
 
     @Override
