@@ -324,7 +324,7 @@ public class DefaultPreheatService implements PreheatService
                     else
                     {
                         Collection<IdentifiableObject> reference = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-                        reference.forEach( identifiableObject -> addIdentifiers( map, identifiableObject ););
+                        reference.forEach( identifiableObject -> addIdentifiers( map, identifiableObject ) );
                     }
                 } );
 
