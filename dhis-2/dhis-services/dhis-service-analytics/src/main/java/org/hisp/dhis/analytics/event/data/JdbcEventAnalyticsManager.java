@@ -38,7 +38,6 @@ import static org.hisp.dhis.commons.util.TextUtils.trimEnd;
 import static org.hisp.dhis.system.util.DateUtils.getMediumDateString;
 import static org.hisp.dhis.system.util.MathUtils.getRounded;
 import static org.hisp.dhis.common.DimensionalObjectUtils.COMPOSITE_DIM_OBJECT_PLAIN_SEP;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.List;
 import java.util.Map;
@@ -328,10 +327,9 @@ public class JdbcEventAnalyticsManager
         List<String> columns = Lists.newArrayList( "count(psi) as count", 
             "ST_AsText(ST_Centroid(ST_Collect(geom))) as center", "ST_Extent(geom) as extent" );
 
-        if ( params.isIncludeClusterPoints() )
-        {
-            columns.add( "array_to_string(array_agg(psi), ',') as events" );
-        }
+        columns.add( params.isIncludeClusterPoints() ?
+            "array_to_string(array_agg(psi), ',') as points" :
+            "case when count(psi) = 1 then array_to_string(array_agg(psi), ',') end as points" );
         
         String sql = "select " + StringUtils.join( columns, "," ) + " ";
         
@@ -350,7 +348,7 @@ public class JdbcEventAnalyticsManager
             grid.addValue( rowSet.getLong( "count" ) );
             grid.addValue( rowSet.getString( "center" ) );
             grid.addValue( String.valueOf( rowSet.getObject( "extent" ) ) );
-            grid.addValue( params.isIncludeClusterPoints() ? rowSet.getString( "events" ) : EMPTY );         
+            grid.addValue( rowSet.getString( "points" ) );         
         }
         
         return grid;
