@@ -90,6 +90,7 @@ public class PreheatServiceTest
     }
 
     @Test
+    @Ignore
     public void testCollectNoObjectsDE()
     {
         DataElement dataElement = createDataElement( 'A' );
@@ -103,6 +104,7 @@ public class PreheatServiceTest
     }
 
     @Test
+    @Ignore
     public void testCollectNoObjectsDEG()
     {
         DataElementGroup dataElementGroup = createDataElementGroup( 'A' );
