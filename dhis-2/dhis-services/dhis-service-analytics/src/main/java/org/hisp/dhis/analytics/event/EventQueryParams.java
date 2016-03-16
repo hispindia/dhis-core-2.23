@@ -150,9 +150,14 @@ public class EventQueryParams
     private boolean collapseDataDimensions;
 
     /**
-     * Indicates whether request is intended to fetch coordinates only.
+     * Indicates whether request is intended to fetch events with coordinates only.
      */
     private boolean coordinatesOnly;
+    
+    /**
+     * Indicates whether request is intended to fetch events with geometry only.
+     */
+    private boolean geometryOnly;
 
     /**
      * Indicates whether the query originates from an aggregate data query.
@@ -201,6 +206,7 @@ public class EventQueryParams
         params.outputType = this.outputType;
         params.collapseDataDimensions = this.collapseDataDimensions;
         params.coordinatesOnly = this.coordinatesOnly;
+        params.geometryOnly = this.geometryOnly;
         params.aggregateData = this.aggregateData;
 
         params.periodType = this.periodType;
@@ -718,6 +724,16 @@ public class EventQueryParams
     public void setCoordinatesOnly( boolean coordinatesOnly )
     {
         this.coordinatesOnly = coordinatesOnly;
+    }
+
+    public boolean isGeometryOnly()
+    {
+        return geometryOnly;
+    }
+
+    public void setGeometryOnly( boolean geometryOnly )
+    {
+        this.geometryOnly = geometryOnly;
     }
 
     public boolean isAggregateData()

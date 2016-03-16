@@ -40,6 +40,7 @@ import static org.hisp.dhis.system.util.MathUtils.getRounded;
 import static org.hisp.dhis.common.DimensionalObjectUtils.COMPOSITE_DIM_OBJECT_PLAIN_SEP;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -75,6 +76,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * TODO could use row_number() and filtering for paging, but not supported on MySQL.
@@ -89,6 +91,8 @@ public class JdbcEventAnalyticsManager
     private static final String QUERY_ERR_MSG = "Query failed, likely because the requested analytics table does not exist";
     private static final String ITEM_NAME_SEP = ": ";
     private static final String NA = "[N/A]";
+    private static final String COL_COUNT = "count";
+    private static final String COL_EXTENT = "extent";
 
     private JdbcTemplate jdbcTemplate;
 
@@ -336,6 +340,30 @@ public class JdbcEventAnalyticsManager
         }
         
         return count;
+    }
+
+    @Override
+    public Map<String, Object> getCountAndExtent( EventQueryParams params )
+    {
+        Map<String, Object> map = Maps.newHashMap();
+        
+        params.setGeometryOnly( true );
+                
+        String sql = "select count(psi) as " + COL_COUNT + ", ST_Extent(geom) AS " + COL_EXTENT + " ";
+        
+        sql += getFromWhereClause( params, Lists.newArrayList( "psi", "geom" ) );
+        
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
+        
+        log.info( "Analytics event count and extent SQL: " + sql );
+        
+        if ( rowSet.next() )
+        {
+            map.put( COL_COUNT, rowSet.getLong( COL_COUNT ) );
+            map.put( COL_EXTENT, String.valueOf( rowSet.getObject( COL_EXTENT ) ) );
+        }
+        
+        return map;
     }
     
     // -------------------------------------------------------------------------
@@ -661,6 +689,11 @@ public class JdbcEventAnalyticsManager
         if ( params.isCoordinatesOnly() )
         {
             sql += "and (longitude is not null and latitude is not null) ";
+        }
+        
+        if ( params.isGeometryOnly() )
+        {
+            sql += "and geom is not null ";
         }
         
         if ( params.isCompletedOnly() )

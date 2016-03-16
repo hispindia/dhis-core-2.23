@@ -293,6 +293,43 @@ public class EventAnalyticsController
     }
 
     // -------------------------------------------------------------------------
+    // Count
+    // -------------------------------------------------------------------------
+
+    @RequestMapping( value = RESOURCE_PATH + "/count/{program}", method = RequestMethod.GET, produces = { "application/json", "application/javascript" } )
+    public String getCountJson( // JSON, JSONP
+        @PathVariable String program,
+        @RequestParam( required = false ) String stage,
+        @RequestParam( required = false ) String startDate,
+        @RequestParam( required = false ) String endDate,
+        @RequestParam Set<String> dimension,
+        @RequestParam( required = false ) Set<String> filter,
+        @RequestParam( required = false ) OrganisationUnitSelectionMode ouMode,
+        @RequestParam( required = false ) Set<String> asc,
+        @RequestParam( required = false ) Set<String> desc,
+        @RequestParam( required = false ) boolean skipMeta,
+        @RequestParam( required = false ) boolean skipData,
+        @RequestParam( required = false ) boolean completedOnly,
+        @RequestParam( required = false ) boolean hierarchyMeta,
+        @RequestParam( required = false ) boolean coordinatesOnly,
+        @RequestParam( required = false ) Integer page,
+        @RequestParam( required = false ) Integer pageSize,
+        @RequestParam( required = false ) DisplayProperty displayProperty,
+        @RequestParam( required = false ) String userOrgUnit,
+        Model model,
+        HttpServletResponse response ) throws Exception
+    {
+        EventQueryParams params = eventDataQueryService.getFromUrl( program, stage, startDate, endDate, dimension, filter, 
+            ouMode, asc, desc, skipMeta, skipData, completedOnly, hierarchyMeta, coordinatesOnly, displayProperty, userOrgUnit, page, pageSize, i18nManager.getI18nFormat() );
+
+        contextUtils.configureResponse( response, ContextUtils.CONTENT_TYPE_JSON, CacheStrategy.RESPECT_SYSTEM_SETTING );
+        Map<String, Object> map = analyticsService.getEventCountAndExtent( params );
+        model.addAttribute( "model", map );
+        model.addAttribute( "viewClass", "detailed" );
+        return "grid";
+    }
+
+    // -------------------------------------------------------------------------
     // Query
     // -------------------------------------------------------------------------
 

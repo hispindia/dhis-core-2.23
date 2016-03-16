@@ -70,6 +70,7 @@ import org.hisp.dhis.i18n.I18nFormat;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramStage;
+import org.hisp.dhis.system.database.DatabaseInfo;
 import org.hisp.dhis.system.grid.ListGrid;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
@@ -96,6 +97,9 @@ public class DefaultEventAnalyticsService
 
     @Autowired
     private CurrentUserService currentUserService;
+    
+    @Autowired
+    private DatabaseInfo databaseInfo;
     
     // -------------------------------------------------------------------------
     // EventAnalyticsService implementation
@@ -315,6 +319,25 @@ public class DefaultEventAnalyticsService
         grid.setMetaData( metaData );
 
         return grid;
+    }
+
+    @Override
+    public Map<String, Object> getEventCountAndExtent( EventQueryParams params )
+    {
+        if ( !databaseInfo.isSpatialSupport() )
+        {
+            throw new IllegalQueryException( "Spatial database support is not enabled" );
+        }
+        
+        securityManager.decideAccess( params );
+        
+        queryPlanner.validate( params );
+
+        params.replacePeriodsWithStartEndDates();
+        
+        params = queryPlanner.planEventQuery( params );
+
+        return analyticsManager.getCountAndExtent( params );
     }
 
     // -------------------------------------------------------------------------
