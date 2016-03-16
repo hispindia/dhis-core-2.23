@@ -90,29 +90,27 @@ public class PreheatServiceTest
     }
 
     @Test
-    @Ignore
     public void testCollectNoObjectsDE()
     {
         DataElement dataElement = createDataElement( 'A' );
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElement )
-            .get( PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
+            dataElement ).get( PreheatIdentifier.UID );
 
-        assertTrue( references.containsKey( OptionSet.class ) );
-        assertTrue( references.containsKey( LegendSet.class ) );
+        assertFalse( references.containsKey( OptionSet.class ) );
+        assertFalse( references.containsKey( LegendSet.class ) );
         assertTrue( references.containsKey( DataElementCategoryCombo.class ) );
-        assertTrue( references.containsKey( User.class ) );
+        assertFalse( references.containsKey( User.class ) );
     }
 
     @Test
-    @Ignore
     public void testCollectNoObjectsDEG()
     {
         DataElementGroup dataElementGroup = createDataElementGroup( 'A' );
-        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences( dataElementGroup )
-            .get( PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> references = preheatService.collectReferences(
+            dataElementGroup ).get( PreheatIdentifier.UID );
 
-        assertTrue( references.containsKey( DataElement.class ) );
-        assertTrue( references.containsKey( User.class ) );
+        assertFalse( references.containsKey( DataElement.class ) );
+        assertFalse( references.containsKey( User.class ) );
     }
 
     @Test
