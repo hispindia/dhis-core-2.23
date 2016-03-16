@@ -163,7 +163,22 @@ public class EventQueryParams
      * Indicates whether the query originates from an aggregate data query.
      */
     private boolean aggregateData;
+    
+    /**
+     * Size of cluster in meter.
+     */
+    private Long clusterSize;
 
+    /**
+     * Bounding box for events to include in clustering.
+     */
+    private String bbox;
+    
+    /**
+     * Indicates whether to include underlying points for each cluster.
+     */
+    private boolean includeClusterPoints;
+    
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
@@ -208,6 +223,9 @@ public class EventQueryParams
         params.coordinatesOnly = this.coordinatesOnly;
         params.geometryOnly = this.geometryOnly;
         params.aggregateData = this.aggregateData;
+        params.clusterSize = this.clusterSize;
+        params.bbox = this.bbox;
+        params.includeClusterPoints = this.includeClusterPoints;
 
         params.periodType = this.periodType;
 
@@ -509,6 +527,11 @@ public class EventQueryParams
     {
         return program != null && program.isRegistration();
     }
+    
+    public boolean hasBbox()
+    {
+        return bbox != null && !bbox.isEmpty();
+    }
 
     /**
      * Returns a negative integer in case of ascending sort order, a positive in
@@ -744,5 +767,35 @@ public class EventQueryParams
     public void setAggregateData( boolean aggregateData )
     {
         this.aggregateData = aggregateData;
+    }
+
+    public Long getClusterSize()
+    {
+        return clusterSize;
+    }
+
+    public void setClusterSize( Long clusterSize )
+    {
+        this.clusterSize = clusterSize;
+    }
+
+    public String getBbox()
+    {
+        return bbox;
+    }
+
+    public void setBbox( String bbox )
+    {
+        this.bbox = bbox;
+    }
+
+    public boolean isIncludeClusterPoints()
+    {
+        return includeClusterPoints;
+    }
+
+    public void setIncludeClusterPoints( boolean includeClusterPoints )
+    {
+        this.includeClusterPoints = includeClusterPoints;
     }
 }

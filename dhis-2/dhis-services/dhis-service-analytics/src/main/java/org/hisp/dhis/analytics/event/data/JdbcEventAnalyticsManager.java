@@ -318,7 +318,34 @@ public class JdbcEventAnalyticsManager
             }
         }
     }
-    
+
+    @Override
+    public Grid getEventClusters( EventQueryParams params, Grid grid, int maxLimit )
+    {
+        params.setGeometryOnly( true );
+        
+        String sql = "select count(psi) as count, ST_AsText(ST_Centroid(ST_Collect(geom))) as center, ST_Extent(geom) as extent ";
+        
+        sql += getFromWhereClause( params, Lists.newArrayList( "psi", "geom" ) );
+        
+        sql += "group by ST_SnapToGrid(ST_Transform(geom, 3785), " + params.getClusterSize() + ") ";
+        
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
+
+        log.info( "Analytics event cluster SQL: " + sql );
+        
+        while ( rowSet.next() )
+        {
+            grid.addRow();
+            
+            grid.addValue( rowSet.getLong( "count" ) );
+            grid.addValue( rowSet.getObject( String.valueOf( "center" ) ) );
+            grid.addValue( rowSet.getObject( String.valueOf( "extent" ) ) );
+        }
+        
+        return grid;
+    }
+
     @Override
     public long getEventCount( EventQueryParams params )
     {
@@ -341,21 +368,21 @@ public class JdbcEventAnalyticsManager
         
         return count;
     }
-
+    
     @Override
     public Map<String, Object> getCountAndExtent( EventQueryParams params )
     {
         Map<String, Object> map = Maps.newHashMap();
         
         params.setGeometryOnly( true );
-                
+        
         String sql = "select count(psi) as " + COL_COUNT + ", ST_Extent(geom) AS " + COL_EXTENT + " ";
         
         sql += getFromWhereClause( params, Lists.newArrayList( "psi", "geom" ) );
         
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
         
-        log.info( "Analytics event count and extent SQL: " + sql );
+        log.debug( "Analytics event count and extent SQL: " + sql );
         
         if ( rowSet.next() )
         {
@@ -699,6 +726,11 @@ public class JdbcEventAnalyticsManager
         if ( params.isCompletedOnly() )
         {
             sql += "and completeddate is not null ";
+        }
+        
+        if ( params.hasBbox() )
+        {
+            sql += "and geom && ST_MakeEnvelope(" + params.getBbox() + ",4326)";
         }
 
         return sql;

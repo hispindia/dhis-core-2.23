@@ -322,6 +322,41 @@ public class DefaultEventAnalyticsService
     }
 
     @Override
+    public Grid getEventClusters( EventQueryParams params )
+    {
+        if ( !databaseInfo.isSpatialSupport() )
+        {
+            throw new IllegalQueryException( "Spatial database support is not enabled" );
+        }
+        
+        securityManager.decideAccess( params );
+        
+        queryPlanner.validate( params );
+
+        params.replacePeriodsWithStartEndDates();
+        
+        Grid grid = new ListGrid();
+        
+        // ---------------------------------------------------------------------
+        // Headers
+        // ---------------------------------------------------------------------
+
+        grid.addHeader( new GridHeader( ITEM_COUNT, "Count", Long.class.getName(), false, true ) );
+        grid.addHeader( new GridHeader( ITEM_CENTER, "Center", String.class.getName(), false, true ) );
+        grid.addHeader( new GridHeader( ITEM_EXTENT, "Extent", String.class.getName(), false, true ) );
+
+        // ---------------------------------------------------------------------
+        // Data
+        // ---------------------------------------------------------------------
+
+        params = queryPlanner.planEventQuery( params );
+
+        analyticsManager.getEventClusters( params, grid, queryPlanner.getMaxLimit() );
+        
+        return grid;
+    }
+    
+    @Override
     public Map<String, Object> getEventCountAndExtent( EventQueryParams params )
     {
         if ( !databaseInfo.isSpatialSupport() )

@@ -41,6 +41,8 @@ public interface EventAnalyticsManager
     
     Grid getEvents( EventQueryParams params, Grid grid, int maxLimit );
     
+    Grid getEventClusters( EventQueryParams params, Grid grid, int maxLimit );
+    
     long getEventCount( EventQueryParams params );
     
     Map<String, Object> getCountAndExtent( EventQueryParams params );
