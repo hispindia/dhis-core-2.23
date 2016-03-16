@@ -526,6 +526,7 @@ trackerCapture.controller('TEIAddController',
     $scope.trackedEntityForm = null;
     $scope.customForm = null;
     $scope.selectedTei = {};
+    $scope.teiOriginal = {};
     $scope.tei = {};
     $scope.hiddenFields = {};
     $scope.editingDisabled = false;
@@ -643,7 +644,7 @@ trackerCapture.controller('TEIAddController',
         $scope.selectedTei.orgUnit = $scope.tei.orgUnit = $scope.selectedOrgUnit.id;
         $scope.selectedTei.attributes = $scope.tei.attributes = [];
         
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
                 

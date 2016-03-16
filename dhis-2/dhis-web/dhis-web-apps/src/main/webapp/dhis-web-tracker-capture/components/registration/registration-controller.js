@@ -97,9 +97,10 @@ trackerCapture.controller('RegistrationController',
         
         if($scope.registrationMode !== 'REGISTRATION'){
             $scope.selectedTei = args.selectedTei;            
-            $scope.tei = angular.copy(args.selectedTei);  
-            //$scope.teiOriginal = angular.copy(args.selectedTei);  
+            $scope.tei = angular.copy(args.selectedTei);             
         }
+        
+        $scope.teiOriginal = angular.copy($scope.tei); 
         
         if($scope.registrationMode === 'PROFILE'){
             $scope.selectedEnrollment = args.enrollment;
@@ -276,7 +277,7 @@ trackerCapture.controller('RegistrationController',
         //get tei attributes and their values
         //but there could be a case where attributes are non-mandatory and
         //registration form comes empty, in this case enforce at least one value        
-        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.attributesById);
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
         $scope.formEmpty = result.formEmpty;
         $scope.tei = result.tei;
         
@@ -381,17 +382,24 @@ trackerCapture.controller('RegistrationController',
         });
     };
     
-    $scope.cancelRegistrationWarning = function(cancelFunction){
-        
-        var modalOptions = {
-            closeButtonText: 'no',
-            actionButtonText: 'yes',
-            headerText: 'cancel',
-            bodyText: 'are_you_sure_to_cancel_registration'
-        };
-        
-        ModalService.showModal({}, modalOptions).then(function(){
+    $scope.cancelRegistrationWarning = function(cancelFunction){        
+        var result = RegistrationService.processForm($scope.tei, $scope.selectedTei, $scope.teiOriginal, $scope.attributesById);
+        if( result.formChanged){
+            var modalOptions = {
+                closeButtonText: 'no',
+                actionButtonText: 'yes',
+                headerText: 'cancel',
+                bodyText: 'are_you_sure_to_cancel_registration'
+            };
+
+            ModalService.showModal({}, modalOptions).then(function(){
+                $scope.outerForm.$setPristine();
+                cancelFunction();
+            });
+        }
+        else{
+            $scope.outerForm.$setPristine();
             cancelFunction();
-        });
+        }        
     };
 });
