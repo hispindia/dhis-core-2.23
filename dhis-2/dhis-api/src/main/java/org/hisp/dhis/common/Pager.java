@@ -42,7 +42,7 @@ public class Pager
 
     private int page = 1;
 
-    private int total = 0;
+    private long total = 0;
 
     private int pageSize = Pager.DEFAULT_PAGE_SIZE;
 
@@ -55,7 +55,7 @@ public class Pager
 
     }
 
-    public Pager( int page, int total )
+    public Pager( int page, long total )
     {
         this.page = page;
         this.total = total;
@@ -71,7 +71,7 @@ public class Pager
         }
     }
 
-    public Pager( int page, int total, int pageSize )
+    public Pager( int page, long total, int pageSize )
     {
         this.page = page;
         this.total = total >= 0 ? total : 0;
@@ -107,7 +107,7 @@ public class Pager
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public int getTotal()
+    public long getTotal()
     {
         return total;
     }
@@ -134,7 +134,7 @@ public class Pager
     public int getPageCount()
     {
         int pageCount = 1;
-        int totalTmp = total;
+        long totalTmp = total;
 
         while ( totalTmp > pageSize )
         {

@@ -272,7 +272,7 @@ public class DefaultEventAnalyticsService
 
         timer.getSplitTime( "Planned event query, got partitions: " + params.getPartitions() );
 
-        int count = 0;
+        long count = 0;
 
         if ( params.getPartitions().hasAny() )
         {

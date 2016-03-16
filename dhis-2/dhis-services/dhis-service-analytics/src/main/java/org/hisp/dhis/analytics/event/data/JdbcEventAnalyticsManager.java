@@ -316,13 +316,13 @@ public class JdbcEventAnalyticsManager
     }
     
     @Override
-    public int getEventCount( EventQueryParams params )
+    public long getEventCount( EventQueryParams params )
     {
         String sql = "select count(psi) ";
         
         sql += getFromWhereClause( params, Lists.newArrayList( "psi" ) );
                 
-        int count = 0;
+        long count = 0;
         
         try
         {
@@ -336,7 +336,7 @@ public class JdbcEventAnalyticsManager
         return count;
     }
     
-    private int getEventCount( String sql )
+    private long getEventCount( String sql )
     {
         int count = jdbcTemplate.queryForObject( sql, Integer.class );
 

@@ -39,5 +39,5 @@ public interface EventAnalyticsManager
     
     Grid getEvents( EventQueryParams params, Grid grid, int maxLimit );
     
-    int getEventCount( EventQueryParams params );
+    long getEventCount( EventQueryParams params );
 }
