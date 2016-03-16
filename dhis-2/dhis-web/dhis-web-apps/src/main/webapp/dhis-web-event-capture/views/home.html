@@ -119,7 +119,7 @@
                 <h3>
                     <span ng-if="editingEventInFull">{{'event_details'| translate}}</span>
                     <span ng-if="eventRegistration">{{'new_event'| translate}}</span>
-                    <span ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'" style="margin-left: 53%">
+                    <span ng-if="currentEvent.event && currentEvent.event !== 'SINGLE_EVENT'" class="horizonal-spacing">
                         <d2-audit style="font-size: 15px" name-id-map="prStDes" event-id="{{currentEvent.event}}" data-type="dataElement">
                         </d2-audit>
                     </span>

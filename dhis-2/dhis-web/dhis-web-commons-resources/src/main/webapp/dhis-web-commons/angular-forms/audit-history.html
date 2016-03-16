@@ -1,49 +1,56 @@
-<div>
-    <div ng-if="!isListEmpty()">
-        <div class="modal-header">
-            <h2>{{'audit_history'| translate}}</h2>
-        </div>
-
-        <div class="modal-body">
-            <span class="row">
-                <input class="form-control col-md-7" ng-model="model.searchText" placeholder="Search" type="search" ng-change="searchTheList()" />
-            </span>
-            <div class="scroll">
-                <table class="listTable dhis2-table-striped-border">
+<div class="modal-header">
+    <h2>{{'audit_history'| translate}}</h2>
+</div>
+<div class="modal-body page"> 
+    <div ng-if="itemList.length > 0">
+        <span class="row">
+            <input class="form-control col-md-7" ng-model="model.searchText" placeholder="Search" type="search" />
+        </span>
+        <div class="scroll">
+            <table class="listTable dhis2-table-striped-border">
+                <thead>
                     <tr>
-                        <th ng-if="model.type==='dataElement'" colspan="4">{{'data_element' | translate}}</th>
-                        <th ng-if="model.type==='attribute'" colspan="4">{{'attribute' | translate}}</th>
-                        <th colspan="4"> {{'audit_date' | translate}}</th>
-                        <th colspan="4"> {{'audit_value' | translate}}</th>
-                        <th colspan="4"> {{'audit_modified' | translate}}</th>
+                        <th ng-repeat="col in auditColumns">
+                            <span ng-switch="col">
+                                <span ng-switch-when="name">
+                                    {{model.type === 'dataElement' ? 'data_element' : 'attribute'| translate}}
+                                </span>
+                                <span ng-switch-when="auditType">
+                                    {{'audit_type'| translate}}
+                                </span>
+                                <span ng-switch-when="value">
+                                    {{'audit_value'| translate}}
+                                </span>
+                                <span ng-switch-when="modifiedBy">
+                                    {{'audit_modified'| translate}}
+                                </span>
+                                <span ng-switch-when="created">
+                                    {{'audit_date'| translate}}
+                                </span>                                    
+                            </span>
+                        </th>
                     </tr>
-                    <tbody ng-repeat="(key,values) in listInDisplay">
-                    <tr ng-repeat="value in values">
-                        <td ng-if="$index===0" rowspan="{{values.length}}" colspan="4">{{key}}</td>
-                        <td colspan="4">{{value.created}}</td>
-                        <td colspan="4">{{value.value}}</td>
-                        <td colspan="4">{{value.modifiedBy}}</td>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="item in itemList| orderBy:'name' | filter:model.searchText" 
+                        ng-init="itemRowIndex = $index">
+                        <td ng-repeat="col in auditColumns" 
+                            rowspan="{{(itemList| filter: {name: item.name}).length}}"
+                            ng-if="col === 'name' && (itemRowIndex % (itemList | filter: {name: item.name}).length === 0)">
+                            {{item[col]}}
+                        </td>
+                        <td ng-repeat="col in auditColumns" ng-if="col !== 'name'">
+                            {{item[col]}}
+                        </td>
                     </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div ng-if="itemList.length === 0">
-                {{'audit_history_unavailable'| translate}}
-            </div>
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-ng-click="close()">{{'close'| translate}}</button>
+                </tbody>
+            </table>
         </div>
     </div>
-    <div ng-if="isListEmpty()">
-        <div class="modal-header">
-            <h2>{{'audit_history'| translate}}</h2>
-        </div>
-        <div class="modal-body">
-            <div class="alert alert-warning">
-                {{'audit_history_unavailable'| translate}}
-            </div>
-            <button type="button" class="btn btn-default" data-ng-click="close()">{{'close'| translate}}</button>
-        </div>
+    <div ng-if="itemList.length === 0">
+        <div class="alert alert-warning">{{'audit_history_unavailable'| translate}}</div>
     </div>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-ng-click="close()">{{'close'| translate}}</button>
 </div>
