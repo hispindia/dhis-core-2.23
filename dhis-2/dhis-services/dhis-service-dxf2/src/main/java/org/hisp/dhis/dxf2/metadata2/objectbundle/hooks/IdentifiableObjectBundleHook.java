@@ -50,22 +50,23 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
     public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
         Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
-        handleAttributeValues( identifiableObject, objectBundle, schema );
-        handleUserGroupAccesses( identifiableObject, objectBundle, schema );
+        Session session = sessionFactory.getCurrentSession();
+        handleAttributeValues( session, identifiableObject, objectBundle, schema );
+        handleUserGroupAccesses( session, identifiableObject, objectBundle, schema );
     }
 
     @Override
-    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
     {
         Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
-        handleAttributeValues( identifiableObject, objectBundle, schema );
-        handleUserGroupAccesses( identifiableObject, objectBundle, schema );
+        Session session = sessionFactory.getCurrentSession();
+        handleAttributeValues( session, identifiableObject, objectBundle, schema );
+        handleUserGroupAccesses( session, identifiableObject, objectBundle, schema );
     }
 
-    public void handleAttributeValues( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
+    public void handleAttributeValues( Session session, IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "attributeValues" ) ) return;
-        Session session = sessionFactory.getCurrentSession();
 
         for ( AttributeValue attributeValue : identifiableObject.getAttributeValues() )
         {
@@ -75,10 +76,9 @@ public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
         }
     }
 
-    public void handleUserGroupAccesses( IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
+    public void handleUserGroupAccesses( Session session, IdentifiableObject identifiableObject, ObjectBundle bundle, Schema schema )
     {
         if ( !schema.havePersistedProperty( "userGroupAccesses" ) ) return;
-        Session session = sessionFactory.getCurrentSession();
 
         for ( UserGroupAccess userGroupAccess : identifiableObject.getUserGroupAccesses() )
         {

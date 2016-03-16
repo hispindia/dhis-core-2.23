@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hibernate.Session;
 import org.hisp.dhis.common.AnalyticalObject;
 import org.hisp.dhis.common.BaseAnalyticalObject;
 import org.hisp.dhis.common.IdentifiableObject;
@@ -48,8 +49,13 @@ public class AnalyticalObjectObjectBundleHook
     {
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
-        analyticalObject.getDataDimensionItems().clear();
-        analyticalObject.getCategoryDimensions().clear();
+        Session session = sessionFactory.getCurrentSession();
+
+        handleDataDimensionItems( session, analyticalObject, objectBundle );
+        handleCategoryDimensions( session, analyticalObject, objectBundle );
+        handleDataElementDimensions( session, analyticalObject, objectBundle );
+        handleAttributeDimensions( session, analyticalObject, objectBundle );
+        handleProgramIndicatorDimensions( session, analyticalObject, objectBundle );
     }
 
     @Override
@@ -57,7 +63,37 @@ public class AnalyticalObjectObjectBundleHook
     {
         if ( !AnalyticalObject.class.isInstance( identifiableObject ) ) return;
         BaseAnalyticalObject analyticalObject = (BaseAnalyticalObject) identifiableObject;
+        Session session = sessionFactory.getCurrentSession();
+
+        handleDataDimensionItems( session, analyticalObject, objectBundle );
+        handleCategoryDimensions( session, analyticalObject, objectBundle );
+        handleDataElementDimensions( session, analyticalObject, objectBundle );
+        handleAttributeDimensions( session, analyticalObject, objectBundle );
+        handleProgramIndicatorDimensions( session, analyticalObject, objectBundle );
+    }
+
+    private void handleDataDimensionItems( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    {
         analyticalObject.getDataDimensionItems().clear();
+    }
+
+    private void handleCategoryDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    {
         analyticalObject.getCategoryDimensions().clear();
+    }
+
+    private void handleDataElementDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    {
+        analyticalObject.getDataElementDimensions().clear();
+    }
+
+    private void handleAttributeDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    {
+        analyticalObject.getAttributeDimensions().clear();
+    }
+
+    private void handleProgramIndicatorDimensions( Session session, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
+    {
+        analyticalObject.getProgramIndicatorDimensions().clear();
     }
 }
