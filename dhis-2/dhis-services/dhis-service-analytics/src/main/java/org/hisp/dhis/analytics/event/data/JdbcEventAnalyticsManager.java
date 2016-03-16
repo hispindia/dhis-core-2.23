@@ -321,26 +321,19 @@ public class JdbcEventAnalyticsManager
         String sql = "select count(psi) ";
         
         sql += getFromWhereClause( params, Lists.newArrayList( "psi" ) );
-                
+        
         long count = 0;
         
         try
         {
-            count = getEventCount( sql );          
+            count = jdbcTemplate.queryForObject( sql, Long.class );
+            
+            log.debug( "Analytics event count SQL: " + sql );
         }
         catch ( BadSqlGrammarException ex )
         {
             log.info( QUERY_ERR_MSG, ex );
         }
-
-        return count;
-    }
-    
-    private long getEventCount( String sql )
-    {
-        int count = jdbcTemplate.queryForObject( sql, Integer.class );
-
-        log.debug( "Analytics event count SQL: " + sql );
         
         return count;
     }
