@@ -514,6 +514,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             htmlCode = htmlCode.replace(inputField, newInputField);
                         }
                     }
+                    htmlCode = addPopOver(htmlCode, programStageDataElements);
                     return {htmlCode: htmlCode, hasEventDate: hasEventDate};
                 }
                 return null;
@@ -688,6 +689,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                         htmlCode = htmlCode.replace(inputField, newInputField);
                     }
+                    htmlCode = addPopOver(htmlCode, trackedEntityFormAttributes);
                     return {htmlCode: htmlCode, hasProgramDate: hasProgramDate};
                 }
                 return null;
@@ -705,6 +707,67 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 return null;
             }
         };
+        /* This function inserts the d2-pop-over attributes into the tags containing d2-input-label attribute to
+         * add description and url popover to those tags */
+        function addPopOver(htmlCodeToInsertPopOver, popOverContent) {
+
+            var inputRegex = /<span.*?\/span>/g;
+            var match, tagToInsertPopOver, tagWithPopOver;
+            var htmlCode = htmlCodeToInsertPopOver;
+            while (match = inputRegex.exec(htmlCodeToInsertPopOver)) {
+                if (match[0].indexOf("d2-input-label") > -1) {
+                    tagToInsertPopOver = match[0];
+                    tagWithPopOver = insertPopOverSpanToTag(tagToInsertPopOver, popOverContent);
+                    htmlCode = htmlCode.replace(tagToInsertPopOver,tagWithPopOver);
+                }
+            }
+            return htmlCode;
+
+        }
+
+        function insertPopOverSpanToTag(tagToInsertPopOverSpan, popOverContent)  {
+
+            var attribute, attributes, fieldId, description, url, element, attValue;
+            var popOverSpanElement, tagWithPopOverSpan;
+
+            element = $(tagToInsertPopOverSpan);
+            attributes = element[0].attributes;
+
+            for (var index = 0; index < attributes.length; index++) {
+                if (attributes[index].name === "d2-input-label") {
+                    attValue = attributes[index].value;
+                    break;
+                }
+            }
+            if (attValue) {
+                popOverSpanElement = $('<span></span>');
+                popOverSpanElement.attr("d2-pop-over","");
+                popOverSpanElement.attr("details","{{'details'| translate}}");
+                popOverSpanElement.attr("trigger","click");
+                popOverSpanElement.attr("placement","right");
+
+                if (attValue.indexOf("attributeId.") > -1) {
+                    fieldId = attValue.split(".")[1];
+                    description = popOverContent[fieldId].description ? "'" + popOverContent[fieldId].description + "'" :
+                        "undefined";
+                    popOverSpanElement.attr("content","{description: " + description + "}");
+                    popOverSpanElement.attr("template","attribute-details.html");
+
+                } else {
+                    fieldId = attValue.split("-")[1];
+                    description = popOverContent[fieldId].dataElement.description ? "'" +
+                    popOverContent[fieldId].dataElement.description + "'" : "undefined";
+                    url = popOverContent[fieldId].dataElement.url ? "'" +
+                    popOverContent[fieldId].dataElement.url + "'" : "undefined";
+                    popOverSpanElement.attr("content","{description: " + description + ", url:" + url + "}");
+                    popOverSpanElement.attr("template","dataelement-details.html");
+                }
+                popOverSpanElement.html("<a href title=\"{{'details'| translate}}\">" +element.html() + "</a>");
+                element.html(popOverSpanElement[0].outerHTML.replace('d2-pop-over=""','d2-pop-over'));
+                tagWithPopOverSpan = element[0].outerHTML;
+            }
+            return tagWithPopOverSpan;
+        }
     })
 
     /* Context menu for grid*/
