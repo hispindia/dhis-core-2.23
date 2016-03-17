@@ -48,8 +48,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -101,6 +100,39 @@ public class ObjectBundleServiceFavoritesTest
         assertEquals( 1, organisationUnits.size() );
         assertEquals( 4, dataElements.size() );
         assertEquals( 3, charts.size() );
+    }
+
+    @Test
+    public void testCreateMetadataWithChartsWithPeriods1() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/favorites/metadata_with_chart_periods1.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        System.err.println( validate.getObjectErrorReports() );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<Chart> charts = manager.getAll( Chart.class );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 1, organisationUnits.size() );
+        assertEquals( 4, dataElements.size() );
+        assertEquals( 4, charts.size() );
+
+        Chart chart = manager.get( Chart.class, "ziCoxdcXRQz" );
+
+        assertNotNull( chart );
+        assertEquals( 5, chart.getPeriods().size() );
     }
 
     @Test

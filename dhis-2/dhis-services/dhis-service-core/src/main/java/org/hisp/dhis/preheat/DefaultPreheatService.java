@@ -42,6 +42,9 @@ import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
+import org.hisp.dhis.period.Period;
+import org.hisp.dhis.period.PeriodService;
+import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.query.Restrictions;
@@ -88,6 +91,9 @@ public class DefaultPreheatService implements PreheatService
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private PeriodService periodService;
 
     @Override
     @SuppressWarnings( "unchecked" )
@@ -222,6 +228,9 @@ public class DefaultPreheatService implements PreheatService
             List<IdentifiableObject> objects = params.getObjects().get( klass );
             preheat.put( params.getPreheatIdentifier(), objects );
         }
+
+        periodService.getAllPeriods().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
+        periodService.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
 
         return preheat;
     }
@@ -598,7 +607,7 @@ public class DefaultPreheatService implements PreheatService
         schema.getProperties().stream()
             .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
             .forEach( p -> {
-                if ( skipCheckAndConnect( p.getKlass() ) || skipCheckAndConnect( p.getItemKlass() ) )
+                if ( skipCheck( p.getKlass() ) || skipCheck( p.getItemKlass() ) )
                 {
                     return;
                 }
@@ -767,7 +776,7 @@ public class DefaultPreheatService implements PreheatService
         schema.getProperties().stream()
             .filter( p -> p.isPersisted() && p.isOwner() && (PropertyType.REFERENCE == p.getPropertyType() || PropertyType.REFERENCE == p.getItemPropertyType()) )
             .forEach( p -> {
-                if ( skipCheckAndConnect( p.getKlass() ) || skipCheckAndConnect( p.getItemKlass() ) )
+                if ( skipConnect( p.getKlass() ) || skipConnect( p.getItemKlass() ) )
                 {
                     return;
                 }
@@ -775,7 +784,7 @@ public class DefaultPreheatService implements PreheatService
                 if ( !p.isCollection() )
                 {
                     IdentifiableObject refObject = ReflectionUtils.invokeMethod( object, p.getGetterMethod() );
-                    IdentifiableObject ref = preheat.get( identifier, refObject );
+                    IdentifiableObject ref = getPersistedObject( preheat, identifier, refObject );
 
                     if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
                     {
@@ -798,7 +807,7 @@ public class DefaultPreheatService implements PreheatService
 
                     for ( IdentifiableObject refObject : refObjects )
                     {
-                        IdentifiableObject ref = preheat.get( identifier, refObject );
+                        IdentifiableObject ref = getPersistedObject( preheat, identifier, refObject );
 
                         if ( Preheat.isDefaultClass( refObject ) && (ref == null || "default".equals( refObject.getName() )) )
                         {
@@ -811,6 +820,28 @@ public class DefaultPreheatService implements PreheatService
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
+    }
+
+    private IdentifiableObject getPersistedObject( Preheat preheat, PreheatIdentifier identifier, IdentifiableObject ref )
+    {
+        if ( Period.class.isInstance( ref ) )
+        {
+            IdentifiableObject period = preheat.getPeriodMap().get( ref.getName() );
+
+            if ( period == null )
+            {
+                period = periodService.reloadIsoPeriod( ref.getName() );
+            }
+
+            if ( period != null )
+            {
+                preheat.getPeriodMap().put( period.getName(), (Period) period );
+            }
+
+            return period;
+        }
+
+        return preheat.get( identifier, ref );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -828,7 +859,14 @@ public class DefaultPreheatService implements PreheatService
         return userCredentialsMap;
     }
 
-    private boolean skipCheckAndConnect( Class<?> klass )
+    private boolean skipCheck( Class<?> klass )
+    {
+        return klass != null && (
+            UserCredentials.class.isAssignableFrom( klass ) || DataElementOperand.class.isAssignableFrom( klass )
+                || Period.class.isAssignableFrom( klass ) || PeriodType.class.isAssignableFrom( klass ));
+    }
+
+    private boolean skipConnect( Class<?> klass )
     {
         return klass != null && (UserCredentials.class.isAssignableFrom( klass ) || DataElementOperand.class.isAssignableFrom( klass ));
     }

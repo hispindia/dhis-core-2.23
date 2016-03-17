@@ -33,6 +33,8 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
+import org.hisp.dhis.period.Period;
+import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserCredentials;
 import org.springframework.util.StringUtils;
@@ -57,6 +59,10 @@ public class Preheat
     private Map<String, UserCredentials> usernames = new HashMap<>();
 
     private Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> uniquenessMap = new HashMap<>();
+
+    private Map<String, Period> periodMap = new HashMap<>();
+
+    private Map<String, PeriodType> periodTypeMap = new HashMap<>();
 
     public Preheat()
     {
@@ -401,5 +407,25 @@ public class Preheat
     public Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> getUniquenessMap()
     {
         return uniquenessMap;
+    }
+
+    public Map<String, Period> getPeriodMap()
+    {
+        return periodMap;
+    }
+
+    public void setPeriodMap( Map<String, Period> periodMap )
+    {
+        this.periodMap = periodMap;
+    }
+
+    public Map<String, PeriodType> getPeriodTypeMap()
+    {
+        return periodTypeMap;
+    }
+
+    public void setPeriodTypeMap( Map<String, PeriodType> periodTypeMap )
+    {
+        this.periodTypeMap = periodTypeMap;
     }
 }
