@@ -83,10 +83,14 @@ public class ImportMetaDataTask
             if ( "json".equals( format ) )
             {
                 metadata = JacksonUtils.fromJson( inputStream, Metadata.class );
+                
+                log.info( "Read JSON file. Importing metadata." );
             }
             else
             {
                 metadata = JacksonUtils.fromXml( inputStream, Metadata.class );
+                
+                log.info( "Read XML file. Importing metadata." );
             }
         }
         catch ( IOException ex )

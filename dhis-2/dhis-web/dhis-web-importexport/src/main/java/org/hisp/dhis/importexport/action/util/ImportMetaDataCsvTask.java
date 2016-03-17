@@ -90,6 +90,8 @@ public class ImportMetaDataCsvTask
         try
         {
             metadata = csvImportService.fromCsv( inputStream, clazz );
+            
+            log.info( "Read CSV file. Importing metadata." );
         }
         catch ( IOException ex )
         {
