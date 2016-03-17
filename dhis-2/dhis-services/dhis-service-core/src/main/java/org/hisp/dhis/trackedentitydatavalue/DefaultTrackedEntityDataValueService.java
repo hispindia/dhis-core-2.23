@@ -29,6 +29,7 @@ package org.hisp.dhis.trackedentitydatavalue;
  */
 
 import org.hisp.dhis.common.AuditType;
+import org.hisp.dhis.common.IllegalQueryException;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.program.ProgramStageInstance;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
@@ -36,6 +37,8 @@ import org.hisp.dhis.user.CurrentUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import static org.hisp.dhis.system.util.ValidationUtils.dataValueIsValid;
 
 import java.util.Collection;
 import java.util.Date;
@@ -76,6 +79,18 @@ public class DefaultTrackedEntityDataValueService
             {
                 trackedEntityDataValue.setStoredBy( currentUserService.getCurrentUsername() );
             }
+            
+            if ( trackedEntityDataValue.getDataElement() == null || trackedEntityDataValue.getDataElement().getValueType() == null )
+            {
+                throw new IllegalQueryException( "Data element or type is null or empty" );
+            }
+            
+            String result = dataValueIsValid( trackedEntityDataValue.getValue(), trackedEntityDataValue.getDataElement().getValueType() );
+
+            if ( result != null )
+            {
+                throw new IllegalQueryException( "Value is not valid:  " + result );
+            }
 
             dataValueStore.saveVoid( trackedEntityDataValue );
         }
@@ -97,6 +112,18 @@ public class DefaultTrackedEntityDataValueService
                 trackedEntityDataValue.setStoredBy( currentUserService.getCurrentUsername() );
             }
 
+            if ( trackedEntityDataValue.getDataElement() == null || trackedEntityDataValue.getDataElement().getValueType() == null )
+            {
+                throw new IllegalQueryException( "Data element or type is null or empty" );
+            }
+            
+            String result = dataValueIsValid( trackedEntityDataValue.getValue(), trackedEntityDataValue.getDataElement().getValueType() );
+
+            if ( result != null )
+            {
+                throw new IllegalQueryException( "Value is not valid:  " + result );
+            }
+            
             TrackedEntityDataValueAudit dataValueAudit = new TrackedEntityDataValueAudit( trackedEntityDataValue, trackedEntityDataValue.getAuditValue(),
                 trackedEntityDataValue.getStoredBy(), AuditType.UPDATE );
 

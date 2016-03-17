@@ -162,10 +162,10 @@ public class TrackedEntityDataValueServiceTest
         stageInstanceB = programStageInstanceService.createProgramStageInstance( programInstance, stageB, yesterday,
             yesterday, organisationUnit );
 
-        dataValueA = new TrackedEntityDataValue( stageInstanceA, dataElementA, "A" );
-        dataValueB = new TrackedEntityDataValue( stageInstanceA, dataElementB, "B" );
-        dataValueC = new TrackedEntityDataValue( stageInstanceB, dataElementA, "C" );
-        dataValueD = new TrackedEntityDataValue( stageInstanceB, dataElementB, "D" );
+        dataValueA = new TrackedEntityDataValue( stageInstanceA, dataElementA, "1" );
+        dataValueB = new TrackedEntityDataValue( stageInstanceA, dataElementB, "2" );
+        dataValueC = new TrackedEntityDataValue( stageInstanceB, dataElementA, "3" );
+        dataValueD = new TrackedEntityDataValue( stageInstanceB, dataElementB, "4" );
     }
 
     @Test
@@ -205,10 +205,10 @@ public class TrackedEntityDataValueServiceTest
 
         assertNotNull( dataValueService.getTrackedEntityDataValue( stageInstanceA, dataElementA ) );
 
-        dataValueA.setValue( "B" );
+        dataValueA.setValue( "2" );
         dataValueService.updateTrackedEntityDataValue( dataValueA );
 
-        assertEquals( "B", dataValueService.getTrackedEntityDataValue( stageInstanceA, dataElementA ).getValue() );
+        assertEquals( "2", dataValueService.getTrackedEntityDataValue( stageInstanceA, dataElementA ).getValue() );
     }
 
     @Test

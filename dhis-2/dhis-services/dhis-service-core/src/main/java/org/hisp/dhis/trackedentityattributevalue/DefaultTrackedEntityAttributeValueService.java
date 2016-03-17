@@ -29,6 +29,7 @@ package org.hisp.dhis.trackedentityattributevalue;
  */
 
 import org.hisp.dhis.common.AuditType;
+import org.hisp.dhis.common.IllegalQueryException;
 import org.hisp.dhis.external.conf.DhisConfigurationProvider;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.trackedentity.TrackedEntityInstance;
@@ -37,6 +38,8 @@ import org.jasypt.exceptions.EncryptionOperationNotPossibleException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import static org.hisp.dhis.system.util.ValidationUtils.dataValueIsValid;
 
 import java.util.Collection;
 import java.util.List;
@@ -119,6 +122,18 @@ public class DefaultTrackedEntityAttributeValueService
         {
             throw new EncryptionOperationNotPossibleException( "Unable to encrypt data, encryption is not correctly configured" );
         }
+        
+        if ( attributeValue == null || attributeValue.getAttribute() == null || attributeValue.getAttribute().getValueType() == null )
+        {
+            throw new IllegalQueryException( "Attribute or type is null or empty" );
+        }
+        
+        String result = dataValueIsValid( attributeValue.getValue(), attributeValue.getAttribute().getValueType() );
+
+        if ( result != null )
+        {
+            throw new IllegalQueryException( "Value is not valid:  " + result );
+        }
 
         attributeValue.setAutoFields();
 
@@ -138,7 +153,19 @@ public class DefaultTrackedEntityAttributeValueService
             attributeValueStore.delete( attributeValue );
         }
         else
-        {
+        {            
+            if ( attributeValue == null || attributeValue.getAttribute() == null || attributeValue.getAttribute().getValueType() == null )
+            {
+                throw new IllegalQueryException( "Attribute or type is null or empty" );
+            }
+            
+            String result = dataValueIsValid( attributeValue.getValue(), attributeValue.getAttribute().getValueType() );
+
+            if ( result != null )
+            {
+                throw new IllegalQueryException( "Value is not valid:  " + result );
+            }
+            
             TrackedEntityAttributeValueAudit trackedEntityAttributeValueAudit = new TrackedEntityAttributeValueAudit( attributeValue,
                 attributeValue.getAuditValue(), currentUserService.getCurrentUsername(), AuditType.UPDATE );
 
