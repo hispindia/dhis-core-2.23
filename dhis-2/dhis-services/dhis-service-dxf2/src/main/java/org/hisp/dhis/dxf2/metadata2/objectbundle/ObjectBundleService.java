@@ -28,6 +28,11 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.feedback.TypeReport;
+
+import java.util.Map;
+
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
@@ -53,5 +58,5 @@ public interface ObjectBundleService
      *
      * @param bundle ObjectBundle to commit.
      */
-    void commit( ObjectBundle bundle );
+    Map<Class<? extends IdentifiableObject>, TypeReport> commit( ObjectBundle bundle );
 }

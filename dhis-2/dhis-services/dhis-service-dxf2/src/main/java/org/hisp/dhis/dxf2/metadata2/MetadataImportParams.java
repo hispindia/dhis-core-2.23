@@ -56,7 +56,7 @@ public class MetadataImportParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
+    private ImportStrategy importMode = ImportStrategy.ATOMIC_CREATE_AND_UPDATE;
 
     private MergeMode mergeMode = MergeMode.MERGE;
 

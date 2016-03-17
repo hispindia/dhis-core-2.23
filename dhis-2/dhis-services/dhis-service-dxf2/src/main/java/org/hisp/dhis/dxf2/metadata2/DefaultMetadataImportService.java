@@ -29,14 +29,15 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import com.google.common.base.Enums;
+import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
-import org.hisp.dhis.feedback.ObjectTypeErrorReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleService;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleValidation;
+import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -75,23 +76,13 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundle bundle = objectBundleService.create( bundleParams );
 
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
-        validation.getObjectErrorReports().forEach( ( klass, objectErrorReports ) -> {
-            if ( !report.getImportTypeReportMap().containsKey( klass ) )
-            {
-                ObjectTypeErrorReport objectTypeErrorReport = new ObjectTypeErrorReport( klass, objectErrorReports );
-                report.getImportTypeReportMap().put( klass, objectTypeErrorReport );
-            }
-            else
-            {
-                ObjectTypeErrorReport objectTypeErrorReport = report.getImportTypeReportMap().get( klass );
-                objectTypeErrorReport.getObjectErrorReports().addObjectErrorReports( objectErrorReports );
-            }
-
-        } );
+        report.addStats( validation.getStatsMap() );
+        report.addObjectErrorReports( validation.getObjectErrorReports() );
 
         if ( !(bundleParams.getImportMode().isAtomic() && !validation.getObjectErrorReports().isEmpty()) )
         {
-            objectBundleService.commit( bundle );
+            Map<Class<? extends IdentifiableObject>, TypeReport> typeReports = objectBundleService.commit( bundle );
+            report.addTypeReports( typeReports );
         }
 
         return report;
@@ -104,7 +95,7 @@ public class DefaultMetadataImportService implements MetadataImportService
         params.setObjectBundleMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "objectBundleMode", ObjectBundleMode.COMMIT ) );
         params.setPreheatMode( getEnumWithDefault( PreheatMode.class, parameters, "preheatMode", PreheatMode.REFERENCE ) );
         params.setPreheatIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
-        params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.CREATE_AND_UPDATE ) );
+        params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.ATOMIC_CREATE_AND_UPDATE ) );
         params.setMergeMode( getEnumWithDefault( MergeMode.class, parameters, "mergeMode", MergeMode.MERGE ) );
         params.setFlushMode( getEnumWithDefault( FlushMode.class, parameters, "flushMode", FlushMode.AUTO ) );
 

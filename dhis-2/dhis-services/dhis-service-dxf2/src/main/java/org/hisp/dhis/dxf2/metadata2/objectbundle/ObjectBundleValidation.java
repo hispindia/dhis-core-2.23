@@ -33,6 +33,7 @@ import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReports;
+import org.hisp.dhis.feedback.Stats;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,10 +46,23 @@ import java.util.Map;
  */
 public class ObjectBundleValidation
 {
+    private Map<Class<?>, Stats> statsMap = new HashMap<>();
+
     private Map<Class<?>, ObjectErrorReports> objectErrorReportsMap = new HashMap<>();
 
     public ObjectBundleValidation()
     {
+    }
+
+    public Stats getStats( Class<?> klass )
+    {
+        if ( !statsMap.containsKey( klass ) ) statsMap.put( klass, new Stats() );
+        return statsMap.get( klass );
+    }
+
+    public Map<Class<?>, Stats> getStatsMap()
+    {
+        return statsMap;
     }
 
     public void addObjectErrorReports( List<ObjectErrorReport> objectErrorReports )

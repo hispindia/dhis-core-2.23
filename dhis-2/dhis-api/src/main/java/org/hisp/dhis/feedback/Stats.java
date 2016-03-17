@@ -31,44 +31,131 @@ package org.hisp.dhis.feedback;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "objectTypeErrorReport", namespace = DxfNamespaces.DXF_2_0 )
-public class ObjectTypeErrorReport
+@JacksonXmlRootElement( localName = "stats", namespace = DxfNamespaces.DXF_2_0 )
+public class Stats
 {
-    private final Class<?> klass;
+    private int total;
 
-    private final ObjectErrorReports objectErrorReports;
+    private int created;
 
-    private final ObjectTypeStats objectTypeStats = new ObjectTypeStats();
+    private int updated;
 
-    public ObjectTypeErrorReport( Class<?> klass, ObjectErrorReports objectErrorReports )
+    private int deleted;
+
+    private int ignored;
+
+    public Stats()
     {
-        this.klass = klass;
-        this.objectErrorReports = objectErrorReports;
     }
 
-    @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public Class<?> getKlass()
+    public void merge( Stats stats )
     {
-        return klass;
+        total += stats.getTotal();
+        created += stats.getCreated();
+        updated += stats.getUpdated();
+        deleted += stats.getDeleted();
+        ignored += stats.getIgnored();
     }
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public ObjectErrorReports getObjectErrorReports()
+    public int getTotal()
     {
-        return objectErrorReports;
+        return total;
     }
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public ObjectTypeStats getObjectTypeStats()
+    public int getCreated()
     {
-        return objectTypeStats;
+        return created;
+    }
+
+    public void incCreated()
+    {
+        created++;
+        total++;
+    }
+
+    public void incCreated( int n )
+    {
+        created += n;
+        total += n;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getUpdated()
+    {
+        return updated;
+    }
+
+    public void incUpdated()
+    {
+        updated++;
+        total++;
+    }
+
+    public void incUpdated( int n )
+    {
+        updated += n;
+        total += n;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getDeleted()
+    {
+        return deleted;
+    }
+
+    public void incDeleted()
+    {
+        deleted++;
+        total++;
+    }
+
+    public void incDeleted( int n )
+    {
+        deleted += n;
+        total += n;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getIgnored()
+    {
+        return ignored;
+    }
+
+    public void incIgnored()
+    {
+        ignored++;
+        total++;
+    }
+
+    public void incIgnored( int n )
+    {
+        ignored += n;
+        total += n;
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return MoreObjects.toStringHelper( this )
+            .add( "total", total )
+            .add( "created", created )
+            .add( "updated", updated )
+            .add( "deleted", deleted )
+            .add( "ignored", ignored )
+            .toString();
     }
 }
