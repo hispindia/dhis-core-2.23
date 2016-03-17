@@ -129,6 +129,7 @@
           <option value="TRACKER_ASSOCIATE">$i18n.getString( "tracker_associate" )</option>
           <option value="USERNAME">$i18n.getString( "users" )</option>
           <option value="OPTION_SET">$i18n.getString( "option_set" )</option>
+		  <option value="COORDINATE">$i18n.getString( "coordinate" )</option>
         </select>
       </td>
       <td></td>

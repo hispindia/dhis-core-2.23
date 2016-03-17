@@ -126,6 +126,7 @@
             <option value="TRACKER_ASSOCIATE" #if( $attribute.unique=='true' ) style='display:none' #end #if( $attribute.valueType == 'TRACKER_ASSOCIATE' ) selected="selected" #end>$i18n.getString( "tracker_associate" )</option>
             <option value="USERNAME" #if( $attribute.unique=='true' ) style='display:none' #end #if( $attribute.valueType == 'USERNAME' ) selected="selected" #end>$i18n.getString( "users" )</option>
             <option value="OPTION_SET" #if( $attribute.unique=='true' ) style='display:none' #end #if( $attribute.valueType == 'OPTION_SET' ) selected="selected" #end>$i18n.getString( "option_set" )</option>
+			<option value="COORDINATE" #if( $attribute.valueType == 'COORDINATE' ) selected="selected" #end>$i18n.getString( "coordinate" )</option>
           </select>
         </td>
     </tr>
