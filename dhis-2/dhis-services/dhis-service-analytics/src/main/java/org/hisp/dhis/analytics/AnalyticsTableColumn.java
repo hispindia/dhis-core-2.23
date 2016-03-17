@@ -31,99 +31,87 @@ package org.hisp.dhis.analytics;
 /**
  * @author Lars Helge Overland
  */
-public class AnalyticsIndex
+public class AnalyticsTableColumn
 {
-    private String table;
+    private String name;
     
-    private String column;
+    private String dataType;
     
-    private String type;
+    private String alias;
+    
+    private String indexType;
+
+    // -------------------------------------------------------------------------
+    // Constructor
+    // -------------------------------------------------------------------------
 
     /**
-     * @param table table name.
-     * @param column column name.
-     * @param type index type.
+     * @param name column name.
+     * @param dataType column data type.
+     * @param alias column alias and name.
      */
-    public AnalyticsIndex( String table, String column, String type )
+    public AnalyticsTableColumn( String name, String dataType, String alias )
     {
-        this.table = table;
-        this.column = column;
-        this.type = type;
+        this.name = name;
+        this.dataType = dataType;
+        this.alias = alias;
     }
 
-    // -------------------------------------------------------------------------
-    // Logic
-    // -------------------------------------------------------------------------
-
-    public boolean hasType()
+    /**
+     * @param name column name.
+     * @param dataType column data type.
+     * @param alias column alias and name.
+     * @param indexType index type.
+     */
+    public AnalyticsTableColumn( String name, String dataType, String alias, String indexType )
     {
-        return type != null;
+        this.name = name;
+        this.dataType = dataType;
+        this.alias = alias;
+        this.indexType = indexType;
     }
 
     // -------------------------------------------------------------------------
     // Get and set methods
     // -------------------------------------------------------------------------
 
-    public String getTable()
+    public String getName()
     {
-        return table;
+        return name;
     }
 
-    public void setTable( String table )
+    public void setName( String name )
     {
-        this.table = table;
+        this.name = name;
     }
 
-    public String getColumn()
+    public String getDataType()
     {
-        return column;
+        return dataType;
     }
 
-    public void setColumn( String column )
+    public void setDataType( String dataType )
     {
-        this.column = column;
+        this.dataType = dataType;
     }
 
-    public String getType()
+    public String getAlias()
     {
-        return type;
+        return alias;
     }
 
-    public void setType( String type )
+    public void setAlias( String alias )
     {
-        this.type = type;
+        this.alias = alias;
     }
 
-    @Override
-    public int hashCode()
+    public String getIndexType()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + column.hashCode();
-        result = prime * result + table.hashCode();
-        return result;
+        return indexType;
     }
 
-    @Override
-    public boolean equals( Object object )
+    public void setIndexType( String indexType )
     {
-        if ( this == object )
-        {
-            return true;
-        }
-        
-        if ( object == null )
-        {
-            return false;
-        }
-        
-        if ( getClass() != object.getClass() )
-        {
-            return false;
-        }
-        
-        AnalyticsIndex other = (AnalyticsIndex) object;
-        
-        return column.equals( other.column ) && table.equals( other.table );
-    }
+        this.indexType = indexType;
+    }    
 }

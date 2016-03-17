@@ -42,7 +42,7 @@ public class AnalyticsTable
 {
     private String baseName;
 
-    private List<String[]> dimensionColumns;
+    private List<AnalyticsTableColumn> dimensionColumns;
 
     private Period period;
 
@@ -56,20 +56,20 @@ public class AnalyticsTable
     {
     }
 
-    public AnalyticsTable( String baseName, List<String[]> dimensionColumns )
+    public AnalyticsTable( String baseName, List<AnalyticsTableColumn> dimensionColumns )
     {
         this.baseName = baseName;
         this.dimensionColumns = dimensionColumns;
     }
 
-    public AnalyticsTable( String baseName, List<String[]> dimensionColumns, Period period )
+    public AnalyticsTable( String baseName, List<AnalyticsTableColumn> dimensionColumns, Period period )
     {
         this.baseName = baseName;
         this.dimensionColumns = dimensionColumns;
         this.period = period;
     }
 
-    public AnalyticsTable( String baseName, List<String[]> dimensionColumns, Period period, Program program )
+    public AnalyticsTable( String baseName, List<AnalyticsTableColumn> dimensionColumns, Period period, Program program )
     {
         this.baseName = baseName;
         this.dimensionColumns = dimensionColumns;
@@ -139,12 +139,12 @@ public class AnalyticsTable
         this.baseName = baseName;
     }
 
-    public List<String[]> getDimensionColumns()
+    public List<AnalyticsTableColumn> getDimensionColumns()
     {
         return dimensionColumns;
     }
 
-    public void setDimensionColumns( List<String[]> dimensionColumns )
+    public void setDimensionColumns( List<AnalyticsTableColumn> dimensionColumns )
     {
         this.dimensionColumns = dimensionColumns;
     }

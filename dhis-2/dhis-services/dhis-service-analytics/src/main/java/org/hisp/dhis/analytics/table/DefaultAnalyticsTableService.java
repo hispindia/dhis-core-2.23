@@ -39,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.analytics.AnalyticsIndex;
 import org.hisp.dhis.analytics.AnalyticsTable;
+import org.hisp.dhis.analytics.AnalyticsTableColumn;
 import org.hisp.dhis.analytics.AnalyticsTableManager;
 import org.hisp.dhis.analytics.AnalyticsTableService;
 import org.hisp.dhis.analytics.partition.PartitionManager;
@@ -272,11 +273,11 @@ public class DefaultAnalyticsTableService
         
         for ( AnalyticsTable table : tables )
         {
-            List<String[]> columns = table.getDimensionColumns();
+            List<AnalyticsTableColumn> columns = table.getDimensionColumns();
             
-            for ( String[] column : columns )
+            for ( AnalyticsTableColumn col : columns )
             {
-                indexes.add( new AnalyticsIndex( table.getTempTableName(), column[0] ) );
+                indexes.add( new AnalyticsIndex( table.getTempTableName(), col.getName(), col.getIndexType() ) );
             }
         }
         

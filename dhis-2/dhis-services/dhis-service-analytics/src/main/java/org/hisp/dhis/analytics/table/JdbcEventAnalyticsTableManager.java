@@ -40,6 +40,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
 import org.hisp.dhis.analytics.AnalyticsTable;
+import org.hisp.dhis.analytics.AnalyticsTableColumn;
 import org.hisp.dhis.calendar.Calendar;
 import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.commons.collection.ListUtils;
@@ -103,7 +104,7 @@ public class JdbcEventAnalyticsTableManager
                 Program program = idObjectManager.getNoAcl( Program.class, id );
                 
                 AnalyticsTable table = new AnalyticsTable( baseName, null, period, program );
-                List<String[]> dimensionColumns = getDimensionColumns( table );
+                List<AnalyticsTableColumn> dimensionColumns = getDimensionColumns( table );
                 table.setDimensionColumns( dimensionColumns );
                 tables.add( table );
             }
@@ -142,13 +143,13 @@ public class JdbcEventAnalyticsTableManager
 
         String sqlCreate = "create table " + tableName + " (";
 
-        List<String[]> columns = getDimensionColumns( table );
+        List<AnalyticsTableColumn> columns = getDimensionColumns( table );
         
         validateDimensionColumns( columns );
         
-        for ( String[] col : columns )
+        for ( AnalyticsTableColumn col : columns )
         {
-            sqlCreate += col[0] + " " + col[1] + ",";
+            sqlCreate += col.getName() + " " + col.getDataType() + ",";
         }
 
         sqlCreate = removeLast( sqlCreate, 1 ) + ") ";
@@ -181,20 +182,20 @@ public class JdbcEventAnalyticsTableManager
 
             String sql = "insert into " + table.getTempTableName() + " (";
 
-            List<String[]> columns = getDimensionColumns( table );
+            List<AnalyticsTableColumn> columns = getDimensionColumns( table );
             
             validateDimensionColumns( columns );
 
-            for ( String[] col : columns )
+            for ( AnalyticsTableColumn col : columns )
             {
-                sql += col[0] + ",";
+                sql += col.getName() + ",";
             }
 
             sql = removeLast( sql, 1 ) + ") select ";
 
-            for ( String[] col : columns )
+            for ( AnalyticsTableColumn col : columns )
             {
-                sql += col[2] + ",";
+                sql += col.getAlias() + ",";
             }
 
             sql = removeLast( sql, 1 ) + " ";
@@ -221,7 +222,7 @@ public class JdbcEventAnalyticsTableManager
     }
 
     @Override
-    public List<String[]> getDimensionColumns( AnalyticsTable table )
+    public List<AnalyticsTableColumn> getDimensionColumns( AnalyticsTable table )
     {
         final String dbl = statementBuilder.getDoubleColumnType();
         final String numericClause = " and value " + statementBuilder.getRegexpMatch() + " '" + NUMERIC_LENIENT_REGEXP + "'";
@@ -229,7 +230,7 @@ public class JdbcEventAnalyticsTableManager
         
         //TODO dateClause regexp
 
-        List<String[]> columns = new ArrayList<>();
+        List<AnalyticsTableColumn> columns = new ArrayList<>();
 
         Collection<OrganisationUnitGroupSet> orgUnitGroupSets = 
             idObjectManager.getDataDimensionsNoAcl( OrganisationUnitGroupSet.class );
@@ -241,22 +242,19 @@ public class JdbcEventAnalyticsTableManager
 
         for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )
         {
-            String[] col = { quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) ) );
         }
         
         for ( OrganisationUnitLevel level : levels )
         {
             String column = quote( PREFIX_ORGUNITLEVEL + level.getLevel() );
-            String[] col = { column, "character(11)", "ous." + column };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character(11)", "ous." + column ) );
         }
 
         for ( PeriodType periodType : periodTypes )
         {
             String column = quote( periodType.getName().toLowerCase() );
-            String[] col = { column, "character varying(15)", "dps." + column };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character varying(15)", "dps." + column ) );
         }
 
         for ( DataElement dataElement : table.getProgram().getDataElements() )
@@ -269,8 +267,7 @@ public class JdbcEventAnalyticsTableManager
             String sql = "(select " + select + " from trackedentitydatavalue where programstageinstanceid=psi.programstageinstanceid " + 
                 "and dataelementid=" + dataElement.getId() + dataClause + ") as " + quote( dataElement.getUid() );
 
-            String[] col = { quote( dataElement.getUid() ), dataType, sql };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( dataElement.getUid() ), dataType, sql ) );
         }
 
         for ( DataElement dataElement : table.getProgram().getDataElementsWithLegendSet() )
@@ -283,8 +280,7 @@ public class JdbcEventAnalyticsTableManager
                 "and lsl.legendsetid=" + dataElement.getLegendSet().getId() + " and dv.programstageinstanceid=psi.programstageinstanceid " + 
                 "and dv.dataelementid=" + dataElement.getId() + numericClause + ") as " + column;
                 
-            String[] col = { column, "character(11)", sql };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character(11)", sql ) );
         }
 
         for ( TrackedEntityAttribute attribute : table.getProgram().getNonConfidentialTrackedEntityAttributes() )
@@ -296,8 +292,7 @@ public class JdbcEventAnalyticsTableManager
             String sql = "(select " + select + " from trackedentityattributevalue where trackedentityinstanceid=pi.trackedentityinstanceid " + 
                 "and trackedentityattributeid=" + attribute.getId() + dataClause + ") as " + quote( attribute.getUid() );
 
-            String[] col = { quote( attribute.getUid() ), dataType, sql };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( attribute.getUid() ), dataType, sql ) );
         }
         
         for ( TrackedEntityAttribute attribute : table.getProgram().getNonConfidentialTrackedEntityAttributesWithLegendSet() )
@@ -310,36 +305,34 @@ public class JdbcEventAnalyticsTableManager
                 "and lsl.legendsetid=" + attribute.getLegendSet().getId() + " and av.trackedentityinstanceid=pi.trackedentityinstanceid " +
                 "and av.trackedentityattributeid=" + attribute.getId() + numericClause + ") as " + column;
             
-            String[] col = { column, "character(11)", sql };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character(11)", sql ) );
         }
 
-        String[] psi = { quote( "psi" ), "character(11) not null", "psi.uid" };
-        String[] pi = { quote( "pi" ), "character(11) not null", "pi.uid" };
-        String[] ps = { quote( "ps" ), "character(11) not null", "ps.uid" };
-        String[] erd = { quote( "enrollmentdate" ), "timestamp", "pi.enrollmentdate" };
-        String[] id = { quote( "incidentdate" ), "timestamp", "pi.incidentdate" };
-        String[] ed = { quote( "executiondate" ), "timestamp", "psi.executiondate" };
-        String[] dd = { quote( "duedate" ), "timestamp", "psi.duedate" };
-        String[] cd = { quote( "completeddate" ), "timestamp", "psi.completeddate" };
-        String[] longitude = { quote( "longitude" ), dbl, "psi.longitude" };
-        String[] latitude = { quote( "latitude" ), dbl, "psi.latitude" };
-        String[] ou = { quote( "ou" ), "character(11) not null", "ou.uid" };
-        String[] oun = { quote( "ouname" ), "character varying(230) not null", "ou.name" };
-        String[] ouc = { quote( "oucode" ), "character varying(50)", "ou.code" };
+        AnalyticsTableColumn psi = new AnalyticsTableColumn( quote( "psi" ), "character(11) not null", "psi.uid" );
+        AnalyticsTableColumn pi = new AnalyticsTableColumn( quote( "pi" ), "character(11) not null", "pi.uid" );
+        AnalyticsTableColumn ps = new AnalyticsTableColumn( quote( "ps" ), "character(11) not null", "ps.uid" );
+        AnalyticsTableColumn erd = new AnalyticsTableColumn( quote( "enrollmentdate" ), "timestamp", "pi.enrollmentdate" );
+        AnalyticsTableColumn id = new AnalyticsTableColumn( quote( "incidentdate" ), "timestamp", "pi.incidentdate" );
+        AnalyticsTableColumn ed = new AnalyticsTableColumn( quote( "executiondate" ), "timestamp", "psi.executiondate" );
+        AnalyticsTableColumn dd = new AnalyticsTableColumn( quote( "duedate" ), "timestamp", "psi.duedate" );
+        AnalyticsTableColumn cd = new AnalyticsTableColumn( quote( "completeddate" ), "timestamp", "psi.completeddate" );
+        AnalyticsTableColumn longitude = new AnalyticsTableColumn( quote( "longitude" ), dbl, "psi.longitude" );
+        AnalyticsTableColumn latitude = new AnalyticsTableColumn( quote( "latitude" ), dbl, "psi.latitude" );
+        AnalyticsTableColumn ou = new AnalyticsTableColumn( quote( "ou" ), "character(11) not null", "ou.uid" );
+        AnalyticsTableColumn oun = new AnalyticsTableColumn( quote( "ouname" ), "character varying(230) not null", "ou.name" );
+        AnalyticsTableColumn ouc = new AnalyticsTableColumn( quote( "oucode" ), "character varying(50)", "ou.code" );
 
         columns.addAll( Lists.newArrayList( psi, pi, ps, erd, id, ed, dd, cd, longitude, latitude, ou, oun, ouc ) );
 
         if ( databaseInfo.isSpatialSupport() )
         {
-            String[] geo = { quote( "geom" ), "geometry(Point, 4326)", "(select ST_SetSRID(ST_MakePoint(psi.longitude, psi.latitude), 4326)) as geom" };
-            columns.add( geo );
+            String alias = "(select ST_SetSRID(ST_MakePoint(psi.longitude, psi.latitude), 4326)) as geom";
+            columns.add( new AnalyticsTableColumn( quote( "geom" ), "geometry(Point, 4326)", alias, "gist" ) );
         }
         
         if ( table.hasProgram() && table.getProgram().isRegistration() )
         {
-            String[] tei = { quote( "tei" ), "character(11)", "tei.uid" };
-            columns.add( tei );
+            columns.add( new AnalyticsTableColumn( quote( "tei" ), "character(11)", "tei.uid" ) );
         }
                 
         return columns;

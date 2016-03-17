@@ -36,6 +36,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
 import org.hisp.dhis.analytics.AnalyticsTable;
+import org.hisp.dhis.analytics.AnalyticsTableColumn;
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,13 +85,13 @@ public class JdbcOrgUnitTargetTableManager
 
         String sqlCreate = "create table " + tableName + " (";
 
-        List<String[]> columns = getDimensionColumns( table );
+        List<AnalyticsTableColumn> columns = getDimensionColumns( table );
         
         validateDimensionColumns( columns );
 
-        for ( String[] col : columns )
+        for ( AnalyticsTableColumn col : columns )
         {
-            sqlCreate += col[0] + " " + col[1] + ",";
+            sqlCreate += col.getName() + " " + col.getDataType() + ",";
         }
         
         sqlCreate += "value double precision) ";
@@ -121,20 +122,20 @@ public class JdbcOrgUnitTargetTableManager
 
             String sql = "insert into " + table.getTempTableName() + " (";
     
-            List<String[]> columns = getDimensionColumns( table );
+            List<AnalyticsTableColumn> columns = getDimensionColumns( table );
             
             validateDimensionColumns( columns );
             
-            for ( String[] col : columns )
+            for ( AnalyticsTableColumn col : columns )
             {
-                sql += col[0] + ",";
+                sql += col.getName() + ",";
             }
     
             sql += "value) select ";
     
-            for ( String[] col : columns )
+            for ( AnalyticsTableColumn col : columns )
             {
-                sql += col[2] + ",";
+                sql += col.getAlias() + ",";
             }
             
             sql +=
@@ -151,9 +152,9 @@ public class JdbcOrgUnitTargetTableManager
     }
 
     @Override
-    public List<String[]> getDimensionColumns( AnalyticsTable table )
+    public List<AnalyticsTableColumn> getDimensionColumns( AnalyticsTable table )
     {
-        List<String[]> columns = new ArrayList<>();
+        List<AnalyticsTableColumn> columns = new ArrayList<>();
 
         Collection<OrganisationUnitLevel> levels =
             organisationUnitService.getFilledOrganisationUnitLevels();
@@ -161,11 +162,10 @@ public class JdbcOrgUnitTargetTableManager
         for ( OrganisationUnitLevel level : levels )
         {
             String column = quote( PREFIX_ORGUNITLEVEL + level.getLevel() );
-            String[] col = { column, "character(11)", "ous." + column };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character(11)", "ous." + column ) );
         }
 
-        String[] ds = { quote( "oug" ), "character(11) not null", "oug.uid" };
+        AnalyticsTableColumn ds = new AnalyticsTableColumn( quote( "oug" ), "character(11) not null", "oug.uid" );
         
         columns.add( ds );
         

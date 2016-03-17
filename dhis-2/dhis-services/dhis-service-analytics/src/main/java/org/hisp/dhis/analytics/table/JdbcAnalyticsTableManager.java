@@ -34,6 +34,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.hisp.dhis.analytics.AggregationType;
 import org.hisp.dhis.analytics.AnalyticsTable;
+import org.hisp.dhis.analytics.AnalyticsTableColumn;
 import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.commons.util.TextUtils;
@@ -132,13 +133,13 @@ public class JdbcAnalyticsTableManager
 
         String sqlCreate = "create table " + tableName + " (";
 
-        List<String[]> columns = getDimensionColumns( table );
+        List<AnalyticsTableColumn> columns = getDimensionColumns( table );
 
         validateDimensionColumns( columns );
 
-        for ( String[] col : columns )
+        for ( AnalyticsTableColumn col : columns )
         {
-            sqlCreate += col[0] + " " + col[1] + ",";
+            sqlCreate += col.getName() + " " + col.getDataType() + ",";
         }
 
         sqlCreate += "daysxvalue " + dbl + ", daysno integer not null, value " + dbl + ", textvalue text) ";
@@ -208,20 +209,20 @@ public class JdbcAnalyticsTableManager
 
         String sql = "insert into " + table.getTempTableName() + " (";
 
-        List<String[]> columns = getDimensionColumns( table );
+        List<AnalyticsTableColumn> columns = getDimensionColumns( table );
 
         validateDimensionColumns( columns );
 
-        for ( String[] col : columns )
+        for ( AnalyticsTableColumn col : columns )
         {
-            sql += col[0] + ",";
+            sql += col.getName() + ",";
         }
 
         sql += "daysxvalue, daysno, value, textvalue) select ";
 
-        for ( String[] col : columns )
+        for ( AnalyticsTableColumn col : columns )
         {
-            sql += col[2] + ",";
+            sql += col.getAlias() + ",";
         }
 
         sql +=
@@ -288,9 +289,9 @@ public class JdbcAnalyticsTableManager
     }
 
     @Override
-    public List<String[]> getDimensionColumns( AnalyticsTable table )
+    public List<AnalyticsTableColumn> getDimensionColumns( AnalyticsTable table )
     {
-        List<String[]> columns = new ArrayList<>();
+        List<AnalyticsTableColumn> columns = new ArrayList<>();
 
         List<DataElementGroupSet> dataElementGroupSets =
             idObjectManager.getDataDimensionsNoAcl( DataElementGroupSet.class );
@@ -315,45 +316,38 @@ public class JdbcAnalyticsTableManager
 
         for ( DataElementGroupSet groupSet : dataElementGroupSets )
         {
-            String[] col = { quote( groupSet.getUid() ), "character(11)", "degs." + quote( groupSet.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "degs." + quote( groupSet.getUid() ) ) );
         }
 
         for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )
         {
-            String[] col = { quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) ) );
         }
 
         for ( CategoryOptionGroupSet groupSet : disaggregationCategoryOptionGroupSets )
         {
-            String[] col = { quote( groupSet.getUid() ), "character(11)", "cogs." + quote( groupSet.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "cogs." + quote( groupSet.getUid() ) ) );
         }
 
         for ( CategoryOptionGroupSet groupSet : attributeCategoryOptionGroupSets )
         {
-            String[] col = { quote( groupSet.getUid() ), "character(11)", "aogs." + quote( groupSet.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "aogs." + quote( groupSet.getUid() ) ) );
         }
 
         for ( DataElementCategory category : disaggregationCategories )
         {
-            String[] col = { quote( category.getUid() ), "character(11)", "dcs." + quote( category.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( category.getUid() ), "character(11)", "dcs." + quote( category.getUid() ) ) );
         }
 
         for ( DataElementCategory category : attributeCategories )
         {
-            String[] col = { quote( category.getUid() ), "character(11)", "acs." + quote( category.getUid() ) };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( quote( category.getUid() ), "character(11)", "acs." + quote( category.getUid() ) ) );
         }
 
         for ( OrganisationUnitLevel level : levels )
         {
             String column = quote( PREFIX_ORGUNITLEVEL + level.getLevel() );
-            String[] col = { column, "character(11)", "ous." + column };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character(11)", "ous." + column ) );
         }
 
         List<PeriodType> periodTypes = PeriodType.getAvailablePeriodTypes();
@@ -361,15 +355,14 @@ public class JdbcAnalyticsTableManager
         for ( PeriodType periodType : periodTypes )
         {
             String column = quote( periodType.getName().toLowerCase() );
-            String[] col = { column, "character varying(15)", "ps." + column };
-            columns.add( col );
+            columns.add( new AnalyticsTableColumn( column, "character varying(15)", "ps." + column ) );
         }
 
-        String[] de = { quote( "dx" ), "character(11) not null", "de.uid" };
-        String[] co = { quote( "co" ), "character(11) not null", "co.uid" };
-        String[] ao = { quote( "ao" ), "character(11) not null", "ao.uid" };
-        String[] ou = { quote( "ou" ), "character(11) not null", "ou.uid" };
-        String[] level = { quote( "level" ), "integer", "ous.level" };
+        AnalyticsTableColumn de = new AnalyticsTableColumn( quote( "dx" ), "character(11) not null", "de.uid" );
+        AnalyticsTableColumn co = new AnalyticsTableColumn( quote( "co" ), "character(11) not null", "co.uid" );
+        AnalyticsTableColumn ao = new AnalyticsTableColumn( quote( "ao" ), "character(11) not null", "ao.uid" );
+        AnalyticsTableColumn ou = new AnalyticsTableColumn( quote( "ou" ), "character(11) not null", "ou.uid" );
+        AnalyticsTableColumn level = new AnalyticsTableColumn( quote( "level" ), "integer", "ous.level" );
 
         columns.addAll( Lists.newArrayList( de, co, ao, ou, level ) );
 
@@ -377,8 +370,7 @@ public class JdbcAnalyticsTableManager
         {
             String col = "coalesce(des.datasetapprovallevel, aon.approvallevel, da.minlevel, " + APPROVAL_LEVEL_UNAPPROVED + ")";
 
-            String[] al = { quote( "approvallevel" ), "integer", col };
-            columns.add( al );
+            columns.add( new AnalyticsTableColumn( quote( "approvallevel" ), "integer", col ) );
         }
 
         return columns;
