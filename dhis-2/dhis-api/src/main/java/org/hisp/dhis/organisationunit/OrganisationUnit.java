@@ -575,6 +575,8 @@ public class OrganisationUnit
     /**
      * Returns the list of ancestor organisation units for this organisation unit.
      * Does not include itself. The list is ordered by root first.
+     * 
+     * @throws IllegalStateException if circular parent relationships is detected.
      */
     @JsonProperty( "ancestors" )
     @JsonSerialize( contentAs = BaseIdentifiableObject.class )
@@ -584,11 +586,18 @@ public class OrganisationUnit
     public List<OrganisationUnit> getAncestors()
     {
         List<OrganisationUnit> units = new ArrayList<>();
+        
+        Set<OrganisationUnit> visitedUnits = new HashSet<>();
 
         OrganisationUnit unit = parent;
 
         while ( unit != null )
         {
+            if ( !visitedUnits.add( unit ) )
+            {
+                throw new IllegalStateException( "Organisation unit '" + this.toString() + "' has circular parent relationships: '" + unit + "'" );
+            }
+            
             units.add( unit );
             unit = unit.getParent();
         }

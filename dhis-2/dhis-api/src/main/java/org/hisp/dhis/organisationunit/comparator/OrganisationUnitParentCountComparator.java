@@ -38,24 +38,11 @@ import java.util.Comparator;
 public class OrganisationUnitParentCountComparator
     implements Comparator<OrganisationUnit>
 {
-    private int countParents( OrganisationUnit organisationUnit )
-    {
-        int parents = 0;
-        OrganisationUnit currentOrganisationUnit = organisationUnit;
-
-        while ( (currentOrganisationUnit = currentOrganisationUnit.getParent()) != null )
-        {
-            parents++;
-        }
-
-        return parents;
-    }
-
     @Override
     public int compare( OrganisationUnit organisationUnit1, OrganisationUnit organisationUnit2 )
     {
-        Integer parents1 = countParents( organisationUnit1 );
-        Integer parents2 = countParents( organisationUnit2 );
+        Integer parents1 = organisationUnit1.getAncestors().size();
+        Integer parents2 = organisationUnit2.getAncestors().size();
 
         return parents1.compareTo( parents2 );
     }
