@@ -105,7 +105,7 @@ d2Directives.directive('d2NumberValidator', function() {
                     return false;
                 }
                 
-                return coordinate[0] >= -90 && coordinate[0] <= 90 && coordinate[1] >= -180 && coordinate[1] <= 180;
+                return coordinate[0] >= -180 && coordinate[0] <= 180 && coordinate[1] >= -90 && coordinate[1] <= 90;
             };           
         }
     };
