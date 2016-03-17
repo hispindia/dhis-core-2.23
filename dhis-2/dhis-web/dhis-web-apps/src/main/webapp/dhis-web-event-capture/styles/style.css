@@ -306,8 +306,9 @@ select {
     clear: both
 }
 
-.horizontal-spacing{
-    margin-right: 20px;    
+.horizontal-spacing {
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .disable-clicks {

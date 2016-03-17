@@ -43,9 +43,9 @@
 		<div ng-if="!useTopBar">
                 <button type="button" class="btn btn-default" ng-click="back()">{{getBackButtonText()}}</button>
 
-                <button ng-disabled="!previousTeiExists" type="button" class="btn btn-default small-horizonal-spacing" ng-click="fetchTei('PREV')" title="{{'previous'| translate}}"><i class="fa fa-caret-left"></i></button>
+                <button ng-disabled="!previousTeiExists" type="button" class="btn btn-default small-horizontal-spacing" ng-click="fetchTei('PREV')" title="{{'previous'| translate}}"><i class="fa fa-caret-left"></i></button>
 
-                <button ng-disabled="!nextTeiExists" type="button" class="btn btn-default small-horizonal-spacing" ng-click="fetchTei('NEXT')" title="{{'next'| translate}}"><i class="fa fa-caret-right"></i></button>
+                <button ng-disabled="!nextTeiExists" type="button" class="btn btn-default small-horizontal-spacing" ng-click="fetchTei('NEXT')" title="{{'next'| translate}}"><i class="fa fa-caret-right"></i></button>
 
                 <select ng-model="selectedProgram"
                         class="form-control-program"

@@ -651,7 +651,8 @@ table.table-striped tr td.optionset {
 .handle {
     cursor: move;
 }
-.horizonal-spacing{
+
+.horizontal-spacing {
     margin-left: 10px;
     margin-right: 10px;
 }
@@ -666,7 +667,7 @@ table.table-striped tr td.optionset {
     margin-bottom: 10px;
 }
 
-.small-horizonal-spacing{
+.small-horizontal-spacing{
     margin-left: 5px;
 }
 

@@ -919,7 +919,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     $scope.getHelpContent = function(){
     };
     
-    $scope.showMap = function(event){
+    $scope.showProgramStageMap = function(event){
         var modalInstance = $modal.open({
             templateUrl: '../dhis-web-commons/angular-forms/map.html',
             controller: 'MapController',
@@ -935,6 +935,33 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
             if(angular.isObject(location)){
                 event.coordinate.latitude = location.lat;
                 event.coordinate.longitude = location.lng;
+            }
+        }, function () {
+        });
+    };
+    
+    $scope.showDataElementMap = function(obj, id, fieldId){
+        var lat = "",
+            lng = "";
+        if(obj[id] && obj[id].length > 0){
+            var coordinates = obj[id].split(",");
+            lng = coordinates[0];
+            lat = coordinates[1];
+        }
+        var modalInstance = $modal.open({
+            templateUrl: '../dhis-web-commons/angular-forms/map.html',
+            controller: 'MapController',
+            windowClass: 'modal-full-window',
+            resolve: {
+                location: function () {
+                    return {lat: lat, lng: lng};
+                }
+            }
+        });
+
+        modalInstance.result.then(function (location) {
+            if(angular.isObject(location)){
+                obj[id] = location.lng + ',' + location.lat;
             }
         }, function () {
         });

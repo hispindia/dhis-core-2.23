@@ -253,6 +253,26 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
             </div>
         </div>
+        <div ng-switch-when="COORDINATE">
+            <div class="hideInPrint">
+                <input type="text"
+                       placeholder="{{'latitude_longitude_format' | translate}}"
+                       d2-custom-coordinate-validator 
+                       class="form-control"
+                       ng-class="getInputNotifcationClass(prStDe.dataElement.id,false, currentEvent)"
+                       ng-model="currentEvent[prStDe.dataElement.id]"
+                       ng-required={{prStDe.compulsory}}
+                       ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id]"
+                       ng-blur="saveDatavalue(prStDe, innerForm.foo)"
+                       name="foo"/>
+                <span ng-if="!(selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id])">
+                    <a href ng-click="showDataElementMap(currentEvent, prStDe.dataElement.id)" title="{{'get_from_map'| translate}}"><i class="fa fa-map-marker fa-2x"></i></a>
+                </span>
+            </div>
+            <div class="not-for-screen">
+                <input type="text" class="form-control" value={{currentEvent[prStDe.dataElement.id]}}>
+            </div>
+        </div>
         <div ng-switch-default>
             <div class="hideInPrint">
                 <input type="text"

@@ -490,6 +490,15 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                             </span>\n\
                                                         </span>';
                                         }
+                                        else if (prStDe.dataElement.valueType === "COORDINATE") {
+                                        	newInputField = '<span class="hideInPrint"><input type="text" ' +
+	                                            ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
+	                                            ' ng-blur="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
+	                                            commonInputFieldProperty + '>' +
+	                                            '<span class="horizontal-spacing"><a href ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\')" title="{{\'get_from_map\' | translate}}" ' +
+                                                '<i class="fa fa-map-marker fa-2x vertical-center"></i> ' +                     
+                                                '</a></span></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                        }
                                         else {
                                             newInputField = '<span class="hideInPrint"><input type="text" ' +
                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
@@ -627,7 +636,15 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             '</a> ' +
                                             '<a href ng-if="selectedTei.' + attId + '" ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="selectedTei.' + attId + ' = null" title="{{\'remove\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
                                             '<i class="fa fa-trash-o fa-2x vertical-center"></i> ' +
-                                            '</a>';
+                                            '</a></span>';
+                                    }
+                                    else if (att.valueType === "COORDINATE") {
+                                        newInputField = '<input type="text"' +
+                                            ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
+                                            commonInputFieldProperty + ' >' +
+                                            '<span class="horizontal-spacing hideInPrint"><a href ng-click="showAttributeMap(selectedTei,\'' + attId + '\')" title="{{\'get_from_map\' | translate}}" ' +
+                                            '<i class="fa fa-map-marker fa-2x vertical-center"></i> ' +                     
+                                            '</a></span>';
                                     }
                                     else if (att.valueType === "LONG_TEXT") {
                                         newInputField = '<span><textarea row ="3" ' +

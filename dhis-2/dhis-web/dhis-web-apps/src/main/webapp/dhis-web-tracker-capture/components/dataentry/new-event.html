@@ -98,8 +98,8 @@
                         ng-model="dhis2Event.selectedPeriod"
                         ng-options="period.name for period in dhis2Event.periods">
                 </select>                
-                <button ng-disabled="true" type="button" class="btn btn-default small-horizonal-spacing trim" ng-click="fetchPeriod('PREV')" title="{{'prev_period'| translate}}"><i class="fa fa-backward"></i></button>        
-                <button ng-disabled="true" type="button" class="btn btn-default small-horizonal-spacing trim" ng-click="fetchPeriod('NEXT')" title="{{'nxt_period'| translate}}"><i class="fa fa-forward"></i></button>        
+                <button ng-disabled="true" type="button" class="btn btn-default small-horizontal-spacing trim" ng-click="fetchPeriod('PREV')" title="{{'prev_period'| translate}}"><i class="fa fa-backward"></i></button>        
+                <button ng-disabled="true" type="button" class="btn btn-default small-horizontal-spacing trim" ng-click="fetchPeriod('NEXT')" title="{{'nxt_period'| translate}}"><i class="fa fa-forward"></i></button>        
             </div>        
         </div>
         <div class="row" ng-if="selectedProgram" ng-repeat="category in selectedCategories">
