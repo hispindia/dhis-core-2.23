@@ -354,7 +354,10 @@ public class DefaultPreheatService implements PreheatService
                         }
                     } );
 
-                    categoryDimensions.forEach( categoryDimension -> addIdentifiers( map, categoryDimension.getDimension() ) );
+                    categoryDimensions.forEach( categoryDimension -> {
+                        addIdentifiers( map, categoryDimension.getDimension() );
+                        categoryDimension.getItems().forEach( item -> addIdentifiers( map, item ) );
+                    } );
 
                     dataElementDimensions.forEach( trackedEntityDataElementDimension -> {
                         addIdentifiers( map, trackedEntityDataElementDimension.getDataElement() );
@@ -443,7 +446,7 @@ public class DefaultPreheatService implements PreheatService
     private Map<String, Map<Object, String>> handleUniqueProperties( Schema schema, List<IdentifiableObject> objects )
     {
         List<Property> uniqueProperties = schema.getProperties().stream()
-            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() )
+            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() && p.isSimple() )
             .collect( Collectors.toList() );
 
         Map<String, Map<Object, String>> map = new HashMap<>();
@@ -717,7 +720,7 @@ public class DefaultPreheatService implements PreheatService
 
         Schema schema = schemaService.getDynamicSchema( object.getClass() );
         List<Property> uniqueProperties = schema.getProperties().stream()
-            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() )
+            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() && p.isSimple() )
             .collect( Collectors.toList() );
 
         uniqueProperties.forEach( property -> {

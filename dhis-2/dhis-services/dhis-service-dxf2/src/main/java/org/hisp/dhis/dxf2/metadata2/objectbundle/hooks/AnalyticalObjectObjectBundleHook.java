@@ -63,6 +63,7 @@ public class AnalyticalObjectObjectBundleHook
         handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
         handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
         handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
+        handleRelativePeriods( session, schema, analyticalObject, objectBundle );
     }
 
     @Override
@@ -78,6 +79,15 @@ public class AnalyticalObjectObjectBundleHook
         handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
         handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
         handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
+        handleRelativePeriods( session, schema, analyticalObject, objectBundle );
+    }
+
+    private void handleRelativePeriods( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle objectBundle )
+    {
+        if ( analyticalObject.getRelatives() != null )
+        {
+            // session.save( analyticalObject.getRelatives() );
+        }
     }
 
     private void handleDataDimensionItems( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
@@ -86,6 +96,12 @@ public class AnalyticalObjectObjectBundleHook
 
         for ( DataDimensionItem dataDimensionItem : analyticalObject.getDataDimensionItems() )
         {
+            if ( dataDimensionItem.getDataElementOperand() != null )
+            {
+                preheatService.connectReferences( dataDimensionItem.getDataElementOperand(), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+                session.save( dataDimensionItem.getDataElementOperand() );
+            }
+
             preheatService.connectReferences( dataDimensionItem, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             session.save( dataDimensionItem );
         }

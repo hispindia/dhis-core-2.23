@@ -79,7 +79,7 @@ public class ObjectBundleServiceFavoritesTest
     public void testCreateMetadataWithCharts1() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/metadata_with_charts1.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/favorites/metadata_with_charts1.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
@@ -88,6 +88,7 @@ public class ObjectBundleServiceFavoritesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        System.err.println( validate.getObjectErrorReports() );
         assertTrue( validate.getObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
@@ -96,11 +97,9 @@ public class ObjectBundleServiceFavoritesTest
         List<DataElement> dataElements = manager.getAll( DataElement.class );
         List<Chart> charts = manager.getAll( Chart.class );
 
-        assertEquals( 2, dataSets.size() );
+        assertEquals( 1, dataSets.size() );
         assertEquals( 1, organisationUnits.size() );
         assertEquals( 4, dataElements.size() );
-        assertEquals( 2, charts.size() );
-        assertEquals( 2, charts.get( 0 ).getDataDimensionItems().size() );
-        assertEquals( 2, charts.get( 1 ).getDataDimensionItems().size() );
+        assertEquals( 3, charts.size() );
     }
 }
