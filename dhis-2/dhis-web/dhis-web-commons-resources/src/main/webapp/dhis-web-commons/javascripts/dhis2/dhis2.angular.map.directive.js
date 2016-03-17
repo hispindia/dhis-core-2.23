@@ -288,10 +288,12 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                     }
                 }
 
+                var centerLatLng = new google.maps.LatLng(latCenter, lngCenter);
+                
                 //default map configurations 
                 var mapOptions = {
                     zoom: 4,
-                    center: new google.maps.LatLng(latCenter, lngCenter),
+                    center: centerLatLng,
                     mapTypeId: google.maps.MapTypeId.ROADMAP
                 },
                 featureStyle = {
@@ -385,6 +387,9 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                         map.fitBounds(latLngBounds);
                         map.panToBounds(latLngBounds);
                     }
+                    else{    
+                        map.setCenter(centerLatLng);
+                    }
                 }
 
                 var overLays = [];
@@ -418,7 +423,16 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                 }
 
                 function initializeMap() {
-                    getGeoJsonByOuLevel(true, null);
+                    if(ouLevels && ouLevels.length > 0){
+                        getGeoJsonByOuLevel(true, null);
+                    }
+                    else{
+                        google.maps.event.addListenerOnce(map, 'idle', function () {
+                            google.maps.event.trigger(map, 'resize');
+                            map.data.setStyle(featureStyle);
+                            centerMap();
+                        });
+                    }
                 }
 
                 function zoomMap(event, mode) {
@@ -430,8 +444,10 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                     for (var i = 0; i < overLays.length; i++) {
                         overLays[i].setMap(null);
                     }
-
-                    getGeoJsonByOuLevel(false, event, mode);
+                    
+                    if(ouLevels && ouLevels.length > 0){
+                        getGeoJsonByOuLevel(false, event, mode);
+                    }                    
                 }
 
                 function enableDisableZoom() {
