@@ -97,7 +97,7 @@ public class ImportReport
         }
     }
 
-    public void addTypeReports( Map<Class<? extends IdentifiableObject>, TypeReport> typeReports )
+    public void addTypeReports( Map<Class<?>, TypeReport> typeReports )
     {
         for ( Class<?> klass : typeReports.keySet() )
         {

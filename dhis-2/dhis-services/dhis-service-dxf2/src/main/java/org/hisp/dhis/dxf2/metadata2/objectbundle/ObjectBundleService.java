@@ -58,5 +58,5 @@ public interface ObjectBundleService
      *
      * @param bundle ObjectBundle to commit.
      */
-    Map<Class<? extends IdentifiableObject>, TypeReport> commit( ObjectBundle bundle );
+    Map<Class<?>, TypeReport> commit( ObjectBundle bundle );
 }

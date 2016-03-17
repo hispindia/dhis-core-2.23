@@ -88,7 +88,7 @@ public class ObjectBundleServiceFavoritesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        assertTrue( validate.getAllObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
         List<DataSet> dataSets = manager.getAll( DataSet.class );
@@ -115,8 +115,7 @@ public class ObjectBundleServiceFavoritesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        System.err.println( validate.getObjectErrorReports() );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        assertTrue( validate.getAllObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
         List<DataSet> dataSets = manager.getAll( DataSet.class );
@@ -148,7 +147,7 @@ public class ObjectBundleServiceFavoritesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        assertTrue( validate.getAllObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
         List<DataSet> dataSets = manager.getAll( DataSet.class );

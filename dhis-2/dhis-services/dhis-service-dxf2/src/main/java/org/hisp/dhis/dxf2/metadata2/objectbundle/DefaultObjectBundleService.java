@@ -41,7 +41,7 @@ import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
-import org.hisp.dhis.feedback.Stats;
+import org.hisp.dhis.feedback.ObjectErrorReports;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -121,36 +121,37 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
-            Stats stats = validation.getStats( klass );
+            TypeReport typeReport = new TypeReport( klass );
+            ObjectErrorReports objectErrorReports = typeReport.getObjectErrorReports();
 
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
                 TypeReport validateBySchemas1 = validateBySchemas( klass, bundle.getObjects( klass, false ), bundle );
                 TypeReport validateBySchemas2 = validateBySchemas( klass, bundle.getObjects( klass, true ), bundle );
 
-                stats.merge( validateBySchemas1.getStats() );
-                stats.merge( validateBySchemas2.getStats() );
+                typeReport.getStats().merge( validateBySchemas1.getStats() );
+                typeReport.getStats().merge( validateBySchemas2.getStats() );
 
-                validation.addObjectErrorReports( validateBySchemas1.getObjectErrorReports().getObjectErrorReports() );
-                validation.addObjectErrorReports( validateBySchemas2.getObjectErrorReports().getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateBySchemas1.getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateBySchemas2.getObjectErrorReports() );
 
                 List<ObjectErrorReport> checkUniqueness1 = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
                 List<ObjectErrorReport> checkUniqueness2 = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
-                stats.incIgnored( checkUniqueness1.size() );
-                stats.incIgnored( checkUniqueness2.size() );
+                typeReport.getStats().incIgnored( checkUniqueness1.size() );
+                typeReport.getStats().incIgnored( checkUniqueness2.size() );
 
-                validation.addObjectErrorReports( checkUniqueness1 );
-                validation.addObjectErrorReports( checkUniqueness2 );
+                objectErrorReports.addObjectErrorReports( checkUniqueness1 );
+                objectErrorReports.addObjectErrorReports( checkUniqueness2 );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects
                 {
-                    stats.incIgnored( checkReferences.size() );
+                    typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                validation.addObjectErrorReports( checkReferences );
+                objectErrorReports.addObjectErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isCreate() )
@@ -158,26 +159,26 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 TypeReport validateForCreate = validateForCreate( klass, bundle.getObjects( klass, true ), bundle );
                 TypeReport validateBySchemas = validateBySchemas( klass, bundle.getObjects( klass, false ), bundle );
 
-                stats.merge( validateForCreate.getStats() );
-                stats.merge( validateBySchemas.getStats() );
+                typeReport.getStats().merge( validateForCreate.getStats() );
+                typeReport.getStats().merge( validateBySchemas.getStats() );
 
-                validation.addObjectErrorReports( validateBySchemas.getObjectErrorReports().getObjectErrorReports() );
-                validation.addObjectErrorReports( validateForCreate.getObjectErrorReports().getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateBySchemas.getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateForCreate.getObjectErrorReports() );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
-                stats.incIgnored( checkUniqueness.size() );
-                validation.addObjectErrorReports( checkUniqueness );
+                typeReport.getStats().incIgnored( checkUniqueness.size() );
+                objectErrorReports.addObjectErrorReports( checkUniqueness );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects
                 {
-                    stats.incIgnored( checkReferences.size() );
+                    typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                validation.addObjectErrorReports( checkReferences );
+                objectErrorReports.addObjectErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isUpdate() )
@@ -185,34 +186,36 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 TypeReport validateForUpdate = validateForUpdate( klass, bundle.getObjects( klass, false ), bundle );
                 TypeReport validateBySchemas = validateBySchemas( klass, bundle.getObjects( klass, true ), bundle );
 
-                stats.merge( validateForUpdate.getStats() );
-                stats.merge( validateBySchemas.getStats() );
+                typeReport.getStats().merge( validateForUpdate.getStats() );
+                typeReport.getStats().merge( validateBySchemas.getStats() );
 
-                validation.addObjectErrorReports( validateForUpdate.getObjectErrorReports().getObjectErrorReports() );
-                validation.addObjectErrorReports( validateBySchemas.getObjectErrorReports().getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateForUpdate.getObjectErrorReports() );
+                objectErrorReports.addObjectErrorReports( validateBySchemas.getObjectErrorReports() );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
-                stats.incIgnored( checkUniqueness.size() );
-                validation.addObjectErrorReports( checkUniqueness );
+                typeReport.getStats().incIgnored( checkUniqueness.size() );
+                objectErrorReports.addObjectErrorReports( checkUniqueness );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects
                 {
-                    stats.incIgnored( checkReferences.size() );
+                    typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                validation.addObjectErrorReports( checkReferences );
+                objectErrorReports.addObjectErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isDelete() )
             {
                 TypeReport validateForDelete = validateForDelete( klass, bundle.getObjects( klass, false ), bundle );
-                stats.merge( validateForDelete.getStats() );
-                validation.addObjectErrorReports( validateForDelete.getObjectErrorReports().getObjectErrorReports() );
+                typeReport.getStats().merge( validateForDelete.getStats() );
+                objectErrorReports.addObjectErrorReports( validateForDelete.getObjectErrorReports() );
             }
+
+            validation.addTypeReport( typeReport );
         }
 
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );
@@ -222,9 +225,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public Map<Class<? extends IdentifiableObject>, TypeReport> commit( ObjectBundle bundle )
+    public Map<Class<?>, TypeReport> commit( ObjectBundle bundle )
     {
-        Map<Class<? extends IdentifiableObject>, TypeReport> typeReports = new HashMap<>();
+        Map<Class<?>, TypeReport> typeReports = new HashMap<>();
 
         if ( ObjectBundleMode.VALIDATE == bundle.getObjectBundleMode() )
         {

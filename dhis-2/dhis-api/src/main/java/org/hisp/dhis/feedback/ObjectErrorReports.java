@@ -58,6 +58,11 @@ public class ObjectErrorReports
         objectErrorReports.getObjectErrorReports().forEach( this::addObjectErrorReport );
     }
 
+    public void addObjectErrorReports( List<ObjectErrorReport> objectErrorReports )
+    {
+        objectErrorReports.forEach( this::addObjectErrorReport );
+    }
+
     public void addObjectErrorReport( ObjectErrorReport objectErrorReport )
     {
         if ( !objectErrorReportsMap.containsKey( objectErrorReport.getObjectIndex() ) )
