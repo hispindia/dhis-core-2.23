@@ -50,6 +50,7 @@ public class HibernateCurrentUserStore
         
         Query query = sessionFactory.getCurrentSession().createQuery( hql );
         query.setString( "username", username );
+        query.setCacheable( true );
         
         return (UserCredentials) query.uniqueResult();
     }
