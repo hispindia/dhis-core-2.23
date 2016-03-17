@@ -96,6 +96,16 @@ public class ObjectBundleValidation
         typeReports.forEach( this::addTypeReport );
     }
 
+    public boolean isEmpty()
+    {
+        return typeReportMap.isEmpty();
+    }
+
+    public boolean isEmpty( Class<?> klass )
+    {
+        return typeReportMap.containsKey( klass ) && typeReportMap.get( klass ).getObjectErrorReports().isEmpty();
+    }
+
     public Map<Class<?>, TypeReport> getTypeReportMap()
     {
         return typeReportMap;

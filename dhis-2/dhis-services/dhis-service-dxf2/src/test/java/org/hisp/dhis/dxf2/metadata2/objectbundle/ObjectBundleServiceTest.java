@@ -159,7 +159,7 @@ public class ObjectBundleServiceTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        assertFalse( validate.getTypeReportMap().isEmpty() );
+        assertFalse( validate.isEmpty() );
 
         List<ObjectErrorReport> objectErrorReports = validate.getAllObjectErrorReports( DataElement.class );
         assertFalse( objectErrorReports.isEmpty() );
@@ -1389,7 +1389,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap().isEmpty() );
+        assertFalse( validate.isEmpty() );
         assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
     }
 
