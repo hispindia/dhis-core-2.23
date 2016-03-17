@@ -63,7 +63,6 @@ public class AnalyticalObjectObjectBundleHook
         handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
         handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
         handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
-        handleRelativePeriods( session, schema, analyticalObject, objectBundle );
     }
 
     @Override
@@ -79,15 +78,6 @@ public class AnalyticalObjectObjectBundleHook
         handleDataElementDimensions( session, schema, analyticalObject, objectBundle );
         handleAttributeDimensions( session, schema, analyticalObject, objectBundle );
         handleProgramIndicatorDimensions( session, schema, analyticalObject, objectBundle );
-        handleRelativePeriods( session, schema, analyticalObject, objectBundle );
-    }
-
-    private void handleRelativePeriods( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle objectBundle )
-    {
-        if ( analyticalObject.getRelatives() != null )
-        {
-            // session.save( analyticalObject.getRelatives() );
-        }
     }
 
     private void handleDataDimensionItems( Session session, Schema schema, BaseAnalyticalObject analyticalObject, ObjectBundle bundle )
