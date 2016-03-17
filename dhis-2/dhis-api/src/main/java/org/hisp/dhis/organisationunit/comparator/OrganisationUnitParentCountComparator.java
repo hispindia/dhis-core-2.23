@@ -35,7 +35,7 @@ import java.util.Comparator;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class OrganisationUnitComparator
+public class OrganisationUnitParentCountComparator
     implements Comparator<OrganisationUnit>
 {
     private int countParents( OrganisationUnit organisationUnit )

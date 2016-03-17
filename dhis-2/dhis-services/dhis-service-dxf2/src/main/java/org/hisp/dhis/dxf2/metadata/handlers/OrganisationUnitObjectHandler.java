@@ -30,7 +30,7 @@ package org.hisp.dhis.dxf2.metadata.handlers;
 
 import org.hisp.dhis.dxf2.common.OrganisationUnitUtils;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
-import org.hisp.dhis.organisationunit.comparator.OrganisationUnitComparator;
+import org.hisp.dhis.organisationunit.comparator.OrganisationUnitParentCountComparator;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +45,7 @@ public class OrganisationUnitObjectHandler
     public void preImportObjects( List<OrganisationUnit> objects )
     {
         OrganisationUnitUtils.updateParents( objects );
-        Collections.sort( objects, new OrganisationUnitComparator() );
+        Collections.sort( objects, new OrganisationUnitParentCountComparator() );
     }
 
     @Override
