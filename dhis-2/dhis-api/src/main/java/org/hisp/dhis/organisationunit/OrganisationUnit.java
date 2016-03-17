@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
-import com.google.common.base.Joiner;
 import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.hisp.dhis.common.BaseDimensionalItemObject;
@@ -77,7 +76,6 @@ public class OrganisationUnit
     extends BaseDimensionalItemObject
 {
     private static final String PATH_SEP = "/";
-    private static final Joiner PATH_JOINER = Joiner.on( PATH_SEP );
 
     public static final String KEY_USER_ORGUNIT = "USER_ORGUNIT";
     public static final String KEY_USER_ORGUNIT_CHILDREN = "USER_ORGUNIT_CHILDREN";
@@ -839,15 +837,17 @@ public class OrganisationUnit
     public String getPath()
     {
         List<String> pathList = new ArrayList<>();
+        Set<String> visitedSet = new HashSet<>();
         OrganisationUnit currentParent = parent;
 
         pathList.add( uid );
 
         while ( currentParent != null )
         {
-            if ( !pathList.contains( currentParent.getUid() ) )
+            if ( !visitedSet.contains( currentParent.getUid() ) )
             {
                 pathList.add( currentParent.getUid() );
+                visitedSet.add( currentParent.getUid() );
                 currentParent = currentParent.getParent();
             }
             else
@@ -858,7 +858,7 @@ public class OrganisationUnit
 
         Collections.reverse( pathList );
 
-        path = "/" + PATH_JOINER.join( pathList );
+        path = PATH_SEP + StringUtils.join( pathList, PATH_SEP );
 
         return path;
     }

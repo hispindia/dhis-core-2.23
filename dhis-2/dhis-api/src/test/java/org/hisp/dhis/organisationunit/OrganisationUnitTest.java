@@ -140,6 +140,18 @@ public class OrganisationUnitTest
     }
 
     @Test
+    public void testGetPath()
+    {
+        unitD.setParent( unitC );
+        unitC.setParent( unitB );
+        unitB.setParent( unitA );
+        
+        String expected = "/uidA/uidB/uidC/uidD";
+        
+        assertEquals( expected, unitD.getPath() );
+    }
+
+    @Test
     public void testGetParentNameGraph()
     {
         unitD.setParent( unitC );
