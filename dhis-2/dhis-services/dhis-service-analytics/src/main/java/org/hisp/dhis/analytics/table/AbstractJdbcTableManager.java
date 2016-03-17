@@ -116,20 +116,12 @@ public abstract class AbstractJdbcTableManager
     // -------------------------------------------------------------------------
 
     /**
-     * Returns a list of string arrays in where the first index holds the database
-     * column name, the second index holds the database column data type and the 
-     * third column holds a table alias and name. Column names are quoted.
-     * 
-     * <ul>
-     * <li>0 = database column name (quoted)</li>
-     * <li>1 = database column data type</li>
-     * <li>2 = column alias and name</li>
-     * </ul>
+     * Returns a list of analytics table columns. Column names are quoted.
      */
     protected abstract List<AnalyticsTableColumn> getDimensionColumns( AnalyticsTable table );
     
     /**
-     * Override to perform work before tables are being generated.
+     * Override in order to perform work before tables are being generated.
      */
     @Override
     public void preCreateTables()
