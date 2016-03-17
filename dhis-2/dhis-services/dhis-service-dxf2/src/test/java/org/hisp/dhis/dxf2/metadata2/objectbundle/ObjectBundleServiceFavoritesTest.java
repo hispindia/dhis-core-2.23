@@ -38,6 +38,7 @@ import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
+import org.hisp.dhis.reporttable.ReportTable;
 import org.hisp.dhis.user.UserService;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,7 +89,6 @@ public class ObjectBundleServiceFavoritesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
-        System.err.println( validate.getObjectErrorReports() );
         assertTrue( validate.getObjectErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
@@ -101,5 +101,32 @@ public class ObjectBundleServiceFavoritesTest
         assertEquals( 1, organisationUnits.size() );
         assertEquals( 4, dataElements.size() );
         assertEquals( 3, charts.size() );
+    }
+
+    @Test
+    public void testCreateMetadataWithReportTables1() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/favorites/metadata_with_rt1.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getObjectErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<ReportTable> reportTables = manager.getAll( ReportTable.class );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 1, organisationUnits.size() );
+        assertEquals( 4, dataElements.size() );
+        assertEquals( 3, reportTables.size() );
     }
 }
