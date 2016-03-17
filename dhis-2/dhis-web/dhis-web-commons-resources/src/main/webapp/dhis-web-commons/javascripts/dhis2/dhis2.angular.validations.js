@@ -78,6 +78,39 @@ d2Directives.directive('d2NumberValidator', function() {
     };
 })
 
+.directive("d2CustomCoordinateValidator", function() {
+    return {
+        restrict: "A",         
+        require: "ngModel",         
+        link: function(scope, element, attrs, ngModel) {
+            
+            var isRequired = attrs.ngRequired === 'true';
+            
+            ngModel.$validators.customCoordinateValidator = function(value) {
+                if(!value){
+                    return !isRequired;
+                }
+                
+                var coordinate = value.split(",");
+                
+                if( !coordinate || coordinate.length !== 2 ){
+                    return false;
+                }
+
+                if( !dhis2.validation.isNumber(coordinate[0]) ){
+                    return false;
+                }
+                
+                if( !dhis2.validation.isNumber(coordinate[1]) ){
+                    return false;
+                }
+                
+                return coordinate[0] >= -90 && coordinate[0] <= 90 && coordinate[1] >= -180 && coordinate[1] <= 180;
+            };           
+        }
+    };
+})
+
 .directive("d2CoordinateValidator", function() {
     return {
         restrict: "A",         
@@ -91,9 +124,9 @@ d2Directives.directive('d2NumberValidator', function() {
                     if(!value){
                         return !isRequired;
                     }
-                    var isNumber = dhis2.validation.isNumber(value);
-                    if(!isNumber){
-                        return isNumber;
+
+                    if(!dhis2.validation.isNumber(value)){
+                        return false;
                     }
                     return value >= -90 && value <= 90;
                 };
@@ -104,9 +137,9 @@ d2Directives.directive('d2NumberValidator', function() {
                     if(!value){
                         return !isRequired;
                     }
-                    var isNumber = dhis2.validation.isNumber(value);
-                    if(!isNumber){
-                        return isNumber;
+
+                    if(!dhis2.validation.isNumber(value)){
+                        return false;
                     }
                     return value >= -180 && value <= 180;
                 };
