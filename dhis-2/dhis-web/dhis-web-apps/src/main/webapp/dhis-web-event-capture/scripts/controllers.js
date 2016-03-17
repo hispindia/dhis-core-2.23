@@ -32,8 +32,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 CommonUtils,
                 FileService,
                 AuthorityService,
-                TrackerRulesExecutionService,
-                TrackerRulesFactory) {
+                TrackerRulesExecutionService) {
     
     $scope.maxOptionSize = 30;
     //selected org unit
@@ -120,7 +119,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
 
     $scope.completeEnrollment = function() {
         $scope.currentEvent.status = !$scope.currentEvent.status;
-    }
+    };
     
     //load programs associated with the selected org unit.
     $scope.loadPrograms = function() {
@@ -240,12 +239,9 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                     $scope.optionsReady = true;
                 }
                 
-                TrackerRulesFactory.getRules($scope.selectedProgram.id).then(function(rules){                    
-                    $scope.allProgramRules = rules;
-                    if($scope.selectedCategories.length === 0){
-                        $scope.loadEvents();
-                    }                        
-                });
+                if($scope.selectedCategories.length === 0){
+                    $scope.loadEvents();
+                }   
         }
     };
     
@@ -1121,12 +1117,8 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     
     $scope.executeRules = function() {
         $scope.currentEvent.event = !$scope.currentEvent.event ? 'SINGLE_EVENT' : $scope.currentEvent.event;
-        $scope.eventsByStage = [];
-        $scope.eventsByStage[$scope.selectedProgramStage.id] = [$scope.currentEvent];
-        var evs = {all: [$scope.currentEvent], byStage: $scope.eventsByStage};
-        
-        var flag = {debug: true, verbose: false};        
-        TrackerRulesExecutionService.executeRules($scope.allProgramRules, $scope.currentEvent, evs, $scope.prStDes, $scope.selectedTei, $scope.selectedEnrollment, flag);
+        var flags = {debug: true, verbose: false};
+        TrackerRulesExecutionService.loadAndExecuteRulesScope($scope.currentEvent,$scope.selectedProgram.id,$scope.selectedProgramStage.id,$scope.prStDes,$scope.selectedOrgUnit.id,flags);
     };
        
     
@@ -1144,8 +1136,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
         else {
             return $scope.hiddenFields[id];
         }
-    }; 
-    
+    };
     
     $scope.saveDatavalue = function(){        
         $scope.executeRules();
@@ -1184,7 +1175,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
             return "showNotes(" + dhis2Event + ")"; 
         }
         else{
-            if(dhis2Event.event ===$scope.currentEvent.evnet){
+            if(dhis2Event.event ===$scope.currentEvent.event){
                 return '';
             }
             else{

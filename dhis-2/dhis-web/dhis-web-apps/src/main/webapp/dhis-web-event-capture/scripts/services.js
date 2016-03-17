@@ -225,25 +225,35 @@ var eventCaptureServices = angular.module('eventCaptureServices', ['ngResource']
 
 /* factory for handling events */
 .factory('DHIS2EventFactory', function($http, $q, ECStorageService, $rootScope) {   
-    
-    return {
-        getByStage: function(orgUnit, programStage, attributeCategoryUrl, pager, paging){
+    var internalGetByFilters = function(orgUnit, attributeCategoryUrl, pager, paging, ordering, filterings) {
+        var url = '../api/events.json?' + 'orgUnit=' + orgUnit;
             
-            var url = '../api/events.json?' + 'orgUnit=' + orgUnit + '&programStage=' + programStage;
+            if(filterings) {
+                angular.forEach(filterings,function(filtering) {
+                    url += '&' + filtering.field + '=' + filtering.value;
+                });
+            }
             
             if(attributeCategoryUrl && !attributeCategoryUrl.default){
                 url = url + '&attributeCc=' + attributeCategoryUrl.cc + '&attributeCos=' + attributeCategoryUrl.cp;
             }
-            
+                
             if(paging){
-                var pgSize = pager ? pager.pageSize : 50;
-                var pg = pager ? pager.page : 1;
+                var pgSize = pager.pageSize ? pager.pageSize : 50;
+                var pg = pager.pg ? pager.page : 1;
                 pgSize = pgSize > 1 ? pgSize  : 1;
                 pg = pg > 1 ? pg : 1; 
                 url = url  + '&pageSize=' + pgSize + '&page=' + pg + '&totalPages=true';
             }
             else{
                 url = url  + '&skipPaging=true';
+            }
+            
+            if(ordering && ordering.field){
+                url = url  + '&order=' + ordering.field;
+                if(ordering.direction) {
+                    url = url  + ':' + ordering.direction;
+                }
             }
             
             var promise = $http.get( url ).then(function(response){                    
@@ -268,7 +278,16 @@ var eventCaptureServices = angular.module('eventCaptureServices', ['ngResource']
             });            
             
             return promise;
-        },        
+    };
+    
+    return {
+        getByStage: function(orgUnit, programStage, attributeCategoryUrl, pager, paging){
+            var filterings = [{field:'programStage',value:programStage}];
+            return internalGetByFilters(orgUnit, attributeCategoryUrl, pager, paging, null, filterings);
+        },  
+        getByFilters: function(orgUnit, pager, paging, ordering, filterings){
+            return internalGetByFilters(orgUnit, null, pager, paging, ordering, filterings);
+        },  
         get: function(eventUid){            
             var promise = $http.get('../api/events/' + eventUid + '.json').then(function(response){               
                 return response.data;                
@@ -332,199 +351,4 @@ var eventCaptureServices = angular.module('eventCaptureServices', ['ngResource']
             return promise;
         }
     };    
-})
-
-/* Returns a function for getting rules for a specific program */
-.factory('TrackerRulesFactory', function($q,MetaDataFactory,$filter){
-    var staticReplacements = 
-                        [{regExp:new RegExp("([^\w\d])(and)([^\w\d])","gi"), replacement:"$1&&$3"},
-                        {regExp:new RegExp("([^\w\d])(or)([^\w\d])","gi"), replacement:"$1||$3"},
-                        {regExp:new RegExp("V{execution_date}","g"), replacement:"V{event_date}"}];
-                    
-    var performStaticReplacements = function(expression) {
-        angular.forEach(staticReplacements, function(staticReplacement) {
-            expression = expression.replace(staticReplacement.regExp, staticReplacement.replacement);
-        });
-        
-        return expression;
-    };
-    
-    return{        
-        getRules : function(programUid){            
-            var def = $q.defer();            
-            MetaDataFactory.getAll('constants').then(function(constants) {
-                MetaDataFactory.getByProgram('programIndicators',programUid).then(function(pis){                    
-                    var variables = [];
-                    var programRules = [];
-                    angular.forEach(pis, function(pi){
-                        if(pi.displayInForm){
-                            var newAction = {
-                                    id:pi.id,
-                                    content:pi.displayDescription ? pi.displayDescription : pi.displayName,
-                                    data:pi.expression,
-                                    programRuleActionType:'DISPLAYKEYVALUEPAIR',
-                                    location:'indicators'
-                                };
-                            var newRule = {
-                                    displayName:pi.displayName,
-                                    id: pi.id,
-                                    shortname:pi.shortname,
-                                    code:pi.code,
-                                    program:pi.program,
-                                    description:pi.description,
-                                    condition:pi.filter ? pi.filter : 'true',
-                                    programRuleActions: [newAction]
-                                };
-
-                            programRules.push(newRule);
-
-                            var variablesInCondition = newRule.condition.match(/[A#]{\w+.?\w*}/g);
-                            var variablesInData = newAction.data.match(/[A#]{\w+.?\w*}/g);
-                            var valueCountPresent = newRule.condition.indexOf("V{value_count}") >= 0 
-                                                            || newAction.data.indexOf("V{value_count}") >= 0;
-                            var positiveValueCountPresent = newRule.condition.indexOf("V{zero_pos_value_count}") >= 0
-                                                            || newAction.data.indexOf("V{zero_pos_value_count}") >= 0;
-                            var variableObjectsCurrentExpression = [];
-                            
-                            var pushDirectAddressedVariable = function(variableWithCurls) {
-                                var variableName = $filter('trimvariablequalifiers')(variableWithCurls);
-                                var variableNameParts = variableName.split('.');
-
-                                var newVariableObject;
-
-                                if(variableNameParts.length === 2) {
-                                    //this is a programstage and dataelement specification. translate to program variable:
-                                    newVariableObject = {
-                                        displayName:variableName,
-                                        programRuleVariableSourceType:'DATAELEMENT_NEWEST_EVENT_PROGRAM_STAGE',
-                                        dataElement:variableNameParts[1],
-                                        programStage:variableNameParts[0],
-                                        program:programUid
-                                    };
-                                }
-                                else if(variableNameParts.length === 1)
-                                {
-                                    //This is an attribute - let us translate to program variable:
-                                    newVariableObject = {
-                                        displayName:variableName,
-                                        programRuleVariableSourceType:'TEI_ATTRIBUTE',
-                                        trackedEntityAttribute:variableNameParts[0],
-                                        program:programUid
-                                    };
-                                }
-                                variables.push(newVariableObject);
-                                
-                                return newVariableObject;
-                                
-                            };
-                            
-                            angular.forEach(variablesInCondition, function(variableInCondition) {
-                                var pushed = pushDirectAddressedVariable(variableInCondition);
-                            });
-
-                            angular.forEach(variablesInData, function(variableInData) {
-                                var pushed = pushDirectAddressedVariable(variableInData);
-                                
-                                //We only count the number of values in the data part of the rule
-                                //(Called expression in program indicators)
-                                variableObjectsCurrentExpression.push(pushed);
-                            });
-                            
-                            //Change expression or data part of the rule to match the program rules execution model
-                            if(valueCountPresent) {
-                                var valueCountText;
-                                angular.forEach(variableObjectsCurrentExpression, function(variableCurrentRule) {
-                                   if(valueCountText) {
-                                       //This is not the first value in the value count part of the expression. 
-                                       valueCountText +=  ' + d2:count(\'' + variableCurrentRule.displayName + '\')';
-                                   }
-                                   else
-                                   {
-                                       //This is the first part value in the value count expression:
-                                       valueCountText = '(d2:count(\'' + variableCurrentRule.displayName + '\')';
-                                   }
-                                });
-                                //To finish the value count expression we need to close the paranthesis:
-                                valueCountText += ')';
-
-                                //Replace all occurrences of value counts in both the data and expression:
-                                newRule.condition = newRule.condition.replace(new RegExp("V{value_count}", 'g'),valueCountText);
-                                newAction.data = newAction.data.replace(new RegExp("V{value_count}", 'g'),valueCountText);
-                            }
-                            if(positiveValueCountPresent) {
-                                var zeroPosValueCountText;
-                                angular.forEach(variableObjectsCurrentExpression, function(variableCurrentRule) {
-                                   if(zeroPosValueCountText) {
-                                       //This is not the first value in the value count part of the expression. 
-                                       zeroPosValueCountText +=  '+ d2:countifzeropos(\'' + variableCurrentRule.displayName + '\')';
-                                   }
-                                   else
-                                   {
-                                       //This is the first part value in the value count expression:
-                                       zeroPosValueCountText = '(d2:countifzeropos(\'' + variableCurrentRule.displayName + '\')';
-                                   }
-                                });
-                                //To finish the value count expression we need to close the paranthesis:
-                                zeroPosValueCountText += ')';
-
-                                //Replace all occurrences of value counts in both the data and expression:
-                                newRule.condition = newRule.condition.replace(new RegExp("V{zero_pos_value_count}", 'g'),zeroPosValueCountText);
-                                newAction.data = newAction.data.replace(new RegExp("V{zero_pos_value_count}", 'g'),zeroPosValueCountText);
-                            }
-                            
-                            newAction.data = performStaticReplacements(newAction.data);
-                            newRule.condition = performStaticReplacements(newRule.condition);
-                        }
-                    });
-
-                    var programIndicators = {rules:programRules, variables:variables};
-                    
-                    MetaDataFactory.getByProgram('programValidations',programUid).then(function(programValidations){                    
-                        MetaDataFactory.getByProgram('programRuleVariables',programUid).then(function(programVariables){                    
-                            MetaDataFactory.getByProgram('programRules',programUid).then(function(prs){
-                                var programRules = [];
-                                angular.forEach(prs, function(rule){
-                                    rule.actions = [];
-                                    rule.programStageId = rule.programStage && rule.programStage.id ? rule.programStage.id : null;
-                                    programRules.push(rule);
-                                });                                
-                                def.resolve({constants: constants, programIndicators: programIndicators, programValidations: programValidations, programVariables: programVariables, programRules: programRules});
-                            });
-                        });
-                    });
-                }); 
-            });                        
-            return def.promise;
-        }
-    };  
-})
-
-/* Returns user defined variable names and their corresponding UIDs and types for a specific program */
-.factory('TrackerRuleVariableFactory', function($rootScope, $q, ECStorageService){
-    return{
-        getProgramRuleVariables : function(programUid){
-            var def = $q.defer();
-
-            ECStorageService.currentStore.open().done(function(){
-                
-                ECStorageService.currentStore.getAll('programRuleVariables').done(function(variables){
-                    
-                    //The array will ultimately be returned to the caller.
-                    var programRuleVariablesArray = [];
-                    //Loop through and add the variables belonging to this program
-                    angular.forEach(variables, function(variable){
-                       if(variable.program.id === programUid) {
-                            programRuleVariablesArray.push(variable);
-                       }
-                    });
-
-                    $rootScope.$apply(function(){
-                        def.resolve(programRuleVariablesArray);
-                    });
-                });
-            });
-                        
-            return def.promise;
-        }
-    };
 });
