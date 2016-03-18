@@ -70,6 +70,16 @@ public class Stats
         return total;
     }
 
+    public void incTotal()
+    {
+        total++;
+    }
+
+    public void incTotal( int n )
+    {
+        total += n;
+    }
+
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public int getCreated()
@@ -80,13 +90,11 @@ public class Stats
     public void incCreated()
     {
         created++;
-        total++;
     }
 
     public void incCreated( int n )
     {
         created += n;
-        total += n;
     }
 
     @JsonProperty
@@ -99,13 +107,11 @@ public class Stats
     public void incUpdated()
     {
         updated++;
-        total++;
     }
 
     public void incUpdated( int n )
     {
         updated += n;
-        total += n;
     }
 
     @JsonProperty
@@ -124,7 +130,6 @@ public class Stats
     public void incDeleted( int n )
     {
         deleted += n;
-        total += n;
     }
 
     @JsonProperty
@@ -137,13 +142,11 @@ public class Stats
     public void incIgnored()
     {
         ignored++;
-        total++;
     }
 
     public void incIgnored( int n )
     {
         ignored += n;
-        total += n;
     }
 
 

@@ -30,7 +30,7 @@ package org.hisp.dhis.preheat;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ObjectErrorReport;
+import org.hisp.dhis.feedback.TypeReport;
 
 import java.util.Collection;
 import java.util.List;
@@ -97,7 +97,7 @@ public interface PreheatService
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type to check references
      */
-    List<ObjectErrorReport> checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+    TypeReport checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
 
     /**
      * Checks but does not connect any references, returns check report
@@ -115,7 +115,7 @@ public interface PreheatService
      * @param preheat    Preheat Cache to use
      * @param identifier Use this identifier type report issues
      */
-    List<ObjectErrorReport> checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+    TypeReport checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
 
     /**
      * Check for properties that are unique.

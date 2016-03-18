@@ -44,23 +44,12 @@ import java.util.Map;
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @JacksonXmlRootElement( localName = "objectErrorReport", namespace = DxfNamespaces.DXF_2_0 )
-public class ObjectErrorReport
+public class ErrorReports
 {
-    private final Class<?> objectClass;
-
-    private Integer objectIndex;
-
     private Map<ErrorCode, List<ErrorReport>> errorReportsByCode = new HashMap<>();
 
-    public ObjectErrorReport( Class<?> objectClass )
+    public ErrorReports()
     {
-        this.objectClass = objectClass;
-    }
-
-    public ObjectErrorReport( Class<?> objectClass, Integer objectIndex )
-    {
-        this.objectClass = objectClass;
-        this.objectIndex = objectIndex;
     }
 
     //-----------------------------------------------------------------------------------
@@ -87,25 +76,6 @@ public class ObjectErrorReport
     //-----------------------------------------------------------------------------------
 
     @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public Class<?> getObjectClass()
-    {
-        return objectClass;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public Integer getObjectIndex()
-    {
-        return objectIndex;
-    }
-
-    public List<ErrorCode> getErrorCodes()
-    {
-        return new ArrayList<>( errorReportsByCode.keySet() );
-    }
-
-    @JsonProperty
     @JacksonXmlElementWrapper( localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
     @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
     public List<ErrorReport> getErrorReports()
@@ -114,6 +84,11 @@ public class ObjectErrorReport
         errorReportsByCode.values().forEach( errorReports::addAll );
 
         return errorReports;
+    }
+
+    public List<ErrorCode> getErrorCodes()
+    {
+        return new ArrayList<>( errorReportsByCode.keySet() );
     }
 
     public Map<ErrorCode, List<ErrorReport>> getErrorReportsByCode()
@@ -125,8 +100,6 @@ public class ObjectErrorReport
     public String toString()
     {
         return MoreObjects.toStringHelper( this )
-            .add( "objectClass", objectClass )
-            .add( "objectIndex", objectIndex )
             .add( "errorReportsByCode", errorReportsByCode )
             .toString();
     }

@@ -34,7 +34,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.Stats;
 import org.hisp.dhis.feedback.TypeReport;
 
@@ -54,6 +53,30 @@ public class ImportReport
     public ImportReport()
     {
     }
+
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
+    public void addTypeReport( TypeReport typeReport )
+    {
+        if ( !typeReportMap.containsKey( typeReport.getKlass() ) ) typeReportMap.put( typeReport.getKlass(), new TypeReport( typeReport.getKlass() ) );
+        typeReportMap.get( typeReport.getKlass() ).merge( typeReport );
+    }
+
+    public void addTypeReports( List<TypeReport> typeReports )
+    {
+        typeReports.forEach( this::addTypeReport );
+    }
+
+    public void addTypeReports( Map<Class<?>, TypeReport> typeReportMap )
+    {
+        typeReportMap.values().forEach( this::addTypeReport );
+    }
+
+    //-----------------------------------------------------------------------------------
+    // Getters and Setters
+    //-----------------------------------------------------------------------------------
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
@@ -76,35 +99,6 @@ public class ImportReport
     public Map<Class<?>, TypeReport> getTypeReportMap()
     {
         return typeReportMap;
-    }
-
-    public void addStats( Map<Class<?>, Stats> statsMap )
-    {
-        for ( Class<?> klass : statsMap.keySet() )
-        {
-            if ( !typeReportMap.containsKey( klass ) ) typeReportMap.put( klass, new TypeReport( klass ) );
-            typeReportMap.get( klass ).getStats().merge( statsMap.get( klass ) );
-        }
-    }
-
-    public void addObjectErrorReports( Map<Class<?>, ObjectReport> objectErrorReports )
-    {
-        for ( Class<?> klass : objectErrorReports.keySet() )
-        {
-            if ( !typeReportMap.containsKey( klass ) ) typeReportMap.put( klass, new TypeReport( klass ) );
-            typeReportMap.get( klass ).getObjectReport().addErrorReports( objectErrorReports.get( klass ) );
-        }
-    }
-
-    public void addTypeReports( Map<Class<?>, TypeReport> typeReports )
-    {
-        for ( Class<?> klass : typeReports.keySet() )
-        {
-            if ( !typeReportMap.containsKey( klass ) ) typeReportMap.put( klass, new TypeReport( klass ) );
-            TypeReport typeReport = typeReportMap.get( klass );
-            typeReport.getStats().merge( typeReports.get( klass ).getStats() );
-            typeReport.getObjectReport().addErrorReports( typeReports.get( klass ).getObjectReport() );
-        }
     }
 
     @Override

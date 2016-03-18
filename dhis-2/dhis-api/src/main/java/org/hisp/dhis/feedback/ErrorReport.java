@@ -113,6 +113,7 @@ public class ErrorReport
     {
         return MoreObjects.toStringHelper( this )
             .add( "message", getMessage() )
+            .add( "errorCode", message.getErrorCode() )
             .add( "mainKlass", mainKlass )
             .add( "errorKlass", errorKlass )
             .add( "value", value )

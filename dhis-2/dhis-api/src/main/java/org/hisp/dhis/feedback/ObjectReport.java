@@ -29,7 +29,6 @@ package org.hisp.dhis.feedback;
  */
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
@@ -47,10 +46,16 @@ import java.util.Map;
 @JacksonXmlRootElement( localName = "objectReport", namespace = DxfNamespaces.DXF_2_0 )
 public class ObjectReport
 {
-    private Map<Integer, ObjectErrorReport> errorReportsMap = new HashMap<>();
+    private final Class<?> klass;
 
-    public ObjectReport()
+    private Integer index;
+
+    private Map<Integer, ErrorReports> errorReportsMap = new HashMap<>();
+
+    public ObjectReport( Class<?> klass, Integer index )
     {
+        this.klass = klass;
+        this.index = index;
     }
 
     //-----------------------------------------------------------------------------------
@@ -62,26 +67,19 @@ public class ObjectReport
         addErrorReports( objectReport.getErrorReports() );
     }
 
-    public void addErrorReports( ObjectReport objectReport )
+    public void addErrorReports( List<ErrorReports> errorReports )
     {
-        objectReport.getErrorReports().forEach( this::addErrorReport );
+        errorReports.forEach( this::addErrorReport );
     }
 
-    public void addErrorReports( List<ObjectErrorReport> objectErrorReports )
+    public void addErrorReport( ErrorReports errorReports )
     {
-        objectErrorReports.forEach( this::addErrorReport );
-    }
+        if ( !errorReportsMap.containsKey( index ) )
+        {
+            errorReportsMap.put( index, new ErrorReports() );
+        }
 
-    public void addErrorReport( ObjectErrorReport objectErrorReport )
-    {
-        if ( !errorReportsMap.containsKey( objectErrorReport.getObjectIndex() ) )
-        {
-            errorReportsMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
-        }
-        else
-        {
-            errorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
-        }
+        errorReportsMap.get( index ).addErrorReports( errorReports.getErrorReports() );
     }
 
     //-----------------------------------------------------------------------------------
@@ -89,15 +87,28 @@ public class ObjectReport
     //-----------------------------------------------------------------------------------
 
     @JsonProperty
-    @JsonValue
-    @JacksonXmlElementWrapper( useWrapping = false, localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( isAttribute = true )
+    public Class<?> getKlass()
+    {
+        return klass;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( isAttribute = true )
+    public Integer getIndex()
+    {
+        return index;
+    }
+
+    @JsonProperty
+    @JacksonXmlElementWrapper( localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
     @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ObjectErrorReport> getErrorReports()
+    public List<ErrorReports> getErrorReports()
     {
         return new ArrayList<>( errorReportsMap.values() );
     }
 
-    public Map<Integer, ObjectErrorReport> getErrorReportsMap()
+    public Map<Integer, ErrorReports> getErrorReportsMap()
     {
         return errorReportsMap;
     }
@@ -116,7 +127,7 @@ public class ObjectReport
     public String toString()
     {
         return MoreObjects.toStringHelper( this )
-            .add( "objectErrorReports", getErrorReports() )
+            .add( "errorReports", getErrorReports() )
             .toString();
     }
 }

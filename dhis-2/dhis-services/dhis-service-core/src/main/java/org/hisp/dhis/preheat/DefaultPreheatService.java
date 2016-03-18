@@ -41,7 +41,9 @@ import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ObjectErrorReport;
+import org.hisp.dhis.feedback.ErrorReports;
+import org.hisp.dhis.feedback.ObjectReport;
+import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
@@ -528,29 +530,31 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ObjectErrorReport> checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
-        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+        TypeReport typeReport = new TypeReport( klass );
 
         if ( objects.isEmpty() )
         {
-            return objectErrorReports;
+            return typeReport;
         }
 
-        for ( int i = 0; i < objects.size(); i++ )
+        for ( int idx = 0; idx < objects.size(); idx++ )
         {
-            IdentifiableObject object = objects.get( i );
+            IdentifiableObject object = objects.get( idx );
             List<PreheatErrorReport> errorReports = checkReferences( klass, object, preheat, identifier );
 
             if ( errorReports.isEmpty() ) continue;
 
-            ObjectErrorReport objectErrorReport = new ObjectErrorReport( object.getClass(), i );
+            ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
+            ErrorReports objectErrorReport = new ErrorReports();
             objectErrorReport.addErrorReports( errorReports );
-            objectErrorReports.add( objectErrorReport );
+            objectReport.addErrorReport( objectErrorReport );
 
+            typeReport.addObjectReport( objectReport );
         }
 
-        return objectErrorReports;
+        return typeReport;
     }
 
     @Override
@@ -629,13 +633,13 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ObjectErrorReport> checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
-        List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
+        TypeReport typeReport = new TypeReport( klass );
 
         if ( objects.isEmpty() )
         {
-            return objectErrorReports;
+            return typeReport;
         }
 
         Iterator<IdentifiableObject> iterator = objects.iterator();
@@ -660,17 +664,20 @@ public class DefaultPreheatService implements PreheatService
 
             if ( !errorReports.isEmpty() )
             {
-                ObjectErrorReport objectErrorReport = new ObjectErrorReport( object.getClass(), idx );
-                objectErrorReport.addErrorReports( errorReports );
-                objectErrorReports.add( objectErrorReport );
+                ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
+                ErrorReports objectErrorReport = new ErrorReports();
 
+                objectErrorReport.addErrorReports( errorReports );
+                objectReport.addErrorReport( objectErrorReport );
+
+                typeReport.addObjectReport( objectReport );
                 iterator.remove();
             }
 
             idx++;
         }
 
-        return objectErrorReports;
+        return typeReport;
     }
 
     @Override
