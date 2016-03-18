@@ -915,6 +915,32 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
     $scope.getHelpContent = function(){
     };
     
+    $scope.showAuditHistory = function(){
+        
+        var dhis2Event = ContextMenuSelectedItem.getSelectedItem();
+        
+        var modalInstance = $modal.open({
+            templateUrl: '../dhis-web-commons/angular-forms/audit-history.html',
+            controller: 'AuditHistoryController',
+            resolve: {
+                eventId: function () {
+                    return dhis2Event.event;
+                },
+                dataType: function () {
+                    return 'dataElement';
+                },
+                nameIdMap: function () {
+                    return $scope.prStDes;
+                }
+            }
+        });
+
+        modalInstance.result.then(function () {            
+        },function(){
+        });
+        
+    };
+    
     $scope.showProgramStageMap = function(event){
         var modalInstance = $modal.open({
             templateUrl: '../dhis-web-commons/angular-forms/map.html',

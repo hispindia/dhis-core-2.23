@@ -184,11 +184,10 @@ trackerCapture.controller('RegistrationController',
     var notifyRegistrtaionCompletion = function(destination, teiId){
         if($scope.registrationMode === 'ENROLLMENT'){
             broadcastTeiEnrolled();
-        }else{
+        }
+        else{
             goToDashboard( destination ? destination : 'DASHBOARD', teiId );  
         }
-         
-
     };
     
     var performRegistration = function(destination){
