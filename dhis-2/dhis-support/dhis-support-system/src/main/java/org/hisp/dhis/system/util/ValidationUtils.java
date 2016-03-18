@@ -50,15 +50,14 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtils
 {
+    private static final String NUM_PAT = "((-?[0-9]+)(\\.[0-9]+)?)";
+    
     private static final Pattern POINT_PATTERN = Pattern.compile( "\\[(.+),\\s?(.+)\\]" );
-
     private static final Pattern DIGIT_PATTERN = Pattern.compile( ".*\\d.*" );
-
     private static final Pattern UPPERCASE_PATTERN = Pattern.compile( ".*[A-Z].*" );
-
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile( "^#?([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$" );
-
     private static final Pattern TIME_OF_DAY_PATTERN = Pattern.compile( "^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$" );
+    private static final Pattern BBOX_PATTERN = Pattern.compile( "^" + NUM_PAT + ",\\s*?" + NUM_PAT + ",\\s*?" + NUM_PAT + ",\\s*?" + NUM_PAT + "$" );
 
     private static final int VALUE_MAX_LENGTH = 50000;
 
@@ -220,6 +219,46 @@ public class ValidationUtils
         }
 
         return longitude >= LONG_MIN && longitude <= LONG_MAX && latitude >= LAT_MIN && latitude <= LAT_MAX;
+    }
+    
+    /**
+     * Validates whether a bbox string is valid and on the format:
+     * 
+     * <code>min longitude, min latitude, max longitude, max latitude</code>
+     * 
+     * @param bbox the bbox string.
+     * @return true if the bbox string is valid.
+     */
+    public static boolean bboxIsValid( String bbox )
+    {
+        if ( bbox == null || bbox.trim().isEmpty() )
+        {
+            return false;
+        }
+        
+        Matcher matcher = BBOX_PATTERN.matcher( bbox );
+        
+        if ( !matcher.matches() )
+        {
+            return false;
+        }
+        
+        double minLng = Double.parseDouble( matcher.group( 1 ) );
+        double minLat = Double.parseDouble( matcher.group( 4 ) );
+        double maxLng = Double.parseDouble( matcher.group( 7 ) );
+        double maxLat = Double.parseDouble( matcher.group( 10 ) );
+        
+        if ( minLng < -180d || minLng > 180d || maxLng < -180d || maxLng > 180d )
+        {
+            return false;
+        }
+        
+        if ( minLat < -90d || minLat > 90d || maxLat < -90d || maxLat > 90d )
+        {
+            return false;
+        }
+        
+        return true;
     }
 
     /**

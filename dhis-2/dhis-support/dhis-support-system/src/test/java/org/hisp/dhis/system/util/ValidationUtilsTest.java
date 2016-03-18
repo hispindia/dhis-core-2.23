@@ -67,6 +67,24 @@ public class ValidationUtilsTest
         assertFalse( coordinateIsValid( "000.34,-94.23323" ) );
         assertFalse( coordinateIsValid( "123.34,-00.23323" ) );
     }
+    
+    @Test
+    public void testBboxIsValid()
+    {
+        assertTrue( bboxIsValid( "-13.2682125,7.3721619,-10.4261178,9.904012" ) );
+        assertTrue( bboxIsValid( "12.26821,-23.3721,13.4261,-21.904" ) );
+        assertTrue( bboxIsValid( "4,-23.37,5,-24.904" ) );
+        assertTrue( bboxIsValid( "2.23, -23.37, 5.22, -24.90" ) );
+        assertTrue( bboxIsValid( "-179.234,-89.342,178.323,88.135" ) );
+        
+        assertFalse( bboxIsValid( "[12.23,14.41,34.12,12.45]" ) );
+        assertFalse( bboxIsValid( "22,23,14,41,34,11,11,41" ) );
+        assertFalse( bboxIsValid( "22,23.14,41.34,11.11,41" ) );
+        assertFalse( bboxIsValid( "-181.234,-89.342,178.323,88.135" ) );
+        assertFalse( bboxIsValid( "-179.234,-92.342,178.323,88.135" ) );
+        assertFalse( bboxIsValid( "-179.234,-89.342,185.323,88.135" ) );
+        assertFalse( bboxIsValid( "-179.234,-89.342,178.323,94.135" ) );
+    }
 
     @Test
     public void testGetLongitude()

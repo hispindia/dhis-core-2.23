@@ -49,6 +49,7 @@ import org.hisp.dhis.period.Period;
 import org.hisp.dhis.program.ProgramIndicator;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
+import org.hisp.dhis.system.util.ValidationUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -138,6 +139,11 @@ public class DefaultEventQueryPlanner
         if ( params.hasClusterSize() && params.getClusterSize() <= 0 )
         {
             violation = "Cluster size must be a positive number: " + params.getClusterSize();
+        }
+        
+        if ( params.hasBbox() && !ValidationUtils.bboxIsValid( params.getBbox() ) )
+        {
+            violation = "Bbox is invalid: " + params.getBbox() + ", must be on format: 'min-lng,min-lat,max-lng,max-lat'";
         }
         
         if ( violation != null )
