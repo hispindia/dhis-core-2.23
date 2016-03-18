@@ -26,6 +26,9 @@ trackerCapture.controller('RuleBoundController',
         var textInEffect = false;
         var keyDataInEffect = false;
         
+        if(args.event === 'registration' || args.event === 'dataEntryInit') return;
+
+        //In case the 
         if($scope.lastEventUpdated !== args.event) {
             $scope.displayTextEffects = {};
             $scope.displayKeyDataEffects = {};
