@@ -95,11 +95,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.hisp.dhis.system.notification.NotificationLevel.ERROR;
 
@@ -177,6 +177,10 @@ public abstract class AbstractEventService
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    // -------------------------------------------------------------------------
+    // Caches
+    // -------------------------------------------------------------------------
+
     private CachingMap<String, OrganisationUnit> organisationUnitCache = new CachingMap<>();
 
     private CachingMap<String, Program> programCache = new CachingMap<>();
@@ -185,7 +189,7 @@ public abstract class AbstractEventService
 
     private CachingMap<String, DataElement> dataElementCache = new CachingMap<>();
 
-    private Set<Program> accessiblePrograms = new HashSet<>();
+    private Set<Program> accessibleProgramsCache = new HashSet<>();
 
     // -------------------------------------------------------------------------
     // CREATE
@@ -236,7 +240,6 @@ public abstract class AbstractEventService
             notifier.notify( taskId, ERROR, "Process failed: " + ex.getMessage(), true );
             return new ImportSummaries().addImportSummary( new ImportSummary( ImportStatus.ERROR, "The import process failed: " + ex.getMessage() ) );
         }
-
     }
 
     @Override
@@ -260,7 +263,8 @@ public abstract class AbstractEventService
 
         if ( program == null )
         {
-            return new ImportSummary( ImportStatus.ERROR, "Event.program does not point to a valid program: " + event.getProgram() ).incrementIgnored();
+            return new ImportSummary( ImportStatus.ERROR, 
+                "Event.program does not point to a valid program: " + event.getProgram() ).incrementIgnored();
         }
 
         if ( programStage == null && program.isRegistration() )
@@ -276,7 +280,7 @@ public abstract class AbstractEventService
         Assert.notNull( program );
         Assert.notNull( programStage );
 
-        if ( verifyProgramAccess( program, user ) )
+        if ( !canAccess( program, user ) )
         {
             return new ImportSummary( ImportStatus.ERROR,
                 "Current user does not have permission to access this program" ).incrementIgnored();
@@ -364,7 +368,7 @@ public abstract class AbstractEventService
 
             if ( programInstances.isEmpty() )
             {
-                // this is a WOR program, so just create the PI if it doesn't exist (should only be one)
+                // Create PI if it doesn't exist (should only be one)
                 ProgramInstance pi = new ProgramInstance();
                 pi.setEnrollmentDate( new Date() );
                 pi.setIncidentDate( new Date() );
@@ -404,7 +408,7 @@ public abstract class AbstractEventService
             return new ImportSummary( ImportStatus.ERROR, "Event.orgUnit does not point to a valid organisation unit: " + event.getOrgUnit() ).incrementIgnored();
         }
 
-        if ( verifyProgramOrganisationUnitAssociation( program, organisationUnit ) )
+        if ( !program.hasOrganisationUnit( organisationUnit ) )
         {
             return new ImportSummary( ImportStatus.ERROR, "Program is not assigned to this organisation unit: " + event.getOrgUnit() ).incrementIgnored();
         }
@@ -976,26 +980,14 @@ public abstract class AbstractEventService
         return event;
     }
 
-    private boolean verifyProgramOrganisationUnitAssociation( Program program, OrganisationUnit organisationUnit )
+    private boolean canAccess( Program program, User user )
     {
-        boolean assignedToOrganisationUnit = false;
-
-        if ( program.getOrganisationUnits().contains( organisationUnit ) )
+        if ( accessibleProgramsCache.isEmpty() )
         {
-            assignedToOrganisationUnit = true;
+            accessibleProgramsCache = programService.getCurrentUserPrograms();
         }
 
-        return !assignedToOrganisationUnit;
-    }
-
-    private boolean verifyProgramAccess( Program program, User user )
-    {
-        if ( accessiblePrograms.isEmpty() )
-        {
-            accessiblePrograms = programService.getCurrentUserPrograms();
-        }
-
-        return !accessiblePrograms.contains( program );
+        return accessibleProgramsCache.contains( program );
     }
 
     private boolean validateDataValue( DataElement dataElement, String value, ImportSummary importSummary )
@@ -1186,7 +1178,7 @@ public abstract class AbstractEventService
         String storedBy = getStoredBy( event, importSummary, user );
         String completedBy = getCompletedBy( event, importSummary, user );
 
-        DataElementCategoryOptionCombo coc = categoryService.getDefaultDataElementCategoryOptionCombo();
+        DataElementCategoryOptionCombo coc = null;
 
         if ( event.getAttributeCategoryOptions() != null && program.getCategoryCombo() != null )
         {
@@ -1196,6 +1188,10 @@ public abstract class AbstractEventService
             {
                 importSummary.getConflicts().add( new ImportConflict( "Invalid attribute option combo for option names.", event.getAttributeCategoryOptions() ) );
             }
+        }
+        else
+        {
+            coc = categoryService.getDefaultDataElementCategoryOptionCombo();
         }
 
         if ( !dryRun )
@@ -1260,14 +1256,7 @@ public abstract class AbstractEventService
 
     private Map<String, TrackedEntityDataValue> getDataElementDataValueMap( Collection<TrackedEntityDataValue> dataValues )
     {
-        Map<String, TrackedEntityDataValue> map = new HashMap<>();
-
-        for ( TrackedEntityDataValue value : dataValues )
-        {
-            map.put( value.getDataElement().getUid(), value );
-        }
-
-        return map;
+        return dataValues.stream().collect( Collectors.toMap( dv -> dv.getDataElement().getUid(), dv -> dv ) );
     }
 
     private void saveTrackedEntityComment( ProgramStageInstance programStageInstance, Event event, String storedBy )
