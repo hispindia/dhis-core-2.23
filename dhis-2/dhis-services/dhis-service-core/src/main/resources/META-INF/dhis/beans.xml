@@ -533,6 +533,7 @@
     <property name="clazz" value="org.hisp.dhis.program.ProgramInstance" />
     <property name="sessionFactory" ref="sessionFactory" />
     <property name="jdbcTemplate" ref="jdbcTemplate" />
+    <property name="cacheable" value="true" />
   </bean>
 
   <bean id="org.hisp.dhis.program.ProgramStageStore"

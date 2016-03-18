@@ -6,6 +6,8 @@
 <hibernate-mapping>
   <class name="org.hisp.dhis.program.ProgramInstance" table="programinstance">
 
+    <cache usage="read-write" />
+    
     <id name="id" column="programinstanceid">
       <generator class="native" />
     </id>
