@@ -61,11 +61,6 @@ public class UserObjectBundleHook extends AbstractObjectBundleHook
         User user = (User) identifiableObject;
         userCredentials = user.getUserCredentials();
         user.setUserCredentials( null );
-
-        if ( objectBundle.getPreheat().getUsernames().containsKey( userCredentials.getUsername() ) )
-        {
-            // Username exists, throw validation error
-        }
     }
 
     @Override

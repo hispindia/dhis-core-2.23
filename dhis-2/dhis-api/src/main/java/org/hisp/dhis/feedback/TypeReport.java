@@ -77,8 +77,7 @@ public class TypeReport
     {
         return objectReport;
     }
-
-
+    
     @Override
     public String toString()
     {

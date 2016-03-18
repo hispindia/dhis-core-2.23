@@ -28,6 +28,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hibernate.Session;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
@@ -50,10 +51,12 @@ public class DataSetObjectBundleHook extends AbstractObjectBundleHook
         if ( !DataSet.class.isInstance( identifiableObject ) ) return;
         DataSet dataSet = (DataSet) identifiableObject;
 
+        Session session = sessionFactory.getCurrentSession();
+
         for ( DataElementOperand dataElementOperand : dataSet.getCompulsoryDataElementOperands() )
         {
             preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
-            sessionFactory.getCurrentSession().save( dataElementOperand );
+            session.save( dataElementOperand );
         }
     }
 

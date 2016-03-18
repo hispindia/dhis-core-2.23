@@ -573,7 +573,7 @@ public abstract class AbstractEventService
         params.setSkipPaging( skipPaging );
         params.setIncludeAttributes( includeAttributes );
         params.setOrders( orders );
-        
+
         return params;
     }
 

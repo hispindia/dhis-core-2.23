@@ -49,7 +49,7 @@ import java.util.Map;
 @JacksonXmlRootElement( localName = "importReport", namespace = DxfNamespaces.DXF_2_0 )
 public class ImportReport
 {
-    private final Map<Class<?>, TypeReport> typeReportMap = new HashMap<>();
+    private Map<Class<?>, TypeReport> typeReportMap = new HashMap<>();
 
     public ImportReport()
     {
