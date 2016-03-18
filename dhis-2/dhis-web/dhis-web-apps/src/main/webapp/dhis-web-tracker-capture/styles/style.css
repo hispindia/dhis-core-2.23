@@ -762,9 +762,12 @@ div#searchOuTree h4{
     height: 100%;
 }
 
+.modal {
+    padding-top: 50px;
+}
+
 .modal-dialog {
     top: 50%;
-
 }
 
 .expanded{

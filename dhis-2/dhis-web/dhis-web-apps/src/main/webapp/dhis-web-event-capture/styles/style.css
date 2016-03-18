@@ -269,6 +269,10 @@ input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spi
     height: 99%;
 }
 
+.modal {
+    padding-top: 50px;
+}
+
 #map-container { 
     height: 800px;
     width: 100%;
