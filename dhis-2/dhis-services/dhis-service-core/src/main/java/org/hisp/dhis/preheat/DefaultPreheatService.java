@@ -568,7 +568,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ObjectErrorReport> checkReferences( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public List<ObjectErrorReport> checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
 
@@ -580,7 +580,7 @@ public class DefaultPreheatService implements PreheatService
         for ( int i = 0; i < objects.size(); i++ )
         {
             IdentifiableObject object = objects.get( i );
-            List<PreheatErrorReport> errorReports = checkReferences( object, preheat, identifier );
+            List<PreheatErrorReport> errorReports = checkReferences( klass, object, preheat, identifier );
 
             if ( errorReports.isEmpty() ) continue;
 
@@ -594,7 +594,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<PreheatErrorReport> checkReferences( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<PreheatErrorReport> checkReferences( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<PreheatErrorReport> preheatErrorReports = new ArrayList<>();
 
@@ -669,7 +669,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ObjectErrorReport> checkUniqueness( List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public List<ObjectErrorReport> checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
 
@@ -689,12 +689,12 @@ public class DefaultPreheatService implements PreheatService
             if ( User.class.isInstance( object ) )
             {
                 User user = (User) object;
-                errorReports.addAll( checkUniqueness( user, preheat, identifier ) );
-                errorReports.addAll( checkUniqueness( user.getUserCredentials(), preheat, identifier ) );
+                errorReports.addAll( checkUniqueness( klass, user, preheat, identifier ) );
+                errorReports.addAll( checkUniqueness( klass, user.getUserCredentials(), preheat, identifier ) );
             }
             else
             {
-                errorReports = checkUniqueness( object, preheat, identifier );
+                errorReports = checkUniqueness( klass, object, preheat, identifier );
             }
 
 
@@ -714,7 +714,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ErrorReport> checkUniqueness( IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<ErrorReport> checkUniqueness( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 

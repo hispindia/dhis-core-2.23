@@ -135,8 +135,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectReport.addErrorReports( validateBySchemas1.getObjectReport() );
                 objectReport.addErrorReports( validateBySchemas2.getObjectReport() );
 
-                List<ObjectErrorReport> checkUniqueness1 = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
-                List<ObjectErrorReport> checkUniqueness2 = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+                List<ObjectErrorReport> checkUniqueness1 = preheatService.checkUniqueness( klass, bundle.getObjects( klass, false ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+                List<ObjectErrorReport> checkUniqueness2 = preheatService.checkUniqueness( klass, bundle.getObjects( klass, true ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 typeReport.getStats().incIgnored( checkUniqueness1.size() );
                 typeReport.getStats().incIgnored( checkUniqueness2.size() );
@@ -144,7 +144,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectReport.addErrorReports( checkUniqueness1 );
                 objectReport.addErrorReports( checkUniqueness2 );
 
-                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
+                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( klass, bundle.getObjectMap().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects
                 {
@@ -165,12 +165,12 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectReport.addErrorReports( validateBySchemas.getObjectReport() );
                 objectReport.addErrorReports( validateForCreate.getObjectReport() );
 
-                List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
+                List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( klass, bundle.getObjects( klass, false ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
                 typeReport.getStats().incIgnored( checkUniqueness.size() );
                 objectReport.addErrorReports( checkUniqueness );
 
-                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
+                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( klass, bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects
@@ -192,12 +192,12 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectReport.addErrorReports( validateForUpdate.getObjectReport() );
                 objectReport.addErrorReports( validateBySchemas.getObjectReport() );
 
-                List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(),
+                List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( klass, bundle.getObjects( klass, true ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
                 typeReport.getStats().incIgnored( checkUniqueness.size() );
                 objectReport.addErrorReports( checkUniqueness );
 
-                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
+                List<ObjectErrorReport> checkReferences = preheatService.checkReferences( klass, bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
                 if ( bundle.getImportMode().isAtomic() ) // if mode is atomic, report reference errors as ignored objects

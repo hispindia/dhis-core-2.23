@@ -473,7 +473,7 @@ public class PreheatServiceTest
 
         preheatService.validate( params );
         Preheat preheat = preheatService.preheat( params );
-        List<PreheatErrorReport> referenceErrors = preheatService.checkReferences( dataElementGroup, preheat, PreheatIdentifier.UID );
+        List<PreheatErrorReport> referenceErrors = preheatService.checkReferences( DataElementGroup.class, dataElementGroup, preheat, PreheatIdentifier.UID );
         assertEquals( 3, referenceErrors.size() );
         assertEquals( PreheatIdentifier.UID, referenceErrors.get( 0 ).getPreheatIdentifier() );
         assertEquals( PreheatIdentifier.UID, referenceErrors.get( 1 ).getPreheatIdentifier() );
