@@ -306,7 +306,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertEquals( 3, validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().size() );
+        assertEquals( 3, validate.getTypeReportMap( DataElement.class ).getObjectReport().size() );
     }
 
     @Test
@@ -345,7 +345,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().isEmpty() );
+        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectReport().isEmpty() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
@@ -364,7 +364,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().isEmpty() );
+        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectReport().isEmpty() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
@@ -383,7 +383,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().isEmpty() );
+        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectReport().isEmpty() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
@@ -402,7 +402,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().isEmpty() );
+        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectReport().isEmpty() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 
@@ -421,7 +421,7 @@ public class ObjectBundleServiceTest
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidation validate = objectBundleService.validate( bundle );
 
-        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectErrorReports().isEmpty() );
+        assertFalse( validate.getTypeReportMap( DataElement.class ).getObjectReport().isEmpty() );
         assertEquals( 3, validate.getErrorReportsByCode( DataElement.class, ErrorCode.E5001 ).size() );
     }
 

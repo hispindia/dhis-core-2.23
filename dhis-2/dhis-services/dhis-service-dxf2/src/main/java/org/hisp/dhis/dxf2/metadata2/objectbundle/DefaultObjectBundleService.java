@@ -41,7 +41,7 @@ import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectErrorReport;
-import org.hisp.dhis.feedback.ObjectErrorReports;
+import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.preheat.Preheat;
 import org.hisp.dhis.preheat.PreheatParams;
@@ -122,7 +122,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
             TypeReport typeReport = new TypeReport( klass );
-            ObjectErrorReports objectErrorReports = typeReport.getObjectErrorReports();
+            ObjectReport objectReport = typeReport.getObjectReport();
 
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
@@ -132,8 +132,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.getStats().merge( validateBySchemas1.getStats() );
                 typeReport.getStats().merge( validateBySchemas2.getStats() );
 
-                objectErrorReports.addObjectErrorReports( validateBySchemas1.getObjectErrorReports() );
-                objectErrorReports.addObjectErrorReports( validateBySchemas2.getObjectErrorReports() );
+                objectReport.addErrorReports( validateBySchemas1.getObjectReport() );
+                objectReport.addErrorReports( validateBySchemas2.getObjectReport() );
 
                 List<ObjectErrorReport> checkUniqueness1 = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
                 List<ObjectErrorReport> checkUniqueness2 = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
@@ -141,8 +141,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.getStats().incIgnored( checkUniqueness1.size() );
                 typeReport.getStats().incIgnored( checkUniqueness2.size() );
 
-                objectErrorReports.addObjectErrorReports( checkUniqueness1 );
-                objectErrorReports.addObjectErrorReports( checkUniqueness2 );
+                objectReport.addErrorReports( checkUniqueness1 );
+                objectReport.addErrorReports( checkUniqueness2 );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
@@ -151,7 +151,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                objectErrorReports.addObjectErrorReports( checkReferences );
+                objectReport.addErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isCreate() )
@@ -162,13 +162,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.getStats().merge( validateForCreate.getStats() );
                 typeReport.getStats().merge( validateBySchemas.getStats() );
 
-                objectErrorReports.addObjectErrorReports( validateBySchemas.getObjectErrorReports() );
-                objectErrorReports.addObjectErrorReports( validateForCreate.getObjectErrorReports() );
+                objectReport.addErrorReports( validateBySchemas.getObjectReport() );
+                objectReport.addErrorReports( validateForCreate.getObjectReport() );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, false ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
                 typeReport.getStats().incIgnored( checkUniqueness.size() );
-                objectErrorReports.addObjectErrorReports( checkUniqueness );
+                objectReport.addErrorReports( checkUniqueness );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
@@ -178,7 +178,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                objectErrorReports.addObjectErrorReports( checkReferences );
+                objectReport.addErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isUpdate() )
@@ -189,13 +189,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.getStats().merge( validateForUpdate.getStats() );
                 typeReport.getStats().merge( validateBySchemas.getStats() );
 
-                objectErrorReports.addObjectErrorReports( validateForUpdate.getObjectErrorReports() );
-                objectErrorReports.addObjectErrorReports( validateBySchemas.getObjectErrorReports() );
+                objectReport.addErrorReports( validateForUpdate.getObjectReport() );
+                objectReport.addErrorReports( validateBySchemas.getObjectReport() );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( bundle.getObjects( klass, true ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
                 typeReport.getStats().incIgnored( checkUniqueness.size() );
-                objectErrorReports.addObjectErrorReports( checkUniqueness );
+                objectReport.addErrorReports( checkUniqueness );
 
                 List<ObjectErrorReport> checkReferences = preheatService.checkReferences( bundle.getObjectMap().get( klass ),
                     bundle.getPreheat(), bundle.getPreheatIdentifier() );
@@ -205,14 +205,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
                     typeReport.getStats().incIgnored( checkReferences.size() );
                 }
 
-                objectErrorReports.addObjectErrorReports( checkReferences );
+                objectReport.addErrorReports( checkReferences );
             }
 
             if ( bundle.getImportMode().isDelete() )
             {
                 TypeReport validateForDelete = validateForDelete( klass, bundle.getObjects( klass, false ), bundle );
                 typeReport.getStats().merge( validateForDelete.getStats() );
-                objectErrorReports.addObjectErrorReports( validateForDelete.getObjectErrorReports() );
+                objectReport.addErrorReports( validateForDelete.getObjectReport() );
             }
 
             validation.addTypeReport( typeReport );
@@ -436,7 +436,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
 
-                typeReport.getObjectErrorReports().addObjectErrorReport( objectErrorReport );
+                typeReport.getObjectReport().addErrorReport( objectErrorReport );
                 typeReport.getStats().incIgnored();
 
                 iterator.remove();
@@ -473,7 +473,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
 
-                typeReport.getObjectErrorReports().addObjectErrorReport( objectErrorReport );
+                typeReport.getObjectReport().addErrorReport( objectErrorReport );
                 typeReport.getStats().incIgnored();
 
                 iterator.remove();
@@ -509,7 +509,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
                 objectErrorReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-                typeReport.getObjectErrorReports().addObjectErrorReport( objectErrorReport );
+                typeReport.getObjectReport().addErrorReport( objectErrorReport );
                 typeReport.getStats().incIgnored();
 
                 iterator.remove();
@@ -543,7 +543,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 ObjectErrorReport objectErrorReport = new ObjectErrorReport( klass, idx );
                 objectErrorReport.addErrorReports( validationErrorReports );
 
-                typeReport.getObjectErrorReports().addObjectErrorReport( objectErrorReport );
+                typeReport.getObjectReport().addErrorReport( objectErrorReport );
                 typeReport.getStats().incIgnored();
 
                 iterator.remove();

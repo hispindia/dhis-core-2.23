@@ -34,8 +34,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.DxfNamespaces;
-import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.feedback.ObjectErrorReports;
+import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.Stats;
 import org.hisp.dhis.feedback.TypeReport;
 
@@ -88,12 +87,12 @@ public class ImportReport
         }
     }
 
-    public void addObjectErrorReports( Map<Class<?>, ObjectErrorReports> objectErrorReports )
+    public void addObjectErrorReports( Map<Class<?>, ObjectReport> objectErrorReports )
     {
         for ( Class<?> klass : objectErrorReports.keySet() )
         {
             if ( !typeReportMap.containsKey( klass ) ) typeReportMap.put( klass, new TypeReport( klass ) );
-            typeReportMap.get( klass ).getObjectErrorReports().addObjectErrorReports( objectErrorReports.get( klass ) );
+            typeReportMap.get( klass ).getObjectReport().addErrorReports( objectErrorReports.get( klass ) );
         }
     }
 
@@ -104,7 +103,7 @@ public class ImportReport
             if ( !typeReportMap.containsKey( klass ) ) typeReportMap.put( klass, new TypeReport( klass ) );
             TypeReport typeReport = typeReportMap.get( klass );
             typeReport.getStats().merge( typeReports.get( klass ).getStats() );
-            typeReport.getObjectErrorReports().addObjectErrorReports( typeReports.get( klass ).getObjectErrorReports() );
+            typeReport.getObjectReport().addErrorReports( typeReports.get( klass ).getObjectReport() );
         }
     }
 

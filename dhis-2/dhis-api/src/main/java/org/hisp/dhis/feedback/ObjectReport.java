@@ -44,59 +44,59 @@ import java.util.Map;
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-@JacksonXmlRootElement( localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
-public class ObjectErrorReports
+@JacksonXmlRootElement( localName = "objectReport", namespace = DxfNamespaces.DXF_2_0 )
+public class ObjectReport
 {
-    private Map<Integer, ObjectErrorReport> objectErrorReportsMap = new HashMap<>();
+    private Map<Integer, ObjectErrorReport> errorReportsMap = new HashMap<>();
 
-    public ObjectErrorReports()
+    public ObjectReport()
     {
     }
 
-    public void addObjectErrorReports( ObjectErrorReports objectErrorReports )
+    public void addErrorReports( ObjectReport objectReport )
     {
-        objectErrorReports.getObjectErrorReports().forEach( this::addObjectErrorReport );
+        objectReport.getErrorReports().forEach( this::addErrorReport );
     }
 
-    public void addObjectErrorReports( List<ObjectErrorReport> objectErrorReports )
+    public void addErrorReports( List<ObjectErrorReport> objectErrorReports )
     {
-        objectErrorReports.forEach( this::addObjectErrorReport );
+        objectErrorReports.forEach( this::addErrorReport );
     }
 
-    public void addObjectErrorReport( ObjectErrorReport objectErrorReport )
+    public void addErrorReport( ObjectErrorReport objectErrorReport )
     {
-        if ( !objectErrorReportsMap.containsKey( objectErrorReport.getObjectIndex() ) )
+        if ( !errorReportsMap.containsKey( objectErrorReport.getObjectIndex() ) )
         {
-            objectErrorReportsMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
+            errorReportsMap.put( objectErrorReport.getObjectIndex(), objectErrorReport );
         }
         else
         {
-            objectErrorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
+            errorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
         }
     }
 
     @JsonProperty
     @JsonValue
-    @JacksonXmlElementWrapper( useWrapping = false, localName = "objectErrorReports", namespace = DxfNamespaces.DXF_2_0 )
-    @JacksonXmlProperty( localName = "objectErrorReport", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ObjectErrorReport> getObjectErrorReports()
+    @JacksonXmlElementWrapper( useWrapping = false, localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
+    public List<ObjectErrorReport> getErrorReports()
     {
-        return new ArrayList<>( objectErrorReportsMap.values() );
+        return new ArrayList<>( errorReportsMap.values() );
     }
 
-    public Map<Integer, ObjectErrorReport> getObjectErrorReportsMap()
+    public Map<Integer, ObjectErrorReport> getErrorReportsMap()
     {
-        return objectErrorReportsMap;
+        return errorReportsMap;
     }
 
     public boolean isEmpty()
     {
-        return objectErrorReportsMap.isEmpty();
+        return errorReportsMap.isEmpty();
     }
 
     public int size()
     {
-        return objectErrorReportsMap.size();
+        return errorReportsMap.size();
     }
 
 
@@ -104,7 +104,7 @@ public class ObjectErrorReports
     public String toString()
     {
         return MoreObjects.toStringHelper( this )
-            .add( "objectErrorReports", getObjectErrorReports() )
+            .add( "objectErrorReports", getErrorReports() )
             .toString();
     }
 }

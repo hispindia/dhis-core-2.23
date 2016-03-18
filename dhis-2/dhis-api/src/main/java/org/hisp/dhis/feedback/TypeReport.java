@@ -44,17 +44,17 @@ public class TypeReport
 
     private Stats stats = new Stats();
 
-    private ObjectErrorReports objectErrorReports = new ObjectErrorReports();
+    private ObjectReport objectReport = new ObjectReport();
 
     public TypeReport( Class<?> klass )
     {
         this.klass = klass;
     }
 
-    public TypeReport( Class<?> klass, ObjectErrorReports objectErrorReports )
+    public TypeReport( Class<?> klass, ObjectReport objectReport )
     {
         this.klass = klass;
-        this.objectErrorReports = objectErrorReports;
+        this.objectReport = objectReport;
     }
 
     @JsonProperty
@@ -73,9 +73,9 @@ public class TypeReport
 
     @JsonProperty
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public ObjectErrorReports getObjectErrorReports()
+    public ObjectReport getObjectReport()
     {
-        return objectErrorReports;
+        return objectReport;
     }
 
 
@@ -85,7 +85,7 @@ public class TypeReport
         return MoreObjects.toStringHelper( this )
             .add( "klass", klass )
             .add( "stats", stats )
-            .add( "errorReports", objectErrorReports )
+            .add( "errorReports", objectReport )
             .toString();
     }
 }

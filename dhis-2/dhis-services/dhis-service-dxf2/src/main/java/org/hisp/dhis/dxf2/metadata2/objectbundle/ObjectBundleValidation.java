@@ -61,7 +61,7 @@ public class ObjectBundleValidation
             return errorReports;
         }
 
-        Collection<ObjectErrorReport> objectErrorReports = typeReportMap.get( klass ).getObjectErrorReports().getObjectErrorReports();
+        Collection<ObjectErrorReport> objectErrorReports = typeReportMap.get( klass ).getObjectReport().getErrorReports();
 
         for ( ObjectErrorReport objectErrorReport : objectErrorReports )
         {
@@ -88,7 +88,7 @@ public class ObjectBundleValidation
 
         TypeReport typeReport = typeReportMap.get( report.getKlass() );
         typeReport.getStats().merge( report.getStats() );
-        typeReport.getObjectErrorReports().addObjectErrorReports( report.getObjectErrorReports() );
+        typeReport.getObjectReport().addErrorReports( report.getObjectReport() );
     }
 
     public void addTypeReports( Collection<TypeReport> typeReports )
@@ -103,7 +103,7 @@ public class ObjectBundleValidation
 
     public boolean isEmpty( Class<?> klass )
     {
-        return typeReportMap.containsKey( klass ) && typeReportMap.get( klass ).getObjectErrorReports().isEmpty();
+        return typeReportMap.containsKey( klass ) && typeReportMap.get( klass ).getObjectReport().isEmpty();
     }
 
     public Map<Class<?>, TypeReport> getTypeReportMap()
@@ -119,13 +119,13 @@ public class ObjectBundleValidation
     public List<ObjectErrorReport> getAllObjectErrorReports( Class<?> klass )
     {
         if ( !typeReportMap.containsKey( klass ) ) new ArrayList<>();
-        return typeReportMap.get( klass ).getObjectErrorReports().getObjectErrorReports().stream().collect( Collectors.toList() );
+        return typeReportMap.get( klass ).getObjectReport().getErrorReports().stream().collect( Collectors.toList() );
     }
 
     public List<ObjectErrorReport> getAllObjectErrorReports()
     {
         List<ObjectErrorReport> objectErrorReports = new ArrayList<>();
-        typeReportMap.values().forEach( typeReport -> objectErrorReports.addAll( typeReport.getObjectErrorReports().getObjectErrorReports() ) );
+        typeReportMap.values().forEach( typeReport -> objectErrorReports.addAll( typeReport.getObjectReport().getErrorReports() ) );
 
         return objectErrorReports;
     }
