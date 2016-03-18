@@ -412,26 +412,6 @@ public class DefaultPreheatService implements PreheatService
         return map;
     }
 
-    private void cleanEmptyEntries( Map<Class<? extends IdentifiableObject>, Set<String>> map )
-    {
-        Set<Class<? extends IdentifiableObject>> classes = new HashSet<>( map.keySet() );
-        classes.stream().filter( klass -> map.get( klass ).isEmpty() ).forEach( map::remove );
-    }
-
-    private void addIdentifiers( Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> map, IdentifiableObject identifiableObject )
-    {
-        if ( identifiableObject == null ) return;
-
-        Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = map.get( PreheatIdentifier.UID );
-        Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = map.get( PreheatIdentifier.CODE );
-
-        if ( !uidMap.containsKey( identifiableObject.getClass() ) ) uidMap.put( identifiableObject.getClass(), new HashSet<>() );
-        if ( !codeMap.containsKey( identifiableObject.getClass() ) ) codeMap.put( identifiableObject.getClass(), new HashSet<>() );
-
-        if ( !StringUtils.isEmpty( identifiableObject.getUid() ) ) uidMap.get( identifiableObject.getClass() ).add( identifiableObject.getUid() );
-        if ( !StringUtils.isEmpty( identifiableObject.getCode() ) ) codeMap.get( identifiableObject.getClass() ).add( identifiableObject.getCode() );
-    }
-
     @Override
     public Map<Class<? extends IdentifiableObject>, Map<String, Map<Object, String>>> collectUniqueness( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects )
     {
@@ -450,26 +430,6 @@ public class DefaultPreheatService implements PreheatService
         }
 
         return uniqueMap;
-    }
-
-    private Map<String, Map<Object, String>> handleUniqueProperties( Schema schema, List<IdentifiableObject> objects )
-    {
-        List<Property> uniqueProperties = schema.getProperties().stream()
-            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() && p.isSimple() )
-            .collect( Collectors.toList() );
-
-        Map<String, Map<Object, String>> map = new HashMap<>();
-
-        for ( IdentifiableObject object : objects )
-        {
-            uniqueProperties.forEach( property -> {
-                if ( !map.containsKey( property.getName() ) ) map.put( property.getName(), new HashMap<>() );
-                Object value = ReflectionUtils.invokeMethod( object, property.getGetterMethod() );
-                if ( value != null ) map.get( property.getName() ).put( value, object.getUid() );
-            } );
-        }
-
-        return map;
     }
 
     @Override
@@ -820,6 +780,50 @@ public class DefaultPreheatService implements PreheatService
                     ReflectionUtils.invokeMethod( object, p.getSetterMethod(), objects );
                 }
             } );
+    }
+
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
+    private void cleanEmptyEntries( Map<Class<? extends IdentifiableObject>, Set<String>> map )
+    {
+        Set<Class<? extends IdentifiableObject>> classes = new HashSet<>( map.keySet() );
+        classes.stream().filter( klass -> map.get( klass ).isEmpty() ).forEach( map::remove );
+    }
+
+    private void addIdentifiers( Map<PreheatIdentifier, Map<Class<? extends IdentifiableObject>, Set<String>>> map, IdentifiableObject identifiableObject )
+    {
+        if ( identifiableObject == null ) return;
+
+        Map<Class<? extends IdentifiableObject>, Set<String>> uidMap = map.get( PreheatIdentifier.UID );
+        Map<Class<? extends IdentifiableObject>, Set<String>> codeMap = map.get( PreheatIdentifier.CODE );
+
+        if ( !uidMap.containsKey( identifiableObject.getClass() ) ) uidMap.put( identifiableObject.getClass(), new HashSet<>() );
+        if ( !codeMap.containsKey( identifiableObject.getClass() ) ) codeMap.put( identifiableObject.getClass(), new HashSet<>() );
+
+        if ( !StringUtils.isEmpty( identifiableObject.getUid() ) ) uidMap.get( identifiableObject.getClass() ).add( identifiableObject.getUid() );
+        if ( !StringUtils.isEmpty( identifiableObject.getCode() ) ) codeMap.get( identifiableObject.getClass() ).add( identifiableObject.getCode() );
+    }
+
+    private Map<String, Map<Object, String>> handleUniqueProperties( Schema schema, List<IdentifiableObject> objects )
+    {
+        List<Property> uniqueProperties = schema.getProperties().stream()
+            .filter( p -> p.isPersisted() && p.isOwner() && p.isUnique() && p.isSimple() )
+            .collect( Collectors.toList() );
+
+        Map<String, Map<Object, String>> map = new HashMap<>();
+
+        for ( IdentifiableObject object : objects )
+        {
+            uniqueProperties.forEach( property -> {
+                if ( !map.containsKey( property.getName() ) ) map.put( property.getName(), new HashMap<>() );
+                Object value = ReflectionUtils.invokeMethod( object, property.getGetterMethod() );
+                if ( value != null ) map.get( property.getName() ).put( value, object.getUid() );
+            } );
+        }
+
+        return map;
     }
 
     private IdentifiableObject getPersistedObject( Preheat preheat, PreheatIdentifier identifier, IdentifiableObject ref )

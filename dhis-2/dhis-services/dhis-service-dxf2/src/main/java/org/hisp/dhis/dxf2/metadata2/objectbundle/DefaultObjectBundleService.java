@@ -126,14 +126,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
-                TypeReport validateBySchemas1 = validateBySchemas( klass, bundle.getObjects( klass, false ), bundle );
-                TypeReport validateBySchemas2 = validateBySchemas( klass, bundle.getObjects( klass, true ), bundle );
-
-                typeReport.getStats().merge( validateBySchemas1.getStats() );
-                typeReport.getStats().merge( validateBySchemas2.getStats() );
-
-                objectReport.addErrorReports( validateBySchemas1.getObjectReport() );
-                objectReport.addErrorReports( validateBySchemas2.getObjectReport() );
+                typeReport.merge( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
+                typeReport.merge( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
 
                 List<ObjectErrorReport> checkUniqueness1 = preheatService.checkUniqueness( klass, bundle.getObjects( klass, false ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
                 List<ObjectErrorReport> checkUniqueness2 = preheatService.checkUniqueness( klass, bundle.getObjects( klass, true ), bundle.getPreheat(), bundle.getPreheatIdentifier() );
@@ -156,14 +150,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( bundle.getImportMode().isCreate() )
             {
-                TypeReport validateForCreate = validateForCreate( klass, bundle.getObjects( klass, true ), bundle );
-                TypeReport validateBySchemas = validateBySchemas( klass, bundle.getObjects( klass, false ), bundle );
-
-                typeReport.getStats().merge( validateForCreate.getStats() );
-                typeReport.getStats().merge( validateBySchemas.getStats() );
-
-                objectReport.addErrorReports( validateBySchemas.getObjectReport() );
-                objectReport.addErrorReports( validateForCreate.getObjectReport() );
+                typeReport.merge( validateForCreate( klass, bundle.getObjects( klass, true ), bundle ) );
+                typeReport.merge( validateBySchemas( klass, bundle.getObjects( klass, false ), bundle ) );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( klass, bundle.getObjects( klass, false ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
@@ -183,14 +171,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( bundle.getImportMode().isUpdate() )
             {
-                TypeReport validateForUpdate = validateForUpdate( klass, bundle.getObjects( klass, false ), bundle );
-                TypeReport validateBySchemas = validateBySchemas( klass, bundle.getObjects( klass, true ), bundle );
-
-                typeReport.getStats().merge( validateForUpdate.getStats() );
-                typeReport.getStats().merge( validateBySchemas.getStats() );
-
-                objectReport.addErrorReports( validateForUpdate.getObjectReport() );
-                objectReport.addErrorReports( validateBySchemas.getObjectReport() );
+                typeReport.merge( validateForUpdate( klass, bundle.getObjects( klass, false ), bundle ) );
+                typeReport.merge( validateBySchemas( klass, bundle.getObjects( klass, true ), bundle ) );
 
                 List<ObjectErrorReport> checkUniqueness = preheatService.checkUniqueness( klass, bundle.getObjects( klass, true ), bundle.getPreheat(),
                     bundle.getPreheatIdentifier() );
@@ -210,9 +192,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( bundle.getImportMode().isDelete() )
             {
-                TypeReport validateForDelete = validateForDelete( klass, bundle.getObjects( klass, false ), bundle );
-                typeReport.getStats().merge( validateForDelete.getStats() );
-                objectReport.addErrorReports( validateForDelete.getObjectReport() );
+                typeReport.merge( validateForDelete( klass, bundle.getObjects( klass, false ), bundle ) );
             }
 
             validation.addTypeReport( typeReport );
@@ -246,12 +226,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
-                TypeReport createTypeReport = handleCreates( session, klass, nonPersistedObjects, bundle );
-                TypeReport updateTypeReport = handleUpdates( session, klass, persistedObjects, bundle );
-
                 TypeReport typeReport = new TypeReport( klass );
-                typeReport.getStats().merge( createTypeReport.getStats() );
-                typeReport.getStats().merge( updateTypeReport.getStats() );
+                typeReport.merge( handleCreates( session, klass, nonPersistedObjects, bundle ) );
+                typeReport.merge( handleUpdates( session, klass, persistedObjects, bundle ) );
 
                 typeReports.put( klass, typeReport );
             }
@@ -384,9 +361,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
         return typeReport;
     }
 
-    //----------------------------------------------------------------------------------------------------------
-    // Helpers
-    //----------------------------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
 
     @SuppressWarnings( "unchecked" )
     private List<Class<? extends IdentifiableObject>> getSortedClasses( ObjectBundle bundle )

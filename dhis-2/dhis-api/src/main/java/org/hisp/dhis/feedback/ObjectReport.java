@@ -53,6 +53,15 @@ public class ObjectReport
     {
     }
 
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
+    public void merge( ObjectReport objectReport )
+    {
+        addErrorReports( objectReport.getErrorReports() );
+    }
+
     public void addErrorReports( ObjectReport objectReport )
     {
         objectReport.getErrorReports().forEach( this::addErrorReport );
@@ -74,6 +83,10 @@ public class ObjectReport
             errorReportsMap.get( objectErrorReport.getObjectIndex() ).addErrorReports( objectErrorReport.getErrorReports() );
         }
     }
+
+    //-----------------------------------------------------------------------------------
+    // Getters and Setters
+    //-----------------------------------------------------------------------------------
 
     @JsonProperty
     @JsonValue
@@ -98,7 +111,6 @@ public class ObjectReport
     {
         return errorReportsMap.size();
     }
-
 
     @Override
     public String toString()

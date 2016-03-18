@@ -63,19 +63,9 @@ public class ObjectErrorReport
         this.objectIndex = objectIndex;
     }
 
-    @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public Class<?> getObjectClass()
-    {
-        return objectClass;
-    }
-
-    @JsonProperty
-    @JacksonXmlProperty( isAttribute = true )
-    public Integer getObjectIndex()
-    {
-        return objectIndex;
-    }
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
 
     public void addErrorReports( List<? extends ErrorReport> errorReports )
     {
@@ -90,6 +80,24 @@ public class ObjectErrorReport
         }
 
         errorReportsByCode.get( errorReport.getErrorCode() ).add( errorReport );
+    }
+
+    //-----------------------------------------------------------------------------------
+    // Getters and Setters
+    //-----------------------------------------------------------------------------------
+
+    @JsonProperty
+    @JacksonXmlProperty( isAttribute = true )
+    public Class<?> getObjectClass()
+    {
+        return objectClass;
+    }
+
+    @JsonProperty
+    @JacksonXmlProperty( isAttribute = true )
+    public Integer getObjectIndex()
+    {
+        return objectIndex;
     }
 
     public List<ErrorCode> getErrorCodes()

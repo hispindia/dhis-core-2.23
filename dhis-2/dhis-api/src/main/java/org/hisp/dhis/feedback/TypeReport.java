@@ -57,6 +57,20 @@ public class TypeReport
         this.objectReport = objectReport;
     }
 
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
+    public void merge( TypeReport typeReport )
+    {
+        stats.merge( typeReport.getStats() );
+        objectReport.merge( typeReport.getObjectReport() );
+    }
+
+    //-----------------------------------------------------------------------------------
+    // Getters and Setters
+    //-----------------------------------------------------------------------------------
+
     @JsonProperty
     @JacksonXmlProperty( isAttribute = true )
     public Class<?> getKlass()
@@ -77,7 +91,7 @@ public class TypeReport
     {
         return objectReport;
     }
-    
+
     @Override
     public String toString()
     {
