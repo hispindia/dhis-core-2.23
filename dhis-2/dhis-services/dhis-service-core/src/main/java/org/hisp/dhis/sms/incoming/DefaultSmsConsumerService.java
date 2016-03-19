@@ -31,14 +31,11 @@ package org.hisp.dhis.sms.incoming;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.hisp.dhis.setting.SettingKey;
-import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.sms.SmsPublisher;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-
 
 public class DefaultSmsConsumerService
     implements ApplicationListener<ContextRefreshedEvent>, SmsConsumerService
@@ -50,9 +47,6 @@ public class DefaultSmsConsumerService
     // -------------------------------------------------------------------------
 
     @Autowired
-    private SystemSettingManager systemSettingManager;
-
-    @Autowired
     private SmsPublisher smsPublisher;
 
     // -------------------------------------------------------------------------
@@ -62,10 +56,7 @@ public class DefaultSmsConsumerService
     @Override
     public void onApplicationEvent( ContextRefreshedEvent event )
     {
-        if ( isSmsConsumerRunning() )
-        {
-            startSmsConsumer();
-        }  
+        startSmsConsumer();
     }
 
     @Override
@@ -74,8 +65,6 @@ public class DefaultSmsConsumerService
         smsPublisher.start();
 
         log.info( "SMS consumer started" );
-
-        saveSmsConsumerState( true );
     }
 
     @Override
@@ -84,17 +73,5 @@ public class DefaultSmsConsumerService
         smsPublisher.stop();
 
         log.info( "SMS consumer stopped" );
-
-        saveSmsConsumerState( false );
-    }
-
-    private boolean isSmsConsumerRunning()
-    {
-        return (boolean) systemSettingManager.getSystemSetting( SettingKey.SMS_CONSUMER_STATE );
-    }
-
-    private void saveSmsConsumerState( boolean state )
-    {
-        systemSettingManager.saveSystemSetting( SettingKey.SMS_CONSUMER_STATE, state );
     }
 }

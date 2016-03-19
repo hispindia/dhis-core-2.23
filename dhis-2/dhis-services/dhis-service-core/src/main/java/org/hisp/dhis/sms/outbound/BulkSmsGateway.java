@@ -89,6 +89,8 @@ public class BulkSmsGateway
         {
             responseEntity = restTemplate.exchange( uriBuilder.build().encode( "ISO-8859-1" ).toUri(), HttpMethod.POST,
                 null, String.class );
+            
+            statusCode = responseEntity.getStatusCode();
         }
         catch ( HttpClientErrorException ex )
         {
