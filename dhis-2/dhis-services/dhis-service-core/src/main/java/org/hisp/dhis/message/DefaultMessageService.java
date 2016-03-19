@@ -410,6 +410,8 @@ public class DefaultMessageService
         for ( MessageSender messageSender : messageSenders )
         {
             log.debug( "Invoking message sender: " + messageSender.getClass().getSimpleName() );
+            
+            log.info( "Invoking message sender: " + messageSender.getClass().getSimpleName() );
 
             messageSender.sendMessage( subject, text, footer, sender, new HashSet<>( users ), forceSend );
         }

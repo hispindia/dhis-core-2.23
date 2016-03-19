@@ -80,7 +80,8 @@ public class SmsConfigurationController
 
         SmsConfiguration smsConfiguration = new SmsConfiguration();
 
-        SmsGatewayConfig gatewayConfig = new GenericHttpGatewayConfig( "http://storset.org/", new HashMap<>() );
+        SmsGatewayConfig gatewayConfig = new GenericHttpGatewayConfig( new HashMap<>() );
+        gatewayConfig.setUrlTemplate( "http://storset.org/" );
         smsConfiguration.setGateways( Collections.singletonList( gatewayConfig ) );
 
         model.addAttribute( "model", smsConfiguration );
@@ -89,13 +90,13 @@ public class SmsConfigurationController
         return "smsConfiguration";
     }
 
-
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // POST
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
 
     @RequestMapping( method = RequestMethod.PUT )
-    public String putSmsConfig( @RequestBody SmsConfiguration smsConfiguration, Model model ) throws Exception
+    public String putSmsConfig( @RequestBody SmsConfiguration smsConfiguration, Model model )
+        throws Exception
     {
         if ( smsConfiguration == null )
         {
@@ -106,9 +107,9 @@ public class SmsConfigurationController
         return getSmsConfiguration( model );
     }
 
-
     @ExceptionHandler
-    public void mapException( IllegalArgumentException exception, HttpServletResponse response ) throws IOException
+    public void mapException( IllegalArgumentException exception, HttpServletResponse response )
+        throws IOException
     {
         log.info( "Exception", exception );
         response.setStatus( HttpServletResponse.SC_CONFLICT );

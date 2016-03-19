@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Date;
 
 import org.hisp.dhis.sms.MessageQueue;
-import org.smslib.InboundMessage;
 
 /**
  * Service providing support for retrieving incoming SMSes.
@@ -60,8 +59,6 @@ public interface IncomingSmsService
 
     void deleteById( Integer id );
 
-    List<InboundMessage> getMsgList();
-
     int save( IncomingSms sms );
 
     int save( String message, String originator, String gateway, Date receivedTime );
@@ -71,6 +68,4 @@ public interface IncomingSmsService
     List<IncomingSms> getSmsByStatus( SmsMessageStatus status, String keyword );
 
     List<IncomingSms> getSmsByStatus( SmsMessageStatus status, String keyword, Integer min, Integer max );
-
-    IncomingSms convertToIncomingSms( InboundMessage message );
 }

@@ -82,7 +82,8 @@ public class GenericHttpGatewayConfigTest
         parameters.put( "password", "p1" );
         parameters.put( "sender", "s1" );
 
-        SmsGatewayConfig config = new GenericHttpGatewayConfig( urlTemplate, parameters );
+        SmsGatewayConfig config = new GenericHttpGatewayConfig(parameters );
+        config.setUrlTemplate( urlTemplate );
         SmsConfiguration smsConfiguration = new SmsConfiguration();
         smsConfiguration.setGateways( Collections.singletonList( config ) );
         Marshaller marshaller = context.createMarshaller();

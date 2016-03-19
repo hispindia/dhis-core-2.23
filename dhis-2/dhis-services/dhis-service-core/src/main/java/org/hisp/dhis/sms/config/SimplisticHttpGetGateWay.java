@@ -41,10 +41,8 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.smslib.AGateway;
-import org.smslib.GatewayException;
-import org.smslib.OutboundMessage;
-import org.smslib.TimeoutException;
+import org.hisp.dhis.sms.outbound.OutboundSms;
+
 
 /**
  * Simplistic http gateway sending smses through a get to a url constructed from
@@ -73,7 +71,6 @@ import org.smslib.TimeoutException;
  * </ul>
  */
 public class SimplisticHttpGetGateWay
-    extends AGateway
 {
     private static final Log log = LogFactory.getLog( SimplisticHttpGetGateWay.class );
 
@@ -89,48 +86,16 @@ public class SimplisticHttpGetGateWay
 
     public SimplisticHttpGetGateWay( String id, String urlTemplate, Map<String, String> parameters )
     {
-        super( id );
         this.urlTemplate = urlTemplate;
         this.parameters = parameters;
-
-        setAttributes( AGateway.GatewayAttributes.SEND | AGateway.GatewayAttributes.CUSTOMFROM
-            | AGateway.GatewayAttributes.BIGMESSAGES | AGateway.GatewayAttributes.FLASHSMS );
     }
 
-    @Override
-    public void startGateway()
-        throws TimeoutException, GatewayException, IOException, InterruptedException
-    {
-        log.debug( "Starting gateway. " + getGatewayId() );
-        super.startGateway();
-    }
-
-    @Override
-    public void stopGateway()
-        throws TimeoutException, GatewayException, IOException, InterruptedException
-    {
-        log.debug( "Stopping gateway. " + getGatewayId() );
-        super.stopGateway();
-    }
-
-    @Override
-    public boolean sendMessage( OutboundMessage msg )
-        throws TimeoutException, GatewayException, IOException, InterruptedException
+    public boolean sendMessage( OutboundSms msg )
+        throws IOException, InterruptedException
     {
         log.debug( "Sending message " + msg + " " + getGatewayId() );
 
         Map<String, String> requestParameters = new HashMap<>( parameters );
-
-        requestParameters.put( RECIPIENT, msg.getRecipient() );
-        requestParameters.put( MESSAGE, msg.getText() );
-
-        String sender = msg.getFrom();
-
-        if ( sender != null )
-        {
-            log.debug( "Adding sender " + sender + " " + getGatewayId() );
-            requestParameters.put( SENDER, sender );
-        }
 
         String urlString = urlTemplate;
 
@@ -184,10 +149,9 @@ public class SimplisticHttpGetGateWay
 
         return true;
     }
-
-    @Override
-    public int getQueueSchedulingInterval()
+    
+    private String getGatewayId()
     {
-        return 500;
+        return null;
     }
 }

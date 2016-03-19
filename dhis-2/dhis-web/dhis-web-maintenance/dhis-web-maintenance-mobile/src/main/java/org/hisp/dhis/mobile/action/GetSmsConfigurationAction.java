@@ -33,12 +33,11 @@ import java.util.Map;
 
 import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
 import org.hisp.dhis.sms.config.ClickatellGatewayConfig;
-import org.hisp.dhis.sms.config.ModemGatewayConfig;
 import org.hisp.dhis.sms.config.SMPPGatewayConfig;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
-import org.hisp.dhis.sms.outbound.OutboundSmsTransportService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.Action;
@@ -57,9 +56,6 @@ public class GetSmsConfigurationAction
 
     @Autowired
     private SmsConfigurationManager smsConfigurationManager;
-
-    @Autowired
-    private OutboundSmsTransportService outboundSmsTransportService;
 
     // -------------------------------------------------------------------------
     // Input & Output
@@ -142,8 +138,6 @@ public class GetSmsConfigurationAction
         throws Exception
     {
 
-        smsServiceStatus = outboundSmsTransportService.getServiceStatus();
-
         smsConfig = smsConfigurationManager.getSmsConfiguration();
 
         if ( smsConfig != null )
@@ -164,10 +158,6 @@ public class GetSmsConfigurationAction
                 {
                     clickatellIndex = index;
                 }
-                else if ( gw instanceof ModemGatewayConfig )
-                {
-                    modemIndex = index;
-                }
                 else if ( gw instanceof SMPPGatewayConfig )
                 {
                     smppIndex = index;
@@ -181,7 +171,7 @@ public class GetSmsConfigurationAction
         else
         {
             smsConfig = new SmsConfiguration( true );
-            
+
             smsConfigurationManager.updateSmsConfiguration( smsConfig );
         }
 

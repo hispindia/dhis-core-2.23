@@ -102,35 +102,6 @@
 #set( $gwSizeTemp = $gatewayConfigMap.keySet().size() )
 <form id="saveSmsConfigurationForm" name="saveSmsConfigurationForm" action="saveSmsConfiguration.action" method="post" >
   <table id="detailsList" border="0">
-    <col/> ## Labels
-    <col/> ## Input
-    <thead>
-      <tr>
-        <th colspan="2">$i18n.getString( "service_status" )</th>
-      </tr>
-    </thead>
-    <tbody>
-		<tr>
-			<td colspan="2">
-				#if( $gwSizeTemp != 0)
-				<div class="generalOverlaps overlaps" id="noOverlapsDiv" style="display: block;">
-					$i18n.getString( $!encoder.htmlEncode( $!smsServiceStatus ) )
-				</div>
-				#else
-				<div class="generalOverlaps overlapsWarning" id="noOverlapsDiv" style="display: block;">
-					$i18n.getString( "unable_load_configuration_cause_of_there_is_no_gateway" )
-				</div>
-				#end
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2" align="right">
-				<input type="button" value="$i18n.getString( 'reload_configuration' )" onclick="reloadStartStopService( 'reload' );" />
-				<input type="button" id="startStopButton" value="$i18n.getString( 'stop_sms_service' )" onclick="reloadStartStopService( actionType );" />
-			</td>
-		</tr>
-		<tr><td>&nbsp;</td><td>&nbsp;</td></tr>
-
 		<tr>
 			<td colspan="2">
 				<table id="listTable" class="listTable">

@@ -30,7 +30,6 @@ package org.hisp.dhis.sms.config;
 
 import java.util.List;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -54,54 +53,39 @@ public class DefaultSmsConfigurationManager
 
     @Autowired
     private SystemSettingManager systemSettingManager;
-
-    @Autowired( required = false )
-    private List<SmsConfigurable> smsConfigurables;
+    
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
 
     @Override
     public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
     {
         initializeSmsConfigurables();
     }
-    
+
     public void initializeSmsConfigurables()
     {
-        if ( smsConfigurables == null )
-        {
-            return;
-        }
-
         SmsConfiguration smsConfiguration = getSmsConfiguration();
 
         if ( smsConfiguration == null )
         {
+            log.info( "No sms configuration found" );
+
             return;
         }
 
-        String message = null;
+        List<SmsGatewayConfig> gatewayList = smsConfiguration.getGateways();
 
-        for ( SmsConfigurable smsConfigurable : smsConfigurables )
+        if ( gatewayList == null || gatewayList.isEmpty() )
         {
-            try
-            {
-                log.debug( "Initialized " + smsConfigurable );
+            log.info( "No gateway configuration found" );
 
-                message = smsConfigurable.initialize( smsConfiguration );
-
-                if ( message != null && !message.equals( "success" ) )
-                {
-                    return;
-                }
-            }
-            catch ( Throwable t )
-            {
-                log.warn( "Unable to initialize service " + smsConfigurable.getClass().getSimpleName()
-                    + " with configuration " + smsConfiguration, t );
-                return;
-            }
+            return;
         }
 
-        return;
+        log.info( "Found following gateway configurations " + gatewayList );
+        
+        gatewayAdminService.loadGatewayConfigurationMap( smsConfiguration );
     }
 
     @Override
@@ -158,12 +142,10 @@ public class DefaultSmsConfigurationManager
             {
                 gw.setDefault( true );
                 result = true;
-
             }
             else
             {
                 gw.setDefault( false );
-
             }
         }
 
@@ -187,17 +169,5 @@ public class DefaultSmsConfigurationManager
         }
 
         return false;
-    }
-
-    @Override
-    public boolean removeSMSGatewayById( String gatewayId )
-    {
-        return false;
-    }
-
-    @Override
-    public String addSMSGateway()
-    {
-        throw new NotImplementedException();
     }
 }

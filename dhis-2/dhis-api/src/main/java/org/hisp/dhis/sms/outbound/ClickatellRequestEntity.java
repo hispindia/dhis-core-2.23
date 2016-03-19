@@ -1,4 +1,4 @@
-package org.hisp.dhis.sms.config;
+package org.hisp.dhis.sms.outbound;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,22 +28,57 @@ package org.hisp.dhis.sms.config;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.hisp.dhis.sms.SmsServiceException;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
- * Interface for any service requiring an {@link SmsConfiguration}.
+ * Zubair <rajazubair.asghar@gmail.com>
  */
-public interface SmsConfigurable
+
+@JacksonXmlRootElement( localName = "requestEntity" )
+public class ClickatellRequestEntity
 {
-    /**
-     * Initialize the service with the provided configuration. Services
-     * implementing this interface are also expected to be able to reinitialize
-     * based on these setting in a safe way when running.
-     * 
-     * @param smsConfiguration The SMS configuration
-     * @throws SmsServiceException if the service cannot be initialized with the
-     *         provided {@link SmsConfiguration}
-     */
-    String initialize( SmsConfiguration smsConfiguration )
-        throws SmsServiceException;
+    private String text;
+
+    private List<String> to;
+
+    public ClickatellRequestEntity()
+    {
+        super();
+    }
+
+    public ClickatellRequestEntity( String text, List<String> to )
+    {
+        super();
+        this.text = text;
+        this.to = to;
+    }
+
+    @JsonProperty( value = "text" )
+    @JacksonXmlProperty( localName = "text" )
+    public String getText()
+    {
+        return text;
+    }
+
+    public void setText( String text )
+    {
+        this.text = text;
+    }
+
+    @JsonProperty( value = "to" )
+    @JacksonXmlProperty( localName = "to" )
+    public List<String> getTo()
+    {
+        return to;
+    }
+
+    public void setTo( List<String> to )
+    {
+        this.to = to;
+    }
+
 }

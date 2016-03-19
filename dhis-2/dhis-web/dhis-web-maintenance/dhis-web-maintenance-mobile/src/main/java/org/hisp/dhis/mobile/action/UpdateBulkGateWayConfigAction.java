@@ -1,7 +1,5 @@
 package org.hisp.dhis.mobile.action;
 
-import org.hisp.dhis.common.CodeGenerator;
-
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -31,8 +29,11 @@ import org.hisp.dhis.common.CodeGenerator;
  */
 
 import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
+import org.hisp.dhis.common.CodeGenerator;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.Action;
@@ -43,12 +44,16 @@ import com.opensymphony.xwork2.Action;
 public class UpdateBulkGateWayConfigAction
     implements Action
 {
+
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
 
     @Autowired
     private SmsConfigurationManager smsConfigurationManager;
+
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
 
     // -------------------------------------------------------------------------
     // Input
@@ -85,6 +90,20 @@ public class UpdateBulkGateWayConfigAction
     public void setRegion( String region )
     {
         this.region = region;
+    }
+
+    private String urlTemplate;
+
+    public void setUrlTemplate( String url )
+    {
+        this.urlTemplate = url;
+    }
+    
+    private String urlTemplateForBatchSms;
+
+    public void setUrlTemplateForBatchSms( String urlTemplateForBatchSms )
+    {
+        this.urlTemplateForBatchSms = urlTemplateForBatchSms;
     }
 
     private String gatewayType;
@@ -126,6 +145,8 @@ public class UpdateBulkGateWayConfigAction
                 bulkGatewayConfig.setPassword( password );
                 bulkGatewayConfig.setUsername( username );
                 bulkGatewayConfig.setRegion( region );
+                bulkGatewayConfig.setUrlTemplate( urlTemplate );
+                bulkGatewayConfig.setUrlTemplateForBatchSms( urlTemplateForBatchSms );
                 bulkGatewayConfig.setUid( CodeGenerator.generateCode( 10 ) );
 
                 if ( smsConfig.getGateways() == null || smsConfig.getGateways().isEmpty() )
@@ -141,6 +162,8 @@ public class UpdateBulkGateWayConfigAction
                 {
                     smsConfig.getGateways().add( bulkGatewayConfig );
                 }
+
+                gatewayAdminService.getGatewayConfigurationMap().put( name, bulkGatewayConfig );
 
                 smsConfigurationManager.updateSmsConfiguration( smsConfig );
             }

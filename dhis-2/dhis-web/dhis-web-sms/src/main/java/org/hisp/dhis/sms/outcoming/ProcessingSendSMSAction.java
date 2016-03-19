@@ -39,6 +39,7 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.oust.manager.SelectionTreeManager;
 import org.hisp.dhis.scheduling.TaskCategory;
 import org.hisp.dhis.scheduling.TaskId;
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
 import org.hisp.dhis.sms.outbound.OutboundSmsTransportService;
 import org.hisp.dhis.sms.task.SendSmsTask;
 import org.hisp.dhis.system.notification.Notifier;
@@ -76,6 +77,9 @@ public class ProcessingSendSMSAction
 
     @Autowired
     private OutboundSmsTransportService transportService;
+    
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
     
     @Autowired
     private Scheduler scheduler;
@@ -159,7 +163,7 @@ public class ProcessingSendSMSAction
     public String execute()
         throws Exception
     {
-        gatewayId = transportService.getDefaultGateway();
+        gatewayId = gatewayAdminService.getDefaultGateway().getName();
 
         if ( gatewayId == null || gatewayId.trim().length() == 0 )
         {

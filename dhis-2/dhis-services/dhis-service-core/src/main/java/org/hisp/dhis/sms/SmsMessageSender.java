@@ -32,13 +32,14 @@ import java.lang.Character.UnicodeBlock;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.message.MessageSender;
+import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
+import org.hisp.dhis.sms.config.SmsGatewayConfig;
 import org.hisp.dhis.sms.outbound.OutboundSms;
 import org.hisp.dhis.sms.outbound.OutboundSmsTransportService;
 import org.hisp.dhis.system.util.SmsUtils;
@@ -60,8 +61,6 @@ public class SmsMessageSender
 
     private static int MAX_CHAR = 160;
 
-    private static final String GW_BULK = "bulk_gw";
-
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
@@ -75,27 +74,21 @@ public class SmsMessageSender
     @Autowired
     private OutboundSmsTransportService outboundSmsTransportService;
 
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
+
     @Override
     public String sendMessage( String subject, String text, String footer, User sender, Set<User> users,
         boolean forceSend )
     {
         String message = null;
 
-        if ( outboundSmsTransportService == null )
+        if ( outboundSmsTransportService == null || gatewayAdminService == null)
         {
             return "No gateway";
         }
-
-        Map<String, String> gatewayMap = outboundSmsTransportService.getGatewayMap();
-
-        String gatewayId = StringUtils.trimToNull( outboundSmsTransportService.getDefaultGateway() );
-
-        boolean gatewayEnabled = outboundSmsTransportService.isEnabled();
-
-        if ( gatewayMap == null || gatewayId == null || !gatewayEnabled )
-        {
-            return "No gateway";
-        }
+        
+        SmsGatewayConfig gatewayId = gatewayAdminService.getDefaultGateway() ;
 
         Set<User> toSendList = new HashSet<>();
 
@@ -127,7 +120,7 @@ public class SmsMessageSender
 
         // Bulk is limited in sending long SMS, need to split in pieces
 
-        if ( gatewayId.equals( gatewayMap.get( GW_BULK ) ) )
+        if ( gatewayId instanceof BulkSmsGatewayConfig )
         {
             // Check if text contain any specific character
 
@@ -148,7 +141,7 @@ public class SmsMessageSender
                 {
                     if ( !phoneNumbers.isEmpty() && phoneNumbers.size() > 0 )
                     {
-                        message = sendMessage( each, phoneNumbers, gatewayId );
+                        message = sendMessage( each, phoneNumbers, gatewayId.getName() );
                     }
                 }
             }
@@ -156,7 +149,7 @@ public class SmsMessageSender
             {
                 if ( !phoneNumbers.isEmpty() && phoneNumbers.size() > 0 )
                 {
-                    message = sendMessage( text, phoneNumbers, gatewayId );
+                    message = sendMessage( text, phoneNumbers, gatewayId.getName() );
                 }
             }
         }
@@ -164,7 +157,7 @@ public class SmsMessageSender
         {
             if ( !phoneNumbers.isEmpty() && phoneNumbers.size() > 0 )
             {
-                message = sendMessage( text, phoneNumbers, gatewayId );
+                message = sendMessage( text, phoneNumbers, gatewayId.getName() );
             }
         }
 
@@ -184,8 +177,8 @@ public class SmsMessageSender
         else
         // Receiver is user
         {
-            Serializable userSetting = userSettingService
-                .getUserSetting( UserSettingKey.MESSAGE_SMS_NOTIFICATION, user );
+            Serializable userSetting = userSettingService.getUserSetting( UserSettingKey.MESSAGE_SMS_NOTIFICATION,
+                user );
 
             return userSetting != null ? (Boolean) userSetting : false;
         }
@@ -201,7 +194,7 @@ public class SmsMessageSender
 
         try
         {
-            message = outboundSmsTransportService.sendMessage( sms, gateWayId );
+            message = outboundSmsTransportService.sendMessage( sms, gateWayId ).getResponseMessage();
         }
         catch ( SmsServiceException e )
         {

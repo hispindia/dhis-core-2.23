@@ -989,11 +989,6 @@
 
       <!-- SMS -->
       <dependency>
-        <groupId>org.smslib</groupId>
-        <artifactId>smslib</artifactId>
-        <version>3.5.3</version>
-      </dependency>
-      <dependency>
         <groupId>org.rxtx</groupId>
         <artifactId>rxtx</artifactId>
         <version>2.1.7</version>

@@ -40,6 +40,19 @@ public class ClickatellGatewayConfig
     private String password;
 
     private String apiId;
+    
+    private String authToken;
+
+    @JsonProperty( value = "authtoken" )
+    public String getAuthToken()
+    {
+        return authToken;
+    }
+
+    public void setAuthToken( String authToken )
+    {
+        this.authToken = authToken;
+    }
 
     @JsonProperty( value = "username" )
     public String getUsername()

@@ -24,15 +24,6 @@
 	<bean id="org.hisp.dhis.mobile.action.NoAction" class="org.hisp.dhis.mobile.action.NoAction"
 		scope="prototype" />
 
-	<bean id="org.hisp.dhis.mobile.action.incoming.ReceivingSMSAction"
-		class="org.hisp.dhis.mobile.action.incoming.ReceivingSMSAction" 
-		scope="prototype">
-		<property name="incomingSmsService"
-			ref="org.hisp.dhis.sms.incoming.IncomingSmsService" />
-		<property name="userService" ref="org.hisp.dhis.user.UserService" />
-		<property name="currentUserService" ref="org.hisp.dhis.user.CurrentUserService" />
-	</bean>
-
 	<bean id="org.hisp.dhis.mobile.action.incoming.DeleteReceiveSMSAction"
 		class="org.hisp.dhis.mobile.action.incoming.DeleteReceiveSMSAction"
 		scope="prototype">
@@ -74,10 +65,6 @@
 
 	<bean id="org.hisp.dhis.mobile.action.UpdateBulkGateWayConfigAction"
 		class="org.hisp.dhis.mobile.action.UpdateBulkGateWayConfigAction"
-		scope="prototype" />
-
-	<bean id="org.hisp.dhis.mobile.action.UpdateModemGateWayConfigAction"
-		class="org.hisp.dhis.mobile.action.UpdateModemGateWayConfigAction"
 		scope="prototype" />
 
 	<bean id="org.hisp.dhis.mobile.action.UpdateClickatellGateWayConfigAction"

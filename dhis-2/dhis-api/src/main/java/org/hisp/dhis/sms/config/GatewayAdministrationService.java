@@ -1,7 +1,6 @@
-package org.hisp.dhis.sms.incoming;
 
 /*
- * Copyright (c) 2004-2016, University of Oslo
+ * Copyright (c) 2004-2015, University of Oslo
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,32 +26,33 @@ package org.hisp.dhis.sms.incoming;
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package org.hisp.dhis.sms.config;
 
-import org.smslib.AGateway;
-import org.smslib.IInboundMessageNotification;
-import org.smslib.InboundMessage;
-import org.smslib.Message.MessageTypes;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Map;
 
-public class SMPPInboundNotification
-    implements IInboundMessageNotification
+/**
+ * @author Zubair <rajazubair.asghar@gmail.com>
+ *
+ */
+public interface GatewayAdministrationService
 {
-    // -------------------------------------------------------------------------
-    // Dependencies
-    // -------------------------------------------------------------------------
+    String setDefaultGateway( String uid );
 
-    @Autowired
-    private IncomingSmsService incomingSmsService;
+    boolean removeGatewayByUid( String uid );
 
-    // -------------------------------------------------------------------------
-    // Implementation
-    // -------------------------------------------------------------------------
+    boolean removeGatewayByName( String gatewayName );
+    
+    Map<String, SmsGatewayConfig> getGatewayConfigurationMap();
 
-    @Override
-    public void process( AGateway gateway, MessageTypes msgType, InboundMessage message )
-    {
-        IncomingSms incomingSms = incomingSmsService.convertToIncomingSms( message );
+    SmsGatewayConfig getDefaultGateway();
 
-        incomingSmsService.save( incomingSms );
-    }
+    SmsConfiguration listGateways();
+
+    SmsGatewayConfig getGatewayConfigurationByUid( String uid );
+
+    SmsGatewayConfig getGatewayConfigurationByName( String gatewayName );
+
+    boolean addOrUpdateGateway( SmsGatewayConfig config, Class<?> klass );
+
+    boolean loadGatewayConfigurationMap( SmsConfiguration smsConfiguration );
 }

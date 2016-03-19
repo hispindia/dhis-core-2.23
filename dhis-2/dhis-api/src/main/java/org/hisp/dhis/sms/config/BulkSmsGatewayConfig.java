@@ -40,6 +40,19 @@ public class BulkSmsGatewayConfig
     private String password;
 
     private String region;
+    
+    private String urlTemplateForBatchSms;
+
+    @JsonProperty( value = "urlTemplateForBatchSms" )
+    public String getUrlTemplateForBatchSms()
+    {
+        return urlTemplateForBatchSms;
+    }
+
+    public void setUrlTemplateForBatchSms( String urlTemplateForBatchSms )
+    {
+        this.urlTemplateForBatchSms = urlTemplateForBatchSms;
+    }
 
     @JsonProperty( value = "username" )
     public String getUsername()

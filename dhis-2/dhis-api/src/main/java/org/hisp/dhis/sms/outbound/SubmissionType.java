@@ -28,10 +28,8 @@ package org.hisp.dhis.sms.outbound;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * Zubair <rajazubair.asghar@gmail.com>
- */
-public enum SMSServiceStatus
+public enum SubmissionType
 {
-    STARTED, STOPPED, STARTING, STOPPING
+    SINGLE,
+    BATCH
 }

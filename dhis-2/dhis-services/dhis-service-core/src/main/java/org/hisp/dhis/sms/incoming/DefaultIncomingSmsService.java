@@ -33,8 +33,6 @@ import java.util.Date;
 import java.util.List;
 
 import org.hisp.dhis.sms.MessageQueue;
-import org.smslib.InboundMessage;
-import org.smslib.Service;
 
 public class DefaultIncomingSmsService
     implements IncomingSmsService
@@ -61,9 +59,9 @@ public class DefaultIncomingSmsService
     // Input & Output
     // -------------------------------------------------------------------------
 
-    private List<InboundMessage> msgList = new ArrayList<>();
+    private List<IncomingSms> msgList = new ArrayList<>();
 
-    public void setMsgList( List<InboundMessage> msgList )
+    public void setMsgList( List<IncomingSms> msgList )
     {
         this.msgList = msgList;
     }
@@ -79,7 +77,7 @@ public class DefaultIncomingSmsService
 
         try
         {
-            Service.getInstance().readMessages( msgList, InboundMessage.MessageClasses.ALL );
+          
         }
         catch ( Exception e )
         {
@@ -88,11 +86,9 @@ public class DefaultIncomingSmsService
 
         if ( msgList.size() > 0 )
         {
-            for ( InboundMessage each : msgList )
+            for ( IncomingSms each : msgList )
             {
-                IncomingSms incomingSms = convertToIncomingSms( each );
-
-                result.add( incomingSms );
+                result.add( each );
             }
 
             msgList.clear();
@@ -106,22 +102,7 @@ public class DefaultIncomingSmsService
     {
         return (List<IncomingSms>) incomingSmsStore.getAllSmses();
     }
-
-    @Override
-    public List<InboundMessage> getMsgList()
-    {
-        try
-        {
-            Service.getInstance().readMessages( msgList, InboundMessage.MessageClasses.ALL );
-        }
-        catch ( Exception e )
-        {
-            e.printStackTrace();
-        }
-
-        return msgList;
-    }
-
+    
     @Override
     public int save( IncomingSms incomingSms )
     {
@@ -159,12 +140,7 @@ public class DefaultIncomingSmsService
     {
         try
         {
-            Service.getInstance().readMessages( msgList, InboundMessage.MessageClasses.ALL );
-
-            for ( InboundMessage each : msgList )
-            {
-                Service.getInstance().deleteMessage( each );
-            }
+           
         }
         catch ( Exception e )
         {
@@ -204,21 +180,6 @@ public class DefaultIncomingSmsService
     public List<IncomingSms> getSmsByStatus( SmsMessageStatus status, String keyword )
     {
         return incomingSmsStore.getSmsByStatus( status, keyword );
-    }
-
-    @Override
-    public IncomingSms convertToIncomingSms( InboundMessage message )
-    {
-        IncomingSms incomingSms = new IncomingSms();
-        incomingSms.setOriginator( message.getOriginator() );
-        incomingSms.setEncoding( SmsMessageEncoding.ENC7BIT );
-        incomingSms.setSentDate( message.getDate() );
-        incomingSms.setReceivedDate( message.getDate() );
-        incomingSms.setText( message.getText() );
-        incomingSms.setGatewayId( message.getGatewayId() );
-        incomingSms.setStatus( SmsMessageStatus.PROCESSED );
-        incomingSms.setStatusMessage( "imported" );
-        return incomingSms;
     }
 
     @Override

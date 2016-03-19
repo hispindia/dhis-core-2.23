@@ -35,6 +35,8 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.ouwt.manager.OrganisationUnitSelectionManager;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramService;
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
+import org.hisp.dhis.sms.config.SmsGatewayConfig;
 import org.hisp.dhis.sms.outbound.OutboundSmsTransportService;
 import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.trackedentity.TrackedEntityAttributeService;
@@ -54,7 +56,7 @@ public class ShowSendSMSBeneficiaryFormAction
     // -------------------------------------------------------------------------
 
     @Autowired
-    private OutboundSmsTransportService transportService;
+    private GatewayAdministrationService gatewayAdminService;
 
     @Autowired
     private OrganisationUnitSelectionManager selectionManager;
@@ -97,9 +99,9 @@ public class ShowSendSMSBeneficiaryFormAction
         return status;
     }
 
-    public Map<String, String> getGatewayMap()
+    public Map<String, SmsGatewayConfig> getGatewayMap()
     {
-        return transportService.getGatewayMap();
+        return gatewayAdminService.getGatewayConfigurationMap();
     }
 
     // -------------------------------------------------------------------------

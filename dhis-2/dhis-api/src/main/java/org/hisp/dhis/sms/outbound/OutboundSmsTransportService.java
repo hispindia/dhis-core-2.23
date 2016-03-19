@@ -1,5 +1,8 @@
 package org.hisp.dhis.sms.outbound;
 
+import java.util.List;
+
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -28,49 +31,19 @@ package org.hisp.dhis.sms.outbound;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.Map;
-
-import org.hisp.dhis.sms.SmsServiceException;
-import org.hisp.dhis.sms.config.SMSGatewayStatus;
-import org.hisp.dhis.sms.config.SmsConfigurable;
-import org.hisp.dhis.sms.config.SmsConfiguration;
-
 /**
  * Marker interface for {@code OutboundSmsService outbound sms services}
  * providing actual SMS sending.
  */
 public interface OutboundSmsTransportService
-    extends SmsConfigurable
 {
-    Map<String, String> getGatewayMap();
+    GatewayResponse sendMessage( OutboundSms sms );
 
-    void updateGatewayMap( String key );
+    GatewayResponse sendMessage( OutboundSms sms, String gatewayName );
 
-    void stopService();
+    GatewayResponse sendMessage( List<OutboundSms> smsBatch ); 
 
-    void startService();
-
-    void reloadConfig()
-        throws SmsServiceException;
-
-    String getServiceStatus();
-
-    String getMessageStatus();
-
-    String getDefaultGateway();
-
-    SMSServiceStatus getServiceStatusEnum();
-
-    SMSGatewayStatus getGatewayStatus();
-
-    boolean isEnabled();
-
-    @Override
-    String initialize( SmsConfiguration smsConfiguration )
-        throws SmsServiceException;
-
-    String sendMessage( OutboundSms sms, String gatewayId )
-        throws SmsServiceException;
+    GatewayResponse sendMessage( List<OutboundSms> smsBatch, String gatewayName );
     
-    boolean sendAyncMessage( OutboundSms sms, String gatewayId );
+    GatewayResponse sendMessage( String message, String recipient );
 }

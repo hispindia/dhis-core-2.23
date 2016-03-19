@@ -41,17 +41,14 @@ public class GenericHttpGatewayConfig
 {
     private static final long serialVersionUID = 6340853488475760213L;
 
-    private String urlTemplate;
-
     Map<String, String> parameters;
 
     public GenericHttpGatewayConfig()
     {
     }
 
-    public GenericHttpGatewayConfig( String urlTemplate, Map<String, String> parameters )
+    public GenericHttpGatewayConfig( Map<String, String> parameters )
     {
-        this.urlTemplate = urlTemplate;
         this.parameters = parameters;
     }
 
@@ -61,21 +58,10 @@ public class GenericHttpGatewayConfig
         return super.getName();
     }
 
-    @JsonProperty( value = "urltemplate" )
-    public String getUrlTemplate()
-    {
-        return urlTemplate;
-    }
-
     @JsonProperty( value = "default" )
     public boolean getStatus()
     {
         return super.isDefault();
-    }
-
-    public void setUrlTemplate( String urlTemplate )
-    {
-        this.urlTemplate = urlTemplate;
     }
 
     @JsonProperty( value = "parameters" )

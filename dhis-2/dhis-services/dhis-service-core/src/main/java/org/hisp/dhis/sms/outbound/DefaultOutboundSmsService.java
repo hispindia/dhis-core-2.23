@@ -33,8 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.smslib.OutboundMessage;
-import org.smslib.OutboundMessage.MessageStatuses;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
@@ -109,33 +107,4 @@ public class DefaultOutboundSmsService
     {
         return outboundSmsStore.getAllOutboundSms( min, max );
     }
-
-    @Override
-    public OutboundSms convertToOutboundSms( OutboundMessage sms )
-    {
-        if ( sms == null )
-        {
-            return null;
-        }
-
-        Set<String> recipients = new HashSet<String>();
-        recipients.add( sms.getRecipient() );
-
-        OutboundSms outboundSms = new OutboundSms();
-        outboundSms.setMessage( sms.getText() );
-        outboundSms.setRecipients( recipients );
-        outboundSms.setDate( sms.getDate() );
-
-        if ( sms.getMessageStatus() == MessageStatuses.SENT )
-        {
-            outboundSms.setStatus( OutboundSmsStatus.SENT );
-        }
-        else
-        {
-            outboundSms.setStatus( OutboundSmsStatus.ERROR );
-        }
-
-        return outboundSms;
-    }
-
 }

@@ -2,9 +2,7 @@ currentType = '';
 function changeValueType( value )
 {
 	hideAll();
-    if ( value == 'modem' ) {
-        showById( "modemFields" );
-    } else if ( value == 'bulksms' ) {
+    if ( value == 'bulksms' ) {
     	showById( "bulksmsFields" );
     } else if ( value == 'clickatell' ) {
     	showById( "clickatellFields" );
@@ -18,46 +16,35 @@ function changeValueType( value )
 
 function hideAll() 
 {
-	 hideById( "modemFields" );
 	 hideById( "bulksmsFields" );
 	 hideById( "smppFields" );
 	 hideById( "clickatellFields" );
-	 hideById( "genericHTTPFields" );
-	 
+	 hideById( "genericHTTPFields" ); 
 }
 
 function getValidationRulesGateway()
 {
 	var rules = {};
-	if ( currentType == 'modem' ) {
-		rules = {
-			'modemFields input[id=name]' : { 'required' : true },
-			'modemFields input[id=port]' : { 'required' : true },
-			'modemFields input[id=baudrate]' : { 'required' : true },
-			'modemFields input[id=pollingInterval]' : { 'required' : true },
-			'modemFields input[id=manufacturer]' : { 'required' : true },
-			'modemFields input[id=model]' : { 'required' : true },
-			'modemFields input[id=pin]' : { 'required' : true },
-			'modemFields select[id=inbound]' : { 'required' : true },
-			'modemFields select[id=outbound]' : { 'required' : true }
-		};
-	} else if ( currentType == 'bulksms' ) {
+	if ( currentType == 'bulksms' ) {
 		rules = {
 			'bulksmsFields input[id=name]' : { 'required' : true },
 			'bulksmsFields input[id=username]' : { 'required' : true },
+			'bulksmsFields input[id=urlTemplate]' : { 'required' : true },
 			'bulksmsFields input[id=password]' : { 'required' : true }
 		};
 	} else if ( currentType == 'smpp_gw' ) {
 		rules = {
-			'bulksmsFields input[id=name]' : { 'required' : true },
-			'bulksmsFields input[id=username]' : { 'required' : true },
-			'bulksmsFields input[id=password]' : { 'required' : true }
+			'smppFields input[id=name]' : { 'required' : true },
+			'smppFields input[id=username]' : { 'required' : true },
+			'smppFields input[id=password]' : { 'required' : true }
 		};
 	} else if ( currentType == 'clickatell' ) {
 		rules = {
 			'clickatellFields input[id=name]' : { 'required' : true },
 			'clickatellFields input[id=username]' : { 'required' : true },
 			'clickatellFields input[id=password]' : { 'required' : true },
+			'clickatellFields input[id=urlTemplate]' : { 'required' : true },
+			'clickatellFields input[id=authToken]' : { 'required' : true },
 			'clickatellFields input[id=apiId]' : { 'required' : true }
 		};
 	} else {
@@ -86,35 +73,7 @@ function getValidationRulesUpdateClient()
 function saveGatewayConfig()
 {
 	
-	if ( currentType == 'modem' )
-	{
-		var port = getFieldValue( 'modemFields input[id=port]' );
-		var baudRate = getFieldValue( 'modemFields input[id=baudRate]' );
-		if ( port == "" || baudRate == "")
-		{	
-			showErrorMessage( i18n_required_data_error );
-		}
-		else
-		{
-			lockScreen();		
-			jQuery.postJSON( "saveModemConfig.action", {
-				gatewayType: getFieldValue( 'gatewayType' ),
-				name: getFieldValue( 'modemFields input[id=name]' ),
-				port: getFieldValue( 'modemFields input[id=port]' ),
-				baudRate: getFieldValue( 'modemFields input[id=baudRate]' ),
-				pollingInterval: getFieldValue( 'modemFields input[id=pollingInterval]' ),
-				manufacturer: getFieldValue( 'modemFields input[id=manufacturer]' ),
-				model: getFieldValue( 'modemFields input[id=model]' ),
-				pin: getFieldValue( 'modemFields input[id=pin]' ),
-				inbound: getFieldValue( 'modemFields select[id=inbound]' ),
-				outbound: getFieldValue( 'modemFields select[id=outbound]' )
-			}, function ( json ) {
-				unLockScreen();
-				showMessage( json );
-			} );
-		}
-	}
-	else if ( currentType == 'bulksms' )
+	if ( currentType == 'bulksms' )
 	{
 		var username = getFieldValue( 'bulksmsFields input[id=username]' );
 		var password = getFieldValue( 'bulksmsFields input[id=password]' );
@@ -130,6 +89,8 @@ function saveGatewayConfig()
 				name: getFieldValue( 'bulksmsFields input[id=name]' ),
 				username: getFieldValue( 'bulksmsFields input[id=username]' ),
 				password: getFieldValue( 'bulksmsFields input[id=password]' ),
+				urlTemplate: getFieldValue( 'bulksmsFields input[id=urlTemplate]' ),
+				urlTemplateForBatchSms: getFieldValue( 'bulksmsFields input[id=urlTemplateForBatchSms]' ),
 				region: getFieldValue( 'bulksmsFields select[id=region]' )
 			}, function ( json ) {
 				unLockScreen();
@@ -177,7 +138,9 @@ function saveGatewayConfig()
 				name: getFieldValue( 'clickatellFields input[id=name]' ),
 				username: getFieldValue( 'clickatellFields input[id=username]' ),
 				password: getFieldValue( 'clickatellFields input[id=password]' ),
-				apiId: getFieldValue( 'clickatellFields input[id=apiId]' )
+				apiId: getFieldValue( 'clickatellFields input[id=apiId]' ),
+				urlTemplate: getFieldValue( 'clickatellFields input[id=urlTemplate]' ),
+				authToken: getFieldValue( 'clickatellFields input[id=authToken]' )
 			}, function ( json ) {
 				unLockScreen();
 				showMessage( json );
@@ -229,7 +192,7 @@ function removeItem( itemId, itemName, confirmation, action, success )
     	$.postJSON(
     	    action,
     	    {
-    	        "id": itemId   
+    	        "id": itemId
     	    },
     	    function( json )
     	    { 

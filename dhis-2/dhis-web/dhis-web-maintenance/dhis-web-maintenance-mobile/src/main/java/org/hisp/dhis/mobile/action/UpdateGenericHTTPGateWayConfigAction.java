@@ -32,6 +32,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.hisp.dhis.common.CodeGenerator;
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
 import org.hisp.dhis.sms.config.GenericHttpGatewayConfig;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
@@ -51,6 +52,9 @@ public class UpdateGenericHTTPGateWayConfigAction
 
     @Autowired
     private SmsConfigurationManager smsConfigurationManager;
+
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
 
     // -------------------------------------------------------------------------
     // Input
@@ -142,6 +146,8 @@ public class UpdateGenericHTTPGateWayConfigAction
                 {
                     config.getGateways().add( gatewayConfig );
                 }
+
+                gatewayAdminService.getGatewayConfigurationMap().put( name, gatewayConfig );
 
                 smsConfigurationManager.updateSmsConfiguration( config );
             }

@@ -1,5 +1,6 @@
 package org.hisp.dhis.sms.outbound;
 
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -28,55 +29,43 @@ package org.hisp.dhis.sms.outbound;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.smslib.AGateway;
-import org.smslib.IOutboundMessageNotification;
-import org.smslib.OutboundMessage;
-import org.smslib.OutboundMessage.MessageStatuses;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import java.util.Map;
 
-public class DefaultOutboundNotification
-    implements IOutboundMessageNotification
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+
+/**
+ * Zubair <rajazubair.asghar@gmail.com>
+ */
+
+@JacksonXmlRootElement( localName = "responseEntity" )
+public class ClickatellResponseEntity
 {
 
-    private static final Log log = LogFactory.getLog( DefaultOutboundNotification.class );
+    private Map<String, List<Map<String, String>>> data;
 
-    // -------------------------------------------------------------------------
-    // Dependencies
-    // -------------------------------------------------------------------------
-
-    @Autowired
-    private OutboundSmsService outboundSmsService;
-
-    private OutboundSms outboundSms;
-
-    public void setOutboundSms( OutboundSms outboundSms )
+    public ClickatellResponseEntity( Map<String, List<Map<String, String>>> data )
     {
-        this.outboundSms = outboundSms;
+        super();
+        this.data = data;
     }
 
-    // -------------------------------------------------------------------------
-    // Implementation
-    // -------------------------------------------------------------------------
-
-    @Override
-    public void process( AGateway gateway, OutboundMessage msg )
+    public ClickatellResponseEntity()
     {
-        log.info( "SENDING via " + gateway.getGatewayId() + " " );
-
-        outboundSms = outboundSmsService.convertToOutboundSms( msg );
-        outboundSmsService.saveOutboundSms( outboundSms );
-
-        if ( msg.getMessageStatus() == MessageStatuses.SENT )
-        {
-            log.info( "SENT To ::: " + msg.getRecipient() );
-        }
-        else
-        {
-            log.info( "FAILED To ::: " + msg.getRecipient() );
-        }
-
+        super();
     }
 
+    @JsonProperty( value = "data" )
+    @JacksonXmlProperty( localName = "data" )
+    public Map<String, List<Map<String, String>>> getData()
+    {
+        return data;
+    }
+
+    public void setData( Map<String, List<Map<String, String>>> data )
+    {
+        this.data = data;
+    }
 }

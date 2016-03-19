@@ -42,8 +42,4 @@ public interface SmsConfigurationManager
     boolean setDefaultSMSGateway( String gatewayId );
 
     boolean gatewayExists( String gatewayId );
-
-    boolean removeSMSGatewayById( String gatewayId );
-
-    String addSMSGateway();
 }

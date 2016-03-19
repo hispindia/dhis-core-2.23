@@ -72,6 +72,8 @@ public class SmsConsumerThread
                     }
                 }
 
+                log.warn( "No suitable sms command found in received data" );
+
                 smsSender.sendMessage( "No command found", message.getOriginator() );
                 message.setStatus( SmsMessageStatus.UNHANDLED );
             }

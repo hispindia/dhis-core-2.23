@@ -50,9 +50,6 @@ public class ReloadStartStopServiceAction
 
     @Autowired
     private SmsConfigurationManager smsConfigurationManager;
-
-    @Autowired
-    private OutboundSmsTransportService outboundSmsTransportService;
     
     @Autowired
     private SmsConsumerService smsConsumerService;
@@ -102,23 +99,17 @@ public class ReloadStartStopServiceAction
         }
 
         if ( actionType != null && actionType.equals( "start" ) )
-        {
-            outboundSmsTransportService.startService();
-            
+        {                      
             smsConsumerService.startSmsConsumer();
         }
         else if ( actionType.equals( "stop" ) )
-        {
-            outboundSmsTransportService.stopService();
-            
+        {            
             smsConsumerService.stopSmsConsumer();
         }
         else
         {
-            outboundSmsTransportService.reloadConfig();
+            
         }
-
-        message = outboundSmsTransportService.getMessageStatus();
         
         if ( message != null && !message.equals( "success" ) )
         {
