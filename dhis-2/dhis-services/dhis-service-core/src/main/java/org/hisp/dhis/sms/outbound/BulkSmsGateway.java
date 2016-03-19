@@ -26,8 +26,7 @@ package org.hisp.dhis.sms.outbound;
  * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */ 
-
+ */
 
 import java.util.List;
 import java.util.Set;
@@ -82,14 +81,14 @@ public class BulkSmsGateway
     private GatewayResponse send( UriComponentsBuilder uriBuilder )
     {
         ResponseEntity<String> responseEntity = null;
-        
+
         HttpStatus statusCode = null;
 
         try
         {
             responseEntity = restTemplate.exchange( uriBuilder.build().encode( "ISO-8859-1" ).toUri(), HttpMethod.POST,
                 null, String.class );
-            
+
             statusCode = responseEntity.getStatusCode();
         }
         catch ( HttpClientErrorException ex )
@@ -110,7 +109,7 @@ public class BulkSmsGateway
         }
 
         log.info( "Response status code: " + statusCode );
-        
+
         return parseGatewayResponse( responseEntity.getBody() );
     }
 
@@ -136,8 +135,7 @@ public class BulkSmsGateway
         }
         else if ( type.equals( SubmissionType.BATCH ) )
         {
-            uriBuilder = UriComponentsBuilder
-                .fromHttpUrl( bulkSmsConfiguration.getUrlTemplateForBatchSms() );
+            uriBuilder = UriComponentsBuilder.fromHttpUrl( bulkSmsConfiguration.getUrlTemplateForBatchSms() );
         }
 
         uriBuilder.queryParam( "username", bulkSmsConfiguration.getUsername() ).queryParam( "password",

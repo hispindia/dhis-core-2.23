@@ -29,6 +29,9 @@ package org.hisp.dhis.sms.outbound;
  */
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -153,26 +156,7 @@ public class DefaultOutboundSmsTransportService
             gatewayResponse = clickatellGateway.send( sms, clickatellConfiguration );
         }
 
-        if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse || GatewayResponse.RESULT_CODE_200 == gatewayResponse
-            || GatewayResponse.RESULT_CODE_202 == gatewayResponse )
-        {
-            sms.setStatus( OutboundSmsStatus.SENT );
-            saveMessage( sms );
-
-            log.info( "Message Sent:" + sms );
-
-            return GatewayResponse.SENT;
-        }
-        else
-        {
-            sms.setStatus( OutboundSmsStatus.ERROR );
-            saveMessage( sms );
-
-            log.info( "Message Failed:" + sms );
-            log.info( "Failure cause : " + gatewayResponse );
-
-            return gatewayResponse;
-        }
+        return responseHanlder( Arrays.asList( sms ), gatewayResponse );
     }
 
     private GatewayResponse sendMessage( List<OutboundSms> smsBatch, SmsGatewayConfig gatewayConfiguration )
@@ -193,6 +177,11 @@ public class DefaultOutboundSmsTransportService
             gatewayResponse = clickatellGateway.send( smsBatch, clickatellConfiguration );
         }
 
+        return responseHanlder( smsBatch, gatewayResponse );
+    }
+
+    private GatewayResponse responseHanlder( Collection<OutboundSms> smsBatch, GatewayResponse gatewayResponse )
+    {
         if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse || GatewayResponse.RESULT_CODE_200 == gatewayResponse
             || GatewayResponse.RESULT_CODE_202 == gatewayResponse )
         {
