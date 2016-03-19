@@ -1,5 +1,8 @@
 package org.hisp.dhis.mobile.action;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -31,6 +34,7 @@ package org.hisp.dhis.mobile.action;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
+import org.hisp.dhis.sms.incoming.DefaultSmsConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.Action;
@@ -41,6 +45,8 @@ import com.opensymphony.xwork2.Action;
 public class UpdateDefaultGatewayAction
     implements Action
 {
+    private static final Log log = LogFactory.getLog( UpdateDefaultGatewayAction.class );
+
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
@@ -80,6 +86,8 @@ public class UpdateDefaultGatewayAction
                 if ( index == i )
                 {
                     gw.setDefault( true );
+                    
+                    log.info( gw.getName() + " is set as default gateway" );
                 }
                 else
                 {

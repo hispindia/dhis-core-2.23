@@ -39,6 +39,10 @@ import org.hisp.dhis.sms.config.SmsGatewayConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * Zubair <rajazubair.asghar@gmail.com>
+ */
+
 public class DefaultOutboundSmsTransportService
     implements OutboundSmsTransportService
 {
@@ -189,7 +193,8 @@ public class DefaultOutboundSmsTransportService
             gatewayResponse = clickatellGateway.send( smsBatch, clickatellConfiguration );
         }
 
-        if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse )
+        if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse || GatewayResponse.RESULT_CODE_200 == gatewayResponse
+            || GatewayResponse.RESULT_CODE_202 == gatewayResponse )
         {
             for ( OutboundSms sms : smsBatch )
             {
