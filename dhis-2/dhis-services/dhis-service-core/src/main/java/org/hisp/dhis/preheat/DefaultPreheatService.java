@@ -41,7 +41,6 @@ import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ErrorReports;
 import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.period.Period;
@@ -547,10 +546,7 @@ public class DefaultPreheatService implements PreheatService
             if ( errorReports.isEmpty() ) continue;
 
             ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
-            ErrorReports objectErrorReport = new ErrorReports();
-            objectErrorReport.addErrorReports( errorReports );
-            objectReport.addErrorReport( objectErrorReport );
-
+            objectReport.addErrorReports( errorReports );
             typeReport.addObjectReport( objectReport );
         }
 
@@ -665,11 +661,7 @@ public class DefaultPreheatService implements PreheatService
             if ( !errorReports.isEmpty() )
             {
                 ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
-                ErrorReports objectErrorReport = new ErrorReports();
-
-                objectErrorReport.addErrorReports( errorReports );
-                objectReport.addErrorReport( objectErrorReport );
-
+                objectReport.addErrorReports( errorReports );
                 typeReport.addObjectReport( objectReport );
                 iterator.remove();
             }

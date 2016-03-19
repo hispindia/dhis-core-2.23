@@ -40,7 +40,6 @@ import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ErrorReports;
 import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.preheat.Preheat;
@@ -371,11 +370,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
             if ( object != null && object.getId() > 0 )
             {
                 ObjectReport objectReport = new ObjectReport( klass, idx );
-                ErrorReports errorReports = new ErrorReports();
-
-                errorReports.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
+                objectReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5000, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-                objectReport.addErrorReport( errorReports );
 
                 typeReport.addObjectReport( objectReport );
                 typeReport.getStats().incIgnored();
@@ -411,12 +407,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
 
                 ObjectReport objectReport = new ObjectReport( klass, idx );
-
-                ErrorReports errorReports = new ErrorReports();
-                errorReports.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
+                objectReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-
-                objectReport.addErrorReport( errorReports );
 
                 typeReport.addObjectReport( objectReport );
                 typeReport.getStats().incIgnored();
@@ -452,12 +444,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 if ( Preheat.isDefaultClass( identifiableObject.getClass() ) ) continue;
 
                 ObjectReport objectReport = new ObjectReport( klass, idx );
-
-                ErrorReports errorReports = new ErrorReports();
-                errorReports.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
+                objectReport.addErrorReport( new ErrorReport( klass, ErrorCode.E5001, bundle.getPreheatIdentifier(),
                     bundle.getPreheatIdentifier().getIdentifiersWithName( identifiableObject ) ) );
-
-                objectReport.addErrorReport( errorReports );
 
                 typeReport.addObjectReport( objectReport );
                 typeReport.getStats().incIgnored();
@@ -491,10 +479,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             if ( !validationErrorReports.isEmpty() )
             {
                 ObjectReport objectReport = new ObjectReport( klass, idx );
-
-                ErrorReports errorReports = new ErrorReports();
-                errorReports.addErrorReports( validationErrorReports );
-                objectReport.addErrorReport( errorReports );
+                objectReport.addErrorReports( validationErrorReports );
 
                 typeReport.addObjectReport( objectReport );
                 typeReport.getStats().incIgnored();

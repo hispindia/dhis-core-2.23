@@ -31,7 +31,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
-import org.hisp.dhis.feedback.ErrorReports;
+import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.TypeReport;
 
 import java.util.ArrayList;
@@ -64,11 +64,11 @@ public class ObjectBundleValidation
             return errorReports;
         }
 
-        List<ErrorReports> objectReports = typeReportMap.get( klass ).getObjectErrorReports();
+        List<ObjectReport> objectReports = typeReportMap.get( klass ).getObjectReports();
 
-        for ( ErrorReports objectErrorReport : objectReports )
+        for ( ObjectReport objectReport : objectReports )
         {
-            List<ErrorReport> byCode = objectErrorReport.getErrorReportsByCode().get( errorCode );
+            List<ErrorReport> byCode = objectReport.getErrorReportsByCode().get( errorCode );
 
             if ( byCode != null )
             {
@@ -117,18 +117,24 @@ public class ObjectBundleValidation
         return typeReportMap.get( klass );
     }
 
-    public List<ErrorReports> getAllObjectErrorReports( Class<?> klass )
+    public List<ObjectReport> getObjectReports( Class<?> klass )
     {
         if ( !typeReportMap.containsKey( klass ) ) new ArrayList<>();
-        return typeReportMap.get( klass ).getObjectErrorReports().stream().collect( Collectors.toList() );
+        return typeReportMap.get( klass ).getObjectReports();
     }
 
-    public List<ErrorReports> getAllObjectErrorReports()
+    public List<ErrorReport> getErrorReports( Class<?> klass )
     {
-        List<ErrorReports> errorReportses = new ArrayList<>();
-        typeReportMap.values().forEach( typeReport -> errorReportses.addAll( typeReport.getObjectErrorReports() ) );
+        if ( !typeReportMap.containsKey( klass ) ) new ArrayList<>();
+        return typeReportMap.get( klass ).getErrorReports().stream().collect( Collectors.toList() );
+    }
 
-        return errorReportses;
+    public List<ErrorReport> getErrorReports()
+    {
+        List<ErrorReport> errorReports = new ArrayList<>();
+        typeReportMap.values().forEach( typeReport -> errorReports.addAll( typeReport.getErrorReports() ) );
+
+        return errorReports;
     }
 
     @Override

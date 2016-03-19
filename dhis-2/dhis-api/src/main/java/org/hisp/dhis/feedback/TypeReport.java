@@ -110,9 +110,9 @@ public class TypeReport
         return objectReports;
     }
 
-    public List<ErrorReports> getObjectErrorReports()
+    public List<ErrorReport> getErrorReports()
     {
-        List<ErrorReports> errorReports = new ArrayList<>();
+        List<ErrorReport> errorReports = new ArrayList<>();
         objectReportMap.values().forEach( objectReport -> errorReports.addAll( objectReport.getErrorReports() ) );
 
         return errorReports;

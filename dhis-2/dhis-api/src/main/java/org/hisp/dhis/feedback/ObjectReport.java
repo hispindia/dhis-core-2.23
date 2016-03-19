@@ -50,7 +50,7 @@ public class ObjectReport
 
     private Integer index;
 
-    private Map<Integer, ErrorReports> errorReportsMap = new HashMap<>();
+    private Map<ErrorCode, List<ErrorReport>> errorReportsByCode = new HashMap<>();
 
     public ObjectReport( Class<?> klass, Integer index )
     {
@@ -67,19 +67,19 @@ public class ObjectReport
         addErrorReports( objectReport.getErrorReports() );
     }
 
-    public void addErrorReports( List<ErrorReports> errorReports )
+    public void addErrorReports( List<? extends ErrorReport> errorReports )
     {
         errorReports.forEach( this::addErrorReport );
     }
 
-    public void addErrorReport( ErrorReports errorReports )
+    public void addErrorReport( ErrorReport errorReport )
     {
-        if ( !errorReportsMap.containsKey( index ) )
+        if ( !errorReportsByCode.containsKey( errorReport.getErrorCode() ) )
         {
-            errorReportsMap.put( index, new ErrorReports() );
+            errorReportsByCode.put( errorReport.getErrorCode(), new ArrayList<>() );
         }
 
-        errorReportsMap.get( index ).addErrorReports( errorReports.getErrorReports() );
+        errorReportsByCode.get( errorReport.getErrorCode() ).add( errorReport );
     }
 
     //-----------------------------------------------------------------------------------
@@ -103,24 +103,32 @@ public class ObjectReport
     @JsonProperty
     @JacksonXmlElementWrapper( localName = "errorReports", namespace = DxfNamespaces.DXF_2_0 )
     @JacksonXmlProperty( localName = "errorReport", namespace = DxfNamespaces.DXF_2_0 )
-    public List<ErrorReports> getErrorReports()
+    public List<ErrorReport> getErrorReports()
     {
-        return new ArrayList<>( errorReportsMap.values() );
+        List<ErrorReport> errorReports = new ArrayList<>();
+        errorReportsByCode.values().forEach( errorReports::addAll );
+
+        return errorReports;
     }
 
-    public Map<Integer, ErrorReports> getErrorReportsMap()
+    public List<ErrorCode> getErrorCodes()
     {
-        return errorReportsMap;
+        return new ArrayList<>( errorReportsByCode.keySet() );
+    }
+
+    public Map<ErrorCode, List<ErrorReport>> getErrorReportsByCode()
+    {
+        return errorReportsByCode;
     }
 
     public boolean isEmpty()
     {
-        return errorReportsMap.isEmpty();
+        return errorReportsByCode.isEmpty();
     }
 
     public int size()
     {
-        return errorReportsMap.size();
+        return errorReportsByCode.size();
     }
 
     @Override
