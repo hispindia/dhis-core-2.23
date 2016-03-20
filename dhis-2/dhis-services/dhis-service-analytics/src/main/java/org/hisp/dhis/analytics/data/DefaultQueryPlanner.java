@@ -255,10 +255,6 @@ public class DefaultQueryPlanner
 
                                 for ( DataQueryParams byDataPeriodType : groupedByDataPeriodType )
                                 {
-                                    byDataPeriodType.setPartitions( byPartition.getPartitions() );
-                                    byDataPeriodType.setPeriodType( byPeriodType.getPeriodType() );
-                                    byDataPeriodType.setAggregationType( byAggregationType.getAggregationType() );
-
                                     queries.add( byDataPeriodType );
                                 }
                             }
@@ -360,7 +356,8 @@ public class DefaultQueryPlanner
         }
         else if ( !params.getPeriods().isEmpty() )
         {
-            ListMap<Partitions, DimensionalItemObject> partitionPeriodMap = PartitionUtils.getPartitionPeriodMap( params.getPeriods(), tableName, tableSuffix, validPartitions );
+            ListMap<Partitions, DimensionalItemObject> partitionPeriodMap = 
+                PartitionUtils.getPartitionPeriodMap( params.getPeriods(), tableName, tableSuffix, validPartitions );
 
             for ( Partitions partitions : partitionPeriodMap.keySet() )
             {
@@ -569,7 +566,8 @@ public class DefaultQueryPlanner
         {
             PeriodType periodType = PeriodType.getPeriodTypeByName( params.getPeriodType() );
 
-            ListMap<AggregationType, DimensionalItemObject> aggregationTypeDataElementMap = QueryPlannerUtils.getAggregationTypeDataElementMap( params.getDataElements(), periodType );
+            ListMap<AggregationType, DimensionalItemObject> aggregationTypeDataElementMap = 
+                QueryPlannerUtils.getAggregationTypeDataElementMap( params.getDataElements(), periodType );
 
             for ( AggregationType aggregationType : aggregationTypeDataElementMap.keySet() )
             {
