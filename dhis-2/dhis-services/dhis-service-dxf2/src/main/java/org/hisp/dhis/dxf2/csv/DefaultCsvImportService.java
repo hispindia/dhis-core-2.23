@@ -391,6 +391,7 @@ public class DefaultCsvImportService
             {
                 OptionSet optionSet = new OptionSet();
                 setIdentifiableObject( optionSet, values );
+                optionSet.setValueType( ValueType.TEXT );
 
                 Option option = new Option();
                 option.setName( getSafe( values, 3, null, 230 ) );
