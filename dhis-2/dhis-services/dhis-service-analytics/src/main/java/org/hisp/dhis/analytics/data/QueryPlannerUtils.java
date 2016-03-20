@@ -1,5 +1,7 @@
 package org.hisp.dhis.analytics.data;
 
+import java.util.ArrayList;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -32,7 +34,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hisp.dhis.analytics.AggregationType;
+import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.analytics.DataType;
+import org.hisp.dhis.analytics.event.EventQueryParams;
 import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.ListMap;
 import org.hisp.dhis.common.ValueType;
@@ -211,5 +215,22 @@ public class QueryPlannerUtils
         }
 
         return map;
+    }
+
+    /**
+     * Converts a list of data query parameters to a list of event query parameters.
+     * 
+     * @param params list of data query parameters.
+     */
+    public static List<EventQueryParams> convert( List<DataQueryParams> params )
+    {
+        List<EventQueryParams> eventParams = new ArrayList<>();
+        
+        for ( DataQueryParams param : params )
+        {
+            eventParams.add( (EventQueryParams) param );
+        }
+        
+        return eventParams;
     }
 }
