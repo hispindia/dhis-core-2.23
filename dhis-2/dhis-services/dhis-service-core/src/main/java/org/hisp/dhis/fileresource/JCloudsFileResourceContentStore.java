@@ -49,6 +49,7 @@ import org.jclouds.domain.Location;
 import org.jclouds.filesystem.reference.FilesystemConstants;
 import org.jclouds.http.HttpRequest;
 import org.jclouds.http.HttpResponseException;
+import org.jclouds.rest.AuthorizationException;
 import org.joda.time.Minutes;
 
 import java.io.File;
@@ -184,6 +185,11 @@ public class JCloudsFileResourceContentStore
         {
             log.error( "Could not configure file store with provider '" + provider + "' and container '" + container + "'. " +
                 "Check your internet connectivity. File storage will not be available.", ex );
+        }
+        catch ( AuthorizationException ex )
+        {
+            log.error( "Could not authenticate with file store provider '" + provider + "' and container '" + container + "'. " +
+                "File storage will not be available.", ex );
         }
     }
 
