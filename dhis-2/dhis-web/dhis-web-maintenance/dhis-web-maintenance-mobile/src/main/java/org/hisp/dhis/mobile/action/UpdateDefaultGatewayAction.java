@@ -34,7 +34,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.sms.config.SmsConfiguration;
 import org.hisp.dhis.sms.config.SmsConfigurationManager;
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
-import org.hisp.dhis.sms.incoming.DefaultSmsConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.opensymphony.xwork2.Action;

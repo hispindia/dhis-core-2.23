@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.hisp.dhis.i18n.I18n;
 import org.hisp.dhis.paging.ActionPagingSupport;
 import org.hisp.dhis.sms.incoming.IncomingSms;
 import org.hisp.dhis.sms.incoming.IncomingSmsService;
@@ -56,13 +55,6 @@ public class ReceivingSMSAction
     public void setIncomingSmsService( IncomingSmsService incomingSmsService )
     {
         this.incomingSmsService = incomingSmsService;
-    }
-
-    private I18n i18n;
-
-    public void setI18n( I18n i18n )
-    {
-        this.i18n = i18n;
     }
     
     private UserService userService;
