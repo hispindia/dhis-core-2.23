@@ -38,6 +38,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.analytics.QueryPlanner;
+import org.hisp.dhis.analytics.QueryPlannerParams;
 import org.hisp.dhis.analytics.event.EventQueryParams;
 import org.hisp.dhis.analytics.event.EventQueryPlanner;
 import org.hisp.dhis.analytics.partition.PartitionManager;
@@ -241,7 +242,10 @@ public class DefaultEventQueryPlanner
         }
         else // Aggregate only
         {
-            return convert( queryPlanner.groupByPartition( params, EVENT_ANALYTICS_TABLE_NAME, tableSuffix ) );
+
+            QueryPlannerParams plannerParams = QueryPlannerParams.instance().setTableName( EVENT_ANALYTICS_TABLE_NAME ).setTableSuffix( tableSuffix );
+
+            return convert( queryPlanner.groupByPartition( params, plannerParams ) );
         }
     }
     

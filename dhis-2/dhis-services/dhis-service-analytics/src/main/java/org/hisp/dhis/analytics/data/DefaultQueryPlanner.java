@@ -36,6 +36,7 @@ import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.analytics.DataType;
 import org.hisp.dhis.analytics.Partitions;
 import org.hisp.dhis.analytics.QueryPlanner;
+import org.hisp.dhis.analytics.QueryPlannerParams;
 import org.hisp.dhis.analytics.partition.PartitionManager;
 import org.hisp.dhis.analytics.table.PartitionUtils;
 import org.hisp.dhis.common.BaseDimensionalObject;
@@ -218,6 +219,8 @@ public class DefaultQueryPlanner
     public DataQueryGroups planQuery( DataQueryParams params, int optimalQueries, String tableName )
     {
         validate( params );
+        
+        QueryPlannerParams plannerParams = QueryPlannerParams.instance().setTableName( tableName );
 
         // ---------------------------------------------------------------------
         // Group queries by partition, period type and organisation unit level
@@ -227,7 +230,7 @@ public class DefaultQueryPlanner
 
         List<DataQueryParams> queries = new ArrayList<>();
 
-        List<DataQueryParams> groupedByPartition = groupByPartition( params, tableName, null );
+        List<DataQueryParams> groupedByPartition = groupByPartition( params, plannerParams );
 
         for ( DataQueryParams byPartition : groupedByPartition )
         {
@@ -343,9 +346,12 @@ public class DefaultQueryPlanner
     // -------------------------------------------------------------------------
 
     @Override
-    public List<DataQueryParams> groupByPartition( DataQueryParams params, String tableName, String tableSuffix )
+    public List<DataQueryParams> groupByPartition( DataQueryParams params, QueryPlannerParams plannerParams )
     {
         Set<String> validPartitions = partitionManager.getAnalyticsPartitions();
+        
+        String tableName = plannerParams.getTableName();
+        String tableSuffix = plannerParams.getTableSuffix();
 
         List<DataQueryParams> queries = new ArrayList<>();
 
