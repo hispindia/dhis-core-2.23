@@ -242,7 +242,6 @@ public class DefaultEventQueryPlanner
         }
         else // Aggregate only
         {
-
             QueryPlannerParams plannerParams = QueryPlannerParams.instance().setTableName( EVENT_ANALYTICS_TABLE_NAME ).setTableSuffix( tableSuffix );
 
             return QueryPlannerUtils.convert( queryPlanner.groupByPartition( params, plannerParams ) );
