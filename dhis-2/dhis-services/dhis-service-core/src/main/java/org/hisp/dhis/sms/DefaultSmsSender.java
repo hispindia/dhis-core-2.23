@@ -103,6 +103,20 @@ public class DefaultSmsSender
 
     @Transactional
     @Override
+    public String sendMessage( List<OutboundSms> smsBatch )
+    {
+        return sendMessage( smsBatch, gatewayAdminService.getDefaultGateway().getName() );
+    }
+
+    @Transactional
+    @Override
+    public String sendMessage( List<OutboundSms> smsBatch, String gatewayId )
+    {
+        return transportService.sendMessage( smsBatch, gatewayId ).getResponseMessage();
+    }
+
+    @Transactional
+    @Override
     public String sendMessage( String message, String phoneNumber )
         throws SmsServiceException
     {

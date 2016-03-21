@@ -1,4 +1,4 @@
-package org.hisp.dhis.sms;
+package org.hisp.dhis.sms.outbound;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -30,23 +30,40 @@ package org.hisp.dhis.sms;
 
 import java.util.List;
 
-import org.hisp.dhis.sms.outbound.OutboundSms;
-import org.hisp.dhis.user.User;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
-public interface SmsSender
+/**
+ * Zubair <rajazubair.asghar@gmail.com>
+ */
+
+@JacksonXmlRootElement( localName = "smsBatch" )
+public class SmsBatch
 {
-    String sendMessage( OutboundSms sms, String gatewayId )
-        throws SmsServiceException;
 
-    String sendMessage( OutboundSms sms )
-        throws SmsServiceException;
+    private List<OutboundSms> smsBatch;
 
-    String sendMessage( List<OutboundSms> smsBatch );
-    
-    String sendMessage( List<OutboundSms> smsBatch, String gatewayId );
+    public SmsBatch()
+    {
+        super();
+    }
 
-    String sendMessage( String message, String phoneNumber )
-        throws SmsServiceException;
+    public SmsBatch( List<OutboundSms> smsBatch )
+    {
+        super();
+        this.smsBatch = smsBatch;
+    }
 
-    String sendMessage( String subject, String text, User sender, List<User> users, boolean forceSend );
+    @JsonProperty( value = "smsBatch" )
+    @JacksonXmlProperty( localName = "smsBatch" )
+    public List<OutboundSms> getSmsBatch()
+    {
+        return smsBatch;
+    }
+
+    public void setSmsBatch( List<OutboundSms> smsBatch )
+    {
+        this.smsBatch = smsBatch;
+    }
 }

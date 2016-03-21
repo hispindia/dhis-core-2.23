@@ -39,7 +39,6 @@ import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -82,45 +81,35 @@ public class BulkSmsGateway
     {
         ResponseEntity<String> responseEntity = null;
 
-        HttpStatus statusCode = null;
-
         try
         {
             responseEntity = restTemplate.exchange( uriBuilder.build().encode( "ISO-8859-1" ).toUri(), HttpMethod.POST,
                 null, String.class );
-
-            statusCode = responseEntity.getStatusCode();
         }
         catch ( HttpClientErrorException ex )
         {
             log.error( "Error: " + ex.getMessage() );
-
-            statusCode = ex.getStatusCode();
         }
         catch ( HttpServerErrorException ex )
         {
             log.error( "Error: " + ex.getMessage() );
-
-            statusCode = ex.getStatusCode();
         }
         catch ( Exception ex )
         {
             log.error( "Error: " + ex.getMessage() );
         }
 
-        log.info( "Response status code: " + statusCode );
-
         return parseGatewayResponse( responseEntity.getBody() );
     }
 
     private String builCsvUrl( List<OutboundSms> smsBatch )
     {
-        String csvData = "msisdn,message,";
+        String csvData = "msisdn,message\n";
 
         for ( OutboundSms sms : smsBatch )
         {
             csvData += getRecipients( sms.getRecipients() );
-            csvData += "," + sms.getMessage();
+            csvData += "," + sms.getMessage() + "\n";
         }
         return csvData;
     }

@@ -30,7 +30,12 @@ package org.hisp.dhis.sms.outcoming;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import org.hisp.dhis.sms.config.GatewayAdministrationService;
+import org.hisp.dhis.sms.config.SmsGatewayConfig;
 import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.user.UserGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +54,9 @@ public class ShowSendSMSFormAction
 
     @Autowired
     private UserGroupService userGroupService;
+    
+    @Autowired
+    private GatewayAdministrationService gatewayAdminService;
 
     // -------------------------------------------------------------------------
     // Input && Output
@@ -64,6 +72,13 @@ public class ShowSendSMSFormAction
     public String getSendTo()
     {
         return sendTo == null || sendTo.trim().isEmpty() ? "phone" : sendTo;
+    }
+
+    private Map<String, SmsGatewayConfig> gatewayMap = new HashMap<>();
+
+    public Map<String, SmsGatewayConfig> getGatewayMap()
+    {
+        return gatewayAdminService.getGatewayConfigurationMap();
     }
 
     private List<UserGroup> userGroups;
