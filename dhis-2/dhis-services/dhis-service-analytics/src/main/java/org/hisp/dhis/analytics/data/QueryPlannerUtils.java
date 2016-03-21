@@ -1,7 +1,5 @@
 package org.hisp.dhis.analytics.data;
 
-import java.util.ArrayList;
-
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -32,6 +30,7 @@ import java.util.ArrayList;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.hisp.dhis.analytics.AggregationType;
 import org.hisp.dhis.analytics.DataQueryParams;
@@ -145,44 +144,44 @@ public class QueryPlannerUtils
      * operator, aggregation period type and data period type.
      * 
      * @param valueType the value type.
-     * @param aggregationOperator the aggregation operator.
+     * @param aggregationType the aggregation operator.
      * @param aggregationPeriodType the aggregation period type.
      * @param dataPeriodType the data period type.
      */
-    public static AggregationType getAggregationType( ValueType valueType, AggregationType aggregationOperator,
+    public static AggregationType getAggregationType( ValueType valueType, AggregationType aggregationType,
         PeriodType aggregationPeriodType, PeriodType dataPeriodType )
     {
-        AggregationType aggregationType;
+        AggregationType type;
 
         boolean disaggregation = isDisaggregation( aggregationPeriodType, dataPeriodType );
         boolean number = valueType.isNumeric();
 
-        if ( aggregationOperator.isAverage() && ValueType.BOOLEAN == valueType )
+        if ( aggregationType.isAverage() && ValueType.BOOLEAN == valueType )
         {
-            aggregationType = AggregationType.AVERAGE_BOOL;
+            type = AggregationType.AVERAGE_BOOL;
         }
-        else if ( AggregationType.AVERAGE_SUM_ORG_UNIT == aggregationOperator && number && disaggregation )
+        else if ( AggregationType.AVERAGE_SUM_ORG_UNIT == aggregationType && number && disaggregation )
         {
-            aggregationType = AggregationType.AVERAGE_SUM_INT_DISAGGREGATION;
+            type = AggregationType.AVERAGE_SUM_INT_DISAGGREGATION;
         }
-        else if ( AggregationType.AVERAGE_SUM_ORG_UNIT == aggregationOperator && number )
+        else if ( AggregationType.AVERAGE_SUM_ORG_UNIT == aggregationType && number )
         {
-            aggregationType = AggregationType.AVERAGE_SUM_INT;
+            type = AggregationType.AVERAGE_SUM_INT;
         }
-        else if ( AggregationType.AVERAGE == aggregationOperator && number && disaggregation )
+        else if ( AggregationType.AVERAGE == aggregationType && number && disaggregation )
         {
-            aggregationType = AggregationType.AVERAGE_INT_DISAGGREGATION;
+            type = AggregationType.AVERAGE_INT_DISAGGREGATION;
         }
-        else if ( AggregationType.AVERAGE == aggregationOperator && number )
+        else if ( AggregationType.AVERAGE == aggregationType && number )
         {
-            aggregationType = AggregationType.AVERAGE_INT;
+            type = AggregationType.AVERAGE_INT;
         }
         else
         {
-            aggregationType = aggregationOperator;
+            type = aggregationType;
         }
 
-        return aggregationType;
+        return type;
     }
 
     /**
