@@ -56,6 +56,7 @@ import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.filter.AggregatableDataElementFilter;
 import org.hisp.dhis.system.util.MathUtils;
+import org.hisp.dhis.util.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.common.collect.ImmutableList;
@@ -543,18 +544,10 @@ public class DefaultQueryPlanner
     {
         List<DataQueryParams> queries = new ArrayList<>();
 
-        if ( params.hasAggregationType() )
-        {
-            queries.add( params.instance() );
-            return queries;
-        }
-
         if ( !params.getDataElements().isEmpty() )
         {
-            PeriodType periodType = PeriodType.getPeriodTypeByName( params.getPeriodType() );
-
             ListMap<AggregationType, DimensionalItemObject> aggregationTypeDataElementMap = 
-                QueryPlannerUtils.getAggregationTypeDataElementMap( params.getDataElements(), periodType );
+                QueryPlannerUtils.getAggregationTypeDataElementMap( params );
 
             for ( AggregationType aggregationType : aggregationTypeDataElementMap.keySet() )
             {
@@ -574,12 +567,13 @@ public class DefaultQueryPlanner
             if ( deg != null && !deg.getMembers().isEmpty() )
             {
                 PeriodType periodType = PeriodType.getPeriodTypeByName( params.getPeriodType() );
+                AggregationType aggregationType = ObjectUtils.firstNonNull( params.getAggregationType(), deg.getAggregationType() );
                 query.setAggregationType( QueryPlannerUtils.getAggregationType( 
-                    deg.getValueType(), deg.getAggregationType(), periodType, deg.getPeriodType() ) );
+                    deg.getValueType(), aggregationType, periodType, deg.getPeriodType() ) );
             }
             else
             {
-                query.setAggregationType( SUM );
+                query.setAggregationType( ObjectUtils.firstNonNull( params.getAggregationType(), SUM ) );
             }
 
             queries.add( query );
@@ -587,7 +581,7 @@ public class DefaultQueryPlanner
         else
         {
             DataQueryParams query = params.instance();
-            query.setAggregationType( SUM );
+            query.setAggregationType( ObjectUtils.firstNonNull( params.getAggregationType(), SUM ) );
             queries.add( query );
         }
 

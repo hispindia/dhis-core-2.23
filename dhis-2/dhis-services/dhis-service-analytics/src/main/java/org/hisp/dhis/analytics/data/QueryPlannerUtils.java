@@ -43,6 +43,7 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodType;
+import org.hisp.dhis.util.ObjectUtils;
 
 /**
  * @author Lars Helge Overland
@@ -96,20 +97,23 @@ public class QueryPlannerUtils
      * Creates a mapping between the aggregation type and data element for the
      * given data elements and period type.
      * 
-     * @param dataElements list of data elements.
-     * @param aggregationPeriodType the aggregation period type.
+     * @param params the data query parameters.
      */
-    public static ListMap<AggregationType, DimensionalItemObject> getAggregationTypeDataElementMap( 
-        List<DimensionalItemObject> dataElements, PeriodType aggregationPeriodType )
+    public static ListMap<AggregationType, DimensionalItemObject> getAggregationTypeDataElementMap( DataQueryParams params )
     {
+        List<DimensionalItemObject> dataElements = params.getDataElements();
+        PeriodType aggregationPeriodType = PeriodType.getPeriodTypeByName( params.getPeriodType() );
+        
         ListMap<AggregationType, DimensionalItemObject> map = new ListMap<>();
 
         for ( DimensionalItemObject element : dataElements )
         {
             DataElement de = (DataElement) element;
+            
+            AggregationType type = ObjectUtils.firstNonNull( params.getAggregationType(), de.getAggregationType() );
 
             AggregationType aggregationType = getAggregationType( de.getValueType(), 
-                de.getAggregationType(), aggregationPeriodType, de.getPeriodType() );
+                type, aggregationPeriodType, de.getPeriodType() );
 
             map.putValue( aggregationType, de );
         }
