@@ -56,7 +56,9 @@ public class MetadataImportParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private ImportStrategy importMode = ImportStrategy.ATOMIC_CREATE_AND_UPDATE;
+    private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
+
+    private AtomicMode atomicMode = AtomicMode.ALL;
 
     private MergeMode mergeMode = MergeMode.MERGE;
 
@@ -116,6 +118,16 @@ public class MetadataImportParams
     public void setImportMode( ImportStrategy importMode )
     {
         this.importMode = importMode;
+    }
+
+    public AtomicMode getAtomicMode()
+    {
+        return atomicMode;
+    }
+
+    public void setAtomicMode( AtomicMode atomicMode )
+    {
+        this.atomicMode = atomicMode;
     }
 
     public MergeMode getMergeMode()
@@ -188,6 +200,7 @@ public class MetadataImportParams
         ObjectBundleParams params = new ObjectBundleParams();
         params.setUser( user );
         params.setImportMode( importMode );
+        params.setAtomicMode( atomicMode );
         params.setObjects( objects );
         params.setPreheatIdentifier( preheatIdentifier );
         params.setPreheatMode( preheatMode );

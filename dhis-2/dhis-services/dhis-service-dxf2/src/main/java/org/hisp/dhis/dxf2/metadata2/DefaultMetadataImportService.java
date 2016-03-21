@@ -77,7 +77,7 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
         report.addTypeReports( validation.getTypeReportMap() );
 
-        if ( !(bundleParams.getImportMode().isAtomic() && !validation.getTypeReportMap().isEmpty()) )
+        if ( !(!validation.getTypeReportMap().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
         {
             Map<Class<?>, TypeReport> typeReports = objectBundleService.commit( bundle );
             report.addTypeReports( typeReports );
@@ -93,7 +93,8 @@ public class DefaultMetadataImportService implements MetadataImportService
         params.setObjectBundleMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "objectBundleMode", ObjectBundleMode.COMMIT ) );
         params.setPreheatMode( getEnumWithDefault( PreheatMode.class, parameters, "preheatMode", PreheatMode.REFERENCE ) );
         params.setPreheatIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
-        params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.ATOMIC_CREATE_AND_UPDATE ) );
+        params.setImportMode( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.CREATE_AND_UPDATE ) );
+        params.setAtomicMode( getEnumWithDefault( AtomicMode.class, parameters, "atomicMode", AtomicMode.ALL ) );
         params.setMergeMode( getEnumWithDefault( MergeMode.class, parameters, "mergeMode", MergeMode.MERGE ) );
         params.setFlushMode( getEnumWithDefault( FlushMode.class, parameters, "flushMode", FlushMode.AUTO ) );
 

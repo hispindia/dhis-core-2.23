@@ -1,4 +1,4 @@
-package org.hisp.dhis.importexport;
+package org.hisp.dhis.dxf2.metadata2;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -29,37 +29,23 @@ package org.hisp.dhis.importexport;
  */
 
 /**
- * @author Lars Helge Overland
+ * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public enum ImportStrategy
+public enum AtomicMode
 {
-    CREATE,
-    UPDATE,
-    CREATE_AND_UPDATE,
-    DELETE,
+    /**
+     * Import object if it passes all validation tests (including references)
+     * (not supported at the moment)
+     */
+    OBJECT,
 
-    NEW_AND_UPDATES,
-    NEW,
-    UPDATES,
-    DELETES;
+    /**
+     * Import objects only if they all pass the validation phase (including references)
+     */
+    ALL,
 
-    public boolean isCreate()
-    {
-        return this == NEW || this == CREATE;
-    }
-
-    public boolean isUpdate()
-    {
-        return this == UPDATES || this == UPDATE;
-    }
-
-    public boolean isCreateAndUpdate()
-    {
-        return this == NEW_AND_UPDATES || this == CREATE_AND_UPDATE;
-    }
-
-    public boolean isDelete()
-    {
-        return this == DELETE || this == DELETES;
-    }
+    /**
+     * Legacy mode. Allow non-valid references when importing.
+     */
+    NONE
 }

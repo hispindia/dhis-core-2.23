@@ -31,6 +31,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 import com.google.common.base.MoreObjects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -56,7 +57,9 @@ public class ObjectBundleParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private ImportStrategy importMode = ImportStrategy.ATOMIC_CREATE_AND_UPDATE;
+    private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
+
+    private AtomicMode atomicMode = AtomicMode.ALL;
 
     private MergeMode mergeMode = MergeMode.MERGE;
 
@@ -119,6 +122,16 @@ public class ObjectBundleParams
     public void setImportMode( ImportStrategy importMode )
     {
         this.importMode = importMode;
+    }
+
+    public AtomicMode getAtomicMode()
+    {
+        return atomicMode;
+    }
+
+    public void setAtomicMode( AtomicMode atomicMode )
+    {
+        this.atomicMode = atomicMode;
     }
 
     public MergeMode getMergeMode()

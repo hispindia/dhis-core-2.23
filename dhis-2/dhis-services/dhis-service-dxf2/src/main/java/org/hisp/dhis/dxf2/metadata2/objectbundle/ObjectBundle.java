@@ -30,6 +30,7 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.Preheat;
@@ -59,6 +60,8 @@ public class ObjectBundle
 
     private final ImportStrategy importMode;
 
+    private final AtomicMode atomicMode;
+
     private final MergeMode mergeMode;
 
     private final FlushMode flushMode;
@@ -80,6 +83,7 @@ public class ObjectBundle
         this.objectBundleMode = params.getObjectBundleMode();
         this.preheatIdentifier = params.getPreheatIdentifier();
         this.importMode = params.getImportMode();
+        this.atomicMode = params.getAtomicMode();
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();
         this.flushMode = params.getFlushMode();
@@ -111,6 +115,11 @@ public class ObjectBundle
     public ImportStrategy getImportMode()
     {
         return importMode;
+    }
+
+    public AtomicMode getAtomicMode()
+    {
+        return atomicMode;
     }
 
     public MergeMode getMergeMode()
@@ -191,6 +200,11 @@ public class ObjectBundle
         } );
 
         return objectMap;
+    }
+
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects( boolean persisted )
+    {
+        return persisted ? objects.get( Boolean.TRUE ) : objects.get( Boolean.FALSE );
     }
 
     public List<IdentifiableObject> getObjects( Class<? extends IdentifiableObject> klass, boolean persisted )

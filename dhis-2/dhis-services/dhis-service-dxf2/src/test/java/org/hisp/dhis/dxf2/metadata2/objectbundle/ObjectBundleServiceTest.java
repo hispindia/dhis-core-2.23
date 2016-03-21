@@ -43,6 +43,7 @@ import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dataset.Section;
+import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectReport;
@@ -322,6 +323,7 @@ public class ObjectBundleServiceTest
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
         params.setPreheatIdentifier( PreheatIdentifier.UID );
         params.setImportMode( ImportStrategy.UPDATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -1144,6 +1146,7 @@ public class ObjectBundleServiceTest
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.CREATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -1189,6 +1192,7 @@ public class ObjectBundleServiceTest
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.CREATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -1201,6 +1205,7 @@ public class ObjectBundleServiceTest
         params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.UPDATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         bundle = objectBundleService.create( params );
@@ -1409,6 +1414,7 @@ public class ObjectBundleServiceTest
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -1431,6 +1437,7 @@ public class ObjectBundleServiceTest
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
@@ -1451,6 +1458,7 @@ public class ObjectBundleServiceTest
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
         params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.NONE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );

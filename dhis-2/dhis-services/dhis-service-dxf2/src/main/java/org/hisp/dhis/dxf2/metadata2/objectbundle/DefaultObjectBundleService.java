@@ -36,6 +36,7 @@ import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dbms.DbmsManager;
+import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.dxf2.metadata2.FlushMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
@@ -169,9 +170,30 @@ public class DefaultObjectBundleService implements ObjectBundleService
             validation.addTypeReport( typeReport );
         }
 
+        validateAtomicity( bundle, validation );
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );
 
         return validation;
+    }
+
+    private void validateAtomicity( ObjectBundle bundle, ObjectBundleValidation validation )
+    {
+        if ( AtomicMode.NONE == bundle.getAtomicMode() )
+        {
+            return;
+        }
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> nonPersistedObjects = bundle.getObjects( false );
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> persistedObjects = bundle.getObjects( true );
+
+        if ( AtomicMode.ALL == bundle.getAtomicMode() )
+        {
+            if ( !validation.getErrorReports().isEmpty() )
+            {
+                nonPersistedObjects.clear();
+                persistedObjects.clear();
+            }
+        }
     }
 
     @Override
