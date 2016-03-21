@@ -45,6 +45,7 @@ import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
+import org.hisp.dhis.period.PeriodStore;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
@@ -92,6 +93,9 @@ public class DefaultPreheatService implements PreheatService
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private PeriodStore periodStore;
 
     @Autowired
     private PeriodService periodService;
@@ -230,8 +234,8 @@ public class DefaultPreheatService implements PreheatService
             preheat.put( params.getPreheatIdentifier(), objects );
         }
 
-        periodService.getAllPeriods().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
-        periodService.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
+        periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
+        periodStore.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
 
         return preheat;
     }

@@ -53,6 +53,7 @@ import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
+import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -86,6 +87,9 @@ public class ObjectBundleServiceTest
 
     @Autowired
     private IdentifiableObjectManager manager;
+
+    @Autowired
+    private PeriodService periodService;
 
     @Autowired
     private RenderService _renderService;
@@ -1488,6 +1492,66 @@ public class ObjectBundleServiceTest
         OrganisationUnit root = manager.get( OrganisationUnit.class, "inVD5SdytkT" );
         assertNull( root.getParent() );
         assertEquals( 3, root.getChildren().size() );
+    }
+
+    @Test
+    public void testCreateAndUpdateDataSetWithSections() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/dataset_with_sections.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getErrorReports().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        metadata = renderService.fromMetadata( new ClassPathResource( "dxf2/dataset_with_sections.json" ).getInputStream(), RenderFormat.JSON );
+
+        params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        bundle = objectBundleService.create( params );
+        validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getErrorReports().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<DataSet> dataSets = manager.getAll( DataSet.class );
+        List<Section> sections = manager.getAll( Section.class );
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+
+        assertFalse( organisationUnits.isEmpty() );
+        assertFalse( dataElements.isEmpty() );
+        assertFalse( dataSets.isEmpty() );
+        assertFalse( users.isEmpty() );
+        assertFalse( userRoles.isEmpty() );
+
+        assertEquals( 1, dataSets.size() );
+        assertEquals( 2, sections.size() );
+
+        DataSet dataSet = dataSets.get( 0 );
+        assertNotNull( dataSet.getPeriodType() );
+        assertEquals( 2, dataSet.getSections().size() );
+
+        Section section1 = sections.get( 0 );
+        Section section2 = sections.get( 1 );
+
+        assertEquals( 1, section1.getDataElements().size() );
+        assertEquals( 1, section2.getDataElements().size() );
+
+        assertNotNull( section1.getDataSet() );
+        assertNotNull( section2.getDataSet() );
     }
 
     private void defaultSetup()

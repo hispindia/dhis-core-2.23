@@ -10,6 +10,10 @@
 
   <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.OrganisationUnitObjectBundleHook" />
 
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ProgramStageObjectBundleHook" />
+
+  <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.DataApprovalWorkflowObjectBundleHook" />
+
   <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.UserObjectBundleHook" />
 
   <bean class="org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.DataSetObjectBundleHook" />
