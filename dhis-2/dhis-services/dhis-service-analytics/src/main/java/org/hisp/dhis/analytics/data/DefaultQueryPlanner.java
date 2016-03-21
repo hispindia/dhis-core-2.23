@@ -58,11 +58,13 @@ import org.hisp.dhis.system.filter.AggregatableDataElementFilter;
 import org.hisp.dhis.system.util.MathUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import static org.hisp.dhis.analytics.AggregationType.SUM;
 import static org.hisp.dhis.analytics.DataQueryParams.LEVEL_PREFIX;
@@ -220,53 +222,32 @@ public class DefaultQueryPlanner
     {
         validate( params );
         
-        QueryPlannerParams plannerParams = QueryPlannerParams.instance().setTableName( tableName );
-
         // ---------------------------------------------------------------------
         // Group queries by partition, period type and organisation unit level
         // ---------------------------------------------------------------------
 
         params = params.instance();
 
-        List<DataQueryParams> queries = new ArrayList<>();
+        final QueryPlannerParams plannerParams = QueryPlannerParams.instance().setTableName( tableName );
 
-        List<DataQueryParams> groupedByPartition = groupByPartition( params, plannerParams );
-
-        for ( DataQueryParams byPartition : groupedByPartition )
+        final List<DataQueryParams> queries = new ArrayList<>( groupByPartition( params, plannerParams ) );
+        
+        ImmutableList<Consumer<DataQueryParams>> groupers = new ImmutableList.Builder<Consumer<DataQueryParams>>().
+            add( q -> queries.addAll( groupByOrgUnitLevel( q ) ) ).
+            add( q -> queries.addAll( groupByPeriodType( q ) ) ).
+            add( q -> queries.addAll( groupByDataType( q ) ) ).
+            add( q -> queries.addAll( groupByAggregationType( q ) ) ).
+            add( q -> queries.addAll( groupByDaysInPeriod( q ) ) ).
+            add( q -> queries.addAll( groupByDataPeriodType( q ) ) ).build();
+        
+        for ( Consumer<DataQueryParams> grouper : groupers )
         {
-            List<DataQueryParams> groupedByOrgUnitLevel = groupByOrgUnitLevel( byPartition );
-
-            for ( DataQueryParams byOrgUnitLevel : groupedByOrgUnitLevel )
-            {
-                List<DataQueryParams> groupedByPeriodType = groupByPeriodType( byOrgUnitLevel );
-
-                for ( DataQueryParams byPeriodType : groupedByPeriodType )
-                {
-                    List<DataQueryParams> groupedByDataType = groupByDataType( byPeriodType );
-
-                    for ( DataQueryParams byDataType : groupedByDataType )
-                    {
-                        List<DataQueryParams> groupedByAggregationType = groupByAggregationType( byDataType );
-
-                        for ( DataQueryParams byAggregationType : groupedByAggregationType )
-                        {
-                            List<DataQueryParams> groupedByDaysInPeriod = groupByDaysInPeriod( byAggregationType );
-
-                            for ( DataQueryParams byDaysInPeriod : groupedByDaysInPeriod )
-                            {
-                                List<DataQueryParams> groupedByDataPeriodType = groupByDataPeriodType( byDaysInPeriod );
-
-                                for ( DataQueryParams byDataPeriodType : groupedByDataPeriodType )
-                                {
-                                    queries.add( byDataPeriodType );
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+            final List<DataQueryParams> currentQueries = Lists.newArrayList( queries );
+            queries.clear();
+            
+            currentQueries.stream().forEach( grouper );
         }
-
+        
         DataQueryGroups queryGroups = new DataQueryGroups( queries );
 
         if ( queryGroups.isOptimal( optimalQueries ) )
