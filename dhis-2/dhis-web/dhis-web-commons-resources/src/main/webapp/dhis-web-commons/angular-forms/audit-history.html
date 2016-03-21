@@ -31,15 +31,14 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr ng-repeat="item in itemList| orderBy:'name' | filter:model.searchText" 
-                        ng-init="itemRowIndex = $index">
+                <tbody ng-repeat="row in uniqueRows">
+                    <tr ng-repeat="item in itemList | filter: {name: row} | filter:model.searchText" ng-init="rowIndex = $index">
                         <td ng-repeat="col in auditColumns" 
-                            rowspan="{{(itemList| filter: {name: item.name}).length}}"
-                            ng-if="col === 'name' && (itemRowIndex % (itemList | filter: {name: item.name}).length === 0)">
+                            rowspan="{{(itemList | filter: {name: row}).length}}"
+                            ng-if="col === 'name' && rowIndex === 0">
                             {{item[col]}}
                         </td>
-                        <td ng-repeat="col in auditColumns" ng-if="col !== 'name'">
+                        <td class="wrap-text" ng-repeat="col in auditColumns" ng-if="col !== 'name'">
                             {{item[col]}}
                         </td>
                     </tr>

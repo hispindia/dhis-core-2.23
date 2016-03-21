@@ -68,6 +68,7 @@ var d2Controllers = angular.module('d2Controllers', [])
     AuditHistoryDataService.getAuditHistoryData(eventId, dataType).then(function (data) {
 
         $scope.itemList = [];
+        $scope.uniqueRows = [];
 
         var reponseData = data.trackedEntityDataValueAudits ? data.trackedEntityDataValueAudits :
             data.trackedEntityAttributeValueAudits ? data.trackedEntityAttributeValueAudits : null;
@@ -98,6 +99,14 @@ var d2Controllers = angular.module('d2Controllers', [])
                     }
                 }                
                 $scope.itemList.push(obj);
+                
+                if( $scope.uniqueRows.indexOf(obj.name) === -1){
+                    $scope.uniqueRows.push(obj.name);
+                }
+            }
+            
+            if($scope.uniqueRows.length > 0){
+                $scope.uniqueRows = $scope.uniqueRows.sort();
             }
         }
     });
