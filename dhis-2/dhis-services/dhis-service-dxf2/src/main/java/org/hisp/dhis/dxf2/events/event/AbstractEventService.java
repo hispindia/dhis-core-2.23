@@ -1016,12 +1016,12 @@ public abstract class AbstractEventService
 
         ImportSummary importSummary = new ImportSummary();
         importSummary.setStatus( ImportStatus.SUCCESS );
-
+        
         if ( importOptions == null )
         {
             importOptions = new ImportOptions();
         }
-
+        
         boolean existingEvent = programStageInstance != null;        
         boolean dryRun = importOptions.isDryRun();
 
@@ -1035,7 +1035,9 @@ public abstract class AbstractEventService
 
         if ( event.getAttributeCategoryOptions() != null && program.getCategoryCombo() != null )
         {
-            coc = inputUtils.getAttributeOptionCombo( program.getCategoryCombo(), event.getAttributeCategoryOptions() );
+            IdScheme idScheme = importOptions.getIdSchemes().getCategoryOptionIdScheme();
+            
+            coc = inputUtils.getAttributeOptionCombo( program.getCategoryCombo(), event.getAttributeCategoryOptions(), idScheme );
 
             if ( coc == null )
             {
