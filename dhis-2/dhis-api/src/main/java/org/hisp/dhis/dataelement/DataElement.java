@@ -138,8 +138,7 @@ public class DataElement
     private List<Integer> aggregationLevels = new ArrayList<>();
 
     /**
-     * There is no point of saving 0's for this data element default is false
-     * ,we don't want to store 0's if not set to true
+     * Indicates whether to store zero data values.
      */
     private boolean zeroIsSignificant;
 
@@ -235,7 +234,12 @@ public class DataElement
         Collections.sort( list, DataSetFrequencyComparator.INSTANCE );
         return !list.isEmpty() ? list.get( 0 ) : null;
     }
-
+    
+    /**
+     * Returns the data set of this data element. If this data element has
+     * multiple data sets, the data set with approval enabled, then the highest 
+     * collection frequency, is returned.
+     */
     public DataSet getApprovalDataSet()
     {
         List<DataSet> list = new ArrayList<>( dataSets );
