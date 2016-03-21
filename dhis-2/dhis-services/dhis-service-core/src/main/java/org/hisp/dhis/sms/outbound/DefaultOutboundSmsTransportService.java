@@ -95,7 +95,7 @@ public class DefaultOutboundSmsTransportService
 
         if ( gatewayConfiguration == null )
         {
-            return GatewayResponse.FAILED;
+            return GatewayResponse.NO_GATWAY_CONFIGURATION;
         }
 
         return sendMessage( sms, gatewayConfiguration );
@@ -116,7 +116,7 @@ public class DefaultOutboundSmsTransportService
 
         if ( gatewayConfiguration == null )
         {
-            return GatewayResponse.FAILED;
+            return GatewayResponse.NO_GATWAY_CONFIGURATION;
         }
 
         return sendMessage( smsBatch, gatewayConfiguration );

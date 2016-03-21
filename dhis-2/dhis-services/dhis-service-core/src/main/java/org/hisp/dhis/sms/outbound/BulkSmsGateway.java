@@ -59,6 +59,10 @@ public class BulkSmsGateway
 
     @Autowired
     private RestTemplate restTemplate;
+    
+    // -------------------------------------------------------------------------
+    // Implementation
+    // -------------------------------------------------------------------------
 
     public GatewayResponse send( OutboundSms sms, BulkSmsGatewayConfig bulkSmsConfiguration )
     {
@@ -76,6 +80,10 @@ public class BulkSmsGateway
 
         return send( uriBuilder );
     }
+    
+    // -------------------------------------------------------------------------
+    // Supportive methods
+    // -------------------------------------------------------------------------
 
     private GatewayResponse send( UriComponentsBuilder uriBuilder )
     {

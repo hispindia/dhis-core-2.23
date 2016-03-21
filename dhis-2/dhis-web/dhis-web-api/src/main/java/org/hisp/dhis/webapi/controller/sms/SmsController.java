@@ -110,7 +110,7 @@ public class SmsController
         throws WebMessageException, IOException
     {
         OutboundSms sms = renderService.fromJson( request.getInputStream(), OutboundSms.class );
-
+        
         String result = smsSender.sendMessage( sms );
 
         if ( result.equals( "success" ) )
@@ -121,7 +121,6 @@ public class SmsController
         {
             throw new WebMessageException( WebMessageUtils.error( result ) );
         }
-
     }
 
     @PreAuthorize( "hasRole('ALL') or hasRole(' F_MOBILE_SENDSMS')" )
@@ -141,7 +140,6 @@ public class SmsController
         {
             throw new WebMessageException( WebMessageUtils.error( result ) );
         }
-
     }
 
     @RequestMapping( value = "/inbound", method = RequestMethod.POST )
@@ -164,7 +162,6 @@ public class SmsController
         int smsId = incomingSMSService.save( message, originator, gateway, receivedTime );
 
         webMessageService.send( WebMessageUtils.ok( "Received SMS: " + smsId ), response, request );
-
     }
 
     @RequestMapping( value = "/inbound", method = RequestMethod.POST, consumes = "application/json" )

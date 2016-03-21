@@ -52,7 +52,6 @@ import org.springframework.web.client.RestTemplate;
 
 public class ClickatellGateway
 {
-
     private static final Log log = LogFactory.getLog( ClickatellGateway.class );
 
     private static final String CONTENT_TYPE = "Content-Type";
@@ -69,7 +68,11 @@ public class ClickatellGateway
 
     @Autowired
     private RestTemplate restTemplate;
-
+    
+    // -------------------------------------------------------------------------
+    // Implementation
+    // -------------------------------------------------------------------------
+    
     public GatewayResponse send( OutboundSms sms, ClickatellGatewayConfig clickatellConfiguration )
     {
         HttpEntity<ClickatellRequestEntity> request = new HttpEntity<ClickatellRequestEntity>( getRequestBody( sms ),
