@@ -1468,6 +1468,28 @@ public class ObjectBundleServiceTest
         assertEquals( 2, manager.getAll( User.class ).size() );
     }
 
+    @Test
+    public void testCreateOrgUnitWithLevels() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/ou_with_levels.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.ALL );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertTrue( objectBundleService.validate( bundle ).getErrorReports().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        OrganisationUnit root = manager.get( OrganisationUnit.class, "inVD5SdytkT" );
+        assertNull( root.getParent() );
+        assertEquals( 3, root.getChildren().size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );

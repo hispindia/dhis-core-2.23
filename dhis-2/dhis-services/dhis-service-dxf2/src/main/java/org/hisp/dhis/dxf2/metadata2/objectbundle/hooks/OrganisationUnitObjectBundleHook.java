@@ -1,4 +1,4 @@
-package org.hisp.dhis.organisationunit.comparator;
+package org.hisp.dhis.dxf2.metadata2.objectbundle.hooks;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -29,22 +29,30 @@ package org.hisp.dhis.organisationunit.comparator;
  */
 
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
+import org.hisp.dhis.organisationunit.comparator.OrganisationUnitParentCountComparator;
 
-import java.util.Comparator;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
-public class OrganisationUnitParentCountComparator
-    implements Comparator<IdentifiableObject>
+public class OrganisationUnitObjectBundleHook extends AbstractObjectBundleHook
 {
     @Override
-    public int compare( IdentifiableObject organisationUnit1, IdentifiableObject organisationUnit2 )
+    public void preImport( ObjectBundle objectBundle )
     {
-        Integer parents1 = ((OrganisationUnit) organisationUnit1).getAncestors().size();
-        Integer parents2 = ((OrganisationUnit) organisationUnit2).getAncestors().size();
+        sortOrganisationUnits( objectBundle );
+    }
 
-        return parents1.compareTo( parents2 );
+    private void sortOrganisationUnits( ObjectBundle objectBundle )
+    {
+        List<IdentifiableObject> nonPersistedObjects = objectBundle.getObjects( OrganisationUnit.class, false );
+        List<IdentifiableObject> persistedObjects = objectBundle.getObjects( OrganisationUnit.class, true );
+
+        Collections.sort( nonPersistedObjects, new OrganisationUnitParentCountComparator() );
+        Collections.sort( persistedObjects, new OrganisationUnitParentCountComparator() );
     }
 }

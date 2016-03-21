@@ -214,8 +214,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         for ( Class<? extends IdentifiableObject> klass : klasses )
         {
-            List<IdentifiableObject> persistedObjects = bundle.getObjects( klass, true );
             List<IdentifiableObject> nonPersistedObjects = bundle.getObjects( klass, false );
+            List<IdentifiableObject> persistedObjects = bundle.getObjects( klass, true );
 
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
@@ -249,6 +249,10 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         return typeReports;
     }
+
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
 
     private TypeReport handleCreates( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
@@ -353,10 +357,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         return typeReport;
     }
-
-    //-----------------------------------------------------------------------------------
-    // Utility Methods
-    //-----------------------------------------------------------------------------------
 
     @SuppressWarnings( "unchecked" )
     private List<Class<? extends IdentifiableObject>> getSortedClasses( ObjectBundle bundle )

@@ -101,6 +101,10 @@ public class DefaultMetadataImportService implements MetadataImportService
         return params;
     }
 
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
     private <T extends Enum<T>> T getEnumWithDefault( Class<T> enumKlass, Map<String, List<String>> parameters, String key, T defaultValue )
     {
         if ( parameters == null || parameters.get( key ) == null || parameters.get( key ).isEmpty() )
