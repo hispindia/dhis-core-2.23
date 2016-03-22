@@ -195,6 +195,12 @@ public class ImportOptions
         idSchemes.setCategoryOptionComboIdScheme( idScheme );
         return this;
     }
+    
+    public ImportOptions setCategoryOptionIdScheme( String idScheme )
+    {
+        idSchemes.setCategoryOptionIdScheme( idScheme );
+        return this;
+    }
 
     public ImportOptions setOrgUnitIdScheme( String idScheme )
     {
