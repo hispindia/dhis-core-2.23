@@ -72,7 +72,7 @@ public enum GatewayResponse
     RESULT_CODE_400("bad request","Validation failure (such as missing/invalid parameters or headers)"),
     RESULT_CODE_401("unauthorized","Authentication failure. This can also be caused by IP lockdown settings"),
     RESULT_CODE_402("payment required","Not enough credit to send message"),
-    RESULT_CODE_404("not found","Resource does not existS"),
+    RESULT_CODE_404("not found","Resource does not exist"),
     RESULT_CODE_405("method not allowed","Http method is not support on the resource"),
     RESULT_CODE_410("gone","Mobile number is blocked"),
     RESULT_CODE_429("too many requests","Generic rate limiting error"),

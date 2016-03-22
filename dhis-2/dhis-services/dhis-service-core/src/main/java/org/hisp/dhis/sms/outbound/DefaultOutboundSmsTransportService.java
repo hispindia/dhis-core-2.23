@@ -35,8 +35,6 @@ import java.util.Collection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
-import org.hisp.dhis.sms.config.ClickatellGatewayConfig;
 import org.hisp.dhis.sms.config.GatewayAdministrationService;
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
 
@@ -66,10 +64,7 @@ public class DefaultOutboundSmsTransportService
     private GatewayAdministrationService gatewayAdminService;
 
     @Autowired
-    private BulkSmsGateway bulkSmsGateway;
-
-    @Autowired
-    private ClickatellGateway clickatellGateway;
+    private List<SmsGateway> smsGateways;
 
     // -------------------------------------------------------------------------
     // OutboundSmsTransportService implementation
@@ -131,6 +126,7 @@ public class DefaultOutboundSmsTransportService
         {
             return GatewayResponse.NO_GATWAY_CONFIGURATION;
         }
+
         return sendMessage( smsBatch, gatewayConfiguration );
     }
 
@@ -138,49 +134,37 @@ public class DefaultOutboundSmsTransportService
     // Supportive methods
     // -------------------------------------------------------------------------
 
-    private GatewayResponse sendMessage( OutboundSms sms, SmsGatewayConfig gatewayConfiguration )
+    private GatewayResponse sendMessage( OutboundSms sms, SmsGatewayConfig gatewayConfig )
     {
-        GatewayResponse gatewayResponse = null;
-
-        if ( gatewayConfiguration instanceof BulkSmsGatewayConfig )
+        for ( SmsGateway smsGateway : smsGateways )
         {
-            BulkSmsGatewayConfig bulkSmsConfiguration = (BulkSmsGatewayConfig) gatewayConfiguration;
+            if ( smsGateway.accept( gatewayConfig ) )
+            {
+                GatewayResponse gatewayResponse = smsGateway.send( sms, gatewayConfig );
 
-            gatewayResponse = bulkSmsGateway.send( sms, bulkSmsConfiguration );
+                return responseHandler( Arrays.asList( sms ), gatewayResponse );
+            }
         }
 
-        if ( gatewayConfiguration instanceof ClickatellGatewayConfig )
-        {
-            ClickatellGatewayConfig clickatellConfiguration = (ClickatellGatewayConfig) gatewayConfiguration;
-
-            gatewayResponse = clickatellGateway.send( sms, clickatellConfiguration );
-        }
-
-        return responseHanlder( Arrays.asList( sms ), gatewayResponse );
+        return GatewayResponse.NO_GATWAY_CONFIGURATION;
     }
 
-    private GatewayResponse sendMessage( List<OutboundSms> smsBatch, SmsGatewayConfig gatewayConfiguration )
+    private GatewayResponse sendMessage( List<OutboundSms> smsBatch, SmsGatewayConfig gatewayConfig )
     {
-        GatewayResponse gatewayResponse = null;
-
-        if ( gatewayConfiguration instanceof BulkSmsGatewayConfig )
+        for ( SmsGateway smsGateway : smsGateways )
         {
-            BulkSmsGatewayConfig bulkSmsConfiguration = (BulkSmsGatewayConfig) gatewayConfiguration;
+            if ( smsGateway.accept( gatewayConfig ) )
+            {
+                GatewayResponse gatewayResponse = smsGateway.send( smsBatch, gatewayConfig );
 
-            gatewayResponse = bulkSmsGateway.send( smsBatch, bulkSmsConfiguration );
+                return responseHandler( smsBatch, gatewayResponse );
+            }
         }
 
-        if ( gatewayConfiguration instanceof ClickatellGatewayConfig )
-        {
-            ClickatellGatewayConfig clickatellConfiguration = (ClickatellGatewayConfig) gatewayConfiguration;
-
-            gatewayResponse = clickatellGateway.send( smsBatch, clickatellConfiguration );
-        }
-
-        return responseHanlder( smsBatch, gatewayResponse );
+        return GatewayResponse.NO_GATWAY_CONFIGURATION;
     }
 
-    private GatewayResponse responseHanlder( Collection<OutboundSms> smsBatch, GatewayResponse gatewayResponse )
+    private GatewayResponse responseHandler( Collection<OutboundSms> smsBatch, GatewayResponse gatewayResponse )
     {
         if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse || GatewayResponse.RESULT_CODE_200 == gatewayResponse
             || GatewayResponse.RESULT_CODE_202 == gatewayResponse )

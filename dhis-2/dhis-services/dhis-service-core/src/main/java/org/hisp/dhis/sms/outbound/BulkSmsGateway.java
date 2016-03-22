@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.hisp.dhis.sms.config.BulkSmsGatewayConfig;
-
+import org.hisp.dhis.sms.config.SmsGatewayConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +50,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 
 public class BulkSmsGateway
+    implements SmsGateway
 {
     private static final Log log = LogFactory.getLog( BulkSmsGateway.class );
 
@@ -59,28 +60,38 @@ public class BulkSmsGateway
 
     @Autowired
     private RestTemplate restTemplate;
-    
+
     // -------------------------------------------------------------------------
     // Implementation
     // -------------------------------------------------------------------------
 
-    public GatewayResponse send( OutboundSms sms, BulkSmsGatewayConfig bulkSmsConfiguration )
+    public GatewayResponse send( OutboundSms sms, SmsGatewayConfig config )
     {
-        UriComponentsBuilder uriBuilder = buildBaseUrl( bulkSmsConfiguration, SubmissionType.SINGLE );
+        BulkSmsGatewayConfig bulkSmsConfig = (BulkSmsGatewayConfig) config;
+
+        UriComponentsBuilder uriBuilder = buildBaseUrl( bulkSmsConfig, SubmissionType.SINGLE );
         uriBuilder.queryParam( "msisdn", getRecipients( sms.getRecipients() ) );
         uriBuilder.queryParam( "message", sms.getMessage() );
 
         return send( uriBuilder );
     }
 
-    public GatewayResponse send( List<OutboundSms> smsBatch, BulkSmsGatewayConfig bulkSmsConfiguration )
+    public GatewayResponse send( List<OutboundSms> smsBatch, SmsGatewayConfig config )
     {
-        UriComponentsBuilder uriBuilder = buildBaseUrl( bulkSmsConfiguration, SubmissionType.BATCH );
+        BulkSmsGatewayConfig bulkSmsConfig = (BulkSmsGatewayConfig) config;
+
+        UriComponentsBuilder uriBuilder = buildBaseUrl( bulkSmsConfig, SubmissionType.BATCH );
         uriBuilder.queryParam( "batch_data", builCsvUrl( smsBatch ) );
 
         return send( uriBuilder );
     }
-    
+
+    @Override
+    public boolean accept( SmsGatewayConfig gatewayConfig )
+    {
+        return gatewayConfig != null && gatewayConfig instanceof BulkSmsGatewayConfig;
+    }
+
     // -------------------------------------------------------------------------
     // Supportive methods
     // -------------------------------------------------------------------------
@@ -107,7 +118,7 @@ public class BulkSmsGateway
             log.error( "Error: " + ex.getMessage() );
         }
 
-        return parseGatewayResponse( responseEntity.getBody() );
+        return responseHandler( responseEntity.getBody() );
     }
 
     private String builCsvUrl( List<OutboundSms> smsBatch )
@@ -141,33 +152,9 @@ public class BulkSmsGateway
         return uriBuilder;
     }
 
-    private GatewayResponse parseGatewayResponse( String response )
+    private GatewayResponse responseHandler( String response )
     {
-        String[] responseCode = StringUtils.split( response, "|" );
-
-        switch ( responseCode[0] )
-        {
-        case "0":
-            return GatewayResponse.RESULT_CODE_0;
-        case "1":
-            return GatewayResponse.RESULT_CODE_1;
-        case "22":
-            return GatewayResponse.RESULT_CODE_22;
-        case "23":
-            return GatewayResponse.RESULT_CODE_23;
-        case "24":
-            return GatewayResponse.RESULT_CODE_24;
-        case "25":
-            return GatewayResponse.RESULT_CODE_25;
-        case "26":
-            return GatewayResponse.RESULT_CODE_26;
-        case "27":
-            return GatewayResponse.RESULT_CODE_27;
-        case "40":
-            return GatewayResponse.RESULT_CODE_40;
-        default:
-            return GatewayResponse.RESULT_CODE_22;
-        }
+        return BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
     }
 
     private String getRecipients( Set<String> recipients )
