@@ -37,13 +37,11 @@ import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.user.UserGroup;
 import org.hisp.dhis.user.UserGroupAccess;
 import org.springframework.core.annotation.Order;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @Order( 0 )
-@Component
 public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
 {
     @Override
