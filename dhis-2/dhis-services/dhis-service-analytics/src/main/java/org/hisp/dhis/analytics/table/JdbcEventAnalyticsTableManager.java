@@ -46,6 +46,7 @@ import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.hisp.dhis.commons.collection.UniqueArrayList;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroupSet;
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
 import org.hisp.dhis.period.Period;
@@ -208,6 +209,7 @@ public class JdbcEventAnalyticsTableManager
                 "inner join organisationunit ou on psi.organisationunitid=ou.organisationunitid " +
                 "left join _orgunitstructure ous on psi.organisationunitid=ous.organisationunitid " +
                 "left join _organisationunitgroupsetstructure ougs on psi.organisationunitid=ougs.organisationunitid " +
+                "left join _categorystructure acs on psi.attributeoptioncomboid=acs.categoryoptioncomboid " +
                 "left join _dateperiodstructure dps on psi.executiondate=dps.dateperiod " +
                 "where psi.executiondate >= '" + start + "' " + 
                 "and psi.executiondate <= '" + end + "' " +
@@ -240,6 +242,13 @@ public class JdbcEventAnalyticsTableManager
             for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )
             {
                 columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) ) );
+            }
+            
+            List<DataElementCategory> categories = table.getProgram().getCategoryCombo().getCategories();
+            
+            for ( DataElementCategory category : categories )
+            {
+                columns.add( new AnalyticsTableColumn( quote( category.getUid() ), "character(11)", "acs." + quote( category.getUid() ) ) );
             }
         }
 
