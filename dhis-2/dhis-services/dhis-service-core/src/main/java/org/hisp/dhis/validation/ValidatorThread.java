@@ -56,6 +56,8 @@ import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.system.util.MathUtils;
 
+import com.google.common.collect.Sets;
+
 /**
  * Runs a validation task on a thread within a multi-threaded validation run.
  * <p>
@@ -280,8 +282,7 @@ public class ValidatorThread
 
         if ( ValidationRunType.SCHEDULED == context.getRunType() )
         {
-            if ( context.getLastScheduledRun() != null ) // True if no previous
-                                                         // scheduled run
+            if ( context.getLastScheduledRun() != null ) // True if no previous scheduled run
             {
                 if ( rule.getLastUpdated().before( context.getLastScheduledRun() ) )
                 {
@@ -313,8 +314,7 @@ public class ValidatorThread
 
                             if ( lastUpdated != null && lastUpdated.after( context.getLastScheduledRun() ) )
                             {
-                                saveThisCombo = true; // True if new/updated
-                                                      // data.
+                                saveThisCombo = true; // True if new/updated data
                                 evaluate = true;
                                 break;
                             }
@@ -486,7 +486,9 @@ public class ValidatorThread
         return dataValueMap;
     }
 
-    /* Generalized surveillance rules */
+    // -------------------------------------------------------------------------
+    // Generalized surveillance rules
+    // -------------------------------------------------------------------------
 
     /**
      * Returns the right-side evaluated value of the validation rule.
@@ -520,15 +522,21 @@ public class ValidatorThread
             {
                 // For past years, fetch a window around the period at the
                 // same time of year as this period.
-                gatherPeriodValues( results, expression, source, base_period, 0, px, periodTypes, lastUpdatedMap,
-                    sourceDataElements );
+                gatherPeriodValues( results, expression, source, base_period, 0, px, 
+                    periodTypes, lastUpdatedMap, sourceDataElements );
+                
                 if ( window != 0 )
+                {
                     gatherPeriodValues( results, expression, source, periodType.getNextPeriod( base_period ),
                         window - 1, px, periodTypes, lastUpdatedMap, sourceDataElements );
+                }
             }
+            
             if ( window != 0 )
+            {
                 gatherPeriodValues( results, expression, source, periodType.getPreviousPeriod( base_period ),
                     1 - window, px, periodTypes, lastUpdatedMap, sourceDataElements );
+            }
 
             // Move to the previous year.
             yearly.set( Calendar.YEAR, yearly.get( Calendar.YEAR ) - 1 );
@@ -560,39 +568,54 @@ public class ValidatorThread
         MapMap<Integer, DataElementOperand, Date> lastUpdatedMap, Collection<DataElement> sourceElements )
     {
         CalendarPeriodType periodType = (CalendarPeriodType) period.getPeriodType();
-        Period periodInstance = context.getPeriodService().getPeriod( period.getStartDate(), period.getEndDate(),
-            periodType );
+        Period periodInstance = context.getPeriodService().getPeriod( period.getStartDate(), 
+            period.getEndDate(), periodType );
+        
         if ( periodInstance == null )
+        {
             return;
+        }
+        
         Set<DataElement> dataElements = getExpressionDataElements( expression );
         SetMap<Integer, DataElementOperand> incompleteValuesMap = new SetMap<>();
+        
         MapMap<Integer, DataElementOperand, Double> dataValueMapByAttributeCombo = getValueMap( px, dataElements,
             sourceElements, dataElements, periodTypes, periodInstance, source, lastUpdatedMap, incompleteValuesMap );
         Map<Integer, Double> eValues = getExpressionValueMap( expression, dataValueMapByAttributeCombo,
             incompleteValuesMap );
+        
         int direction = ((window < 0) ? (-1) : (window > 0) ? (1) : (0));
         int steps = ((direction > 0) ? (window) : (direction < 0) ? (-window) : (0));
         results.putValueMap( eValues );
+        
         log.debug( "Gathering '" + expression.getExpression() + "' " + "at " + period + " (" + window + ") " + "from "
-            + source.getName() + " starting with:\n\t" + eValues );
+            + source.getName() + " starting with: " + eValues );
+        
         if ( direction == 0 )
+        {
             return;
+        }
+        
         Period scan = new Period( periodInstance );
+        
         for ( int count = 0; count < steps; count++ )
         {
             if ( direction < 0 )
+            {
                 scan = periodType.getPreviousPeriod( scan );
+            }
             else
+            {
                 scan = periodType.getNextPeriod( scan );
+            }
+            
             gatherPeriodValues( results, expression, source, scan, 0, px, periodTypes, lastUpdatedMap, sourceElements );
         }
     }
 
     /**
-     * Returns the data elements referenced in an expression, as a set.
-     *
-     * This will return an empty set if e.getDataElementsInExpression returns
-     * null
+     * Returns the data elements referenced in an expression, as a set. This will 
+     * return an empty set if e.getDataElementsInExpression returns null.
      *
      * @param expression expression to evaluate.
      * @return a Set of DataElement(s)
@@ -600,10 +623,8 @@ public class ValidatorThread
     private Set<DataElement> getExpressionDataElements( Expression e )
     {
         Set<DataElement> elts = e.getDataElementsInExpression();
-        if ( elts == null )
-            return new HashSet<DataElement>();
-        else
-            return elts;
+        
+        return elts != null ? elts : Sets.newHashSet();
     }
 
     /**
@@ -625,20 +646,26 @@ public class ValidatorThread
         Map<Integer, ListMap<String, Double>> aggregateValuesMap = new HashMap<>();
         Set<String> aggregates = context.getExpressionService().getAggregatesInExpression( expression.getExpression() );
 
-        if ( aggregates.size() == 0 )
+        if ( aggregates.isEmpty() )
+        {
             return getExpressionValueMap( expression, valueMap, incompleteValuesMap );
+        }
 
         for ( String subExpression : aggregates )
         {
-            Expression subexp = new Expression( subExpression, "aggregated",
-                new HashSet<DataElement>( sourceElements ) );
+            Expression subexp = new Expression( subExpression, "aggregated", new HashSet<DataElement>( sourceElements ) );
+            
             ListMap<Integer, Double> aggregateValues = getAggregateValueMap( subexp, source, period, window, n_years,
                 px, periodTypes, lastUpdatedMap, sourceElements );
+            
             for ( Integer attributeOptionCombo : aggregateValues.keySet() )
             {
                 ListMap<String, Double> aggmap;
+                
                 if ( aggregateValuesMap.containsKey( attributeOptionCombo ) )
+                {
                     aggmap = aggregateValuesMap.get( attributeOptionCombo );
+                }
                 else
                 {
                     aggmap = new ListMap<>();
@@ -663,5 +690,4 @@ public class ValidatorThread
 
         return expressionValueMap;
     }
-
 }
