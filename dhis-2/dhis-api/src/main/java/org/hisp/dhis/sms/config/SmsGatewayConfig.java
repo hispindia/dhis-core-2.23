@@ -40,7 +40,6 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
  * 
  * @author Zubair <rajazubair.asghar@gmail.com>
  */
-@SuppressWarnings( "serial" )
 @JacksonXmlRootElement( localName = "smsgatewayconfig", namespace = DxfNamespaces.DXF_2_0 )
 public abstract class SmsGatewayConfig
     implements Serializable

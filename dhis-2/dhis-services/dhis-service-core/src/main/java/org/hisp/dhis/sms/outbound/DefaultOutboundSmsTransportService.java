@@ -29,6 +29,7 @@ package org.hisp.dhis.sms.outbound;
  */
 
 import java.util.List;
+import java.util.Set;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -39,6 +40,8 @@ import org.hisp.dhis.sms.config.GatewayAdministrationService;
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.collect.Sets;
 
 /**
  * Zubair <rajazubair.asghar@gmail.com>
@@ -165,8 +168,10 @@ public class DefaultOutboundSmsTransportService
 
     private GatewayResponse responseHandler( Collection<OutboundSms> smsBatch, GatewayResponse gatewayResponse )
     {
-        if ( GatewayResponse.RESULT_CODE_0 == gatewayResponse || GatewayResponse.RESULT_CODE_200 == gatewayResponse
-            || GatewayResponse.RESULT_CODE_202 == gatewayResponse )
+        Set<GatewayResponse> okCodes = Sets.newHashSet( GatewayResponse.RESULT_CODE_0, 
+            GatewayResponse.RESULT_CODE_200, GatewayResponse.RESULT_CODE_202 );
+        
+        if ( okCodes.contains( gatewayResponse ) )
         {
             for ( OutboundSms sms : smsBatch )
             {
