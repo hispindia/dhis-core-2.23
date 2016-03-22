@@ -43,7 +43,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 /**
  * Zubair <rajazubair.asghar@gmail.com>
  */
-
 public class DefaultOutboundSmsTransportService
     implements OutboundSmsTransportService
 {
