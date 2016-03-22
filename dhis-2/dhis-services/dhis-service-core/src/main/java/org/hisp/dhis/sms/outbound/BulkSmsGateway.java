@@ -45,6 +45,8 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.google.common.collect.ImmutableMap;
+
 /**
  * @author Zubair <rajazubair.asghar@gmail.com>
  */
@@ -53,6 +55,13 @@ public class BulkSmsGateway
 {
     private static final Log log = LogFactory.getLog( BulkSmsGateway.class );
 
+    public static final ImmutableMap<String, GatewayResponse> BULKSMS_GATEWAY_RESPONSE_MAP = new ImmutableMap.Builder<String, GatewayResponse>()
+        .put( "0", GatewayResponse.RESULT_CODE_0 ).put( "1", GatewayResponse.RESULT_CODE_1 )
+        .put( "22", GatewayResponse.RESULT_CODE_22 ).put( "23", GatewayResponse.RESULT_CODE_23 )
+        .put( "24", GatewayResponse.RESULT_CODE_24 ).put( "25", GatewayResponse.RESULT_CODE_25 )
+        .put( "26", GatewayResponse.RESULT_CODE_26 ).put( "27", GatewayResponse.RESULT_CODE_27 )
+        .put( "40", GatewayResponse.RESULT_CODE_40 ).build();
+    
     // -------------------------------------------------------------------------
     // Dependencies
     // -------------------------------------------------------------------------
@@ -153,7 +162,7 @@ public class BulkSmsGateway
 
     private GatewayResponse responseHandler( String response )
     {
-        return BulkSmsGatewayConfig.BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
+        return BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
     }
 
     private String getRecipients( Set<String> recipients )
