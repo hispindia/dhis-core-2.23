@@ -151,28 +151,6 @@ trackerCapture.controller('EventCreationController',
         }
     });    
 
-    //watch for changes in due/event-date
-    /*$scope.$watchCollection('[dhis2Event.dueDate, dhis2Event.eventDate]', function () {
-        if (angular.isObject($scope.dhis2Event)) {
-            if (!$scope.dhis2Event.dueDate) {
-                $scope.model.dueDateInvalid = true;
-                return;
-            }
-
-            if ($scope.dhis2Event.dueDate) {
-                var rDueDate = $scope.dhis2Event.dueDate;
-                var cDueDate = DateUtils.format($scope.dhis2Event.dueDate);
-                $scope.model.dueDateInvalid = rDueDate !== cDueDate;
-            }
-
-            if ($scope.dhis2Event.eventDate) {
-                var rEventDate = $scope.dhis2Event.eventDate;
-                var cEventDate = DateUtils.format($scope.dhis2Event.eventDate);
-                $scope.model.eventDateInvalid = rEventDate !== cEventDate;
-            }
-        }
-    });*/
-
     $scope.getCategoryOptions = function(){
         $scope.eventFetched = false;
         $scope.optionsReady = false;
