@@ -1944,3 +1944,8 @@ a.disable-link-effects:focus {
 .section-spacing {
     margin-top: 20px;
 }
+
+.popover-label > a {
+    color: #333 !important;
+    text-decoration: none !important;
+}

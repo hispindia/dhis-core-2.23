@@ -569,3 +569,8 @@ div#orgUnitTree {
 .tooltip-font {
     font-size: small;
 }
+
+.popover-label > a {
+    color: #333 !important;
+    text-decoration: none !important;
+}

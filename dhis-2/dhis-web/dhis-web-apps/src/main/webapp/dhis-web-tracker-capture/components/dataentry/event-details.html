@@ -2,7 +2,7 @@
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE' && !currentStage.periodType">
 
     <div ng-class="{true: 'col-md-12', false: 'col-md-6'} [currentStage.hideDueDate]">
-        {{currentEvent.excecutionDateLabel ? currentEvent.excecutionDateLabel : 'report_date' | translate}}
+        {{currentEvent.excecutionDateLabel ? currentEvent.excecutionDateLabel : 'report_date' | translate}} - {{currentStage.hideDueDate}}
         <input type="text"
                placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                class="form-control hideInPrint" 
@@ -23,9 +23,9 @@
         <div ng-messages="outerForm.eventDate.$error" ng-if="interacted(outerForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
         </div>        
     </div>
-    <div ng-if="!currentStage.hideDueDate || !currentEvent.eventDate && currentEvent.status !== 'SKIPPED'"  class="col-md-6">
+    <div ng-if="!currentStage.hideDueDate"  class="col-md-6">
         <span ng-if="currentEvent.eventDate || currentEvent.status === 'SKIPPED' || currentEvent.dueDate || registrationMode === 'REGISTRATION'">
-            {{'due_date'| translate}}
+            {{'due_date'| translate}} - {{!currentStage.hideDueDate }}|| {{!currentEvent.eventDate && currentEvent.status !== 'SKIPPED'}}
         </span>
         <span ng-if="!currentEvent.eventDate && currentEvent.status !== 'SKIPPED' && !selectedEntity.inactive && selectedEnrollment.status === 'ACTIVE' && registrationMode !== 'REGISTRATION'">
             <a href ng-click="enableRescheduling()" title="{{ schedulingEnabled ? 'disable_rescheduling' : 'enable_rescheduling' | translate}}"><span class="text-primary bold">{{'reschedule_duedate'| translate}}</span></a>                        

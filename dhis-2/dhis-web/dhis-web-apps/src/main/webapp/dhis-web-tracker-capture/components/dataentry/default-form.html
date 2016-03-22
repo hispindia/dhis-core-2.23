@@ -13,6 +13,7 @@
         <tr class="col-md-12" ng-repeat="prStDe in currentStage.programStageDataElements" ng-if="!isHidden(prStDe.dataElement.id, currentEvent)">
             <td>
                 <span d2-pop-over 
+                    class="popover-label"
                     details="{{'details'| translate}}"
                     content="prStDe.dataElement"
                     template="dataelement-details.html"
@@ -70,6 +71,7 @@
                         <tr ng-repeat="de in section.programStageDataElements" ng-if="!isHidden(de.dataElement.id)">
                             <td>
                                 <span d2-pop-over 
+                                    class="popover-label"
                                     details="{{'details'| translate}}"
                                     content="prStDes[de.dataElement.id].dataElement"
                                     template="dataelement-details.html"
