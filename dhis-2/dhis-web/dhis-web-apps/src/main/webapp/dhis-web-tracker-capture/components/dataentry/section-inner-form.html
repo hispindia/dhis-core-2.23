@@ -290,7 +290,7 @@
                 <input type="text" class="form-control" value={{currentEvent[prStDes[de.dataElement.id].dataElement.id]}}>
             </div>
         </div>
-        <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerForm)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+        <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerDataEntryForm)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
         </div>
         <div class="alert alert-warning alert-dismissible" role="alert" ng-if="warningMessages[currentEvent.event][de.dataElement.id]">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

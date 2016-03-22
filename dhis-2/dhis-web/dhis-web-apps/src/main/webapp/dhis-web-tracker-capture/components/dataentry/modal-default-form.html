@@ -53,7 +53,7 @@
                        ng-blur="saveCoordinate('LAT')"
                        ng-disabled="currentEvent.enrollmentStatus !== 'ACTIVE' || currentEvent.editingNotAllowed"    
                        ng-required="false"/>
-                <div ng-messages="outerForm.latitude.$error" ng-if="interacted(outerForm.latitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+                <div ng-messages="outerDataEntryForm.latitude.$error" ng-if="interacted(outerDataEntryForm.latitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
                 </div>
             </div>
             <div class="col-md-6">
@@ -67,7 +67,7 @@
                        ng-blur="saveCoordinate('LNG')"
                        ng-disabled="currentEvent.enrollmentStatus !== 'ACTIVE' || currentEvent.editingNotAllowed" 
                        ng-required="false"/>
-                <div ng-messages="outerForm.longitude.$error" ng-if="interacted(outerForm.longitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+                <div ng-messages="outerDataEntryForm.longitude.$error" ng-if="interacted(outerDataEntryForm.longitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
                 </div>
             </div>
         </div>

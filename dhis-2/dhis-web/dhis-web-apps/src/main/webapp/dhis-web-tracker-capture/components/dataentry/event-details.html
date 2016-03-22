@@ -2,7 +2,7 @@
 <div class="row" ng-if="displayCustomForm !== 'TABLE' && displayCustomForm !== 'COMPARE' && !currentStage.periodType">
 
     <div ng-class="{true: 'col-md-12', false: 'col-md-6'} [currentStage.hideDueDate]">
-        {{currentEvent.excecutionDateLabel ? currentEvent.excecutionDateLabel : 'report_date' | translate}} - {{currentStage.hideDueDate}}
+        {{currentEvent.excecutionDateLabel ? currentEvent.excecutionDateLabel : 'report_date' | translate}}
         <input type="text"
                placeholder="{{dhis2CalendarFormat.keyDateFormat}}"
                class="form-control hideInPrint" 
@@ -20,12 +20,12 @@
                class="form-control not-for-screen" 
                ng-class="{'input-success': eventDateSaved}"               
                value={{currentEvent.eventDate}}>
-        <div ng-messages="outerForm.eventDate.$error" ng-if="interacted(outerForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+        <div ng-messages="outerDataEntryForm.eventDate.$error" ng-if="interacted(outerDataEntryForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
         </div>        
     </div>
     <div ng-if="!currentStage.hideDueDate"  class="col-md-6">
         <span ng-if="currentEvent.eventDate || currentEvent.status === 'SKIPPED' || currentEvent.dueDate || registrationMode === 'REGISTRATION'">
-            {{'due_date'| translate}} - {{!currentStage.hideDueDate }}|| {{!currentEvent.eventDate && currentEvent.status !== 'SKIPPED'}}
+            {{'due_date'| translate}} - {{!currentStage.hideDueDate }}
         </span>
         <span ng-if="!currentEvent.eventDate && currentEvent.status !== 'SKIPPED' && !selectedEntity.inactive && selectedEnrollment.status === 'ACTIVE' && registrationMode !== 'REGISTRATION'">
             <a href ng-click="enableRescheduling()" title="{{ schedulingEnabled ? 'disable_rescheduling' : 'enable_rescheduling' | translate}}"><span class="text-primary bold">{{'reschedule_duedate'| translate}}</span></a>                        
@@ -44,7 +44,7 @@
                class="form-control not-for-screen"
                ng-class="{'input-success': dueDateSaved}"
                value={{currentEvent.dueDate}}>        
-        <div ng-messages="outerForm.dueDate.$error" ng-if="interacted(outerForm.dueDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+        <div ng-messages="outerDataEntryForm.dueDate.$error" ng-if="interacted(outerDataEntryForm.dueDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
         </div>
     </div>
 </div>
@@ -63,7 +63,7 @@
                ng-blur="saveCoordinate('LAT')"
                ng-disabled="currentEvent.enrollmentStatus !== 'ACTIVE' || currentEvent.editingNotAllowed"    
                ng-required="false"/>
-        <div ng-messages="outerForm.latitude.$error" ng-if="interacted(outerForm.latitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+        <div ng-messages="outerDataEntryForm.latitude.$error" ng-if="interacted(outerDataEntryForm.latitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
         </div>
     </div>
     <div class="col-md-6">
@@ -77,7 +77,7 @@
                ng-blur="saveCoordinate('LNG')"
                ng-disabled="currentEvent.enrollmentStatus !== 'ACTIVE' || currentEvent.editingNotAllowed" 
                ng-required="false"/>
-        <div ng-messages="outerForm.longitude.$error" ng-if="interacted(outerForm.longitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+        <div ng-messages="outerDataEntryForm.longitude.$error" ng-if="interacted(outerDataEntryForm.longitude)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
         </div>
     </div>
 </div>

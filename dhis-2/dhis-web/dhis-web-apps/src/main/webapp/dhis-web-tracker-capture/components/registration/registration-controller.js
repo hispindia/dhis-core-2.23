@@ -354,7 +354,7 @@ trackerCapture.controller('RegistrationController',
         $scope.warningMessages = effectResult.warningMessages;
     });
 
-    $scope.interacted = function(field) {
+    $scope.interacted = function(field) {        
         var status = false;
         if(field){            
             status = $scope.outerForm.submitted || field.$dirty;

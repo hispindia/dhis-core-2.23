@@ -11,7 +11,7 @@ trackerCapture.controller('ModalDefaultFormController', function($scope){
         }
         else{
             $scope.modalForm.$setSubmitted();
-            $scope.modalForm.outerForm.$setSubmitted();     
+            $scope.modalForm.outerDataEntryForm.$setSubmitted();     
             
             if($scope.modalForm.$invalid){
                 return;

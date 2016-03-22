@@ -290,7 +290,7 @@
         </div>
     </div>
 
-    <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerForm)" class="error-text" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
+    <div ng-messages="innerForm.foo.$error" ng-if="interacted(innerForm.foo, outerDataEntryForm)" class="error-text" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">
     </div>
     <div class="alert alert-warning alert-dismissible" role="alert" ng-if="warningMessages[currentEvent.event][prStDe.dataElement.id]">
         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>

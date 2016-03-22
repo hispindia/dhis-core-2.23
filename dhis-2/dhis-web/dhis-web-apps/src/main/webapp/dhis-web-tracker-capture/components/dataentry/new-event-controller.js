@@ -40,7 +40,6 @@ trackerCapture.controller('EventCreationController',
     $scope.selectedCategories = selectedCategories;
     $scope.pleaseSelectLabel = $translate.instant('please_select');
 
-    var orgPath = [];
     var dummyEvent = {};
     
     function prepareEvent(){
@@ -142,7 +141,7 @@ trackerCapture.controller('EventCreationController',
     
     $scope.$watch('model.selectedStage', function(){       
         if(angular.isObject($scope.model.selectedStage)){
-            stage = $scope.model.selectedStage;
+            stage = $scope.model.selectedStage;            
             prepareEvent();
             
             //If the caller wants to create right away, go ahead and save.
@@ -153,7 +152,7 @@ trackerCapture.controller('EventCreationController',
     });    
 
     //watch for changes in due/event-date
-    $scope.$watchCollection('[dhis2Event.dueDate, dhis2Event.eventDate]', function () {
+    /*$scope.$watchCollection('[dhis2Event.dueDate, dhis2Event.eventDate]', function () {
         if (angular.isObject($scope.dhis2Event)) {
             if (!$scope.dhis2Event.dueDate) {
                 $scope.model.dueDateInvalid = true;
@@ -172,7 +171,7 @@ trackerCapture.controller('EventCreationController',
                 $scope.model.eventDateInvalid = rEventDate !== cEventDate;
             }
         }
-    });
+    });*/
 
     $scope.getCategoryOptions = function(){
         $scope.eventFetched = false;
@@ -193,10 +192,14 @@ trackerCapture.controller('EventCreationController',
     $scope.save = function () {
 
         $scope.getCategoryOptions();
+        
         //check for form validity
-        if ($scope.model.dueDateInvalid || $scope.model.eventDateInvalid) {
+        $scope.eventCreationForm.submitted = true;        
+        if( $scope.eventCreationForm.$invalid ){
             return false;
         }
+        
+        
         if($scope.isReferralEvent && !$scope.selectedSearchingOrgUnit){
             $scope.orgUnitError = true;
             return false;
@@ -252,7 +255,8 @@ trackerCapture.controller('EventCreationController',
                     headerText: 'event_creation_error',
                     bodyText: response.message
                 };
-
+                
+                $scope.eventCreationForm.submitted = false;
                 DialogService.showDialog({}, dialogOptions);
             }
         });
@@ -327,7 +331,6 @@ trackerCapture.controller('EventCreationController',
         return fieldUrl;
     }
     
-
     $scope.expandCollapse = function(orgUnit) {
         orgUnit.show = !orgUnit.show;
         if(!orgUnit.childrenLoaded){
@@ -341,5 +344,13 @@ trackerCapture.controller('EventCreationController',
     //end referral logic
     $scope.cancel = function () {
         $modalInstance.close();
+    };
+    
+    $scope.interacted = function(field) {        
+        var status = false;
+        if(field){            
+            status = $scope.eventCreationForm.submitted || field.$dirty;
+        }
+        return status;        
     };
 });

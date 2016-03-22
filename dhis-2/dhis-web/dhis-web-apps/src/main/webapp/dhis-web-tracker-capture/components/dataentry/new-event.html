@@ -27,13 +27,15 @@
                            placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                            ng-rquired="true" 
                            d2-date
+                           d2-date-validator 
                            ng-model="dhis2Event.dueDate">
-                    <span ng-if="model.dueDateInvalid" class="error">{{'required'| translate}}</span>
-                </div> 
-
+                    <!--<span ng-if="model.dueDateInvalid" class="error">{{'required'| translate}}</span>-->
+                    <div ng-messages="eventCreationForm.dueDate.$error" ng-if="interacted(eventCreationForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+                    </div>
+                </div>
             </div>
             <div class="row" ng-if="isNewEvent">
-                <div class="col-sm-3">{{model.selectedStage.excecutionDateLabel}}</div>
+                <div class="col-sm-3">{{model.selectedStage.excecutionDateLabel ? model.stage.excecutionDateLabel : 'report_date' | translate}}</div>
                 <div class="col-sm-9">
                     <input type="text" 
                            class="form-control" 
@@ -41,10 +43,13 @@
                            placeholder="{{dhis2CalendarFormat.keyDateFormat}}" 
                            ng-rquired="true" 
                            d2-date
+                           d2-date-validator 
                            max-date="0"
                            min-date=""
                            ng-model="dhis2Event.eventDate">
-                    <span ng-if="model.eventDateInvalid" class="error">{{'required'| translate}}</span>
+                    <!--<span ng-if="model.eventDateInvalid" class="error">{{'required'| translate}}</span>-->
+                    <div ng-messages="eventCreationForm.eventDate.$error" ng-if="interacted(eventCreationForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
+                    </div>
                 </div>           
             </div>
             <div class="row" ng-if="isReferralEvent">

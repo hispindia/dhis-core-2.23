@@ -36,7 +36,7 @@ trackerCapture.controller('DataEntryController',
     $scope.eventPagingEnd = $scope.eventPageSize;
     
     //Data entry form
-    $scope.outerForm = {};
+    $scope.outerDataEntryForm = {};
     $scope.displayCustomForm = false;
     $scope.currentElement = {};
     $scope.schedulingEnabled = false;
@@ -577,7 +577,8 @@ trackerCapture.controller('DataEntryController',
                     if (stage.openAfterEnrollment) {
                         $scope.currentStage = stage;
                     }
-          
+                    
+                    stage.excecutionDateLabel ? stage.excecutionDateLabel : $translate.instant('report_date');
                     angular.forEach(stage.programStageDataElements, function (prStDe) {
                         $scope.prStDes[prStDe.dataElement.id] = prStDe;
                         if(prStDe.allowProvidedElsewhere){
@@ -593,7 +594,7 @@ trackerCapture.controller('DataEntryController',
                         $scope.stagesCanBeShownAsTable = true;
                     }
                 });
-                var s = dateFilter(new Date(), 'YYYY-MM-dd');
+
                 $scope.programStages = orderByFilter($scope.programStages, '-sortOrder').reverse();
                 if (!$scope.currentStage) {
                     $scope.currentStage = $scope.programStages[0];
@@ -1498,8 +1499,8 @@ trackerCapture.controller('DataEntryController',
             $scope.longitudeSaved = false;
         }
 
-        if ((type === 'LAT' || type === 'LATLNG') && $scope.outerForm.latitude.$invalid ||
-                (type === 'LNG' || type === 'LATLNG') && $scope.outerForm.longitude.$invalid) {//invalid coordinate            
+        if ((type === 'LAT' || type === 'LATLNG') && $scope.outerDataEntryForm.latitude.$invalid ||
+                (type === 'LNG' || type === 'LATLNG') && $scope.outerDataEntryForm.longitude.$invalid) {//invalid coordinate            
             return;
         }
 
@@ -1749,11 +1750,11 @@ trackerCapture.controller('DataEntryController',
         return dhis2EventToUpdate;
     };
     
-    $scope.completeIncompleteEvent = function (inTableView, outerForm) {
+    $scope.completeIncompleteEvent = function (inTableView, outerDataEntryForm) {
         
         if($scope.currentEvent.status !== 'COMPLETED'){
-            outerForm.$setSubmitted();
-            if(outerForm.$invalid){
+            outerDataEntryForm.$setSubmitted();
+            if(outerDataEntryForm.$invalid){
                 var dialogOptions = {
                     headerText: 'error',
                     bodyText: 'form_invalid'
@@ -1781,11 +1782,11 @@ trackerCapture.controller('DataEntryController',
         else {//complete event            
             if(angular.isUndefined(inTableView) || inTableView === false || inTableView === null){
                 
-                if(!outerForm){
-                    outerForm = $scope.outerForm;
+                if(!outerDataEntryForm){
+                    outerDataEntryForm = $scope.outerDataEntryForm;
                 }
-                outerForm.$setSubmitted();
-                if(outerForm.$invalid){
+                outerDataEntryForm.$setSubmitted();
+                if(outerDataEntryForm.$invalid){
                     return;
                 }
             }
@@ -2266,7 +2267,7 @@ trackerCapture.controller('DataEntryController',
                 status = form.$submitted || field.$dirty;
             }
             else {
-                status = $scope.outerForm.$submitted || field.$dirty;
+                status = $scope.outerDataEntryForm.$submitted || field.$dirty;
             }            
         }
         return status;
