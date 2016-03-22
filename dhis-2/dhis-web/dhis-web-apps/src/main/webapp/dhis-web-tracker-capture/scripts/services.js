@@ -1710,7 +1710,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
     };
 })
 
-.service('EventUtils', function(DateUtils, CommonUtils, PeriodService, CalendarService, $translate, $filter, orderByFilter){
+.service('EventUtils', function(DateUtils, CommonUtils, PeriodService, CalendarService, CurrentSelection, $translate, $filter, orderByFilter){
     
     var getEventDueDate = function(eventsByStage, programStage, enrollment){       
         
@@ -1768,6 +1768,40 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             }
         }        
         return periods;
+    };
+    
+    var reconstructEvent = function(dhis2Event, programStage, optionSets){
+        var e = {dataValues: [], 
+                event: dhis2Event.event, 
+                program: dhis2Event.program, 
+                programStage: dhis2Event.programStage, 
+                orgUnit: dhis2Event.orgUnit, 
+                trackedEntityInstance: dhis2Event.trackedEntityInstance,
+                status: dhis2Event.status,
+                dueDate: DateUtils.formatFromUserToApi(dhis2Event.dueDate)
+            };
+
+        angular.forEach(programStage.programStageDataElements, function(prStDe){
+            if(dhis2Event[prStDe.dataElement.id]){                    
+                var value = CommonUtils.formatDataValue(dhis2Event.event, dhis2Event[prStDe.dataElement.id], prStDe.dataElement, optionSets, 'API');                    
+                var val = {value: value, dataElement: prStDe.dataElement.id};
+                if(dhis2Event.providedElsewhere[prStDe.dataElement.id]){
+                    val.providedElsewhere = dhis2Event.providedElsewhere[prStDe.dataElement.id];
+                }
+                e.dataValues.push(val);
+            }                                
+        });
+
+        if(programStage.captureCoordinates){
+            e.coordinate = {latitude: dhis2Event.coordinate.latitude ? dhis2Event.coordinate.latitude : 0,
+                            longitude: dhis2Event.coordinate.longitude ? dhis2Event.coordinate.longitude : 0};
+        }
+
+        if(dhis2Event.eventDate){
+            e.eventDate = DateUtils.formatFromUserToApi(dhis2Event.eventDate);
+        }
+
+        return e;
     };
     
     return {
@@ -1834,11 +1868,21 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 }               
             }            
         },
-        autoGenerateEvents: function(teiId, program, orgUnit, enrollment){
+        autoGenerateEvents: function(teiId, program, orgUnit, enrollment, availableEvent){
             var dhis2Events = {events: []};
             if(teiId && program && orgUnit && enrollment){
                 angular.forEach(program.programStages, function(stage){
-                    if(stage.autoGenerateEvent){
+                    if(availableEvent && availableEvent.programStage && availableEvent.programStage === stage.id){
+                        var ev = availableEvent;
+                        ev.dueDate = ev.dueDate ? ev.dueDate : ev.eventDate;
+                        ev.trackedEntityInstance = teiId;
+                        ev.enrollment = enrollment.enrollment;
+                        delete ev.event;
+                        ev = reconstructEvent(ev, stage, CurrentSelection.getOptionSets());
+                        dhis2Events.events.push(ev);
+                    }
+                    
+                    if(stage.autoGenerateEvent && (!availableEvent || availableEvent && availableEvent.programStage && availableEvent.programStage !== stage.id)){
                         var newEvent = {
                                 trackedEntityInstance: teiId,
                                 program: program.id,
@@ -1848,7 +1892,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                             };
                         if(stage.periodType){
                             var periods = getEventDuePeriod(null, stage, enrollment);
-                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods[0].endDate);;
+                            newEvent.dueDate = DateUtils.formatFromUserToApi(periods[0].endDate);
                             newEvent.eventDate = newEvent.dueDate;
                         }
                         else{
@@ -1866,46 +1910,15 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 
                         newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
                         
-                        dhis2Events.events.push(newEvent);    
+                        dhis2Events.events.push(newEvent);
                     }
                 });
             }
             
            return dhis2Events;
         },
-        reconstruct: function(dhis2Event, programStage, optionSets){
-            
-            var e = {dataValues: [], 
-                    event: dhis2Event.event, 
-                    program: dhis2Event.program, 
-                    programStage: dhis2Event.programStage, 
-                    orgUnit: dhis2Event.orgUnit, 
-                    trackedEntityInstance: dhis2Event.trackedEntityInstance,
-                    status: dhis2Event.status,
-                    dueDate: DateUtils.formatFromUserToApi(dhis2Event.dueDate)
-                };
-                
-            angular.forEach(programStage.programStageDataElements, function(prStDe){
-                if(dhis2Event[prStDe.dataElement.id]){                    
-                    var value = CommonUtils.formatDataValue(dhis2Event.event, dhis2Event[prStDe.dataElement.id], prStDe.dataElement, optionSets, 'API');                    
-                    var val = {value: value, dataElement: prStDe.dataElement.id};
-                    if(dhis2Event.providedElsewhere[prStDe.dataElement.id]){
-                        val.providedElsewhere = dhis2Event.providedElsewhere[prStDe.dataElement.id];
-                    }
-                    e.dataValues.push(val);
-                }                                
-            });
-            
-            if(programStage.captureCoordinates){
-                e.coordinate = {latitude: dhis2Event.coordinate.latitude ? dhis2Event.coordinate.latitude : 0,
-                                longitude: dhis2Event.coordinate.longitude ? dhis2Event.coordinate.longitude : 0};
-            }
-            
-            if(dhis2Event.eventDate){
-                e.eventDate = DateUtils.formatFromUserToApi(dhis2Event.eventDate);
-            }
-            
-            return e;
+        reconstruct: function(dhis2Event, programStage, optionSets){            
+            return reconstructEvent(dhis2Event, programStage, optionSets);            
         },
         processEvent: function(event, stage, optionSets, prStDes){
             event.providedElsewhere = {};

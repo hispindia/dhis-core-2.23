@@ -672,7 +672,7 @@ trackerCapture.controller('TEIAddController',
                         if(en.reference && en.status === 'SUCCESS'){
                             enrollment.enrollment = en.reference;
                             $scope.selectedEnrollment = enrollment;
-                            var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgramForRelative, $scope.selectedOrgUnit, enrollment);
+                            var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgramForRelative, $scope.selectedOrgUnit, enrollment, null);
                             if(dhis2Events.events.length > 0){
                                 DHIS2EventFactory.create(dhis2Events).then(function(){                                    
                                 });

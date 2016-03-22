@@ -83,7 +83,7 @@
     
     <!-- data entry form starts -->
     <form name="outerDataEntryForm" novalidate>
-        <div ng-if="selectedProgram.programStages.length === 1 && registrationMode === 'REGISTRATION'">            
+        <div ng-if="registrationAndDataEntry">            
             <div class="section-label section-spacing vertical-spacing">
                 {{'data_entry'| translate}}
             </div>

@@ -37,6 +37,7 @@ trackerCapture.controller('RegistrationController',
     $scope.hiddenSections = [];
     $scope.currentEvent = null;
     $scope.prStDes = null;
+    $scope.registrationAndDataEntry = false;
     
     
     $scope.helpTexts = {};
@@ -143,10 +144,15 @@ trackerCapture.controller('RegistrationController',
                 }
                 
                 if( $scope.selectedProgram.programStages && $scope.selectedProgram.programStages.length === 1 && $scope.registrationMode === 'REGISTRATION'){
+                    $scope.registrationAndDataEntry = true;
                     $scope.prStDes = [];
                     $scope.currentStage = $scope.selectedProgram.programStages[0];
                     $scope.currentEvent.event = 'SINGLE_EVENT';
-                    $scope.currentEvent.enrollmentStatus = 'ACTIVE';                    
+                    $scope.currentEvent.providedElsewhere = {};
+                    $scope.currentEvent.orgUnit = $scope.selectedOrgUnit.id;
+                    $scope.currentEvent.program = $scope.selectedProgram.id;
+                    $scope.currentEvent.programStage = $scope.currentStage.id;
+                    $scope.currentEvent.enrollmentStatus = $scope.currentEvent.status = 'ACTIVE';
                     $scope.currentEvent.excecutionDateLabel = $scope.currentStage.excecutionDateLabel;     
                     $rootScope.ruleeffects[$scope.currentEvent.event] = {};
                     $scope.selectedEnrollment.status = 'ACTIVE';
@@ -229,7 +235,7 @@ trackerCapture.controller('RegistrationController',
                             if(en.reference && en.status === 'SUCCESS'){                                
                                 enrollment.enrollment = en.reference;
                                 $scope.selectedEnrollment = enrollment;
-                                var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment);
+                                var dhis2Events = EventUtils.autoGenerateEvents($scope.tei.trackedEntityInstance, $scope.selectedProgram, $scope.selectedOrgUnit, enrollment, $scope.currentEvent);
                                 if(dhis2Events.events.length > 0){
                                     DHIS2EventFactory.create(dhis2Events).then(function(){
                                         notifyRegistrtaionCompletion(destination, $scope.tei.trackedEntityInstance);
@@ -275,7 +281,14 @@ trackerCapture.controller('RegistrationController',
         $scope.outerForm.submitted = true;        
         if( $scope.outerForm.$invalid ){
             return false;
-        }                   
+        }           
+        
+        if( $scope.registrationAndDataEntry ){
+            $scope.outerDataEntryForm.submitted = true;        
+            if( $scope.outerDataEntryForm.$invalid ){
+                return false;
+            }
+        }         
         
         //form is valid, continue the registration
         //get selected entity        
@@ -299,7 +312,8 @@ trackerCapture.controller('RegistrationController',
                 };
             DialogService.showDialog({}, dialogOptions);
             return;
-        }        
+        } 
+
         performRegistration(destination);
     }; 
     
