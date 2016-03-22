@@ -7,9 +7,10 @@ function performMaintenance() {
   var createSqlViews = $("#createSqlViews").is(":checked");
   var updateCategoryOptionCombos = $("#updateCategoryOptionCombos").is(":checked");
   var updateOrganisationUnitPaths = $("#updateOrganisationUnitPaths").is(":checked");
+  var clearApplicationCache = $("#clearApplicationCache").is(":checked");
 
-  if( clearAnalytics || zeroValues || 
-    prunePeriods || removeExpiredInvitations || dropSqlViews || createSqlViews || updateCategoryOptionCombos || updateOrganisationUnitPaths ) {
+  if( clearAnalytics || zeroValues || prunePeriods || removeExpiredInvitations || 
+    dropSqlViews || createSqlViews || updateCategoryOptionCombos || updateOrganisationUnitPaths || clearApplicationCache ) {
 
     setHeaderWaitMessage(i18n_performing_maintenance);
 
@@ -20,7 +21,8 @@ function performMaintenance() {
       "&sqlViewsDrop=" + dropSqlViews +
       "&sqlViewsCreate=" + createSqlViews +
       "&categoryOptionComboUpdate=" + updateCategoryOptionCombos +
-      "&ouPathsUpdate=" + updateOrganisationUnitPaths;
+      "&ouPathsUpdate=" + updateOrganisationUnitPaths +
+      "&cacheClear=" + clearApplicationCache;
 
     $.ajax({
       type: "post",
