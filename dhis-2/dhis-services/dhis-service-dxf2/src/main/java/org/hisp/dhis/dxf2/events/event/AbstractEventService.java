@@ -1037,11 +1037,13 @@ public abstract class AbstractEventService
         {
             IdScheme idScheme = importOptions.getIdSchemes().getCategoryOptionIdScheme();
             
-            coc = inputUtils.getAttributeOptionCombo( program.getCategoryCombo(), event.getAttributeCategoryOptions(), idScheme );
-
-            if ( coc == null )
+            try
             {
-                importSummary.getConflicts().add( new ImportConflict( "Invalid attribute option combo for option names.", event.getAttributeCategoryOptions() ) );
+                coc = inputUtils.getAttributeOptionCombo( program.getCategoryCombo(), event.getAttributeCategoryOptions(), idScheme );
+            }
+            catch ( IllegalQueryException ex )
+            {
+                importSummary.getConflicts().add( new ImportConflict( ex.getMessage(), event.getAttributeCategoryOptions() ) );
             }
         }
         else
