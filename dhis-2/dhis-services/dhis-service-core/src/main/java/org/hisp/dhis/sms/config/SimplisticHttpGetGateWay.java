@@ -127,7 +127,10 @@ public class SimplisticHttpGetGateWay
                 return false;
             }
 
-            reader.close();
+            if ( reader != null )
+            {
+                reader.close();
+            }
 
         }
         catch ( IOException e )
@@ -137,12 +140,15 @@ public class SimplisticHttpGetGateWay
         }
         finally
         {
-            reader.close();
+            if ( reader != null )
+            {
+                reader.close();
+            }
         }
 
         return true;
     }
-    
+
     private String getGatewayId()
     {
         return null;
