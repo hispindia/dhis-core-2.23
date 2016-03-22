@@ -178,7 +178,7 @@ public class DefaultOutboundSmsTransportService
                 sms.setStatus( OutboundSmsStatus.SENT );
                 saveMessage( sms );
 
-                log.info( "Following Message Sent:" + sms );
+                log.info( "Message sent: " + sms );
             }
 
             return GatewayResponse.SENT;
@@ -190,8 +190,8 @@ public class DefaultOutboundSmsTransportService
                 sms.setStatus( OutboundSmsStatus.ERROR );
                 saveMessage( sms );
 
-                log.info( "Following Message Failed:" + sms );
-                log.info( "Failure cause : " + gatewayResponse );
+                log.info( "Message failed: " + sms );
+                log.info( "Failure cause: " + gatewayResponse );
             }
 
             return gatewayResponse;
