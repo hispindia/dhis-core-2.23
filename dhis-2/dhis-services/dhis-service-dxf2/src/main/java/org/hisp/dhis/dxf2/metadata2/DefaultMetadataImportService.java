@@ -37,7 +37,6 @@ import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleService;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleValidation;
-import org.hisp.dhis.feedback.Stats;
 import org.hisp.dhis.feedback.TypeReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -80,23 +79,14 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundleValidation validation = objectBundleService.validate( bundle );
         report.addTypeReports( validation.getTypeReportMap() );
 
-        if ( !(!validation.getTypeReportMap().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
+        if ( !(!validation.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
         {
             Map<Class<?>, TypeReport> typeReports = objectBundleService.commit( bundle );
             report.addTypeReports( typeReports );
 
             if ( !report.getErrorReports().isEmpty() )
             {
-                Stats stats = report.getStats();
-
-                if ( stats.getCreated() > 0 || stats.getUpdated() > 0 || stats.getDeleted() > 0 )
-                {
-                    report.setStatus( Status.WARNING );
-                }
-                else
-                {
-                    report.setStatus( Status.ERROR );
-                }
+                report.setStatus( Status.WARNING );
             }
         }
         else
