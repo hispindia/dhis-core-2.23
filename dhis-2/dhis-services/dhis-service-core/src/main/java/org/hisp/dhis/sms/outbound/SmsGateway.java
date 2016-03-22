@@ -31,35 +31,12 @@ package org.hisp.dhis.sms.outbound;
 import java.util.List;
 
 import org.hisp.dhis.sms.config.SmsGatewayConfig;
-import org.springframework.http.HttpStatus;
-
-import com.google.common.collect.ImmutableMap;
 
 /**
- * Zubair <rajazubair.asghar@gmail.com>
+ * @author Zubair <rajazubair.asghar@gmail.com>
  */
-
 public interface SmsGateway
 {
-    ImmutableMap<HttpStatus, GatewayResponse> CLICKATELL_GATEWAY_RESPONSE_MAP = new ImmutableMap.Builder<HttpStatus, GatewayResponse>()
-        .put( HttpStatus.OK, GatewayResponse.RESULT_CODE_200 )
-        .put( HttpStatus.ACCEPTED, GatewayResponse.RESULT_CODE_202 )
-        .put( HttpStatus.MULTI_STATUS, GatewayResponse.RESULT_CODE_207 )
-        .put( HttpStatus.BAD_REQUEST, GatewayResponse.RESULT_CODE_400 )
-        .put( HttpStatus.UNAUTHORIZED, GatewayResponse.RESULT_CODE_401 )
-        .put( HttpStatus.PAYMENT_REQUIRED, GatewayResponse.RESULT_CODE_402 )
-        .put( HttpStatus.NOT_FOUND, GatewayResponse.RESULT_CODE_404 )
-        .put( HttpStatus.METHOD_NOT_ALLOWED, GatewayResponse.RESULT_CODE_405 )
-        .put( HttpStatus.GONE, GatewayResponse.RESULT_CODE_410 )
-        .put( HttpStatus.SERVICE_UNAVAILABLE, GatewayResponse.RESULT_CODE_503 ).build();
-
-    ImmutableMap<String, GatewayResponse> BULKSMS_GATEWAY_RESPONSE_MAP = new ImmutableMap.Builder<String, GatewayResponse>()
-        .put( "0", GatewayResponse.RESULT_CODE_0 ).put( "1", GatewayResponse.RESULT_CODE_1 )
-        .put( "22", GatewayResponse.RESULT_CODE_22 ).put( "23", GatewayResponse.RESULT_CODE_23 )
-        .put( "24", GatewayResponse.RESULT_CODE_24 ).put( "25", GatewayResponse.RESULT_CODE_25 )
-        .put( "26", GatewayResponse.RESULT_CODE_26 ).put( "27", GatewayResponse.RESULT_CODE_27 )
-        .put( "40", GatewayResponse.RESULT_CODE_40 ).build();
-
     GatewayResponse send( OutboundSms sms, SmsGatewayConfig gatewayConfig );
 
     GatewayResponse send( List<OutboundSms> sms, SmsGatewayConfig gatewayConfig );

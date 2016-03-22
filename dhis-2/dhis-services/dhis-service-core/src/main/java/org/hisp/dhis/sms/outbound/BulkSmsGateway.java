@@ -46,9 +46,8 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
- * Zubair <rajazubair.asghar@gmail.com>
+ * @author Zubair <rajazubair.asghar@gmail.com>
  */
-
 public class BulkSmsGateway
     implements SmsGateway
 {
@@ -154,7 +153,7 @@ public class BulkSmsGateway
 
     private GatewayResponse responseHandler( String response )
     {
-        return BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
+        return BulkSmsGatewayConfig.BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
     }
 
     private String getRecipients( Set<String> recipients )

@@ -37,6 +37,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 
 /**
  * Super class for gateway configurations
+ * 
+ * @author Zubair <rajazubair.asghar@gmail.com>
  */
 @SuppressWarnings( "serial" )
 @JacksonXmlRootElement( localName = "smsgatewayconfig", namespace = DxfNamespaces.DXF_2_0 )

@@ -46,22 +46,32 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-/**
- * Zubair <rajazubair.asghar@gmail.com>
- */
+import com.google.common.collect.ImmutableMap;
 
+/**
+ * @author Zubair <rajazubair.asghar@gmail.com>
+ */
 public class ClickatellGateway
     implements SmsGateway
 {
     private static final Log log = LogFactory.getLog( ClickatellGateway.class );
 
     private static final String CONTENT_TYPE = "Content-Type";
-
     private static final String ACCEPT = "Accept";
-
     private static final String AUTHORIZATION = "Authorization";
-
     private static final String PROTOCOL_VERSION = "X-Version";
+
+    private static final ImmutableMap<HttpStatus, GatewayResponse> CLICKATELL_GATEWAY_RESPONSE_MAP = new ImmutableMap.Builder<HttpStatus, GatewayResponse>()
+        .put( HttpStatus.OK, GatewayResponse.RESULT_CODE_200 )
+        .put( HttpStatus.ACCEPTED, GatewayResponse.RESULT_CODE_202 )
+        .put( HttpStatus.MULTI_STATUS, GatewayResponse.RESULT_CODE_207 )
+        .put( HttpStatus.BAD_REQUEST, GatewayResponse.RESULT_CODE_400 )
+        .put( HttpStatus.UNAUTHORIZED, GatewayResponse.RESULT_CODE_401 )
+        .put( HttpStatus.PAYMENT_REQUIRED, GatewayResponse.RESULT_CODE_402 )
+        .put( HttpStatus.NOT_FOUND, GatewayResponse.RESULT_CODE_404 )
+        .put( HttpStatus.METHOD_NOT_ALLOWED, GatewayResponse.RESULT_CODE_405 )
+        .put( HttpStatus.GONE, GatewayResponse.RESULT_CODE_410 )
+        .put( HttpStatus.SERVICE_UNAVAILABLE, GatewayResponse.RESULT_CODE_503 ).build();
 
     // -------------------------------------------------------------------------
     // Dependencies
