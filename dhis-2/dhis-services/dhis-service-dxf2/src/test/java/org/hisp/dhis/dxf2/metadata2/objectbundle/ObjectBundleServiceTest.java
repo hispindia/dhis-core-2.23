@@ -663,6 +663,50 @@ public class ObjectBundleServiceTest
     }
 
     @Test
+    public void testCreateAndUpdateDataSetsWithUgaUID() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        metadata = renderService.fromMetadata( new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
+
+        params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.UPDATE );
+        params.setObjects( metadata );
+
+        bundle = objectBundleService.create( params );
+        validate = objectBundleService.validate( bundle );
+        assertTrue( validate.getErrorReports().isEmpty() );
+        objectBundleService.commit( bundle );
+
+        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
+        List<DataElement> dataElements = manager.getAll( DataElement.class );
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        List<User> users = manager.getAll( User.class );
+        List<UserGroup> userGroups = manager.getAll( UserGroup.class );
+
+        assertEquals( 1, organisationUnits.size() );
+        assertEquals( 2, dataElements.size() );
+        assertEquals( 1, userRoles.size() );
+        assertEquals( 1, users.size() );
+        assertEquals( 2, userGroups.size() );
+
+        assertEquals( 1, dataElements.get( 0 ).getUserGroupAccesses().size() );
+        assertEquals( 1, dataElements.get( 1 ).getUserGroupAccesses().size() );
+    }
+
+    @Test
     public void testUpdateDataElementsUID() throws IOException
     {
         defaultSetup();
