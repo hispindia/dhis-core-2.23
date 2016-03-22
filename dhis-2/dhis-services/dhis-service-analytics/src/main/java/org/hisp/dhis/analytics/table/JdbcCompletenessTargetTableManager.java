@@ -157,10 +157,10 @@ public class JdbcCompletenessTargetTableManager
     {
         List<AnalyticsTableColumn> columns = new ArrayList<>();
 
-        Collection<OrganisationUnitGroupSet> orgUnitGroupSets = 
+        List<OrganisationUnitGroupSet> orgUnitGroupSets = 
             idObjectManager.getDataDimensionsNoAcl( OrganisationUnitGroupSet.class );
         
-        Collection<OrganisationUnitLevel> levels =
+        List<OrganisationUnitLevel> levels =
             organisationUnitService.getFilledOrganisationUnitLevels();
         
         for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )

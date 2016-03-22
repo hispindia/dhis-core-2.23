@@ -156,7 +156,7 @@ public class JdbcOrgUnitTargetTableManager
     {
         List<AnalyticsTableColumn> columns = new ArrayList<>();
 
-        Collection<OrganisationUnitLevel> levels =
+        List<OrganisationUnitLevel> levels =
             organisationUnitService.getFilledOrganisationUnitLevels();
                 
         for ( OrganisationUnitLevel level : levels )

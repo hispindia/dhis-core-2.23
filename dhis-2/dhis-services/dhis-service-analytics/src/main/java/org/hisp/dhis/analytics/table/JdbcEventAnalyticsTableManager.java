@@ -228,30 +228,31 @@ public class JdbcEventAnalyticsTableManager
         final String numericClause = " and value " + statementBuilder.getRegexpMatch() + " '" + NUMERIC_LENIENT_REGEXP + "'";
         final String dateClause = " and value " + statementBuilder.getRegexpMatch() + " '" + DATE_REGEXP + "'";
         
-        //TODO dateClause regexp
+        //TODO dateClause regular expression
 
         List<AnalyticsTableColumn> columns = new ArrayList<>();
 
-        Collection<OrganisationUnitGroupSet> orgUnitGroupSets = 
-            idObjectManager.getDataDimensionsNoAcl( OrganisationUnitGroupSet.class );
-        
-        Collection<OrganisationUnitLevel> levels = 
+        if ( table.getProgram().hasCategoryCombo() )
+        {
+            List<OrganisationUnitGroupSet> orgUnitGroupSets = 
+                idObjectManager.getDataDimensionsNoAcl( OrganisationUnitGroupSet.class );
+            
+            for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )
+            {
+                columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) ) );
+            }
+        }
+
+        List<OrganisationUnitLevel> levels = 
             organisationUnitService.getFilledOrganisationUnitLevels();
 
-        List<PeriodType> periodTypes = PeriodType.getAvailablePeriodTypes();
-
-        for ( OrganisationUnitGroupSet groupSet : orgUnitGroupSets )
-        {
-            columns.add( new AnalyticsTableColumn( quote( groupSet.getUid() ), "character(11)", "ougs." + quote( groupSet.getUid() ) ) );
-        }
-        
         for ( OrganisationUnitLevel level : levels )
         {
             String column = quote( PREFIX_ORGUNITLEVEL + level.getLevel() );
             columns.add( new AnalyticsTableColumn( column, "character(11)", "ous." + column ) );
         }
 
-        for ( PeriodType periodType : periodTypes )
+        for ( PeriodType periodType : PeriodType.getAvailablePeriodTypes() )
         {
             String column = quote( periodType.getName().toLowerCase() );
             columns.add( new AnalyticsTableColumn( column, "character varying(15)", "dps." + column ) );
