@@ -449,8 +449,7 @@ trackerCapture.controller('RegistrationController',
         });
     };
     
-    $scope.saveDatavalue = function () {
-        //TrackerRulesExecutionService.executeRules($scope.allProgramRules, $scope.currentEvent, {all: [$scope.currentEvent], byStage: [$scope.currentStage.id][$scope.currentEvent]}, $scope.prStDes, $scope.selectedTei, $scope.selectedEnrollment, flag);      
+    $scope.saveDatavalue = function () {        
         $scope.executeRules();
     };    
 });
