@@ -97,7 +97,7 @@ public class IdSchemes
 
     public IdScheme getCategoryOptionIdScheme()
     {
-        return categoryOptionIdScheme;
+        return getScheme( categoryOptionIdScheme );
     }
 
     public IdSchemes setCategoryOptionIdScheme( String idScheme )
