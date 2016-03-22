@@ -30,6 +30,7 @@ package org.hisp.dhis.dxf2.metadata2;
 
 import com.google.common.base.Enums;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.dxf2.common.Status;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
@@ -65,6 +66,7 @@ public class DefaultMetadataImportService implements MetadataImportService
     public ImportReport importMetadata( MetadataImportParams params )
     {
         ImportReport report = new ImportReport();
+        report.setStatus( Status.OK );
 
         if ( params.getUser() == null )
         {
@@ -81,6 +83,15 @@ public class DefaultMetadataImportService implements MetadataImportService
         {
             Map<Class<?>, TypeReport> typeReports = objectBundleService.commit( bundle );
             report.addTypeReports( typeReports );
+
+            if ( !report.getErrorReports().isEmpty() )
+            {
+                report.setStatus( Status.WARNING );
+            }
+        }
+        else
+        {
+            report.setStatus( Status.ERROR );
         }
 
         return report;
