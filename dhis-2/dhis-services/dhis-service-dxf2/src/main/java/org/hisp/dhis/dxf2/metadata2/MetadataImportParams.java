@@ -1,5 +1,7 @@
 package org.hisp.dhis.dxf2.metadata2;
 
+import com.google.common.base.MoreObjects;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -28,7 +30,6 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import com.google.common.base.Objects;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
@@ -215,7 +216,7 @@ public class MetadataImportParams
     @Override
     public String toString()
     {
-        return Objects.toStringHelper( this )
+        return MoreObjects.toStringHelper( this )
             .add( "user", user )
             .add( "objectBundleMode", objectBundleMode )
             .add( "preheatIdentifier", preheatIdentifier )

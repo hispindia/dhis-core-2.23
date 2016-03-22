@@ -53,7 +53,6 @@ import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
-import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.preheat.PreheatErrorReport;
 import org.hisp.dhis.preheat.PreheatIdentifier;
@@ -87,9 +86,6 @@ public class ObjectBundleServiceTest
 
     @Autowired
     private IdentifiableObjectManager manager;
-
-    @Autowired
-    private PeriodService periodService;
 
     @Autowired
     private RenderService _renderService;
@@ -632,7 +628,7 @@ public class ObjectBundleServiceTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidation validation = objectBundleService.validate( bundle );
+        objectBundleService.validate( bundle );
     }
 
     @Test

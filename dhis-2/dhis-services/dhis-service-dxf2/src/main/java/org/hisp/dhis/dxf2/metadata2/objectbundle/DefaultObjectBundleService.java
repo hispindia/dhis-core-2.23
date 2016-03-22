@@ -197,7 +197,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
-    @SuppressWarnings( "unchecked" )
     public Map<Class<?>, TypeReport> commit( ObjectBundle bundle )
     {
         Map<Class<?>, TypeReport> typeReports = new HashMap<>();

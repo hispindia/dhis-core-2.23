@@ -32,7 +32,6 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.validation.ValidationRule;
-import org.springframework.stereotype.Component;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
