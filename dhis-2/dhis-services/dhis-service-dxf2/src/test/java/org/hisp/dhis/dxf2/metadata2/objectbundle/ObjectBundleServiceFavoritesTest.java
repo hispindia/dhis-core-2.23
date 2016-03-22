@@ -34,6 +34,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.render.RenderFormat;
@@ -87,7 +88,7 @@ public class ObjectBundleServiceFavoritesTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        ObjectBundleValidationReport validate = objectBundleService.validate( bundle );
         assertTrue( validate.getErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
@@ -114,7 +115,7 @@ public class ObjectBundleServiceFavoritesTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        ObjectBundleValidationReport validate = objectBundleService.validate( bundle );
         assertTrue( validate.getErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 
@@ -146,7 +147,7 @@ public class ObjectBundleServiceFavoritesTest
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidation validate = objectBundleService.validate( bundle );
+        ObjectBundleValidationReport validate = objectBundleService.validate( bundle );
         assertTrue( validate.getErrorReports().isEmpty() );
         objectBundleService.commit( bundle );
 

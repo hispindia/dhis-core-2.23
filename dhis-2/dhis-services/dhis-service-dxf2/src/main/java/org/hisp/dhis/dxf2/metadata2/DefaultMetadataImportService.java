@@ -36,8 +36,8 @@ import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleParams;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleService;
-import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleValidation;
-import org.hisp.dhis.feedback.TypeReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleCommitReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.preheat.PreheatIdentifier;
 import org.hisp.dhis.preheat.PreheatMode;
@@ -76,13 +76,13 @@ public class DefaultMetadataImportService implements MetadataImportService
         ObjectBundleParams bundleParams = params.toObjectBundleParams();
         ObjectBundle bundle = objectBundleService.create( bundleParams );
 
-        ObjectBundleValidation validation = objectBundleService.validate( bundle );
-        report.addTypeReports( validation.getTypeReportMap() );
+        ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
+        report.addTypeReports( validationReport.getTypeReportMap() );
 
-        if ( !(!validation.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
+        if ( !(!validationReport.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
         {
-            Map<Class<?>, TypeReport> typeReports = objectBundleService.commit( bundle );
-            report.addTypeReports( typeReports );
+            ObjectBundleCommitReport commitReport = objectBundleService.commit( bundle );
+            report.addTypeReports( commitReport.getTypeReportMap() );
 
             if ( !report.getErrorReports().isEmpty() )
             {

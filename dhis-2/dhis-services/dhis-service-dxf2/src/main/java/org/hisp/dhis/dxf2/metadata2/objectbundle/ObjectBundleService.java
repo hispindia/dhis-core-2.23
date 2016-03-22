@@ -28,6 +28,8 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleCommitReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
 import org.hisp.dhis.feedback.TypeReport;
 
 import java.util.Map;
@@ -50,12 +52,12 @@ public interface ObjectBundleService
      *
      * @param bundle Bundle to validate
      */
-    ObjectBundleValidation validate( ObjectBundle bundle );
+    ObjectBundleValidationReport validate( ObjectBundle bundle );
 
     /**
      * Commits objects from bundle into persistence store if bundle mode COMMIT is enabled.
      *
      * @param bundle ObjectBundle to commit.
      */
-    Map<Class<?>, TypeReport> commit( ObjectBundle bundle );
+    ObjectBundleCommitReport commit( ObjectBundle bundle );
 }

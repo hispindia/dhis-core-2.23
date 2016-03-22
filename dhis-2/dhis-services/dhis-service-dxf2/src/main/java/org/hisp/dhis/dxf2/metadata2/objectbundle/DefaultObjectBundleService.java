@@ -38,6 +38,8 @@ import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dbms.DbmsManager;
 import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.dxf2.metadata2.FlushMode;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleCommitReport;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.hooks.ObjectBundleHook;
 import org.hisp.dhis.feedback.ErrorCode;
 import org.hisp.dhis.feedback.ErrorReport;
@@ -119,9 +121,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
-    public ObjectBundleValidation validate( ObjectBundle bundle )
+    public ObjectBundleValidationReport validate( ObjectBundle bundle )
     {
-        ObjectBundleValidation validation = new ObjectBundleValidation();
+        ObjectBundleValidationReport validation = new ObjectBundleValidationReport();
 
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
 
@@ -176,7 +178,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         return validation;
     }
 
-    private void validateAtomicity( ObjectBundle bundle, ObjectBundleValidation validation )
+    private void validateAtomicity( ObjectBundle bundle, ObjectBundleValidationReport validation )
     {
         if ( AtomicMode.NONE == bundle.getAtomicMode() )
         {
@@ -197,13 +199,14 @@ public class DefaultObjectBundleService implements ObjectBundleService
     }
 
     @Override
-    public Map<Class<?>, TypeReport> commit( ObjectBundle bundle )
+    public ObjectBundleCommitReport commit( ObjectBundle bundle )
     {
         Map<Class<?>, TypeReport> typeReports = new HashMap<>();
+        ObjectBundleCommitReport commitReport = new ObjectBundleCommitReport( typeReports );
 
         if ( ObjectBundleMode.VALIDATE == bundle.getObjectBundleMode() )
         {
-            return typeReports; // skip if validate only
+            return commitReport; // skip if validate only
         }
 
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
@@ -246,7 +249,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         dbmsManager.clearSession();
         bundle.setObjectBundleStatus( ObjectBundleStatus.COMMITTED );
 
-        return typeReports;
+        return commitReport;
     }
 
     //-----------------------------------------------------------------------------------
