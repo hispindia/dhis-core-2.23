@@ -13,20 +13,19 @@ function performMaintenance() {
 
     setHeaderWaitMessage(i18n_performing_maintenance);
 
-    var params = "clearAnalytics=" + clearAnalytics +
-      "&zeroValues=" + zeroValues +
-      "&prunePeriods=" + prunePeriods +
-      "&removeExpiredInvitations=" + removeExpiredInvitations +
-      "&dropSqlViews=" + dropSqlViews +
-      "&createSqlViews=" + createSqlViews +
-      "&updateCategoryOptionCombos=" + updateCategoryOptionCombos +
-      "&updateOrganisationUnitPaths=" + updateOrganisationUnitPaths;
+    var params = "analyticsTableClear=" + clearAnalytics +
+      "&zeroDataValueRemoval=" + zeroValues +
+      "&periodPruning=" + prunePeriods +
+      "&expiredInvitationsClear=" + removeExpiredInvitations +
+      "&sqlViewsDrop=" + dropSqlViews +
+      "&sqlViewsCreate=" + createSqlViews +
+      "&categoryOptionComboUpdate=" + updateCategoryOptionCombos +
+      "&ouPathsUpdate=" + updateOrganisationUnitPaths;
 
     $.ajax({
-      type: "POST",
-      url: "performMaintenance.action",
+      type: "post",
+      url: "../api/maintenance",
       data: params,
-      dataType: "xml",
       success: function(result) {
         setHeaderDelayMessage(i18n_maintenance_performed);
       }

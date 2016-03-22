@@ -56,6 +56,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -141,26 +142,6 @@ public class MaintenanceController
         maintenanceService.prunePeriods();
     }
 
-    @RequestMapping( value = "/dataPruning/organisationUnits/{uid}", method = { RequestMethod.PUT, RequestMethod.POST } )
-    @PreAuthorize( "hasRole('ALL')" )
-    public void pruneDataByOrganisationUnit( @PathVariable String uid, HttpServletResponse response )
-        throws Exception
-    {
-        OrganisationUnit organisationUnit = organisationUnitService.getOrganisationUnit( uid );
-
-        if ( organisationUnit == null )
-        {
-            webMessageService.sendJson( WebMessageUtils.conflict( "Organisation unit does not exist: " + uid ), response );
-            return;
-        }
-
-        boolean result = maintenanceService.pruneData( organisationUnit );
-
-        WebMessage message = result ? WebMessageUtils.ok( "Data was pruned successfully" ) : WebMessageUtils.conflict( "Data could not be pruned" );
-
-        webMessageService.sendJson( message, response );
-    }
-
     @RequestMapping( value = "/zeroDataValueRemoval", method = { RequestMethod.PUT, RequestMethod.POST } )
     @PreAuthorize( "hasRole('ALL') or hasRole('F_PERFORM_MAINTENANCE')" )
     public void deleteZeroDataValues()
@@ -195,6 +176,26 @@ public class MaintenanceController
     {
         cacheManager.clearCache();
         partitionManager.clearCaches();
+    }
+
+    @RequestMapping( value = "/dataPruning/organisationUnits/{uid}", method = { RequestMethod.PUT, RequestMethod.POST } )
+    @PreAuthorize( "hasRole('ALL')" )
+    public void pruneDataByOrganisationUnit( @PathVariable String uid, HttpServletResponse response )
+        throws Exception
+    {
+        OrganisationUnit organisationUnit = organisationUnitService.getOrganisationUnit( uid );
+
+        if ( organisationUnit == null )
+        {
+            webMessageService.sendJson( WebMessageUtils.conflict( "Organisation unit does not exist: " + uid ), response );
+            return;
+        }
+
+        boolean result = maintenanceService.pruneData( organisationUnit );
+
+        WebMessage message = result ? WebMessageUtils.ok( "Data was pruned successfully" ) : WebMessageUtils.conflict( "Data could not be pruned" );
+
+        webMessageService.sendJson( message, response );
     }
 
     @RequestMapping( value = "/metadataValidation", method = { RequestMethod.PUT, RequestMethod.POST } )
@@ -233,5 +234,64 @@ public class MaintenanceController
 
         response.setContentType( MediaType.APPLICATION_JSON_VALUE );
         renderService.toJson( response.getOutputStream(), output );
+    }
+
+    @RequestMapping( method = { RequestMethod.PUT, RequestMethod.POST } )
+    @PreAuthorize( "hasRole('ALL') or hasRole('F_PERFORM_MAINTENANCE')" )
+    public void performMaintenance( 
+        @RequestParam( required = false ) boolean analyticsTableClear,
+        @RequestParam( required = false ) boolean expiredInvitationsClear,
+        @RequestParam( required = false ) boolean ouPathsUpdate,
+        @RequestParam( required = false ) boolean periodPruning,
+        @RequestParam( required = false ) boolean zeroDataValueRemoval,
+        @RequestParam( required = false ) boolean sqlViewsDrop,
+        @RequestParam( required = false ) boolean sqlViewsCreate,
+        @RequestParam( required = false ) boolean categoryOptionComboUpdate,
+        @RequestParam( required = false ) boolean cacheClear )
+    {
+        if ( analyticsTableClear )
+        {
+            clearAnalyticsTables();
+        }
+        
+        if ( expiredInvitationsClear )
+        {
+            clearExpiredInvitations();
+        }
+        
+        if ( ouPathsUpdate )
+        {
+            forceUpdatePaths();
+        }
+        
+        if ( periodPruning )
+        {
+            prunePeriods();
+        }
+        
+        if ( zeroDataValueRemoval )
+        {
+            deleteZeroDataValues();
+        }
+        
+        if ( sqlViewsDrop )
+        {
+            dropSqlViews();
+        }
+        
+        if ( sqlViewsCreate )
+        {
+            createSqlViews();
+        }
+        
+        if ( categoryOptionComboUpdate )
+        {
+            updateCategoryOptionCombos();
+        }
+        
+        if ( cacheClear )
+        {
+            clearCache();
+        }
     }
 }
