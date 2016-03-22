@@ -15,6 +15,7 @@
             <tr ng-repeat="eventGridColumn in eventGridColumns" ng-if="eventGridColumn.id !== 'comment' && eventGridColumn.id !== 'uid' && eventGridColumn.id !== 'eventDate' && !hiddenFields[eventGridColumn.id]">
                 <td>
                     <span d2-pop-over 
+                        class="popover-label"  
                         details="{{'details'| translate}}"
                         content="prStDes[eventGridColumn.id].dataElement"
                         template="dataelement-details.html"
@@ -273,6 +274,7 @@
                 <tr ng-repeat="de in section.programStageDataElements" ng-if="!hiddenFields[de.dataElement.id]">
                     <td>
                         <span d2-pop-over 
+                            class="popover-label"  
                             details="{{'details'| translate}}"
                             content="prStDes[de.dataElement.id].dataElement"
                             template="dataelement-details.html"
