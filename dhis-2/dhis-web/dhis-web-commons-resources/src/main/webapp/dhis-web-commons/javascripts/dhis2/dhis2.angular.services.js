@@ -2038,7 +2038,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 //Concatenate rules produced by indicator definitions into the other rules:
                 var rules = $filter('filter')(allProgramRules.programRules, {programStageId: null});
 
-                if(executingEvent.programStage){
+                if(executingEvent && executingEvent.programStage){
                     if(!rules) {
                         rules = [];
                     }

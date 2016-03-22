@@ -171,8 +171,7 @@ trackerCapture.controller('RegistrationController',
         $scope.outerForm.$setPristine();
 
         if(destination === 'DASHBOARD') {
-            $location.path('/dashboard').search({tei: teiId,                                            
-                                    program: $scope.selectedProgram ? $scope.selectedProgram.id: null});
+            $location.path('/dashboard').search({tei: teiId, program: $scope.selectedProgram ? $scope.selectedProgram.id: null});
         }
         else if (destination === 'SELF'){
             //notify user
