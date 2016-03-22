@@ -143,7 +143,7 @@ trackerCapture.controller('EventCreationController',
         if(angular.isObject($scope.model.selectedStage)){
             stage = $scope.model.selectedStage;            
             prepareEvent();
-            
+            $scope.model.selectedStage.excecutionDateLabel = $scope.model.selectedStage.excecutionDateLabel ? $scope.model.selectedStage.excecutionDateLabel : $translate.instant('report_date');
             //If the caller wants to create right away, go ahead and save.
             if (autoCreate) {
                 $scope.save();
