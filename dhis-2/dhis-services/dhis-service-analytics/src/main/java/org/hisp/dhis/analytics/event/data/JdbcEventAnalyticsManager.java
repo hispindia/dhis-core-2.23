@@ -170,10 +170,10 @@ public class JdbcEventAnalyticsManager
     
     private void getAggregatedEventData( Grid grid, EventQueryParams params, String sql )
     {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
-
         log.debug( "Analytics event aggregate SQL: " + sql );
         
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
+
         while ( rowSet.next() )
         {            
             grid.addRow();
@@ -292,10 +292,10 @@ public class JdbcEventAnalyticsManager
 
     private void getEvents( Grid grid, EventQueryParams params, String sql )
     {
-        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
-
         log.debug( "Analytics event query SQL: " + sql );
         
+        SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
+
         while ( rowSet.next() )
         {
             grid.addRow();
@@ -336,11 +336,11 @@ public class JdbcEventAnalyticsManager
         sql += getFromWhereClause( params, Lists.newArrayList( "psi", "geom" ) );
         
         sql += "group by ST_SnapToGrid(ST_Transform(geom, 3785), " + params.getClusterSize() + ") ";
+
+        log.debug( "Analytics event cluster SQL: " + sql );
         
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
 
-        log.info( "Analytics event cluster SQL: " + sql );
-        
         while ( rowSet.next() )
         {
             grid.addRow();
@@ -365,9 +365,9 @@ public class JdbcEventAnalyticsManager
         
         try
         {
-            count = jdbcTemplate.queryForObject( sql, Long.class );
-            
             log.debug( "Analytics event count SQL: " + sql );
+            
+            count = jdbcTemplate.queryForObject( sql, Long.class );
         }
         catch ( BadSqlGrammarException ex )
         {
@@ -387,10 +387,10 @@ public class JdbcEventAnalyticsManager
         String sql = "select count(psi) as " + COL_COUNT + ", ST_Extent(geom) AS " + COL_EXTENT + " ";
         
         sql += getFromWhereClause( params, Lists.newArrayList( "psi", "geom" ) );
+
+        log.debug( "Analytics event count and extent SQL: " + sql );
         
         SqlRowSet rowSet = jdbcTemplate.queryForRowSet( sql );
-        
-        log.debug( "Analytics event count and extent SQL: " + sql );
         
         if ( rowSet.next() )
         {
