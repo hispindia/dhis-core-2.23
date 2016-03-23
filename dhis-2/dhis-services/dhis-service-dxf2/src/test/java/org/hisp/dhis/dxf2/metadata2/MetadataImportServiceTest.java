@@ -30,7 +30,6 @@ package org.hisp.dhis.dxf2.metadata2;
 
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.dxf2.common.Status;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundleMode;
@@ -38,7 +37,6 @@ import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.render.RenderFormat;
 import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.user.UserService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -57,9 +55,6 @@ public class MetadataImportServiceTest
 {
     @Autowired
     private MetadataImportService importService;
-
-    @Autowired
-    private IdentifiableObjectManager manager;
 
     @Autowired
     private RenderService _renderService;

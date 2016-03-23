@@ -30,9 +30,6 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleCommitReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
-import org.hisp.dhis.feedback.TypeReport;
-
-import java.util.Map;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
