@@ -219,12 +219,12 @@ public class DefaultQueryPlanner
     }
 
     @Override
-    public DataQueryGroups planQuery( DataQueryParams params, int optimalQueries, String tableName )
+    public DataQueryGroups planQuery( DataQueryParams params, final int optimalQueries, final String tableName )
     {
         validate( params );
         
         // ---------------------------------------------------------------------
-        // Group queries by partition, period type and organisation unit level
+        // Group queries which can be executed together
         // ---------------------------------------------------------------------
 
         params = params.instance();
@@ -248,7 +248,11 @@ public class DefaultQueryPlanner
             
             currentQueries.stream().forEach( grouper );
         }
-        
+
+        // ---------------------------------------------------------------------
+        // Split queries until optimal number
+        // ---------------------------------------------------------------------
+
         DataQueryGroups queryGroups = new DataQueryGroups( queries );
 
         if ( queryGroups.isOptimal( optimalQueries ) )
@@ -256,29 +260,20 @@ public class DefaultQueryPlanner
             return queryGroups;
         }
 
-        // ---------------------------------------------------------------------
-        // Group by data element
-        // ---------------------------------------------------------------------
-
-        queryGroups = splitByDimension( queryGroups, DATA_X_DIM_ID, optimalQueries );
-
-        if ( queryGroups.isOptimal( optimalQueries ) )
+        List<String> splitDimensions = Lists.newArrayList( DATA_X_DIM_ID, ORGUNIT_DIM_ID );
+        
+        for ( String dim : splitDimensions )
         {
-            return queryGroups;
+            queryGroups = splitByDimension( queryGroups, dim, optimalQueries );
+
+            if ( queryGroups.isOptimal( optimalQueries ) )
+            {
+                break;
+            }
         }
-
-        // ---------------------------------------------------------------------
-        // Group by organisation unit
-        // ---------------------------------------------------------------------
-
-        queryGroups = splitByDimension( queryGroups, ORGUNIT_DIM_ID, optimalQueries );
-
+        
         return queryGroups;
     }
-
-    // -------------------------------------------------------------------------
-    // Dimension constraints methods
-    // -------------------------------------------------------------------------
 
     // -------------------------------------------------------------------------
     // Supportive methods
@@ -488,6 +483,9 @@ public class DefaultQueryPlanner
         return queries;
     }
 
+    /**
+     * Groups queries by their data type.
+     */
     private List<DataQueryParams> groupByDataType( DataQueryParams params )
     {
         List<DataQueryParams> queries = new ArrayList<>();
