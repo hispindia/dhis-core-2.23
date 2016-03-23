@@ -75,7 +75,6 @@ import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataelement.DataElementGroupSet;
 import org.hisp.dhis.dataset.DataSet;
-import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroupSet;
 import org.hisp.dhis.period.Period;
@@ -1226,7 +1225,7 @@ public class DataQueryParams
         map.put( "Filters", filters );
         map.put( "Aggregation type", aggregationType );
         
-        return JacksonUtils.toJsonAsStringSilent( map );
+        return map.toString(); //TODO
     }
     
     // -------------------------------------------------------------------------
