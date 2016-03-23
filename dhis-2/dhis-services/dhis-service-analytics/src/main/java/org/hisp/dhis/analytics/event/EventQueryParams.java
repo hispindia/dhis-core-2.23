@@ -52,6 +52,7 @@ import org.hisp.dhis.common.OrganisationUnitSelectionMode;
 import org.hisp.dhis.common.QueryItem;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dxf2.common.JacksonUtils;
 import org.hisp.dhis.legend.Legend;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -565,7 +566,7 @@ public class EventQueryParams
         map.put( "Dimensions", dimensions );
         map.put( "Filters", filters );
         
-        return map.toString(); //TODO
+        return JacksonUtils.toJsonAsStringSilent( map );
     }
 
     // -------------------------------------------------------------------------
