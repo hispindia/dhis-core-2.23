@@ -135,8 +135,6 @@ public class DefaultObjectBundleService implements ObjectBundleService
             List<IdentifiableObject> persistedObjects = bundle.getObjects( klass, true );
             List<IdentifiableObject> allObjects = bundle.getObjectMap().get( klass );
 
-            typeReport.getStats().incTotal( allObjects.size() );
-
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
                 typeReport.merge( validateSecurity( klass, nonPersistedObjects, bundle, ImportStrategy.CREATE ) );
@@ -145,7 +143,15 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateBySchemas( klass, persistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                typeReport.merge( preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+
+                TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+
+                if ( !checkReferences.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode() )
+                {
+                    typeReport.getStats().incIgnored();
+                }
+
+                typeReport.merge( checkReferences );
             }
             else if ( bundle.getImportMode().isCreate() )
             {
@@ -153,7 +159,15 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateForCreate( klass, persistedObjects, bundle ) );
                 typeReport.merge( validateBySchemas( klass, nonPersistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                typeReport.merge( preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+
+                TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+
+                if ( !checkReferences.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode() )
+                {
+                    typeReport.getStats().incIgnored();
+                }
+
+                typeReport.merge( checkReferences );
             }
             else if ( bundle.getImportMode().isUpdate() )
             {
@@ -161,7 +175,15 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateForUpdate( klass, nonPersistedObjects, bundle ) );
                 typeReport.merge( validateBySchemas( klass, persistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
-                typeReport.merge( preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+
+                TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
+
+                if ( !checkReferences.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode() )
+                {
+                    typeReport.getStats().incIgnored();
+                }
+
+                typeReport.merge( checkReferences );
             }
             else if ( bundle.getImportMode().isDelete() )
             {

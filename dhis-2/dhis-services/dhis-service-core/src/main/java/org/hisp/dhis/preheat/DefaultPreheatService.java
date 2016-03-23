@@ -667,6 +667,8 @@ public class DefaultPreheatService implements PreheatService
                 ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
                 objectReport.addErrorReports( errorReports );
                 typeReport.addObjectReport( objectReport );
+                typeReport.getStats().incIgnored();
+
                 iterator.remove();
             }
 
