@@ -53,7 +53,7 @@ public class DefaultSmsConfigurationManager
 
     @Autowired
     private SystemSettingManager systemSettingManager;
-    
+
     @Autowired
     private GatewayAdministrationService gatewayAdminService;
 
@@ -69,7 +69,7 @@ public class DefaultSmsConfigurationManager
 
         if ( smsConfiguration == null )
         {
-            log.info( "No sms configuration found" );
+            log.info( "SMS configuration not found" );
 
             return;
         }
@@ -78,13 +78,13 @@ public class DefaultSmsConfigurationManager
 
         if ( gatewayList == null || gatewayList.isEmpty() )
         {
-            log.info( "No gateway configuration found" );
+            log.info( "Gateway configuration not found" );
 
             return;
         }
 
-        log.info( "Found following gateway configurations " + gatewayList );
-        
+        log.info( "Found the following gateway configurations: " + gatewayList );
+
         gatewayAdminService.loadGatewayConfigurationMap( smsConfiguration );
     }
 

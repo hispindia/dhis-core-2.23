@@ -33,6 +33,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * @author Zubair <rajazubair.asghar@gmail.com>
  */
+
 public class BulkSmsGatewayConfig
     extends SmsGatewayConfig
 {

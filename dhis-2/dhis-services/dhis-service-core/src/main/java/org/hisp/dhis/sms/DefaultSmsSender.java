@@ -230,7 +230,7 @@ public class DefaultSmsSender
         catch ( SmsServiceException e )
         {
             message = "Unable to send message through sms: " + sms + e.getCause().getMessage();
-            log.warn( "Unable to send message through sms: " + sms, e );
+            log.warn( "Message failed: " + sms, e );
         }
 
         return message;
