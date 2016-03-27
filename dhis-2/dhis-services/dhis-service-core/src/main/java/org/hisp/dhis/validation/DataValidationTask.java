@@ -1,17 +1,5 @@
 package org.hisp.dhis.validation;
 
-import static org.hisp.dhis.system.util.MathUtils.expressionIsTrue;
-import static org.hisp.dhis.system.util.MathUtils.roundSignificant;
-import static org.hisp.dhis.system.util.MathUtils.zeroIfNull;
-
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -40,6 +28,18 @@ import java.util.Set;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import static org.hisp.dhis.system.util.MathUtils.expressionIsTrue;
+import static org.hisp.dhis.system.util.MathUtils.roundSignificant;
+import static org.hisp.dhis.system.util.MathUtils.zeroIfNull;
+
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.ListMap;
@@ -47,14 +47,20 @@ import org.hisp.dhis.common.MapMap;
 import org.hisp.dhis.common.SetMap;
 import org.hisp.dhis.commons.util.DebugUtils;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataelement.DataElementOperand;
+import org.hisp.dhis.datavalue.DataValueService;
 import org.hisp.dhis.expression.Expression;
+import org.hisp.dhis.expression.ExpressionService;
 import org.hisp.dhis.expression.Operator;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.period.CalendarPeriodType;
 import org.hisp.dhis.period.Period;
+import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.system.util.MathUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.collect.Sets;
 
@@ -65,16 +71,30 @@ import com.google.common.collect.Sets;
  *
  * @author Jim Grace
  */
-public class ValidatorThread
-    implements Runnable
+public class DataValidationTask
+    implements ValidationTask
 {
-    private static final Log log = LogFactory.getLog( ValidatorThread.class );
-
+    public static final String NAME = "validationTask";
+    
+    private static final Log log = LogFactory.getLog( DataValidationTask.class );
+    
+    @Autowired
+    private ExpressionService expressionService;
+    
+    @Autowired
+    private PeriodService periodService;
+    
+    @Autowired
+    private DataValueService dataValueService;
+    
+    @Autowired
+    private DataElementCategoryService categoryService;
+    
     private OrganisationUnitExtended sourceX;
 
     private ValidationRunContext context;
 
-    public ValidatorThread( OrganisationUnitExtended sourceX, ValidationRunContext context )
+    public void init( OrganisationUnitExtended sourceX, ValidationRunContext context )
     {
         this.sourceX = sourceX;
         this.context = context;
@@ -85,6 +105,7 @@ public class ValidatorThread
      * central method in validation rule evaluation.
      */
     @Override
+    @Transactional
     public void run()
     {
         try
@@ -109,7 +130,7 @@ public class ValidatorThread
                 Collection<DataElement> sourceDataElements = periodTypeX.getSourceDataElements()
                     .get( sourceX.getSource() );
                 Set<ValidationRule> rules = getRulesBySourceAndPeriodType( sourceX, periodTypeX, sourceDataElements );
-                context.getExpressionService().explodeValidationRuleExpressions( rules );
+                expressionService.explodeValidationRuleExpressions( rules );
 
                 if ( !rules.isEmpty() )
                 {
@@ -190,8 +211,7 @@ public class ValidatorThread
                                             {
                                                 context.getValidationResults()
                                                     .add( new ValidationResult( period, sourceX.getSource(),
-                                                        context.getDataElementCategoryService()
-                                                            .getDataElementCategoryOptionCombo( optionCombo ),
+                                                        categoryService.getDataElementCategoryOptionCombo( optionCombo ),
                                                         rule, roundSignificant( zeroIfNull( leftSide ) ),
                                                         roundSignificant( zeroIfNull( rightSide ) ) ) );
                                             }
@@ -289,14 +309,14 @@ public class ValidatorThread
                     // Get the "current" DataElementOperands from this rule:
                     // Left+Right sides for VALIDATION, Left side only for
                     // SURVEILLANCE.
-                    Collection<DataElementOperand> deos = context.getExpressionService()
+                    Collection<DataElementOperand> deos = expressionService
                         .getOperandsInExpression( rule.getLeftSide().getExpression() );
 
                     if ( rule.getRuleType() == RuleType.VALIDATION )
                     {
                         // Make a copy so we can add to it.
                         deos = new HashSet<>( deos );
-                        deos.addAll( context.getExpressionService()
+                        deos.addAll( expressionService
                             .getOperandsInExpression( rule.getRightSide().getExpression() ) );
                     }
 
@@ -369,7 +389,7 @@ public class ValidatorThread
 
         for ( Map.Entry<Integer, Map<DataElementOperand, Double>> entry : valueMap.entrySet() )
         {
-            Double value = context.getExpressionService().getExpressionValue( expression, entry.getValue(),
+            Double value = expressionService.getExpressionValue( expression, entry.getValue(),
                 context.getConstantMap(), null, null, incompleteValuesMap.getSet( entry.getKey() ), null );
 
             if ( MathUtils.isValidDouble( value ) )
@@ -423,7 +443,7 @@ public class ValidatorThread
         }
         else
         {
-            dataValueMap = context.getDataValueService().getDataValueMapByAttributeCombo( dataElementsToGet,
+            dataValueMap = dataValueService.getDataValueMapByAttributeCombo( dataElementsToGet,
                 period.getStartDate(), source, allowedPeriodTypes, context.getAttributeCombo(),
                 context.getCogDimensionConstraints(), context.getCoDimensionConstraints(), lastUpdatedMap );
         }
@@ -568,7 +588,7 @@ public class ValidatorThread
         MapMap<Integer, DataElementOperand, Date> lastUpdatedMap, Collection<DataElement> sourceElements )
     {
         CalendarPeriodType periodType = (CalendarPeriodType) period.getPeriodType();
-        Period periodInstance = context.getPeriodService().getPeriod( period.getStartDate(), 
+        Period periodInstance = periodService.getPeriod( period.getStartDate(), 
             period.getEndDate(), periodType );
         
         if ( periodInstance == null )
@@ -644,7 +664,7 @@ public class ValidatorThread
     {
         Map<Integer, Double> expressionValueMap = new HashMap<>();
         Map<Integer, ListMap<String, Double>> aggregateValuesMap = new HashMap<>();
-        Set<String> aggregates = context.getExpressionService().getAggregatesInExpression( expression.getExpression() );
+        Set<String> aggregates = expressionService.getAggregatesInExpression( expression.getExpression() );
 
         if ( aggregates.isEmpty() )
         {
@@ -678,7 +698,7 @@ public class ValidatorThread
 
         for ( Map.Entry<Integer, Map<DataElementOperand, Double>> entry : valueMap.entrySet() )
         {
-            Double value = context.getExpressionService().getExpressionValue( expression, entry.getValue(),
+            Double value = expressionService.getExpressionValue( expression, entry.getValue(),
                 context.getConstantMap(), null, null, incompleteValuesMap.getSet( entry.getKey() ),
                 aggregateValuesMap.get( entry.getKey() ) );
 

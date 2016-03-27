@@ -36,16 +36,10 @@ import org.hisp.dhis.dataelement.CategoryOptionGroup;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
 import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
-import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.dataset.DataSet;
-import org.hisp.dhis.datavalue.DataValueService;
-import org.hisp.dhis.expression.ExpressionService;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.period.Period;
-import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
-import org.hisp.dhis.user.CurrentUserService;
-import org.hisp.dhis.user.UserCredentials;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -98,14 +92,6 @@ public class ValidationRunContext
 
     private Collection<ValidationResult> validationResults;
 
-    private ExpressionService expressionService;
-
-    private PeriodService periodService;
-
-    private DataValueService dataValueService;
-
-    private DataElementCategoryService dataElementCategoryService;
-
     private ValidationRunContext()
     {
     }
@@ -121,7 +107,7 @@ public class ValidationRunContext
             .append( "\n sourceXs", Arrays.toString( sourceXs.toArray() ) )
             .append( "\n validationResults", Arrays.toString( validationResults.toArray() ) ).toString();
     }
-
+    
     /**
      * Creates and fills a new context object for a validation run.
      *
@@ -129,6 +115,7 @@ public class ValidationRunContext
      * @param periods                    periods for validation
      * @param attributeCombo             the attribute combo to check (if restricted)
      * @param rules                      validation rules for validation
+     * @param constantMap                map of constants
      * @param runType                    whether this is an INTERACTIVE or SCHEDULED run
      * @param lastScheduledRun           (for SCHEDULED runs) date/time of previous run
      * @param expressionService          expression service
@@ -139,29 +126,21 @@ public class ValidationRunContext
      * @return context object for this run
      */
     public static ValidationRunContext getNewContext( Collection<OrganisationUnit> sources,
-        Collection<Period> periods, DataElementCategoryOptionCombo attributeCombo, Collection<ValidationRule> rules,
-        Map<String, Double> constantMap, ValidationRunType runType, Date lastScheduledRun,
-        ExpressionService expressionService, PeriodService periodService,
-        DataValueService dataValueService, DataElementCategoryService dataElementCategoryService,
-        CurrentUserService currentUserService )
+        Collection<Period> periods, Collection<ValidationRule> rules, DataElementCategoryOptionCombo attributeCombo,
+        Date lastScheduledRun, ValidationRunType runType, Map<String, Double> constantMap, 
+        Set<CategoryOptionGroup> cogDimensionConstraints, Set<DataElementCategoryOption> coDimensionConstraints )
     {
-        UserCredentials currentUserCredentials = currentUserService.getCurrentUser().getUserCredentials();
-
         ValidationRunContext context = new ValidationRunContext();
-        context.runType = runType;
-        context.lastScheduledRun = lastScheduledRun;
         context.validationResults = new ConcurrentLinkedQueue<>(); // thread-safe
         context.periodTypeExtendedMap = new HashMap<>();
         context.ruleXMap = new HashMap<>();
         context.sourceXs = new HashSet<>();
-        context.constantMap = constantMap;
-        context.expressionService = expressionService;
-        context.periodService = periodService;
-        context.dataValueService = dataValueService;
-        context.dataElementCategoryService = dataElementCategoryService;
         context.attributeCombo = attributeCombo;
-        context.cogDimensionConstraints = dataElementCategoryService.getCogDimensionConstraints( currentUserCredentials );
-        context.coDimensionConstraints = dataElementCategoryService.getCoDimensionConstraints( currentUserCredentials );
+        context.lastScheduledRun = lastScheduledRun;
+        context.runType = runType;
+        context.constantMap = constantMap;
+        context.cogDimensionConstraints = cogDimensionConstraints;
+        context.coDimensionConstraints = coDimensionConstraints;
         context.initialize( sources, periods, rules );
 
         return context;
@@ -425,6 +404,11 @@ public class ValidationRunContext
         return runType;
     }
 
+    public void setRunType( ValidationRunType runType )
+    {
+        this.runType = runType;
+    }
+
     public Date getLastScheduledRun()
     {
         return lastScheduledRun;
@@ -468,25 +452,5 @@ public class ValidationRunContext
     public Set<DataElementCategoryOption> getCoDimensionConstraints()
     {
         return coDimensionConstraints;
-    }
-
-    public ExpressionService getExpressionService()
-    {
-        return expressionService;
-    }
-
-    public PeriodService getPeriodService()
-    {
-        return periodService;
-    }
-
-    public DataValueService getDataValueService()
-    {
-        return dataValueService;
-    }
-
-    public DataElementCategoryService getDataElementCategoryService()
-    {
-        return dataElementCategoryService;
     }
 }
