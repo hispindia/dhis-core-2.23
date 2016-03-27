@@ -1,4 +1,4 @@
-package org.hisp.dhis.startup;
+package org.hisp.dhis.system.startup;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,53 +28,35 @@ package org.hisp.dhis.startup;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.configuration.Configuration;
-import org.hisp.dhis.configuration.ConfigurationService;
-import org.hisp.dhis.encryption.EncryptionStatus;
-import org.hisp.dhis.external.conf.DhisConfigurationProvider;
-import org.hisp.dhis.system.startup.TransactionContextStartupRoutine;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 
-import java.util.UUID;
-
-public class ConfigurationPopulator
-    extends TransactionContextStartupRoutine
+/**
+ * @author Lars Helge Overland
+ */
+public abstract class TransactionContextStartupRoutine
+    extends AbstractStartupRoutine
 {
-    @Autowired
-    private ConfigurationService configurationService;
+   @Autowired
+   private TransactionTemplate transactionTemplate;
 
-    @Autowired
-    private DhisConfigurationProvider dhisConfigurationProvider;
-
-    private static final Log log = LogFactory.getLog( ConfigurationPopulator.class );
-
-    @Override
-    public void executeInTransaction()
-    {
-        checkSecurityConfiguration();
-
-        Configuration config = configurationService.getConfiguration();
-
-        if ( config != null && config.getSystemId() == null )
-        {
-            config.setSystemId( UUID.randomUUID().toString() );
-            configurationService.setConfiguration( config );
-        }
-    }
-
-    private void checkSecurityConfiguration()
-    {
-        EncryptionStatus status = dhisConfigurationProvider.isEncryptionConfigured();
-
-        if ( !status.isOk() )
-        {
-            log.warn( "Encryption not configured: " + status.getKey() );
-        }
-        else 
-        {
-            log.info( "Encryption is available" );
-        }
-    }
+   /**
+    * Work performed in this method will run inside a transaction context.
+    */
+   public abstract void executeInTransaction();
+   
+   public final void execute()
+   {
+       transactionTemplate.execute( new TransactionCallback<Object>()
+       {
+           @Override
+           public Object doInTransaction( TransactionStatus status )
+           {
+               executeInTransaction();                
+               return null;
+           }
+       } );
+   }
 }
