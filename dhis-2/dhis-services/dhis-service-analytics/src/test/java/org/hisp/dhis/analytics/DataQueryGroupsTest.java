@@ -29,7 +29,6 @@ package org.hisp.dhis.analytics;
  */
 
 import org.hisp.dhis.DhisConvenienceTest;
-import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.junit.Before;
@@ -72,13 +71,16 @@ public class DataQueryGroupsTest
     @Before
     public void before()
     {
-        deA = createDataElement( 'A', ValueType.INTEGER, AggregationType.SUM );
-        deB = createDataElement( 'B', ValueType.INTEGER, AggregationType.SUM );
-        deC = createDataElement( 'C', ValueType.INTEGER, AggregationType.SUM );
-        deD = createDataElement( 'D', ValueType.INTEGER, AggregationType.SUM );
-        deE = createDataElement( 'E', ValueType.INTEGER, AggregationType.SUM );
-        deF = createDataElement( 'F', ValueType.INTEGER, AggregationType.AVERAGE_SUM_ORG_UNIT );
-        deG = createDataElement( 'G', ValueType.INTEGER, AggregationType.AVERAGE_SUM_ORG_UNIT );
+        deA = createDataElement( 'A', null ); // INTEGER, SUM
+        deB = createDataElement( 'B', null );
+        deC = createDataElement( 'C', null );
+        deD = createDataElement( 'D', null );
+        deE = createDataElement( 'E', null );
+        deF = createDataElement( 'F', null );
+        deG = createDataElement( 'G', null );
+        
+        deF.setAggregationType( AggregationType.AVERAGE_SUM_ORG_UNIT );
+        deG.setAggregationType( AggregationType.AVERAGE_SUM_ORG_UNIT );
 
         ouA = createOrganisationUnit( 'A' );
         ouB = createOrganisationUnit( 'B' );
