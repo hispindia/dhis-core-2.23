@@ -34,13 +34,10 @@ import org.hisp.dhis.security.AuthorityType;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaDescriptor;
 import org.hisp.dhis.programrule.ProgramRule;
-import org.springframework.stereotype.Component;
 
 /**
- *
  * @author markusbekken
  */
-@Component
 public class ProgramRuleSchemaDescriptor implements SchemaDescriptor
 {
     public static final String SINGULAR = "programRule";

@@ -75,7 +75,7 @@ public class TableAlteror
         int defaultOptionComboId = getDefaultOptionCombo();
 
         // ---------------------------------------------------------------------
-        // Drop outdated tables
+        // Drop obsolete tables
         // ---------------------------------------------------------------------
 
         executeSql( "DROP TABLE categoryoptioncomboname" );
