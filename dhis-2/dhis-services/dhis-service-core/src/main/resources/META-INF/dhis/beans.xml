@@ -1567,30 +1567,6 @@
     <property name="skipInTests" value="true" />
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="org.hisp.dhis.system.startup.StartupRoutineExecutor" />
-    <property name="targetMethod" value="addStartupRoutines" />
-    <property name="arguments">
-      <list>
-        <list>
-          <ref bean="org.hisp.dhis.startup.InitTableAlteror" />
-          <ref bean="org.hisp.dhis.period.PeriodTypePopulator" />
-          <ref bean="org.hisp.dhis.dataelement.DataElementDefaultDimensionPopulator" />
-          <ref bean="org.hisp.dhis.common.IdentityPopulator" />
-          <ref bean="org.hisp.dhis.startup.TableCreator" />
-          <ref bean="org.hisp.dhis.startup.TableAlteror" />
-          <ref bean="org.hisp.dhis.trackedentity.startup.TableAlteror" />
-          <ref bean="org.hisp.dhis.startup.ModelUpgrader" />
-          <ref bean="org.hisp.dhis.startup.FavoriteDataItemUpgrader" />
-          <ref bean="org.hisp.dhis.dataentryform.DataEntryFormUpgrader" />
-          <ref bean="org.hisp.dhis.startup.ExpressionUpgrader" />
-          <ref bean="org.hisp.dhis.startup.ConfigurationPopulator" />
-          <ref bean="org.hisp.dhis.startup.I18nLocalePopulator" />
-        </list>
-      </list>
-    </property>
-  </bean>
-
   <!-- DeletionHandlers -->
 
   <bean id="org.hisp.dhis.dataapproval.DataApprovalDeletionHandler" class="org.hisp.dhis.dataapproval.DataApprovalDeletionHandler">

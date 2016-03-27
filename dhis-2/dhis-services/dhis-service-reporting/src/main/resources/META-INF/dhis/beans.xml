@@ -170,18 +170,6 @@
     </property>
   </bean>
 
-  <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    <property name="targetObject" ref="org.hisp.dhis.system.startup.StartupRoutineExecutor" />
-    <property name="targetMethod" value="addStartupRoutines" />
-    <property name="arguments">
-      <list>
-        <list>
-          <ref bean="org.hisp.dhis.common.ReportingIdentityPopulator" />
-        </list>
-      </list>
-    </property>
-  </bean>
-
   <!-- DeletionHandler -->
 
   <bean id="org.hisp.dhis.report.ReportDeletionHandler" class="org.hisp.dhis.report.ReportDeletionHandler">
