@@ -32,11 +32,11 @@ import static org.apache.commons.lang3.StringUtils.trimToNull;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -49,11 +49,13 @@ import org.hisp.dhis.common.cache.CacheStrategy;
 import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.util.CodecUtils;
-import org.hisp.dhis.system.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+
+import static org.hisp.dhis.system.util.DateUtils.getSecondsUntilTomorrow;
 
 /**
  * @author Lars Helge Overland
@@ -109,32 +111,22 @@ public class ContextUtils
 
             cacheStrategy = strategy != null ? CacheStrategy.valueOf( strategy ) : CacheStrategy.NO_CACHE;
         }
-
+        
         if ( cacheStrategy == null || cacheStrategy.equals( CacheStrategy.NO_CACHE ) )
-        {
-            response.setHeader( HEADER_CACHE_CONTROL, "no-cache, no-store" );
-            response.setHeader( HEADER_EXPIRES, DateUtils.getExpiredHttpDateString() );
+        {            
+            response.setHeader( HEADER_CACHE_CONTROL, CacheControl.noStore().getHeaderValue() );
         }
         else if ( cacheStrategy.equals( CacheStrategy.CACHE_1_HOUR ) )
         {
-            Calendar cal = Calendar.getInstance();
-            cal.add( Calendar.HOUR_OF_DAY, 1 );
-
-            response.setHeader( HEADER_CACHE_CONTROL, "public, max-age=3600" );
-            response.setHeader( HEADER_EXPIRES, DateUtils.getHttpDateString( cal.getTime() ) );
+            response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( 1, TimeUnit.HOURS ).cachePublic().getHeaderValue() );
         }
         else if ( cacheStrategy.equals( CacheStrategy.CACHE_6AM_TOMORROW ) )
-        {
-            response.setHeader( HEADER_CACHE_CONTROL, "public, max-age=" + DateUtils.getSecondsUntilTomorrow( 6 ) );
-            response.setHeader( HEADER_EXPIRES, DateUtils.getHttpDateString( DateUtils.getDateForTomorrow( 6 ) ) );
+        {     
+            response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( getSecondsUntilTomorrow( 6 ), TimeUnit.SECONDS ).cachePublic().getHeaderValue() );
         }
         else if ( cacheStrategy.equals( CacheStrategy.CACHE_TWO_WEEKS ) )
         {
-            Calendar cal = Calendar.getInstance();
-            cal.add( Calendar.DAY_OF_YEAR, 14 );
-
-            response.setHeader( HEADER_CACHE_CONTROL, "public, max-age=1209600" );
-            response.setHeader( HEADER_EXPIRES, DateUtils.getHttpDateString( cal.getTime() ) );
+            response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( 14, TimeUnit.DAYS ).cachePublic().getHeaderValue() );
         }
 
         if ( filename != null )
@@ -159,7 +151,7 @@ public class ContextUtils
     {
         response.setStatus( statusCode );
         response.setContentType( CONTENT_TYPE_TEXT );
-        response.setHeader( HEADER_CACHE_CONTROL, "no-cache, no-store" );
+        response.setHeader( HEADER_CACHE_CONTROL, CacheControl.noStore().getHeaderValue() );
 
         PrintWriter writer = null;
 
