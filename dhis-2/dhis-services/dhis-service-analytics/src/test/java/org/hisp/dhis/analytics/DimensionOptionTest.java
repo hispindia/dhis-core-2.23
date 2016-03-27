@@ -61,7 +61,7 @@ public class DimensionOptionTest
     @Before
     public void before()
     {
-        deA = createDataElement( 'A' );
+        deA = createDataElement( 'A', null );
         peA = createPeriod( "2000Q1" );
         ouA = createOrganisationUnit( 'A' );
         

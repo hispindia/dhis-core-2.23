@@ -69,9 +69,9 @@ public class DataQueryParamsTest
     @Before
     public void setUpTest()
     {
-        deA = createDataElement( 'A' );
-        deB = createDataElement( 'B' );
-        deC = createDataElement( 'C' );
+        deA = createDataElement( 'A', null );
+        deB = createDataElement( 'B', null );
+        deC = createDataElement( 'C', null );
         
         dsA = createDataSet( 'A', null );
         dsB = createDataSet( 'B', null );

@@ -368,6 +368,15 @@ public abstract class DhisConvenienceTest
      */
     public static DataElement createDataElement( char uniqueCharacter )
     {
+        return createDataElement( uniqueCharacter, null );
+    }
+
+    /**
+     * @param uniqueCharacter A unique character to identify the object.
+     * @param categoryCombo   The category combo.
+     */
+    public static DataElement createDataElement( char uniqueCharacter, DataElementCategoryCombo categoryCombo )
+    {
         DataElement dataElement = new DataElement();
         dataElement.setAutoFields();
 
@@ -380,37 +389,14 @@ public abstract class DhisConvenienceTest
         dataElement.setDomainType( DataElementDomain.AGGREGATE );
         dataElement.setAggregationType( AggregationType.SUM );
 
-        if ( categoryService != null )
+        if ( categoryCombo != null )
         {
-            DataElementCategoryCombo categoryCombo = categoryService.getDefaultDataElementCategoryCombo();
             dataElement.setCategoryCombo( categoryCombo );
         }
-
-
-        return dataElement;
-    }
-
-    /**
-     * @param uniqueCharacter A unique character to identify the object.
-     */
-    public static DataElement createDataElement( char uniqueCharacter, ValueType valueType )
-    {
-        DataElement dataElement = createDataElement( uniqueCharacter );
-        dataElement.setValueType( valueType );
-
-        return dataElement;
-    }
-
-    /**
-     * @param uniqueCharacter A unique character to identify the object.
-     * @param categoryCombo   The category combo.
-     */
-    public static DataElement createDataElement( char uniqueCharacter, DataElementCategoryCombo categoryCombo )
-    {
-        DataElement dataElement = createDataElement( uniqueCharacter );
-
-        dataElement.setCategoryCombo( categoryCombo );
-        dataElement.setDomainType( DataElementDomain.AGGREGATE );
+        else if ( categoryService != null )
+        {
+            dataElement.setCategoryCombo( categoryService.getDefaultDataElementCategoryCombo() );
+        }
 
         return dataElement;
     }
@@ -424,7 +410,6 @@ public abstract class DhisConvenienceTest
     {
         DataElement dataElement = createDataElement( uniqueCharacter );
         dataElement.setValueType( valueType );
-        dataElement.setDomainType( DataElementDomain.AGGREGATE );
         dataElement.setAggregationType( aggregationType );
 
         return dataElement;
@@ -440,7 +425,6 @@ public abstract class DhisConvenienceTest
     {
         DataElement dataElement = createDataElement( uniqueCharacter );
         dataElement.setValueType( valueType );
-        dataElement.setDomainType( DataElementDomain.AGGREGATE );
         dataElement.setAggregationType( aggregationType );
         dataElement.setDomainType( domainType );
 

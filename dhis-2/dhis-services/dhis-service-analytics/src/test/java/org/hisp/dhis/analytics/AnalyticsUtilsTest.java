@@ -56,8 +56,8 @@ public class AnalyticsUtilsTest extends DhisSpringTest
     {
         Program prA = createProgram( 'A' );
         
-        DataElement deA = createDataElement( 'A' );
-        DataElement deB = createDataElement( 'B' );
+        DataElement deA = createDataElement( 'A', null );
+        DataElement deB = createDataElement( 'B', null );
         ProgramDataElement pdeA = new ProgramDataElement( prA, deA );
         ProgramDataElement pdeB = new ProgramDataElement( prA, deB );
         ProgramIndicator piA = createProgramIndicator( 'A', prA, null, null );
