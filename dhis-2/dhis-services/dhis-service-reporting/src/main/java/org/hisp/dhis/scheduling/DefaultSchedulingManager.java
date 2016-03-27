@@ -40,8 +40,8 @@ import org.hisp.dhis.setting.SystemSettingManager;
 import org.hisp.dhis.system.scheduling.ScheduledTaskStatus;
 import org.hisp.dhis.system.scheduling.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * Cron refers to the cron expression used for scheduling. Key refers to the key
@@ -50,7 +50,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * @author Lars Helge Overland
  */
 public class DefaultSchedulingManager
-    implements ApplicationListener<ContextRefreshedEvent>, SchedulingManager
+    implements SchedulingManager
 {
     // -------------------------------------------------------------------------
     // Dependencies
@@ -86,8 +86,8 @@ public class DefaultSchedulingManager
     // SchedulingManager implementation
     // -------------------------------------------------------------------------
 
-    @Override
-    public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
+    @EventListener
+    public void handleContextRefresh( ContextRefreshedEvent contextRefreshedEvent )
     {
         scheduleTasks();
         scheduleFixedTasks();

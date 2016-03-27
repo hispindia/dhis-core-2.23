@@ -37,8 +37,8 @@ import org.hisp.dhis.setting.SettingKey;
 import org.hisp.dhis.setting.SystemSettingManager;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * Manages the {@link SmsConfiguration} for the DHIS instance.
@@ -47,7 +47,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
  * context, initializing them on startup and on any SMS configuration changes.
  */
 public class DefaultSmsConfigurationManager
-    implements ApplicationListener<ContextRefreshedEvent>, SmsConfigurationManager
+    implements SmsConfigurationManager
 {
     private static final Log log = LogFactory.getLog( DefaultSmsConfigurationManager.class );
 
@@ -57,8 +57,8 @@ public class DefaultSmsConfigurationManager
     @Autowired
     private GatewayAdministrationService gatewayAdminService;
 
-    @Override
-    public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
+    @EventListener
+    public void handleContextRefresh( ContextRefreshedEvent contextRefreshedEvent )
     {
         initializeSmsConfigurables();
     }

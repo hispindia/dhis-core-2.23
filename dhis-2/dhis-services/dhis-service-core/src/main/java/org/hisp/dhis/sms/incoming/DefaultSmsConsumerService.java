@@ -34,15 +34,15 @@ import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.sms.SmsPublisher;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * Zubair <rajazubair.asghar@gmail.com>
  */
 
 public class DefaultSmsConsumerService
-    implements ApplicationListener<ContextRefreshedEvent>, SmsConsumerService
+    implements SmsConsumerService
 {
     private static final Log log = LogFactory.getLog( DefaultSmsConsumerService.class );
 
@@ -57,8 +57,8 @@ public class DefaultSmsConsumerService
     // Implementation
     // -------------------------------------------------------------------------
 
-    @Override
-    public void onApplicationEvent( ContextRefreshedEvent event )
+    @EventListener
+    public void handleContextRefresh( ContextRefreshedEvent event )
     {
         startSmsConsumer();
     }

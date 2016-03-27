@@ -38,8 +38,8 @@ import org.hisp.dhis.schema.descriptors.*;
 import org.hisp.dhis.system.util.AnnotationUtils;
 import org.hisp.dhis.system.util.ReflectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.StringUtils;
 
@@ -53,7 +53,7 @@ import java.util.Map;
  * @author Morten Olav Hansen <mortenoh@gmail.com> descriptors
  */
 public class DefaultSchemaService
-    implements ApplicationListener<ContextRefreshedEvent>, SchemaService
+    implements SchemaService
 {
     private ImmutableList<SchemaDescriptor> descriptors = new ImmutableList.Builder<SchemaDescriptor>().
         add( new AttributeSchemaDescriptor() ).
@@ -144,8 +144,8 @@ public class DefaultSchemaService
     @Autowired
     private SessionFactory sessionFactory;
 
-    @Override
-    public void onApplicationEvent( ContextRefreshedEvent contextRefreshedEvent )
+    @EventListener
+    public void handleContextRefresh( ContextRefreshedEvent contextRefreshedEvent )
     {
         for ( SchemaDescriptor descriptor : descriptors )
         {
