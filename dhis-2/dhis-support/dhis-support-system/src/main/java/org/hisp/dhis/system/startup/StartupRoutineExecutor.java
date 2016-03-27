@@ -36,10 +36,17 @@ import java.util.Collection;
  * @author <a href="mailto:torgeilo@gmail.com">Torgeir Lorange Ostby</a>
  */
 public interface StartupRoutineExecutor
-    extends StartupRoutine
 {
     String ID = StartupRoutineExecutor.class.getName();
 
+    /**
+     * Executes the StartupRoutines.
+     *
+     * @throws Exception on execution failure.
+     */
+    void execute()
+        throws Exception;
+    
     /**
      * Executes the StartupRoutines for testing.
      *

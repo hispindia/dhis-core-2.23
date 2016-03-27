@@ -48,7 +48,6 @@ import java.util.List;
  * @author <a href="mailto:torgeilo@gmail.com">Torgeir Lorange Ostby</a>
  */
 public class DefaultStartupRoutineExecutor
-    extends AbstractStartupRoutine
     implements StartupRoutineExecutor
 {
     private static final Log LOG = LogFactory.getLog( DefaultStartupRoutineExecutor.class );
