@@ -46,7 +46,6 @@ import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.AuditLogUtil;
 import org.hisp.dhis.common.BaseIdentifiableObject;
-import org.hisp.dhis.common.GenericStore;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.dashboard.Dashboard;
 import org.hisp.dhis.hibernate.exception.CreateAccessDeniedException;
@@ -71,7 +70,7 @@ import java.util.List;
  * @author Lars Helge Overland
  */
 public class HibernateGenericStore<T>
-    implements GenericStore<T>
+    implements InternalHibernateGenericStore<T>
 {
     private static final Log log = LogFactory.getLog( HibernateGenericStore.class );
 
