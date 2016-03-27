@@ -50,7 +50,8 @@ import java.util.Map;
 /**
  * @author Lars Helge Overland
  */
-public class AnalyticsUtilsTest extends DhisSpringTest
+public class AnalyticsUtilsTest 
+    extends DhisSpringTest
 {
     @Test
     public void testGetByDataDimensionType()
