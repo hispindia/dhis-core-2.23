@@ -1530,6 +1530,12 @@
     <property name="skipInTests" value="true" />
     <property name="jdbcTemplate" ref="jdbcTemplate" />
   </bean>
+  
+  <bean id="org.hisp.dhis.startup.ModelUpgrader" class="org.hisp.dhis.startup.ModelUpgrader">
+    <property name="name" value="ModelUpgrader" />
+    <property name="runlevel" value="7" />
+    <property name="skipInTests" value="true" />
+  </bean>
 
   <bean id="org.hisp.dhis.startup.FavoriteDataItemUpgrader" class="org.hisp.dhis.startup.FavoriteDataItemUpgrader">
     <property name="name" value="FavoriteDataItemUpgrader" />
@@ -1576,6 +1582,7 @@
           <ref bean="org.hisp.dhis.startup.TableCreator" />
           <ref bean="org.hisp.dhis.startup.TableAlteror" />
           <ref bean="org.hisp.dhis.trackedentity.startup.TableAlteror" />
+          <ref bean="org.hisp.dhis.startup.ModelUpgrader" />
           <ref bean="org.hisp.dhis.startup.FavoriteDataItemUpgrader" />
           <ref bean="org.hisp.dhis.dataentryform.DataEntryFormUpgrader" />
           <ref bean="org.hisp.dhis.startup.ExpressionUpgrader" />

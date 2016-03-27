@@ -33,9 +33,7 @@ import org.amplecode.quick.StatementHolder;
 import org.amplecode.quick.StatementManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hisp.dhis.dataelement.DataElementCategoryService;
 import org.hisp.dhis.jdbc.StatementBuilder;
-import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.system.startup.AbstractStartupRoutine;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,12 +62,6 @@ public class TableAlteror
 
     @Autowired
     private StatementBuilder statementBuilder;
-
-    @Autowired
-    private OrganisationUnitService organisationUnitService;
-
-    @Autowired
-    private DataElementCategoryService categoryService;
 
     // -------------------------------------------------------------------------
     // Execute
@@ -902,11 +894,7 @@ public class TableAlteror
 
         updateRelativePeriods();
         updateNameColumnLengths();
-
-        organisationUnitService.updatePaths();
-
-        categoryService.updateCategoryOptionComboNames();
-
+        
         executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
         executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
 
