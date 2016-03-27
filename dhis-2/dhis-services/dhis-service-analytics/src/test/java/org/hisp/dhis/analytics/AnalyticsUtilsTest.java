@@ -36,6 +36,7 @@ import com.google.common.collect.Lists;
 import org.hisp.dhis.common.DataDimensionItemType;
 import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramDataElement;
 import org.hisp.dhis.program.ProgramIndicator;
@@ -56,8 +57,8 @@ public class AnalyticsUtilsTest extends DhisSpringTest
     {
         Program prA = createProgram( 'A' );
         
-        DataElement deA = createDataElement( 'A', null );
-        DataElement deB = createDataElement( 'B', null );
+        DataElement deA = createDataElement( 'A', new DataElementCategoryCombo() );
+        DataElement deB = createDataElement( 'B', new DataElementCategoryCombo() );
         ProgramDataElement pdeA = new ProgramDataElement( prA, deA );
         ProgramDataElement pdeB = new ProgramDataElement( prA, deB );
         ProgramIndicator piA = createProgramIndicator( 'A', prA, null, null );

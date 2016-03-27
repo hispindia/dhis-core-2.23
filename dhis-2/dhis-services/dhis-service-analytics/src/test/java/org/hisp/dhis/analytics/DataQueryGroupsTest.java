@@ -30,6 +30,7 @@ package org.hisp.dhis.analytics;
 
 import org.hisp.dhis.DhisConvenienceTest;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.junit.Before;
 import org.junit.Test;
@@ -71,13 +72,13 @@ public class DataQueryGroupsTest
     @Before
     public void before()
     {
-        deA = createDataElement( 'A', null ); // INTEGER, SUM
-        deB = createDataElement( 'B', null );
-        deC = createDataElement( 'C', null );
-        deD = createDataElement( 'D', null );
-        deE = createDataElement( 'E', null );
-        deF = createDataElement( 'F', null );
-        deG = createDataElement( 'G', null );
+        deA = createDataElement( 'A', new DataElementCategoryCombo() ); // INTEGER, SUM
+        deB = createDataElement( 'B', new DataElementCategoryCombo() );
+        deC = createDataElement( 'C', new DataElementCategoryCombo() );
+        deD = createDataElement( 'D', new DataElementCategoryCombo() );
+        deE = createDataElement( 'E', new DataElementCategoryCombo() );
+        deF = createDataElement( 'F', new DataElementCategoryCombo() );
+        deG = createDataElement( 'G', new DataElementCategoryCombo() );
         
         deF.setAggregationType( AggregationType.AVERAGE_SUM_ORG_UNIT );
         deG.setAggregationType( AggregationType.AVERAGE_SUM_ORG_UNIT );

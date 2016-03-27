@@ -46,6 +46,7 @@ import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.DimensionalObjectUtils;
 import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.period.Period;
 import org.junit.Before;
@@ -69,9 +70,9 @@ public class DataQueryParamsTest
     @Before
     public void setUpTest()
     {
-        deA = createDataElement( 'A', null );
-        deB = createDataElement( 'B', null );
-        deC = createDataElement( 'C', null );
+        deA = createDataElement( 'A', new DataElementCategoryCombo() );
+        deB = createDataElement( 'B', new DataElementCategoryCombo() );
+        deC = createDataElement( 'C', new DataElementCategoryCombo() );
         
         dsA = createDataSet( 'A', null );
         dsB = createDataSet( 'B', null );
