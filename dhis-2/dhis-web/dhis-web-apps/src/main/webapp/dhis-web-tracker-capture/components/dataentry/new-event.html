@@ -29,7 +29,6 @@
                            d2-date
                            d2-date-validator 
                            ng-model="dhis2Event.dueDate">
-                    <!--<span ng-if="model.dueDateInvalid" class="error">{{'required'| translate}}</span>-->
                     <div ng-messages="eventCreationForm.dueDate.$error" ng-if="interacted(eventCreationForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
                     </div>
                 </div>
@@ -47,7 +46,6 @@
                            max-date="0"
                            min-date=""
                            ng-model="dhis2Event.eventDate">
-                    <!--<span ng-if="model.eventDateInvalid" class="error">{{'required'| translate}}</span>-->
                     <div ng-messages="eventCreationForm.eventDate.$error" ng-if="interacted(eventCreationForm.eventDate)" class="required" ng-messages-include="../dhis-web-commons/angular-forms/error-messages.html">                        
                     </div>
                 </div>           
