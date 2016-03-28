@@ -13,7 +13,6 @@ trackerCapture.controller('DataEntryController',
                 DateUtils,
                 EventUtils,
                 orderByFilter,
-                dateFilter,
                 SessionStorageService,
                 EnrollmentService,
                 ProgramStageFactory,
@@ -2004,7 +2003,7 @@ trackerCapture.controller('DataEntryController',
             closeButtonText: 'cancel',
             actionButtonText: 'delete',
             headerText: 'delete',
-            bodyText: 'are_you_sure_to_delete_event'
+            bodyText: 'are_you_sure_to_delete_event_with_audit'
         };
 
         ModalService.showModal({}, modalOptions).then(function (result) {
