@@ -36,6 +36,7 @@ import org.hisp.dhis.render.RenderService;
 import org.hisp.dhis.webapi.service.ContextService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,6 +61,7 @@ public class MetadataImportController
     @Autowired
     private RenderService renderService;
 
+    @PreAuthorize( "hasRole('ALL')" )
     @RequestMapping( value = "", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE )
     public void postMetadata( HttpServletRequest request, HttpServletResponse response ) throws IOException
     {
