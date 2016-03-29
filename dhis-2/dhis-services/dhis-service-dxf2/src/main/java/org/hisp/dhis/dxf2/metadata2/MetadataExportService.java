@@ -33,6 +33,7 @@ import org.hisp.dhis.node.types.RootNode;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -47,7 +48,7 @@ public interface MetadataExportService
 
     MetadataExportParams getParamsFromMap( Map<String, List<String>> parameters );
 
-    Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getMetadataWithDependencies( IdentifiableObject object );
+    Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> getMetadataWithDependencies( IdentifiableObject object );
 
     RootNode getMetadataWithDependenciesAsNode( IdentifiableObject object );
 }
