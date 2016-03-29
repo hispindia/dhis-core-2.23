@@ -54,7 +54,6 @@ import org.hisp.dhis.expression.Expression;
 import org.hisp.dhis.expression.ExpressionService;
 import org.hisp.dhis.expression.Operator;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
-import org.hisp.dhis.period.CalendarPeriodType;
 import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
@@ -528,7 +527,7 @@ public class DataValidationTask
         MapMap<Integer, DataElementOperand, Date> lastUpdatedMap, Collection<DataElement> sourceDataElements )
     {
         ListMap<Integer, Double> results = new ListMap<Integer, Double>();
-        CalendarPeriodType periodType = (CalendarPeriodType) period.getPeriodType();
+        PeriodType periodType = period.getPeriodType();
         Calendar yearly = PeriodType.createCalendarInstance( period.getStartDate() );
 
         for ( int years = 0; years <= n_years; years++ )
@@ -587,7 +586,7 @@ public class DataValidationTask
         Period period, int window, PeriodTypeExtended px, Collection<PeriodType> periodTypes,
         MapMap<Integer, DataElementOperand, Date> lastUpdatedMap, Collection<DataElement> sourceElements )
     {
-        CalendarPeriodType periodType = (CalendarPeriodType) period.getPeriodType();
+        PeriodType periodType = period.getPeriodType();
         Period periodInstance = periodService.getPeriod( period.getStartDate(), 
             period.getEndDate(), periodType );
         
