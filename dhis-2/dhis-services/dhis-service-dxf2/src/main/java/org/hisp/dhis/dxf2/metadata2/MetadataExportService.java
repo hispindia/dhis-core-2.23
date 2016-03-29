@@ -46,4 +46,8 @@ public interface MetadataExportService
     void validate( MetadataExportParams params );
 
     MetadataExportParams getParamsFromMap( Map<String, List<String>> parameters );
+
+    Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getMetadataWithDependencies( IdentifiableObject object );
+
+    RootNode getMetadataWithDependenciesAsNode( IdentifiableObject object );
 }

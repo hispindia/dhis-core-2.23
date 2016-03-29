@@ -28,15 +28,29 @@ package org.hisp.dhis.dxf2.metadata2;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.IdentifiableObject;
+import org.hisp.dhis.dataelement.DataElement;
+import org.hisp.dhis.dataelement.DataElementCategory;
+import org.hisp.dhis.dataelement.DataElementCategoryCombo;
+import org.hisp.dhis.dataelement.DataElementCategoryOption;
+import org.hisp.dhis.dataelement.DataElementCategoryOptionCombo;
+import org.hisp.dhis.dataelement.DataElementOperand;
+import org.hisp.dhis.dataentryform.DataEntryForm;
+import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.common.OrderParams;
 import org.hisp.dhis.fieldfilter.FieldFilterService;
+import org.hisp.dhis.indicator.Indicator;
+import org.hisp.dhis.legend.Legend;
+import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.node.NodeUtils;
 import org.hisp.dhis.node.types.RootNode;
 import org.hisp.dhis.node.types.SimpleNode;
+import org.hisp.dhis.program.Program;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.schema.Schema;
@@ -248,5 +262,173 @@ public class DefaultMetadataExportService implements MetadataExportService
         }
 
         return params;
+    }
+
+    @Override
+    public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getMetadataWithDependencies( IdentifiableObject object )
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = new HashMap<>();
+
+        if ( DataSet.class.isInstance( object ) ) return handleDataSet( metadata, (DataSet) object );
+        if ( Program.class.isInstance( object ) ) return handleProgram( metadata, (Program) object );
+
+        return metadata;
+    }
+
+    @Override
+    public RootNode getMetadataWithDependenciesAsNode( IdentifiableObject object )
+    {
+        RootNode rootNode = NodeUtils.createMetadata();
+        rootNode.addChild( new SimpleNode( "date", new Date(), true ) );
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = getMetadataWithDependencies( object );
+
+        for ( Class<? extends IdentifiableObject> klass : metadata.keySet() )
+        {
+            rootNode.addChild( fieldFilterService.filter( klass, metadata.get( klass ), Lists.newArrayList( ":owner" ) ) );
+        }
+
+        return rootNode;
+    }
+
+    //-----------------------------------------------------------------------------------
+    // Utility Methods
+    //-----------------------------------------------------------------------------------
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleDataSet( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataSet dataSet )
+    {
+        if ( !metadata.containsKey( DataSet.class ) ) metadata.put( DataSet.class, new ArrayList<>() );
+        metadata.get( DataSet.class ).add( dataSet );
+
+        dataSet.getDataElements().forEach( dataElement -> handleDataElement( metadata, dataElement ) );
+        dataSet.getSections().forEach( section -> handleSection( metadata, section ) );
+        dataSet.getIndicators().forEach( indicator -> handleIndicator( metadata, indicator ) );
+
+        handleDataEntryForm( metadata, dataSet.getDataEntryForm() );
+        handleLegendSet( metadata, dataSet.getLegendSet() );
+        handleCategoryCombo( metadata, dataSet.getCategoryCombo() );
+
+        dataSet.getCompulsoryDataElementOperands().forEach( dataElementOperand -> handleDataElementOperand( metadata, dataElementOperand ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleDataElementOperand( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElementOperand dataElementOperand )
+    {
+        if ( dataElementOperand == null ) return metadata;
+
+        handleCategoryOptionCombo( metadata, dataElementOperand.getCategoryOptionCombo() );
+        handleLegendSet( metadata, dataElementOperand.getLegendSet() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleCategoryOptionCombo( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElementCategoryOptionCombo categoryOptionCombo )
+    {
+        if ( categoryOptionCombo == null ) return metadata;
+        if ( !metadata.containsKey( DataElementCategoryOptionCombo.class ) ) metadata.put( DataElementCategoryOptionCombo.class, new ArrayList<>() );
+        metadata.get( DataElementCategoryOptionCombo.class ).add( categoryOptionCombo );
+
+        categoryOptionCombo.getCategoryOptions().forEach( categoryOption -> handleCategoryOption( metadata, categoryOption ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleCategoryCombo( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElementCategoryCombo categoryCombo )
+    {
+        if ( categoryCombo == null ) return metadata;
+        if ( !metadata.containsKey( DataElementCategoryCombo.class ) ) metadata.put( DataElementCategoryCombo.class, new ArrayList<>() );
+        metadata.get( DataElementCategoryCombo.class ).add( categoryCombo );
+
+        categoryCombo.getCategories().forEach( category -> handleCategory( metadata, category ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleCategory( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElementCategory category )
+    {
+        if ( category == null ) return metadata;
+        if ( !metadata.containsKey( DataElementCategory.class ) ) metadata.put( DataElementCategory.class, new ArrayList<>() );
+        metadata.get( DataElementCategory.class ).add( category );
+
+        category.getCategoryOptions().forEach( categoryOption -> handleCategoryOption( metadata, categoryOption ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleCategoryOption( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElementCategoryOption categoryOption )
+    {
+        if ( categoryOption == null ) return metadata;
+        if ( !metadata.containsKey( DataElementCategoryOption.class ) ) metadata.put( DataElementCategoryOption.class, new ArrayList<>() );
+        metadata.get( DataElementCategoryOption.class ).add( categoryOption );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleLegendSet( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, LegendSet legendSet )
+    {
+        if ( legendSet == null ) return metadata;
+        if ( !metadata.containsKey( LegendSet.class ) ) metadata.put( LegendSet.class, new ArrayList<>() );
+        metadata.get( LegendSet.class ).add( legendSet );
+
+        legendSet.getLegends().forEach( legend -> handleLegend( metadata, legend ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleLegend( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, Legend legend )
+    {
+        if ( legend == null ) return metadata;
+        if ( !metadata.containsKey( Legend.class ) ) metadata.put( Legend.class, new ArrayList<>() );
+        metadata.get( Legend.class ).add( legend );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleDataEntryForm( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataEntryForm dataEntryForm )
+    {
+        if ( dataEntryForm == null ) return metadata;
+        if ( !metadata.containsKey( DataEntryForm.class ) ) metadata.put( DataEntryForm.class, new ArrayList<>() );
+        metadata.get( DataEntryForm.class ).add( dataEntryForm );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleDataElement( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, DataElement dataElement )
+    {
+        if ( dataElement == null ) return metadata;
+        if ( !metadata.containsKey( DataElement.class ) ) metadata.put( DataElement.class, new ArrayList<>() );
+        metadata.get( DataElement.class ).add( dataElement );
+
+        handleCategoryCombo( metadata, dataElement.getCategoryCombo() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleSection( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, Section section )
+    {
+        if ( section == null ) return metadata;
+        if ( !metadata.containsKey( Section.class ) ) metadata.put( Section.class, new ArrayList<>() );
+        metadata.get( Section.class ).add( section );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleIndicator( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, Indicator indicator )
+    {
+        if ( indicator == null ) return metadata;
+        if ( !metadata.containsKey( Indicator.class ) ) metadata.put( Indicator.class, new ArrayList<>() );
+        metadata.get( Indicator.class ).add( indicator );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> handleProgram( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata, Program program )
+    {
+        if ( program == null ) return metadata;
+        if ( !metadata.containsKey( Program.class ) ) metadata.put( Program.class, new ArrayList<>() );
+        metadata.get( Program.class ).add( program );
+
+        return metadata;
     }
 }
