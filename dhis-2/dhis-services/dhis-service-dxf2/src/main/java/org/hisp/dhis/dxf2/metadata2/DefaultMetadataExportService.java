@@ -45,6 +45,7 @@ import org.hisp.dhis.dataset.Section;
 import org.hisp.dhis.dxf2.common.OrderParams;
 import org.hisp.dhis.fieldfilter.FieldFilterService;
 import org.hisp.dhis.indicator.Indicator;
+import org.hisp.dhis.indicator.IndicatorType;
 import org.hisp.dhis.legend.Legend;
 import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.node.NodeUtils;
@@ -429,6 +430,17 @@ public class DefaultMetadataExportService implements MetadataExportService
         if ( indicator == null ) return metadata;
         if ( !metadata.containsKey( Indicator.class ) ) metadata.put( Indicator.class, new HashSet<>() );
         metadata.get( Indicator.class ).add( indicator );
+
+        handleIndicatorType( metadata, indicator.getIndicatorType() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleIndicatorType( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, IndicatorType indicatorType )
+    {
+        if ( indicatorType == null ) return metadata;
+        if ( !metadata.containsKey( IndicatorType.class ) ) metadata.put( IndicatorType.class, new HashSet<>() );
+        metadata.get( IndicatorType.class ).add( indicatorType );
 
         return metadata;
     }
