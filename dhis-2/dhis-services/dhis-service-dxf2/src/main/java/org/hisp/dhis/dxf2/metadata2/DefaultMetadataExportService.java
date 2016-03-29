@@ -319,6 +319,7 @@ public class DefaultMetadataExportService implements MetadataExportService
 
         handleCategoryOptionCombo( metadata, dataElementOperand.getCategoryOptionCombo() );
         handleLegendSet( metadata, dataElementOperand.getLegendSet() );
+        handleDataElement( metadata, dataElementOperand.getDataElement() );
 
         return metadata;
     }
@@ -329,6 +330,7 @@ public class DefaultMetadataExportService implements MetadataExportService
         if ( !metadata.containsKey( DataElementCategoryOptionCombo.class ) ) metadata.put( DataElementCategoryOptionCombo.class, new ArrayList<>() );
         metadata.get( DataElementCategoryOptionCombo.class ).add( categoryOptionCombo );
 
+        handleCategoryCombo( metadata, categoryOptionCombo.getCategoryCombo() );
         categoryOptionCombo.getCategoryOptions().forEach( categoryOption -> handleCategoryOption( metadata, categoryOption ) );
 
         return metadata;
