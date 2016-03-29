@@ -185,7 +185,7 @@ function getUserRoles()
     
     var def = $.Deferred();
     var promise = def.promise();
-    promise = promise.then( dhis2.tracker.getTrackerObject(null, 'USER_ROLES', '../api/me.json', 'fields=id,name,userCredentials[userRoles[id,authorities]]', 'sessionStorage', dhis2.ec.store) );
+    promise = promise.then( dhis2.tracker.getTrackerObject(null, 'USER_ROLES', '../api/me.json', 'fields=id,displayName,userCredentials[userRoles[id,authorities]]', 'sessionStorage', dhis2.ec.store) );
     promise = promise.done(function(){});    
     def.resolve();
 }
@@ -205,7 +205,7 @@ function getConstants()
         if(res.length > 0){
             return;
         }        
-        return dhis2.tracker.getTrackerObjects('constants', 'constants', '../api/constants.json', 'paging=false&fields=id,name,displayName,value', 'idb', dhis2.ec.store);        
+        return dhis2.tracker.getTrackerObjects('constants', 'constants', '../api/constants.json', 'paging=false&fields=id,displayName,displayName,value', 'idb', dhis2.ec.store);        
     });    
 }
 
@@ -215,7 +215,7 @@ function getOrgUnitLevels()
         if(res.length > 0){
             return;
         }        
-        return dhis2.tracker.getTrackerObjects('ouLevels', 'organisationUnitLevels', '../api/organisationUnitLevels.json', 'filter=level:gt:1&fields=id,name,level&paging=false', 'idb', dhis2.ec.store);
+        return dhis2.tracker.getTrackerObjects('ouLevels', 'organisationUnitLevels', '../api/organisationUnitLevels.json', 'filter=level:gt:1&fields=id,displayName,level&paging=false', 'idb', dhis2.ec.store);
     }); 
 }
 

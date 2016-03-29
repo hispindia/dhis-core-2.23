@@ -64,8 +64,8 @@ trackerCapture.controller('TeiReportController',
                 ev.visited = true;
                 ev.dueDate = DateUtils.formatFromApiToUser(ev.dueDate);  
                 ev.sortingDate = ev.dueDate;
-                ev.name = $scope.programStageNames[ev.programStage].name;
-                ev.programName = $scope.programNames[ev.program].name;                    
+                ev.name = $scope.programStageNames[ev.programStage].displayName;
+                ev.programName = $scope.programNames[ev.program].displayName;                    
                 if(!$scope.report[ev.program].enrollments){
                     $scope.report[ev.program] = {enrollments: {}};
                 }

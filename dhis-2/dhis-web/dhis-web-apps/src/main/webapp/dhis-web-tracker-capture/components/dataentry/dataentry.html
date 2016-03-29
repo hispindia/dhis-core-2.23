@@ -69,7 +69,7 @@
             <div ng-if="useMainMenu && !mainMenuStageSelected() && eventsLoaded">
                     <div class="">
                         <div ng-repeat="mainMenuStage in mainMenuStages" class="main-menu-item-container" ng-class="getMainMenuItemStyle(mainMenuStage)" ng-click="openStageFromMenu(mainMenuStage)">                            
-                            <div class="main-menu-item">{{mainMenuStage.name}} ({{getStageEventCnt(mainMenuStage)}})</div>  
+                            <div class="main-menu-item">{{mainMenuStage.displayName}} ({{getStageEventCnt(mainMenuStage)}})</div>  
                             <div class="main-menu-item-footer">{{getStageStyleLabel(mainMenuStage)}}</div>
                         </div>
                     </div>                

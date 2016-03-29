@@ -89,7 +89,7 @@ trackerCapture.controller('EventCreationController',
                             }
                             else if(eventStage.sortOrder === lastStageForEvents.sortOrder){
                                 if(eventStage.id !== lastStageForEvents.id){
-                                    if(eventStage.name.localeCompare(lastStageForEvents.name) > 0){
+                                    if(eventStage.displayName.localeCompare(lastStageForEvents.displayName) > 0){
                                         lastStageForEvents = eventStage;
                                     }
                                 }                            
@@ -113,7 +113,7 @@ trackerCapture.controller('EventCreationController',
                     break;
                 }
                 else if(availableStage.sortOrder === lastStageForEvents.sortOrder){
-                    if(availableStage.name.localeCompare(lastStageForEvents.name) > 0){
+                    if(availableStage.displayName.localeCompare(lastStageForEvents.displayName) > 0){
                         suggestedStage = availableStage;
                         break;
                     }
@@ -293,8 +293,8 @@ trackerCapture.controller('EventCreationController',
     }
     
     function generateFieldsUrl(){
-        var fieldUrl = "fields=id,name,organisationUnitGroups[shortName]";
-        var parentStartDefault = ",parent[id,name,children[id,name,organisationUnitGroups[shortName],children[id,name,organisationUnitGroups[shortName]]]";
+        var fieldUrl = "fields=id,displayName,organisationUnitGroups[shortName]";
+        var parentStartDefault = ",parent[id,displayName,children[id,displayName,organisationUnitGroups[shortName],children[id,displayName,organisationUnitGroups[shortName]]]";
         var parentEndDefault = "]";
         if(orgUnit.level && orgUnit.level > 1){
             var parentStart = parentStartDefault;

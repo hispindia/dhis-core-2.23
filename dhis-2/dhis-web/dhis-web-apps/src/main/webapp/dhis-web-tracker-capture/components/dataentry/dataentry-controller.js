@@ -382,12 +382,12 @@ trackerCapture.controller('DataEntryController',
     $scope.headerCurrentStageName = function(){
         
         var name = "";
-        if($scope.selectedMainMenuStage && angular.isDefined($scope.selectedMainMenuStage.name)){
-            name = $scope.selectedMainMenuStage.name;
+        if($scope.selectedMainMenuStage && angular.isDefined($scope.selectedMainMenuStage.displayName)){
+            name = $scope.selectedMainMenuStage.displayName;
             if(angular.isDefined($scope.headerCombineStages) && $scope.headerCombineStages[$scope.selectedMainMenuStage.id]){
                 var stageWithName = $scope.stagesById[$scope.headerCombineStages[$scope.selectedMainMenuStage.id]];
                 if(angular.isDefined(stageWithName) && angular.isObject(stageWithName)){
-                    name = stageWithName.name;
+                    name = stageWithName.displayName;
                 }
             }
         }        
