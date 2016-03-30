@@ -51,17 +51,24 @@ import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.node.NodeUtils;
 import org.hisp.dhis.node.types.RootNode;
 import org.hisp.dhis.node.types.SimpleNode;
+import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramIndicator;
 import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageDataElement;
 import org.hisp.dhis.program.ProgramStageSection;
 import org.hisp.dhis.program.ProgramTrackedEntityAttribute;
+import org.hisp.dhis.programrule.ProgramRule;
+import org.hisp.dhis.programrule.ProgramRuleAction;
+import org.hisp.dhis.programrule.ProgramRuleService;
+import org.hisp.dhis.programrule.ProgramRuleVariable;
+import org.hisp.dhis.programrule.ProgramRuleVariableService;
 import org.hisp.dhis.query.Query;
 import org.hisp.dhis.query.QueryService;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.trackedentity.TrackedEntity;
+import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +101,12 @@ public class DefaultMetadataExportService implements MetadataExportService
 
     @Autowired
     private CurrentUserService currentUserService;
+
+    @Autowired
+    private ProgramRuleService programRuleService;
+
+    @Autowired
+    private ProgramRuleVariableService programRuleVariableService;
 
     @Override
     @SuppressWarnings( "unchecked" )
@@ -412,6 +425,17 @@ public class DefaultMetadataExportService implements MetadataExportService
         metadata.get( DataElement.class ).add( dataElement );
 
         handleCategoryCombo( metadata, dataElement.getCategoryCombo() );
+        handleOptionSet( metadata, dataElement.getOptionSet() );
+        handleOptionSet( metadata, dataElement.getCommentOptionSet() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleOptionSet( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, OptionSet optionSet )
+    {
+        if ( optionSet == null ) return metadata;
+        if ( !metadata.containsKey( OptionSet.class ) ) metadata.put( OptionSet.class, new HashSet<>() );
+        metadata.get( OptionSet.class ).add( optionSet );
 
         return metadata;
     }
@@ -421,6 +445,10 @@ public class DefaultMetadataExportService implements MetadataExportService
         if ( section == null ) return metadata;
         if ( !metadata.containsKey( Section.class ) ) metadata.put( Section.class, new HashSet<>() );
         metadata.get( Section.class ).add( section );
+
+        section.getGreyedFields().forEach( dataElementOperand -> handleDataElementOperand( metadata, dataElementOperand ) );
+        section.getIndicators().forEach( indicator -> handleIndicator( metadata, indicator ) );
+        section.getDataElements().forEach( dataElement -> handleDataElement( metadata, dataElement ) );
 
         return metadata;
     }
@@ -458,6 +486,62 @@ public class DefaultMetadataExportService implements MetadataExportService
         program.getProgramStages().forEach( programStage -> handleProgramStage( metadata, programStage ) );
         program.getProgramAttributes().forEach( programTrackedEntityAttribute -> handleProgramTrackedEntityAttribute( metadata, programTrackedEntityAttribute ) );
         program.getProgramIndicators().forEach( programIndicator -> handleProgramIndicator( metadata, programIndicator ) );
+
+        List<ProgramRule> programRules = programRuleService.getProgramRule( program );
+        List<ProgramRuleVariable> programRuleVariables = programRuleVariableService.getProgramRuleVariable( program );
+
+        programRules.forEach( programRule -> handleProgramRule( metadata, programRule ) );
+        programRuleVariables.forEach( programRuleVariable -> handleProgramRuleVariable( metadata, programRuleVariable ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleProgramRuleVariable( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, ProgramRuleVariable programRuleVariable )
+    {
+        if ( programRuleVariable == null ) return metadata;
+        if ( !metadata.containsKey( ProgramRuleVariable.class ) ) metadata.put( ProgramRuleVariable.class, new HashSet<>() );
+        metadata.get( ProgramRuleVariable.class ).add( programRuleVariable );
+
+        handleTrackedEntityAttribute( metadata, programRuleVariable.getAttribute() );
+        handleDataElement( metadata, programRuleVariable.getDataElement() );
+        handleProgramStage( metadata, programRuleVariable.getProgramStage() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleTrackedEntityAttribute( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, TrackedEntityAttribute trackedEntityAttribute )
+    {
+        if ( trackedEntityAttribute == null ) return metadata;
+        if ( !metadata.containsKey( TrackedEntityAttribute.class ) ) metadata.put( TrackedEntityAttribute.class, new HashSet<>() );
+        metadata.get( TrackedEntityAttribute.class ).add( trackedEntityAttribute );
+
+        handleOptionSet( metadata, trackedEntityAttribute.getOptionSet() );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleProgramRule( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, ProgramRule programRule )
+    {
+        if ( programRule == null ) return metadata;
+        if ( !metadata.containsKey( ProgramRule.class ) ) metadata.put( ProgramRule.class, new HashSet<>() );
+        metadata.get( ProgramRule.class ).add( programRule );
+
+        programRule.getProgramRuleActions().forEach( programRuleAction -> handleProgramRuleAction( metadata, programRuleAction ) );
+
+        return metadata;
+    }
+
+    private Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> handleProgramRuleAction( Map<Class<? extends IdentifiableObject>, Set<IdentifiableObject>> metadata, ProgramRuleAction programRuleAction )
+    {
+        if ( programRuleAction == null ) return metadata;
+        if ( !metadata.containsKey( ProgramRuleAction.class ) ) metadata.put( ProgramRuleAction.class, new HashSet<>() );
+        metadata.get( ProgramRuleAction.class ).add( programRuleAction );
+
+        handleDataElement( metadata, programRuleAction.getDataElement() );
+        handleTrackedEntityAttribute( metadata, programRuleAction.getAttribute() );
+        handleProgramIndicator( metadata, programRuleAction.getProgramIndicator() );
+        handleProgramStageSection( metadata, programRuleAction.getProgramStageSection() );
+        handleProgramStage( metadata, programRuleAction.getProgramStage() );
 
         return metadata;
     }
