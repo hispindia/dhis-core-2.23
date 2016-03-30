@@ -58,11 +58,7 @@ public interface EventAnalyticalObject
     // Base class emulation methods
     // -------------------------------------------------------------------------
     
-    DataElement getDataElementValueDimension();
-
     void setDataElementValueDimension( DataElement dataElementValueDimension );
-
-    TrackedEntityAttribute getAttributeValueDimension();
     
     void setAttributeValueDimension( TrackedEntityAttribute attributeValueDimension );   
 }
