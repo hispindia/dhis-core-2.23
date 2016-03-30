@@ -119,7 +119,7 @@ public class ProgramController
         return entityList;
     }
 
-    @RequestMapping( value = "/{uid}/export", method = RequestMethod.GET )
+    @RequestMapping( value = "/{uid}/metadata", method = RequestMethod.GET )
     public @ResponseBody RootNode getProgramWithDependencies( @PathVariable( "uid" ) String pvUid, HttpServletResponse response ) throws WebMessageException, IOException
     {
         Program program = programService.getProgram( pvUid );

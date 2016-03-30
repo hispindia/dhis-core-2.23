@@ -275,7 +275,7 @@ public class DataSetController
         dataSetService.updateDataSet( dataSet );
     }
 
-    @RequestMapping( value = "/{uid}/export", method = RequestMethod.GET )
+    @RequestMapping( value = "/{uid}/metadata", method = RequestMethod.GET )
     public @ResponseBody RootNode getDataSetWithDependencies( @PathVariable( "uid" ) String pvUid, HttpServletResponse response ) throws WebMessageException, IOException
     {
         DataSet dataSet = dataSetService.getDataSet( pvUid );
