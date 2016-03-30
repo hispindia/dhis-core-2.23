@@ -183,6 +183,7 @@ public class TableAlteror
         executeSql( "UPDATE mapview SET layer = 'thematic1' WHERE layer IS NULL" );
         executeSql( "UPDATE mapview SET hidden = false WHERE hidden IS NULL" );
         executeSql( "UPDATE mapview SET eventclustering = false WHERE eventclustering IS NULL" );
+        executeSql( "UPDATE mapview SET eventpointradius = 0 WHERE eventpointradius IS NULL" );
 
         executeSql( "DELETE FROM systemsetting WHERE name = 'longitude'" );
         executeSql( "DELETE FROM systemsetting WHERE name = 'latitude'" );
