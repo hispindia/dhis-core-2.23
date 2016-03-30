@@ -55,10 +55,14 @@ public interface EventAnalyticalObject
     DimensionalItemObject getValue();
     
     // -------------------------------------------------------------------------
-    // Base class emulation methods
+    // Base class emulation methods with default implementations
     // -------------------------------------------------------------------------
     
-    void setDataElementValueDimension( DataElement dataElementValueDimension );
+    default void setDataElementValueDimension( DataElement dataElementValueDimension )
+    {
+    }
     
-    void setAttributeValueDimension( TrackedEntityAttribute attributeValueDimension );   
+    default void setAttributeValueDimension( TrackedEntityAttribute attributeValueDimension )
+    {
+    }
 }
