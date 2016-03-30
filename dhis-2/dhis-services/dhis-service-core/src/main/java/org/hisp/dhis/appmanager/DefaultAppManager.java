@@ -54,6 +54,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -116,7 +117,7 @@ public class DefaultAppManager
     }
 
     @Override
-    public List<App> getAppsByType( AppType appType, Set<App> apps )
+    public List<App> getAppsByType( AppType appType, Collection<App> apps )
     {
         return apps.stream()
             .filter( app -> app.getAppType() == appType )
@@ -124,7 +125,7 @@ public class DefaultAppManager
     }
 
     @Override
-    public List<App> getAppsByName( final String name, Set<App> apps, final String operator )
+    public List<App> getAppsByName( final String name, Collection<App> apps, final String operator )
     {
         return apps.stream().filter( app -> ( 
             ( "ilike".equalsIgnoreCase( operator ) && app.getName().toLowerCase().contains( name.toLowerCase() ) ) ||

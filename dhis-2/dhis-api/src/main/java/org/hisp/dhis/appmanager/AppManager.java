@@ -32,8 +32,8 @@ import org.hisp.dhis.user.User;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author Saptarshi Purkayastha
@@ -57,15 +57,15 @@ public interface AppManager
      *
      * @return list of installed apps with given AppType
      */
-    List<App> getAppsByType( AppType appType, Set<App> apps );
+    List<App> getAppsByType( AppType appType, Collection<App> apps );
 
     /**
      * Returns a list of all installed apps with name equal the given name
-     * and operator. Currently support eq and ilike
+     * and operator. Currently supports eq and ilike.
      *
      * @return list of installed apps with given name
      */
-    List<App> getAppsByName( String name, Set<App> apps, String operator );
+    List<App> getAppsByName( String name, Collection<App> apps, String operator );
 
     /**
      * Return a list of all installed apps with given filter list

@@ -113,6 +113,8 @@ public class DefaultDashboardService
     {
         Set<String> words = Sets.newHashSet( query.split( TextUtils.SPACE ) );
 
+        List<App> dashboardApps = appManager.getAppsByType( AppType.DASHBOARD_WIDGET, new HashSet<>( appManager.getApps( null ) ) );
+        
         DashboardSearchResult result = new DashboardSearchResult();
 
         result.setUsers( userService.getAllUsersBetweenByName( query, 0, getMax( DashboardItemType.USERS, maxTypes ) ) );
@@ -123,9 +125,7 @@ public class DefaultDashboardService
         result.setEventReports( objectManager.getBetweenLikeName( EventReport.class, words, 0, getMax( DashboardItemType.EVENT_REPORT, maxTypes ) ) );
         result.setReports( objectManager.getBetweenLikeName( Report.class, words, 0, getMax( DashboardItemType.REPORTS, maxTypes ) ) );
         result.setResources( objectManager.getBetweenLikeName( Document.class, words, 0, getMax( DashboardItemType.RESOURCES, maxTypes ) ) );
-
-        List<App> dashboardApps = appManager.getAppsByType( AppType.DASHBOARD_WIDGET, new HashSet<>( appManager.getApps( null ) ) );
-        result.setApps( appManager.getAppsByName( query, new HashSet<>( dashboardApps ), "ilike" ) );
+        result.setApps( appManager.getAppsByName( query, dashboardApps, "ilike" ) );
 
         return result;
     }
