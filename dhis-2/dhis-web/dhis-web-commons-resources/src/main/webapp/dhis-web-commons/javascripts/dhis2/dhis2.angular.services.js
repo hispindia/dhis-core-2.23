@@ -23,8 +23,6 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 return tx;
             }, function () {
 
-                setHeaderDelayMessage('No translation file is found for the selected locale. Using default translation (English).');
-
                 var p = $http.get(defaultUrl).then(function (response) {
                     tx = {locale: locale, keys: dhis2.util.parseJavaProperties(response.data)};
                     return tx;
