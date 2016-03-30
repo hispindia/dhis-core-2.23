@@ -31,7 +31,6 @@ package org.hisp.dhis.mapping;
 import static org.hisp.dhis.common.DimensionalObject.ORGUNIT_DIM_ID;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +57,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
+import com.google.common.collect.ImmutableList;
 
 /**
  * For analytical data, organisation units and indicators/data elements are
@@ -72,6 +72,7 @@ public class MapView
     public static final String LAYER_BOUNDARY = "boundary";
     public static final String LAYER_FACILITY = "facility";
     public static final String LAYER_SYMBOL = "symbol";
+    public static final String LAYER_EVENT = "event";
     public static final String LAYER_THEMATIC1 = "thematic1";
     public static final String LAYER_THEMATIC2 = "thematic2";
     public static final String LAYER_THEMATIC3 = "thematic3";
@@ -80,9 +81,9 @@ public class MapView
     public static final Integer METHOD_EQUAL_INTERVALS = 2;
     public static final Integer METHOD_EQUAL_COUNTS = 3;
 
-    public static final List<String> DATA_LAYERS = Arrays.asList(
-        LAYER_THEMATIC1, LAYER_THEMATIC2, LAYER_THEMATIC3, LAYER_THEMATIC4 );
-
+    public static final ImmutableList<String> DATA_LAYERS = ImmutableList.<String>builder().add( 
+        LAYER_THEMATIC1, LAYER_THEMATIC2, LAYER_THEMATIC3, LAYER_THEMATIC4 ).build();
+    
     private String layer;
 
     private Integer method;
@@ -116,6 +117,12 @@ public class MapView
     private String labelFontStyle;
 
     private String labelFontColor;
+    
+    private boolean eventClustering;
+    
+    private String eventPointColor;
+    
+    private int eventPointRadius;
 
     // -------------------------------------------------------------------------
     // Transient properties
@@ -189,6 +196,11 @@ public class MapView
         return DATA_LAYERS.contains( layer );
     }
 
+    public boolean isEventLayer()
+    {
+        return LAYER_EVENT.equals( layer );
+    }
+    
     @Override
     public boolean haveUniqueNames()
     {
@@ -433,6 +445,45 @@ public class MapView
     public void setLabelFontColor( String labelFontColor )
     {
         this.labelFontColor = labelFontColor;
+    }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public boolean isEventClustering()
+    {
+        return eventClustering;
+    }
+
+    public void setEventClustering( boolean eventClustering )
+    {
+        this.eventClustering = eventClustering;
+    }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public String getEventPointColor()
+    {
+        return eventPointColor;
+    }
+
+    public void setEventPointColor( String eventPointColor )
+    {
+        this.eventPointColor = eventPointColor;
+    }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public int getEventPointRadius()
+    {
+        return eventPointRadius;
+    }
+
+    public void setEventPointRadius( int eventPointRadius )
+    {
+        this.eventPointRadius = eventPointRadius;
     }
 
     @JsonProperty

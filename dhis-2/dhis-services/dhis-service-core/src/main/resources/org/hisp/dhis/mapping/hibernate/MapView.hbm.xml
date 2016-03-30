@@ -104,6 +104,12 @@
     <property name="labelFontStyle" />
 
     <property name="labelFontColor" />
+    
+    <property name="eventClustering" />
+    
+    <property name="eventPointColor" />
+    
+    <property name="eventPointRadius" />
 
   </class>
 </hibernate-mapping>
