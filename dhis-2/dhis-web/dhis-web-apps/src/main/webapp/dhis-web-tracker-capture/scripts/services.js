@@ -497,8 +497,10 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },
         getSearchTreeRoot: function(){
             if(!rootOrgUnitPromise){
-                var url = '../api/me.json?fields=teiSearchOrganisationUnits[id,displayName,level,children[id,displayName,level,children[id,displayName,level]]]&paging=false';                
-                rootOrgUnitPromise = $http.get( url ).then(function(response){
+                var url = '../api/me.json?fields=teiSearchOrganisationUnits[id,displayName,level,children[id,displayName,level,children[id,displayName,level]]],organisationUnits[id,displayName,level,children[id,displayName,level,children[id,displayName,level]]]&paging=false';                
+                rootOrgUnitPromise = $http.get( url ).then(function(response){                    
+                    response.data.organisationUnits = response.data.teiSearchOrganisationUnits && response.data.teiSearchOrganisationUnits.length > 0 ? response.data.teiSearchOrganisationUnits : response.data.organisationUnits;
+                    delete response.data.teiSearchOrganisationUnits;                    
                     return response.data;
                 });
             }
