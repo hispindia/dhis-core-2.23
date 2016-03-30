@@ -54,8 +54,6 @@ public interface EventAnalyticalObject
     
     DimensionalItemObject getValue();
     
-    boolean isCollapseDataDimensions();
-
     // -------------------------------------------------------------------------
     // Base class emulation methods
     // -------------------------------------------------------------------------
