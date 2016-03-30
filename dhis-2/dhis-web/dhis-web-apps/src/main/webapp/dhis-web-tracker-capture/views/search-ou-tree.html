@@ -16,6 +16,9 @@
                 <ul class="tree" id="tree">
                     <li ng-repeat="orgUnit in orgUnits | orderBy:'displayName'" ng-include="'orgUnitTree.html'"></li>
                 </ul>
+                <div class="alert alert-danger wrap-text">
+                    {{'missing_search_ou' | translate}}
+                </div>
             </div>                      
         </accordion-group> 
     </accordion>

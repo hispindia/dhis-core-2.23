@@ -468,13 +468,13 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
     };   
     
     //Get orgunits for the logged in user
-    OrgUnitFactory.getSearchTreeRoot().then(function(response) {  
-        $scope.orgUnits = response.organisationUnits;
+    OrgUnitFactory.getSearchTreeRoot().then(function(response) {
+        $scope.orgUnits = response.teiSearchOrganisationUnits ? response.teiSearchOrganisationUnits : [];
         angular.forEach($scope.orgUnits, function(ou){
             ou.show = true;
             angular.forEach(ou.children, function(o){                    
                 o.hasChildren = o.children && o.children.length > 0 ? true : false;
-            });            
+            });
         });
         $scope.selectedSearchingOrgUnit = $scope.orgUnits[0] ? $scope.orgUnits[0] : null; 
     });

@@ -1516,6 +1516,7 @@ input, button, select, textarea {
 
 .wrap-text {
     word-wrap: break-word;
+    white-space: normal;
 }
 
 

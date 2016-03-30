@@ -497,7 +497,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },
         getSearchTreeRoot: function(){
             if(!rootOrgUnitPromise){
-                var url = '../api/me.json?fields=organisationUnits[id,displayName,level,children[id,displayName,level,children[id,displayName,level]]]&paging=false';                
+                var url = '../api/me.json?fields=teiSearchOrganisationUnits[id,displayName,level,children[id,displayName,level,children[id,displayName,level]]]&paging=false';                
                 rootOrgUnitPromise = $http.get( url ).then(function(response){
                     return response.data;
                 });
