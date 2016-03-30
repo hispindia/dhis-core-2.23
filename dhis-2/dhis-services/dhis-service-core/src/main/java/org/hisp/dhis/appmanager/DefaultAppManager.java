@@ -124,30 +124,12 @@ public class DefaultAppManager
     }
 
     @Override
-    public List<App> getAppsByName( String name, Set<App> apps, String operator )
+    public List<App> getAppsByName( final String name, Set<App> apps, final String operator )
     {
-        List<App> returnList = new ArrayList<>();
-
-        for ( App app : apps )
-        {
-            if ( "ilike".equalsIgnoreCase( operator ) )
-            {
-                if ( app.getName().toLowerCase().contains( name.toLowerCase() ) )
-                {
-                    returnList.add( app );
-                }
-            }
-            else if ( "eq".equalsIgnoreCase( operator ) )
-            {
-                if ( app.getName().equals( name ) )
-                {
-                    returnList.add( app );
-                }
-            }
-
-        }
-
-        return returnList;
+        return apps.stream().filter( app -> ( 
+            ( "ilike".equalsIgnoreCase( operator ) && app.getName().toLowerCase().contains( name.toLowerCase() ) ) ||
+            ( "eq".equalsIgnoreCase( operator ) && app.getName().equals( name ) ) ) ).
+            collect( Collectors.toList() );
     }
 
     @Override
@@ -162,7 +144,7 @@ public class DefaultAppManager
 
             if ( split.length != 3 )
             {
-                throw new QueryParserException( "Invalid filter => " + filter );
+                throw new QueryParserException( "Invalid filter: " + filter );
             }
 
             if ( "appType".equalsIgnoreCase( split[0] ) )
