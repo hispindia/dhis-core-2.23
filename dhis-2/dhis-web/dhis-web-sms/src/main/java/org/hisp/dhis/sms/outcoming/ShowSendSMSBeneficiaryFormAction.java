@@ -113,7 +113,7 @@ public class ShowSendSMSBeneficiaryFormAction
     {
         patientAttributes = patientAttributeService.getAllTrackedEntityAttributes();
 
-        programs = programService.getCurrentUserPrograms();
+        programs = programService.getUserPrograms();
 
         organisationUnit = selectionManager.getSelectedOrganisationUnit();
 

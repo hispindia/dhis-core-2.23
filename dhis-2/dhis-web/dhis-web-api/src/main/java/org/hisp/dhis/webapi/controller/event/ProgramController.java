@@ -111,7 +111,7 @@ public class ProgramController
 
         if ( userFilter )
         {
-            Set<Program> programs = programService.getCurrentUserPrograms();
+            Set<Program> programs = programService.getUserPrograms();
             entityList.retainAll( programs );
             metadata.setPager( null );
         }

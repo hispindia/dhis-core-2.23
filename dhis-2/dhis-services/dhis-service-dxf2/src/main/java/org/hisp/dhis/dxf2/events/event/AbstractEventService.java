@@ -31,7 +31,6 @@ package org.hisp.dhis.dxf2.events.event;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -265,7 +264,7 @@ public abstract class AbstractEventService
 
         if ( program == null )
         {
-            return new ImportSummary( ImportStatus.ERROR, 
+            return new ImportSummary( ImportStatus.ERROR,
                 "Event.program does not point to a valid program: " + event.getProgram() ).incrementIgnored();
         }
 
@@ -986,7 +985,7 @@ public abstract class AbstractEventService
     {
         if ( accessibleProgramsCache.isEmpty() )
         {
-            accessibleProgramsCache = programService.getCurrentUserPrograms();
+            accessibleProgramsCache = programService.getUserPrograms( user );
         }
 
         return accessibleProgramsCache.contains( program );
@@ -1016,13 +1015,13 @@ public abstract class AbstractEventService
 
         ImportSummary importSummary = new ImportSummary();
         importSummary.setStatus( ImportStatus.SUCCESS );
-        
+
         if ( importOptions == null )
         {
             importOptions = new ImportOptions();
         }
-        
-        boolean existingEvent = programStageInstance != null;        
+
+        boolean existingEvent = programStageInstance != null;
         boolean dryRun = importOptions.isDryRun();
 
         Date eventDate = DateUtils.parseDate( event.getEventDate() );
@@ -1036,7 +1035,7 @@ public abstract class AbstractEventService
         if ( event.getAttributeCategoryOptions() != null && program.getCategoryCombo() != null )
         {
             IdScheme idScheme = importOptions.getIdSchemes().getCategoryOptionIdScheme();
-            
+
             try
             {
                 coc = inputUtils.getAttributeOptionCombo( program.getCategoryCombo(), event.getAttributeCategoryOptions(), idScheme );
@@ -1070,10 +1069,10 @@ public abstract class AbstractEventService
         }
 
         Map<String, TrackedEntityDataValue> dataElementValueMap = Maps.newHashMap();
-        
+
         if ( existingEvent )
         {
-            dataElementValueMap = getDataElementDataValueMap( 
+            dataElementValueMap = getDataElementDataValueMap(
                 dataValueService.getTrackedEntityDataValues( programStageInstance ) );
         }
 
