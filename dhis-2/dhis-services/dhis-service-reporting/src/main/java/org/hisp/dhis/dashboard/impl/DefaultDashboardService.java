@@ -366,7 +366,7 @@ public class DefaultDashboardService
         return dashboardItemStore.countDocumentDashboardItems( document );
     }
 
-// -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Supportive methods
     // -------------------------------------------------------------------------
 
