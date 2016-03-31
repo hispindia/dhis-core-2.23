@@ -1595,6 +1595,32 @@ public class ObjectBundleServiceTest
         assertNotNull( section2.getDataSet() );
     }
 
+    @Test
+    public void testCreateUserRoleWithDataSetProgramAssignment() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/userrole_program_dataset_assignment.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.ALL );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertTrue( objectBundleService.validate( bundle ).getErrorReports().isEmpty() );
+
+        objectBundleService.commit( bundle );
+
+        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
+        assertEquals( 1, userRoles.size() );
+
+        UserAuthorityGroup userRole = userRoles.get( 0 );
+        assertNotNull( userRole );
+        assertEquals( 1, userRole.getDataSets().size() );
+        assertEquals( 1, userRole.getPrograms().size() );
+    }
+
     private void defaultSetup()
     {
         DataElement de1 = createDataElement( 'A' );
