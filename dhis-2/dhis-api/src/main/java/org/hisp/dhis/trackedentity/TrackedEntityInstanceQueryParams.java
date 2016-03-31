@@ -273,7 +273,7 @@ public class TrackedEntityInstanceQueryParams
     {
         if ( user != null && isOrganisationUnitMode( OrganisationUnitSelectionMode.ACCESSIBLE ) )
         {
-            setOrganisationUnits( user.getOrganisationUnits() );
+            setOrganisationUnits( user.getTeiSearchOrganisationUnitsWithFallback() );
             setOrganisationUnitMode( OrganisationUnitSelectionMode.DESCENDANTS );
         }
         else if ( isOrganisationUnitMode( CHILDREN ) )
