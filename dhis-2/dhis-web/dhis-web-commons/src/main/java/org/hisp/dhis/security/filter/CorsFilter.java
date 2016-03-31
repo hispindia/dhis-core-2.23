@@ -173,15 +173,20 @@ public class CorsFilter
         @Override
         public String getQueryString()
         {
-            try
+            String queryString = super.getQueryString();
+
+            if ( !StringUtils.isEmpty( queryString ) )
             {
-                return URLEncoder.encode( super.getQueryString(), "UTF-8" );
-            }
-            catch ( UnsupportedEncodingException ignored )
-            {
+                try
+                {
+                    return URLEncoder.encode( queryString, "UTF-8" );
+                }
+                catch ( UnsupportedEncodingException ignored )
+                {
+                }
             }
 
-            return super.getQueryString();
+            return queryString;
         }
     }
 }
