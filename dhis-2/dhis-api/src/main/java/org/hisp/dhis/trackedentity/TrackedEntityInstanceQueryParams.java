@@ -290,6 +290,11 @@ public class TrackedEntityInstanceQueryParams
         }
     }
     
+    public void addAttributes( List<QueryItem> attrs )
+    {
+        attributes.addAll( attrs );
+    }
+    
     /**
      * Add the given attributes to this params if they are not already present.
      */
