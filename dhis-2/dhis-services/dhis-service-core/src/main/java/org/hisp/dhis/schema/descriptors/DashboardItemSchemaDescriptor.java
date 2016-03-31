@@ -52,7 +52,7 @@ public class DashboardItemSchemaDescriptor implements SchemaDescriptor
         Schema schema = new Schema( DashboardItem.class, SINGULAR, PLURAL );
         schema.setRelativeApiEndpoint( API_ENDPOINT );
         schema.setShareable( false );
-        schema.setOrder( 1600 );
+        schema.setOrder( 3500 );
 
         schema.getAuthorities().add( new Authority( AuthorityType.CREATE_PUBLIC, Lists.newArrayList( "F_DASHBOARD_PUBLIC_ADD" ) ) );
 
