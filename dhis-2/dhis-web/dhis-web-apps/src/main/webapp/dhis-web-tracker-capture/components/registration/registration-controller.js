@@ -143,7 +143,7 @@ trackerCapture.controller('RegistrationController',
                     $scope.customRegistrationForm = CustomFormService.getForTrackedEntity($scope.trackedEntityForm, mode);
                 }
                 
-                if( $scope.selectedProgram.programStages && $scope.selectedProgram.programStages.length === 1 && $scope.registrationMode === 'REGISTRATION'){
+                if( $scope.selectedProgram.programStages && $scope.selectedProgram.programStages[0] && $scope.selectedProgram.useFirstStageDuringRegistration && $scope.registrationMode === 'REGISTRATION'){
                     $scope.registrationAndDataEntry = true;
                     $scope.prStDes = [];
                     $scope.currentStage = $scope.selectedProgram.programStages[0];
