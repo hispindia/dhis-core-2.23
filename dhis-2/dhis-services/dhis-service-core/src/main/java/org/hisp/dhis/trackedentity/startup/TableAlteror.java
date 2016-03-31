@@ -141,6 +141,7 @@ public class TableAlteror
         executeSql( "update program set remindCompleted=false where remindCompleted is null" );
         executeSql( "UPDATE program SET skipoffline=false where skipoffline is null" );
         executeSql( "UPDATE program SET displayfrontpagelist=false where displayfrontpagelist is null" );
+        executeSql( "UPDATE program SET usefirststageduringregistration=false where usefirststageduringregistration is null" );
 
         executeSql( "UPDATE programinstance SET followup=false where followup is null" );
 
