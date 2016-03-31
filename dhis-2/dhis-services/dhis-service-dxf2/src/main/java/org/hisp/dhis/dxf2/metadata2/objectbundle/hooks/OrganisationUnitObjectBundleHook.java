@@ -47,10 +47,10 @@ public class OrganisationUnitObjectBundleHook extends AbstractObjectBundleHook
         sortOrganisationUnits( objectBundle );
     }
 
-    private void sortOrganisationUnits( ObjectBundle objectBundle )
+    private void sortOrganisationUnits( ObjectBundle bundle )
     {
-        List<IdentifiableObject> nonPersistedObjects = objectBundle.getObjects( OrganisationUnit.class, false );
-        List<IdentifiableObject> persistedObjects = objectBundle.getObjects( OrganisationUnit.class, true );
+        List<IdentifiableObject> nonPersistedObjects = bundle.getObjects( OrganisationUnit.class, false );
+        List<IdentifiableObject> persistedObjects = bundle.getObjects( OrganisationUnit.class, true );
 
         Collections.sort( nonPersistedObjects, new OrganisationUnitParentCountComparator() );
         Collections.sort( persistedObjects, new OrganisationUnitParentCountComparator() );

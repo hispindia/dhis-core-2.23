@@ -45,12 +45,12 @@ import org.springframework.core.annotation.Order;
 public class IdentifiableObjectBundleHook extends AbstractObjectBundleHook
 {
     @Override
-    public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void preCreate( IdentifiableObject identifiableObject, ObjectBundle bundle )
     {
         Schema schema = schemaService.getDynamicSchema( identifiableObject.getClass() );
         Session session = sessionFactory.getCurrentSession();
-        handleAttributeValues( session, identifiableObject, objectBundle, schema );
-        handleUserGroupAccesses( session, identifiableObject, objectBundle, schema );
+        handleAttributeValues( session, identifiableObject, bundle, schema );
+        handleUserGroupAccesses( session, identifiableObject, bundle, schema );
     }
 
     @Override

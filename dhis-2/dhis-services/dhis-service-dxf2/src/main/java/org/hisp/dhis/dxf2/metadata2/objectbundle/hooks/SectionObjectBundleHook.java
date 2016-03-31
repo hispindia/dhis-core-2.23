@@ -42,20 +42,20 @@ import java.util.Set;
 public class SectionObjectBundleHook extends AbstractObjectBundleHook
 {
     @Override
-    public void preCreate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void preCreate( IdentifiableObject identifiableObject, ObjectBundle bundle )
     {
         if ( !Section.class.isInstance( identifiableObject ) ) return;
         Section section = (Section) identifiableObject;
 
         for ( DataElementOperand dataElementOperand : section.getGreyedFields() )
         {
-            preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+            preheatService.connectReferences( dataElementOperand, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             sessionFactory.getCurrentSession().save( dataElementOperand );
         }
     }
 
     @Override
-    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void preUpdate( IdentifiableObject identifiableObject, ObjectBundle bundle )
     {
         if ( !Section.class.isInstance( identifiableObject ) ) return;
         Section section = (Section) identifiableObject;
@@ -64,12 +64,12 @@ public class SectionObjectBundleHook extends AbstractObjectBundleHook
 
     @Override
     @SuppressWarnings( "unchecked" )
-    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle objectBundle )
+    public void postUpdate( IdentifiableObject identifiableObject, ObjectBundle bundle )
     {
         if ( !Section.class.isInstance( identifiableObject ) ) return;
         Section section = (Section) identifiableObject;
 
-        Map<String, Object> references = objectBundle.getObjectReferences( Section.class ).get( section.getUid() );
+        Map<String, Object> references = bundle.getObjectReferences( Section.class ).get( section.getUid() );
         if ( references == null ) return;
 
         Set<DataElementOperand> dataElementOperands = (Set<DataElementOperand>) references.get( "greyedFields" );
@@ -77,7 +77,7 @@ public class SectionObjectBundleHook extends AbstractObjectBundleHook
 
         for ( DataElementOperand dataElementOperand : dataElementOperands )
         {
-            preheatService.connectReferences( dataElementOperand, objectBundle.getPreheat(), objectBundle.getPreheatIdentifier() );
+            preheatService.connectReferences( dataElementOperand, bundle.getPreheat(), bundle.getPreheatIdentifier() );
             sessionFactory.getCurrentSession().save( dataElementOperand );
             section.getGreyedFields().add( dataElementOperand );
         }
