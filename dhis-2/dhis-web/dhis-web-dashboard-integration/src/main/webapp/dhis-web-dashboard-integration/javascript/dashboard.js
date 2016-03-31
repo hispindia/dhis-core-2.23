@@ -163,7 +163,7 @@ dhis2.db.tmpl = {
 	"<a href='javascript:dhis2.db.resizeItem( \"${itemId}\", true )'>${i18n_resize}</a>" +
 	"<i class=\"fa fa-arrows dragIcon\" title=\"${i18n_click_and_drag_to_new_position}\"></i>" +
 	"</div><div style='position:relative'>" +
-	"<iframe id='plugin-${itemId}' style='width:100%;height:${dhis2.db.itemContentHeight-4}px;border:0' src='${app.launchUrl}'></iframe>" +
+	"<iframe id='plugin-${itemId}' style='width:100%;height:${dhis2.db.itemContentHeight-4}px;border:0' allowfullscreen src='${app.launchUrl}'></iframe>" +
 	"</div></div></li>"
 };
 
