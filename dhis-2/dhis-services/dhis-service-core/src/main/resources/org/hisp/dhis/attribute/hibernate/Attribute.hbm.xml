@@ -67,6 +67,10 @@
 
     <property name="optionSetAttribute" not-null="false" />
 
+    <property name="constantAttribute" not-null="false" />
+
+    <property name="legendSetAttribute" not-null="false" />
+
     <property name="sortOrder" />
 
     <!-- commented out for now, not sure if we really need this mapping.

@@ -749,6 +749,8 @@ public class TableAlteror
         executeSql( "UPDATE attribute SET documentattribute=false WHERE documentattribute IS NULL" );
         executeSql( "UPDATE attribute SET optionattribute=false WHERE optionattribute IS NULL" );
         executeSql( "UPDATE attribute SET optionsetattribute=false WHERE optionsetattribute IS NULL" );
+        executeSql( "UPDATE attribute SET constantattribute=false WHERE constantattribute IS NULL" );
+        executeSql( "UPDATE attribute SET legendsetattribute=false WHERE legendsetattribute IS NULL" );
 
         executeSql( "update attribute set isunique=false where isunique is null" );
 
@@ -852,7 +854,7 @@ public class TableAlteror
         executeSql( "update programstage set repeatable = irregular where repeatable is null" );
         executeSql( "update programstage set repeatable = false where repeatable is null" );
         executeSql( "alter table programstage drop column reportdatedescription" );
-        executeSql( "alter table programstage drop column irregular" );        
+        executeSql( "alter table programstage drop column irregular" );
 
         executeSql( "alter table programindicator drop column missingvaluereplacement" );
 
@@ -896,7 +898,7 @@ public class TableAlteror
 
         updateRelativePeriods();
         updateNameColumnLengths();
-        
+
         executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
         executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
 

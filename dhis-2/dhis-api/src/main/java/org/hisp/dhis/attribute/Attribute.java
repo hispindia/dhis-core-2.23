@@ -40,6 +40,7 @@ import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.common.view.DetailedView;
 import org.hisp.dhis.common.view.ExportView;
+import org.hisp.dhis.constant.Constant;
 import org.hisp.dhis.dataelement.CategoryOptionGroup;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryOption;
@@ -48,6 +49,7 @@ import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.document.Document;
 import org.hisp.dhis.indicator.Indicator;
 import org.hisp.dhis.indicator.IndicatorGroup;
+import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -110,6 +112,10 @@ public class Attribute
     private boolean optionAttribute;
 
     private boolean optionSetAttribute;
+
+    private boolean constantAttribute;
+
+    private boolean legendSetAttribute;
 
     private boolean mandatory;
 
@@ -175,6 +181,9 @@ public class Attribute
             && Objects.equals( this.categoryOptionAttribute, other.categoryOptionAttribute )
             && Objects.equals( this.categoryOptionGroupAttribute, other.categoryOptionGroupAttribute )
             && Objects.equals( this.optionAttribute, other.optionAttribute )
+            && Objects.equals( this.constantAttribute, other.constantAttribute )
+            && Objects.equals( this.legendSetAttribute, other.legendSetAttribute )
+
             && Objects.equals( this.mandatory, other.mandatory )
             && Objects.equals( this.unique, other.unique )
             && Objects.equals( this.optionSet, other.optionSet );
@@ -469,6 +478,20 @@ public class Attribute
     @JsonProperty
     @JsonView( { DetailedView.class, ExportView.class } )
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public boolean isLegendSetAttribute() { return legendSetAttribute; }
+
+    public void setLegendSetAttribute( boolean legendSetAttribute ) { this.legendSetAttribute = legendSetAttribute; }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public boolean isConstantAttribute() { return constantAttribute; }
+
+    public void setConstantAttribute( boolean constantAttribute ) { this.constantAttribute = constantAttribute; }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public OptionSet getOptionSet()
     {
         return optionSet;
@@ -516,6 +539,8 @@ public class Attribute
         if ( documentAttribute ) klasses.add( Document.class );
         if ( optionAttribute ) klasses.add( Option.class );
         if ( optionSetAttribute ) klasses.add( OptionSet.class );
+        if ( legendSetAttribute ) klasses.add( LegendSet.class );
+        if ( constantAttribute ) klasses.add( Constant.class );
 
         return klasses;
     }
@@ -548,6 +573,8 @@ public class Attribute
             documentAttribute = attribute.isDocumentAttribute();
             optionAttribute = attribute.isOptionAttribute();
             optionSetAttribute = attribute.isOptionSetAttribute();
+            constantAttribute = attribute.isConstantAttribute();
+            legendSetAttribute = attribute.isLegendSetAttribute();
             mandatory = attribute.isMandatory();
 
             if ( mergeMode.isReplace() )
@@ -585,6 +612,8 @@ public class Attribute
             .add( "trackedEntityAttributeAttribute", trackedEntityAttributeAttribute )
             .add( "categoryOptionAttribute", categoryOptionAttribute )
             .add( "categoryOptionGroupAttribute", categoryOptionGroupAttribute )
+            .add( "constantAttribute", constantAttribute )
+            .add( "legendSetAttribute", legendSetAttribute )
             .add( "mandatory", mandatory )
             .toString();
     }
