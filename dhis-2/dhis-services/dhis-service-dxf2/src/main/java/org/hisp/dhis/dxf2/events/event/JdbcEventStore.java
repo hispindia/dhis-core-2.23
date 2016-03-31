@@ -155,33 +155,30 @@ public class JdbcEventStore
                 event.setCompletedBy( rowSet.getString( "psi_completedby" ) );
                 event.setCompletedDate( DateUtils.getLongGmtDateString( rowSet.getDate( "psi_completeddate" ) ) );
 
-                if ( rowSet.getBoolean( "ps_capturecoordinates" ) )
+                Double longitude = rowSet.getDouble( "psi_longitude" );
+                Double latitude = rowSet.getDouble( "psi_latitude" );
+
+                if ( longitude != null && latitude != null )
                 {
-                    Double longitude = rowSet.getDouble( "psi_longitude" );
-                    Double latitude = rowSet.getDouble( "psi_latitude" );
+                    Coordinate coordinate = new Coordinate( longitude, latitude );
 
-                    if ( longitude != null && latitude != null )
+                    try
                     {
-                        Coordinate coordinate = new Coordinate( longitude, latitude );
+                        List<Double> list = OBJECT_MAPPER.readValue( coordinate.getCoordinateString(),
+                            new TypeReference<List<Double>>()
+                            {
+                            } );
 
-                        try
-                        {
-                            List<Double> list = OBJECT_MAPPER.readValue( coordinate.getCoordinateString(),
-                                new TypeReference<List<Double>>()
-                                {
-                                } );
+                        coordinate.setLongitude( list.get( 0 ) );
+                        coordinate.setLatitude( list.get( 1 ) );
+                    }
+                    catch ( IOException ignored )
+                    {
+                    }
 
-                            coordinate.setLongitude( list.get( 0 ) );
-                            coordinate.setLatitude( list.get( 1 ) );
-                        }
-                        catch ( IOException ignored )
-                        {
-                        }
-
-                        if ( coordinate.isValid() )
-                        {
-                            event.setCoordinate( coordinate );
-                        }
+                    if ( coordinate.isValid() )
+                    {
+                        event.setCoordinate( coordinate );
                     }
                 }
 
