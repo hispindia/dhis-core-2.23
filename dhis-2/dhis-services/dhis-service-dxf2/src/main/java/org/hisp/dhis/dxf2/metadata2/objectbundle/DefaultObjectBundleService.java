@@ -401,6 +401,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void prepare( IdentifiableObject object, ObjectBundle bundle )
     {
+        if ( object == null ) return;
         BaseIdentifiableObject identifiableObject = (BaseIdentifiableObject) object;
 
         if ( identifiableObject.getUser() == null ) identifiableObject.setUser( bundle.getUser() );
