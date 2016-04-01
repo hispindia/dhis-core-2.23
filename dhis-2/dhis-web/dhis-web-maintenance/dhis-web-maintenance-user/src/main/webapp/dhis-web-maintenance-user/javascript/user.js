@@ -295,7 +295,7 @@ function assignOrgUnitsToUser(){
 }
 
 function searchOuTreePopup(){
-	$("#searchOrgUnitForm").load('/dhis-web-maintenance-user/searchOUTree.vm', initializeTree).dialog({
+	$("#searchOrgUnitForm").load('../dhis-web-maintenance-user/searchOUTree.vm', initializeTree).dialog({
 		height: 450,
 		width: 500,
 		title: i18n_search_orgunit,
