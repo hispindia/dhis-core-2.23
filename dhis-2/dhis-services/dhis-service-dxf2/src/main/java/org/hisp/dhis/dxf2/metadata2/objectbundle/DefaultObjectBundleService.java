@@ -281,7 +281,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleCreates( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        if ( objects.isEmpty() ) return typeReport;
+        
+        if ( objects.isEmpty() )
+        {
+            return typeReport;
+        }
 
         log.info( "Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -316,7 +320,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleUpdates( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        if ( objects.isEmpty() ) return typeReport;
+        
+        if ( objects.isEmpty() )
+        {
+            return typeReport;
+        }
 
         log.info( "Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -356,7 +364,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleDeletes( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        if ( objects.isEmpty() ) return typeReport;
+        
+        if ( objects.isEmpty() )
+        {
+            return typeReport;
+        }
 
         log.info( "Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
@@ -401,7 +413,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
     private void prepare( IdentifiableObject object, ObjectBundle bundle )
     {
-        if ( object == null ) return;
+        if ( object == null )
+        {
+            return;
+        }
+        
         BaseIdentifiableObject identifiableObject = (BaseIdentifiableObject) object;
 
         if ( identifiableObject.getUser() == null ) identifiableObject.setUser( bundle.getUser() );
