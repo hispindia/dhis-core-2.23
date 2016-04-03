@@ -168,9 +168,7 @@ public class DefaultDataQueryService
         DataQueryParams params = new DataQueryParams();
         
         if ( object != null )
-        {
-            params.setProgram( object.getProgram() );
-            
+        {            
             List<OrganisationUnit> userOrgUnits = getUserOrgUnits( null );
             
             Date date = object.getRelativePeriodDate();

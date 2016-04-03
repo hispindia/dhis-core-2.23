@@ -60,7 +60,6 @@ import org.hisp.dhis.period.Period;
 import org.hisp.dhis.period.RelativePeriodEnum;
 import org.hisp.dhis.period.RelativePeriods;
 import org.hisp.dhis.period.comparator.AscendingPeriodComparator;
-import org.hisp.dhis.program.Program;
 import org.hisp.dhis.trackedentity.TrackedEntityAttributeDimension;
 import org.hisp.dhis.trackedentity.TrackedEntityDataElementDimension;
 import org.hisp.dhis.trackedentity.TrackedEntityProgramIndicatorDimension;
@@ -135,8 +134,6 @@ public abstract class BaseAnalyticalObject
 
     @Scanned
     protected List<TrackedEntityProgramIndicatorDimension> programIndicatorDimensions = new ArrayList<>();
-
-    private Program program;
 
     protected boolean userOrganisationUnit;
 
@@ -836,13 +833,11 @@ public abstract class BaseAnalyticalObject
             if ( mergeMode.isReplace() )
             {
                 relatives = object.getRelatives();
-                program = object.getProgram();
                 aggregationType = object.getAggregationType();
             }
             else if ( mergeMode.isMerge() )
             {
                 relatives = object.getRelatives() == null ? relatives : object.getRelatives();
-                program = object.getProgram() == null ? program : object.getProgram();
                 aggregationType = object.getAggregationType() == null ? aggregationType : object.getAggregationType();
             }
 
@@ -1040,20 +1035,6 @@ public abstract class BaseAnalyticalObject
     public void setProgramIndicatorDimensions( List<TrackedEntityProgramIndicatorDimension> programIndicatorDimensions )
     {
         this.programIndicatorDimensions = programIndicatorDimensions;
-    }
-
-    @JsonProperty
-    @JsonSerialize( as = BaseIdentifiableObject.class )
-    @JsonView( { DetailedView.class, ExportView.class } )
-    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public Program getProgram()
-    {
-        return program;
-    }
-
-    public void setProgram( Program program )
-    {
-        this.program = program;
     }
 
     @JsonProperty

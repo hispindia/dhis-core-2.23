@@ -89,7 +89,6 @@ import org.hisp.dhis.period.PeriodService;
 import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.period.RelativePeriodEnum;
 import org.hisp.dhis.period.RelativePeriods;
-import org.hisp.dhis.program.Program;
 import org.hisp.dhis.program.ProgramDataElement;
 import org.hisp.dhis.program.ProgramIndicator;
 import org.hisp.dhis.program.ProgramService;
@@ -292,11 +291,6 @@ public class DefaultDimensionService
                 object.setUser( currentUserService.getCurrentUser() );
             }
             
-            if ( object.getProgram() != null )
-            {
-                object.setProgram( identifiableObjectManager.get( Program.class, object.getProgram().getUid() ) );
-            }
-
             mergeDimensionalObjects( object, object.getColumns() );
             mergeDimensionalObjects( object, object.getRows() );
             mergeDimensionalObjects( object, object.getFilters() );
