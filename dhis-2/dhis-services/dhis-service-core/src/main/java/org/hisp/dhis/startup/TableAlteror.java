@@ -167,8 +167,6 @@ public class TableAlteror
         // mapping
         executeSql( "DROP TABLE maporganisationunitrelation" );
         executeSql( "ALTER TABLE mapview DROP COLUMN mapid" );
-        executeSql( "ALTER TABLE mapview DROP COLUMN startdate" );
-        executeSql( "ALTER TABLE mapview DROP COLUMN enddate" );
         executeSql( "ALTER TABLE mapview DROP COLUMN mapsource" );
         executeSql( "ALTER TABLE mapview DROP COLUMN mapsourcetype" );
         executeSql( "ALTER TABLE mapview DROP COLUMN mapdatetype" );

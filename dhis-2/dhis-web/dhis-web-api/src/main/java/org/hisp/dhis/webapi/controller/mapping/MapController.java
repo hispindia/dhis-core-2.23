@@ -43,6 +43,8 @@ import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroupService;
 import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.period.Period;
+import org.hisp.dhis.program.ProgramService;
+import org.hisp.dhis.program.ProgramStageService;
 import org.hisp.dhis.schema.descriptors.MapSchemaDescriptor;
 import org.hisp.dhis.user.UserService;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
@@ -86,6 +88,12 @@ public class MapController
 
     @Autowired
     private OrganisationUnitGroupService organisationUnitGroupService;
+
+    @Autowired
+    private ProgramService programService;
+
+    @Autowired
+    private ProgramStageService programStageService;
 
     @Autowired
     private I18nManager i18nManager;
@@ -266,6 +274,7 @@ public class MapController
     private void mergeMapView( MapView view )
     {
         dimensionService.mergeAnalyticalObject( view );
+        dimensionService.mergeEventAnalyticalObject( view );
 
         if ( view.getLegendSet() != null )
         {
@@ -275,6 +284,16 @@ public class MapController
         if ( view.getOrganisationUnitGroupSet() != null )
         {
             view.setOrganisationUnitGroupSet( organisationUnitGroupService.getOrganisationUnitGroupSet( view.getOrganisationUnitGroupSet().getUid() ) );
+        }
+
+        if ( view.getProgram() != null )
+        {
+            view.setProgram( programService.getProgram( view.getProgram().getUid() ) );
+        }
+
+        if ( view.getProgramStage() != null )
+        {
+            view.setProgramStage( programStageService.getProgramStage( view.getProgramStage().getUid() ) );
         }
     }
 

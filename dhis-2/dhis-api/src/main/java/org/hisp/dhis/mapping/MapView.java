@@ -34,11 +34,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.hisp.dhis.analytics.EventOutputType;
 import org.hisp.dhis.common.BaseAnalyticalObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
+import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.DimensionalObjectUtils;
 import org.hisp.dhis.common.DxfNamespaces;
+import org.hisp.dhis.common.EventAnalyticalObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.common.view.DetailedView;
@@ -48,6 +51,8 @@ import org.hisp.dhis.i18n.I18nFormat;
 import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroupSet;
+import org.hisp.dhis.program.Program;
+import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.schema.PropertyType;
 import org.hisp.dhis.schema.annotation.Property;
 import org.hisp.dhis.user.User;
@@ -68,6 +73,7 @@ import com.google.common.collect.ImmutableList;
 @JacksonXmlRootElement( localName = "mapView", namespace = DxfNamespaces.DXF_2_0 )
 public class MapView
     extends BaseAnalyticalObject
+    implements EventAnalyticalObject
 {
     public static final String LAYER_BOUNDARY = "boundary";
     public static final String LAYER_FACILITY = "facility";
@@ -83,6 +89,26 @@ public class MapView
 
     public static final ImmutableList<String> DATA_LAYERS = ImmutableList.<String>builder().add( 
         LAYER_THEMATIC1, LAYER_THEMATIC2, LAYER_THEMATIC3, LAYER_THEMATIC4 ).build();
+
+    /**
+     * Program. Required.
+     */
+    private Program program;
+
+    /**
+     * Program stage.
+     */
+    private ProgramStage programStage;
+
+    /**
+     * Start date.
+     */
+    private Date startDate;
+
+    /**
+     * End date.
+     */
+    private Date endDate;
     
     private String layer;
 
@@ -148,7 +174,7 @@ public class MapView
     }
 
     // -------------------------------------------------------------------------
-    // Analytical
+    // AnalyticalObject
     // -------------------------------------------------------------------------
 
     @Override
@@ -219,8 +245,80 @@ public class MapView
     }
 
     // -------------------------------------------------------------------------
+    // EventAnalyticalObject
+    // -------------------------------------------------------------------------
+
+    public EventOutputType getOutputType()
+    {
+        return EventOutputType.EVENT;
+    }
+    
+    public DimensionalItemObject getValue()
+    {
+        return null;
+    }
+    
+    // -------------------------------------------------------------------------
     // Getters and setters
     // -------------------------------------------------------------------------
+
+    @Override
+    @JsonProperty
+    @JsonSerialize( as = BaseIdentifiableObject.class )
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public Program getProgram()
+    {
+        return program;
+    }
+
+    public void setProgram( Program program )
+    {
+        this.program = program;
+    }
+
+    @Override
+    @JsonProperty
+    @JsonSerialize( as = BaseIdentifiableObject.class )
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public ProgramStage getProgramStage()
+    {
+        return programStage;
+    }
+
+    public void setProgramStage( ProgramStage programStage )
+    {
+        this.programStage = programStage;
+    }
+
+    @Override
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public Date getStartDate()
+    {
+        return startDate;
+    }
+
+    public void setStartDate( Date startDate )
+    {
+        this.startDate = startDate;
+    }
+
+    @Override
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public Date getEndDate()
+    {
+        return endDate;
+    }
+
+    public void setEndDate( Date endDate )
+    {
+        this.endDate = endDate;
+    }
 
     @JsonProperty
     @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
