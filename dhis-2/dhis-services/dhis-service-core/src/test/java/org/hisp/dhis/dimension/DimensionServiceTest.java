@@ -36,14 +36,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
 
 import org.hisp.dhis.DhisSpringTest;
-import org.hisp.dhis.common.BaseDimensionalItemObject;
-import org.hisp.dhis.common.BaseDimensionalObject;
-import org.hisp.dhis.common.DimensionService;
-import org.hisp.dhis.common.DimensionType;
-import org.hisp.dhis.common.DimensionalItemObject;
-import org.hisp.dhis.common.DimensionalObject;
-import org.hisp.dhis.common.DimensionalObjectUtils;
-import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.common.*;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementService;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
@@ -267,11 +260,11 @@ public class DimensionServiceTest
         String idB = prA.getUid() + DimensionalObjectUtils.COMPOSITE_DIM_OBJECT_PLAIN_SEP + deA.getUid();
         String idC = prA.getUid() + DimensionalObjectUtils.COMPOSITE_DIM_OBJECT_PLAIN_SEP + atA.getUid();
         
-        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( idA ) );
-        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( idB ) );
-        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( idC ) );
+        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( IdScheme.UID, idA ) );
+        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( IdScheme.UID, idB ) );
+        assertNotNull( dimensionService.getOrAddDataDimensionalItemObject( IdScheme.UID, idC ) );
         
-        assertEquals( deA, dimensionService.getOrAddDataDimensionalItemObject( idA ) );
+        assertEquals( deA, dimensionService.getOrAddDataDimensionalItemObject( IdScheme.UID, idA ) );
     }
 
     @Test

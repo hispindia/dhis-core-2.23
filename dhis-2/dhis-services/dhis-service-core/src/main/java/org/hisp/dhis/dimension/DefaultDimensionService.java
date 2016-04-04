@@ -54,19 +54,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.hisp.dhis.common.BaseAnalyticalObject;
-import org.hisp.dhis.common.BaseDimensionalObject;
-import org.hisp.dhis.common.CodeGenerator;
-import org.hisp.dhis.common.DataDimensionItem;
-import org.hisp.dhis.common.DimensionService;
-import org.hisp.dhis.common.DimensionType;
-import org.hisp.dhis.common.DimensionalItemObject;
-import org.hisp.dhis.common.DimensionalObject;
-import org.hisp.dhis.common.DimensionalObjectUtils;
-import org.hisp.dhis.common.EventAnalyticalObject;
-import org.hisp.dhis.common.IdentifiableObject;
-import org.hisp.dhis.common.IdentifiableObjectManager;
-import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.common.*;
 import org.hisp.dhis.commons.collection.UniqueArrayList;
 import org.hisp.dhis.dataelement.CategoryOptionGroup;
 import org.hisp.dhis.dataelement.CategoryOptionGroupSet;
@@ -117,10 +105,10 @@ public class DefaultDimensionService
 
     @Autowired
     private DataElementOperandService operandService;
-    
+
     @Autowired
     private ProgramService programService;
-    
+
     @Autowired
     private TrackedEntityAttributeService attributeService;
 
@@ -138,13 +126,13 @@ public class DefaultDimensionService
     //--------------------------------------------------------------------------
 
     public List<DimensionalItemObject> getCanReadDimensionItems( String uid )
-    {        
+    {
         DimensionalObject dimension = identifiableObjectManager.get( DimensionalObject.DYNAMIC_DIMENSION_CLASSES, uid );
-        
+
         List<DimensionalItemObject> items = new ArrayList<>();
 
         if ( dimension != null && dimension.hasItems() )
-        {            
+        {
             User user = currentUserService.getCurrentUser();
 
             items.addAll( getCanReadObjects( user, dimension.getItems() ) );
@@ -152,34 +140,34 @@ public class DefaultDimensionService
 
         return items;
     }
-    
+
     @Override
     public <T extends IdentifiableObject> List<T> getCanReadObjects( List<T> objects )
     {
         User user = currentUserService.getCurrentUser();
-        
+
         return getCanReadObjects( user, objects );
     }
-    
+
     @Override
     public <T extends IdentifiableObject> List<T> getCanReadObjects( User user, List<T> objects )
-    {        
+    {
         List<T> list = new ArrayList<>( objects );
         Iterator<T> iterator = list.iterator();
-        
+
         while ( iterator.hasNext() )
         {
             T object = iterator.next();
-            
+
             if ( !aclService.canRead( user, object ) )
             {
                 iterator.remove();
             }
         }
-        
+
         return list;
     }
-        
+
     @Override
     public DimensionType getDimensionType( String uid )
     {
@@ -212,21 +200,21 @@ public class DefaultDimensionService
         }
 
         TrackedEntityAttribute tea = identifiableObjectManager.get( TrackedEntityAttribute.class, uid );
-        
+
         if ( tea != null )
         {
             return DimensionType.PROGRAM_ATTRIBUTE;
         }
-        
+
         DataElement pde = identifiableObjectManager.get( DataElement.class, uid );
-        
+
         if ( pde != null && DataElementDomain.TRACKER.equals( pde.getDomainType() ) )
         {
             return DimensionType.PROGRAM_DATAELEMENT;
         }
-        
+
         ProgramIndicator pin = identifiableObjectManager.get( ProgramIndicator.class, uid );
-        
+
         if ( pin != null )
         {
             return DimensionType.PROGRAM_INDICATOR;
@@ -257,10 +245,10 @@ public class DefaultDimensionService
         dimensions.addAll( ougs );
 
         User user = currentUserService.getCurrentUser();
-        
+
         return getCanReadObjects( user, dimensions );
     }
-    
+
     @Override
     public List<DimensionalObject> getDimensionConstraints()
     {
@@ -271,10 +259,10 @@ public class DefaultDimensionService
 
         dimensions.addAll( cogs );
         dimensions.addAll( cs );
-        
+
         return dimensions;
     }
-    
+
     @Override
     public void mergeAnalyticalObject( BaseAnalyticalObject object )
     {
@@ -290,7 +278,7 @@ public class DefaultDimensionService
             {
                 object.setUser( currentUserService.getCurrentUser() );
             }
-            
+
             mergeDimensionalObjects( object, object.getColumns() );
             mergeDimensionalObjects( object, object.getRows() );
             mergeDimensionalObjects( object, object.getFilters() );
@@ -305,16 +293,16 @@ public class DefaultDimensionService
             if ( object.getValue() != null )
             {
                 String uid = object.getValue().getUid();
-                
+
                 DataElement dataElement = identifiableObjectManager.get( DataElement.class, uid );
-                
+
                 if ( dataElement != null )
                 {
                     object.setDataElementValueDimension( dataElement );
                 }
-                
+
                 TrackedEntityAttribute attribute = identifiableObjectManager.get( TrackedEntityAttribute.class, uid );
-                
+
                 if ( attribute != null )
                 {
                     object.setAttributeValueDimension( attribute );
@@ -322,27 +310,27 @@ public class DefaultDimensionService
             }
         }
     }
-    
+
     @Override
     public DimensionalObject getDimensionalObjectCopy( String uid, boolean filterCanRead )
     {
         DimensionalObject dimension = identifiableObjectManager.get( DimensionalObject.DYNAMIC_DIMENSION_CLASSES, uid );
-        
+
         BaseDimensionalObject copy = new BaseDimensionalObject();
         copy.mergeWith( dimension, MergeMode.MERGE_IF_NOT_NULL );
-        
+
         if ( filterCanRead )
         {
             User user = currentUserService.getCurrentUser();
             List<DimensionalItemObject> items = getCanReadObjects( user, dimension.getItems() );
             copy.setItems( items );
         }
-        
+
         return copy;
     }
 
     @Override
-    public DimensionalItemObject getOrAddDataDimensionalItemObject( String dimensionItem )
+    public DimensionalItemObject getOrAddDataDimensionalItemObject( IdScheme idScheme, String dimensionItem )
     {
         if ( DimensionalObjectUtils.isCompositeDimensionalObject( dimensionItem ) )
         {
@@ -350,9 +338,9 @@ public class DefaultDimensionService
             String id1 = splitSafe( dimensionItem, COMPOSITE_DIM_OBJECT_ESCAPED_SEP, 1 );
 
             DataElementOperand operand = null;
-            ProgramDataElement programDataElement = null;                    
+            ProgramDataElement programDataElement = null;
             ProgramTrackedEntityAttribute programAttribute = null;
-            
+
             if ( ( operand = operandService.getOrAddDataElementOperand( id0, id1 ) ) != null )
             {
                 return operand;
@@ -366,16 +354,16 @@ public class DefaultDimensionService
                 return programAttribute;
             }
         }
-        else if ( CodeGenerator.isValidCode( dimensionItem ) )
+        else if ( !idScheme.is( IdentifiableProperty.UID ) || CodeGenerator.isValidCode( dimensionItem ) )
         {
-            DimensionalItemObject itemObject = identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, dimensionItem );
-            
+            DimensionalItemObject itemObject = identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, idScheme, dimensionItem );
+
             if ( itemObject != null )
             {
                 return itemObject;
             }
         }
-        
+
         return null;
     }
 
@@ -388,9 +376,9 @@ public class DefaultDimensionService
             String id1 = splitSafe( dimensionItem, COMPOSITE_DIM_OBJECT_ESCAPED_SEP, 1 );
 
             DataElementOperand operand = null;
-            ProgramDataElement programDataElement = null;                    
+            ProgramDataElement programDataElement = null;
             ProgramTrackedEntityAttribute programAttribute = null;
-            
+
             if ( ( operand = operandService.getDataElementOperand( id0, id1 ) ) != null )
             {
                 return operand;
@@ -406,14 +394,15 @@ public class DefaultDimensionService
         }
         else if ( CodeGenerator.isValidCode( dimensionItem ) )
         {
-            DimensionalItemObject itemObject = identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, dimensionItem );
-            
+            DimensionalItemObject itemObject = identifiableObjectManager.
+                get( DataDimensionItem.DATA_DIMENSION_CLASSES, dimensionItem );
+
             if ( itemObject != null )
             {
                 return itemObject;
             }
         }
-        
+
         return null;
     }
 
@@ -424,7 +413,7 @@ public class DefaultDimensionService
     /**
      * Sets persistent objects for dimensional associations on the given
      * BaseAnalyticalObject based on the given list of transient DimensionalObjects.
-     * <p/>
+     * <p>
      * Relative periods represented by enums are converted into a RelativePeriods
      * object. User organisation units represented by enums are converted and
      * represented by the user organisation unit persisted properties on the
@@ -456,8 +445,8 @@ public class DefaultDimensionService
                 {
                     for ( String uid : uids )
                     {
-                        DimensionalItemObject dimItemObject = getOrAddDataDimensionalItemObject( uid );
-                        
+                        DimensionalItemObject dimItemObject = getOrAddDataDimensionalItemObject( IdScheme.UID, uid );
+
                         if ( dimItemObject != null )
                         {
                             object.getDataDimensionItems().add( DataDimensionItem.create( dimItemObject ) );
@@ -560,27 +549,30 @@ public class DefaultDimensionService
                 {
                     TrackedEntityAttributeDimension attributeDimension = new TrackedEntityAttributeDimension();
                     attributeDimension.setAttribute( identifiableObjectManager.get( TrackedEntityAttribute.class, dimensionId ) );
-                    attributeDimension.setLegendSet( dimension.hasLegendSet() ? identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
+                    attributeDimension.setLegendSet( dimension.hasLegendSet() ?
+                        identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
                     attributeDimension.setFilter( dimension.getFilter() );
-                    
+
                     object.getAttributeDimensions().add( attributeDimension );
                 }
                 else if ( PROGRAM_DATAELEMENT.equals( type ) )
                 {
                     TrackedEntityDataElementDimension dataElementDimension = new TrackedEntityDataElementDimension();
                     dataElementDimension.setDataElement( identifiableObjectManager.get( DataElement.class, dimensionId ) );
-                    dataElementDimension.setLegendSet( dimension.hasLegendSet() ? identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
+                    dataElementDimension.setLegendSet( dimension.hasLegendSet() ?
+                        identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
                     dataElementDimension.setFilter( dimension.getFilter() );
-                    
+
                     object.getDataElementDimensions().add( dataElementDimension );
                 }
                 else if ( PROGRAM_INDICATOR.equals( type ) )
                 {
                     TrackedEntityProgramIndicatorDimension programIndicatorDimension = new TrackedEntityProgramIndicatorDimension();
                     programIndicatorDimension.setProgramIndicator( identifiableObjectManager.get( ProgramIndicator.class, dimensionId ) );
-                    programIndicatorDimension.setLegendSet( dimension.hasLegendSet() ? identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
+                    programIndicatorDimension.setLegendSet( dimension.hasLegendSet() ?
+                        identifiableObjectManager.get( LegendSet.class, dimension.getLegendSet().getUid() ) : null );
                     programIndicatorDimension.setFilter( dimension.getFilter() );
-                    
+
                     object.getProgramIndicatorDimensions().add( programIndicatorDimension );
                 }
             }

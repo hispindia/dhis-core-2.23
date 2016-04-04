@@ -255,6 +255,24 @@ public class DefaultIdentifiableObjectManager
 
     @Override
     @SuppressWarnings( "unchecked" )
+    public <T extends IdentifiableObject> T get( Collection<Class<? extends IdentifiableObject>> classes,
+        IdScheme idScheme, String identifier )
+    {
+        for ( Class<? extends IdentifiableObject> clazz : classes )
+        {
+            T object = (T) getObject( clazz, idScheme, identifier );
+
+            if ( object != null )
+            {
+                return object;
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> T getByCode( Class<T> clazz, String code )
     {
         GenericIdentifiableObjectStore<IdentifiableObject> store = getIdentifiableObjectStore( clazz );
