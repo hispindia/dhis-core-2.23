@@ -475,6 +475,17 @@ public abstract class AbstractEventService
     }
 
     @Override
+    public Events getEvents( Collection<String> uids )
+    {
+        Events events = new Events();
+
+        List<ProgramStageInstance> programStageInstances = manager.getByUid( ProgramStageInstance.class, uids );
+        programStageInstances.forEach( programStageInstance -> events.getEvents().add( convertProgramStageInstance( programStageInstance ) ) );
+
+        return events;
+    }
+
+    @Override
     public EventRows getEventRows( EventSearchParams params )
     {
         List<OrganisationUnit> organisationUnits = new ArrayList<>();
