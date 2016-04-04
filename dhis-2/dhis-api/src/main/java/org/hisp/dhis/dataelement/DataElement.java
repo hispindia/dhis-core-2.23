@@ -437,7 +437,7 @@ public class DataElement
      */
     public String getFormNameFallback()
     {
-        return formName != null && !formName.isEmpty() ? getDisplayFormName() : getDisplayName();
+        return formName != null && !formName.isEmpty() ? getFormName() : getDisplayName();
     }
 
     @JsonProperty
@@ -445,7 +445,8 @@ public class DataElement
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
     public String getDisplayFormName()
     {
-        return displayFormName != null && !displayFormName.trim().isEmpty() ? displayFormName : formName;
+        return displayFormName != null && !displayFormName.trim().isEmpty() ? displayFormName : 
+            getFormName() != null && !getFormName().isEmpty() ? getFormName() : getDisplayName();
     }
 
     public void setDisplayFormName( String displayFormName )
