@@ -621,19 +621,11 @@ trackerCapture.controller('DataEntryController',
                     $scope.allProgramRules = rules;
                     $scope.getEvents();                    
                     broadcastDataEntryControllerData();
-                    executeRulesOnInit();
                 });    
                 
             });
         }
     });
-    
-    function executeRulesOnInit(){
-        var flag = {debug: true, verbose: true};        
-        TrackerRulesExecutionService.executeRules($scope.allProgramRules, 'dataEntryInit', null, null, $scope.selectedTei, $scope.selectedEnrollment, flag);
-    }
-    
-    
     
     $scope.openEventExternal = function(event){
         if($scope.useMainMenu){
@@ -1255,7 +1247,7 @@ trackerCapture.controller('DataEntryController',
         $scope.currentEventOriginal = angular.copy($scope.currentEvent);
         
         $scope.currentStageEventsOriginal = angular.copy($scope.currentStageEvents);
-
+        
         var period = {event: $scope.currentEvent.event, stage: $scope.currentEvent.programStage, name: $scope.currentEvent.sortingDate};
         $scope.currentPeriod[$scope.currentEvent.programStage] = period;        
         
