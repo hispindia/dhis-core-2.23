@@ -42,7 +42,6 @@ import com.google.common.collect.Sets;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.analytics.DataQueryService;
-import org.hisp.dhis.analytics.DimensionItem;
 import org.hisp.dhis.chart.Chart;
 import org.hisp.dhis.common.*;
 import org.hisp.dhis.dataelement.DataElement;

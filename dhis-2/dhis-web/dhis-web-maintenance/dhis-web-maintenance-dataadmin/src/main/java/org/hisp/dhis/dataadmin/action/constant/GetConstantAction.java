@@ -35,7 +35,6 @@ import org.hisp.dhis.constant.Constant;
 import org.hisp.dhis.constant.ConstantService;
 
 import com.opensymphony.xwork2.Action;
-import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.system.util.AttributeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
