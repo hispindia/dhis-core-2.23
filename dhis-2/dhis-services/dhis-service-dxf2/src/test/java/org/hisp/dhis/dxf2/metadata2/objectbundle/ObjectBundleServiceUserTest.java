@@ -242,4 +242,19 @@ public class ObjectBundleServiceUserTest
         assertEquals( 1, userRole.getDataSets().size() );
         assertEquals( 1, userRole.getPrograms().size() );
     }
+
+    @Test
+    public void testUpdateAdminUser() throws IOException
+    {
+        createAndInjectAdminUser();
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/user_admin.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
+        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setAtomicMode( AtomicMode.ALL );
+        params.setObjects( metadata );
+    }
 }
