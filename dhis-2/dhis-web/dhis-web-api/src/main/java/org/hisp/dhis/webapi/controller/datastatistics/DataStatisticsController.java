@@ -33,8 +33,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -60,24 +62,19 @@ public class DataStatisticsController
     private CurrentUserService currentUserService;
 
     @Autowired
-    private DataStatisticsService defaultDataStatisticsService;
+    private DataStatisticsService dataStatisticsService;
 
     @RequestMapping( value = "/dataStatistics", method = RequestMethod.POST )
-    public @ResponseBody void saveEvent( @RequestParam EventType eventType )
+    @ResponseStatus( HttpStatus.CREATED )
+    public void saveEvent( @RequestParam EventType eventType )
     {
         Date timestamp = new Date();
         User user = currentUserService.getCurrentUser();
 
         DataStatisticsEvent event = new DataStatisticsEvent( eventType, timestamp, user.getUsername() );
-        defaultDataStatisticsService.addEvent( event );
+        dataStatisticsService.addEvent( event );
     }
 
-    /**
-     * web api for getting a report from start date too end date
-     *
-     * @param eventType
-     * @return a List of Datastatistic objects
-     */
     @RequestMapping( value = "/dataStatistics", method = RequestMethod.GET )
     public @ResponseBody List<AggregatedStatistics> report( @RequestParam @DateTimeFormat( pattern = "yyyy-mm-dd" ) Date startDate,
         @RequestParam @DateTimeFormat( pattern = "yyyy-mm-dd" ) Date endDate, 
@@ -89,6 +86,6 @@ public class DataStatisticsController
             return null;
         }
 
-        return defaultDataStatisticsService.getReports( startDate, endDate, interval );
+        return dataStatisticsService.getReports( startDate, endDate, interval );
     }
 }

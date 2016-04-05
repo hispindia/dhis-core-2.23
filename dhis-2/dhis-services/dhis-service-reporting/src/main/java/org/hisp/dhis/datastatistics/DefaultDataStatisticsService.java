@@ -55,10 +55,10 @@ public class DefaultDataStatisticsService
     implements DataStatisticsService
 {
     @Autowired
-    private DataStatisticsStore hibernateDataStatisticsStore;
+    private DataStatisticsStore dataStatisticsStore;
 
     @Autowired
-    private DataStatisticsEventStore hibernateDataStatisticsEventStore;
+    private DataStatisticsEventStore dataStatisticsEventStore;
 
     @Autowired
     private UserService userService;
@@ -74,7 +74,7 @@ public class DefaultDataStatisticsService
      */
     public int addEvent( DataStatisticsEvent event )
     {
-        return hibernateDataStatisticsEventStore.save( event );
+        return dataStatisticsEventStore.save( event );
     }
 
     /**
@@ -108,7 +108,7 @@ public class DefaultDataStatisticsService
                 sql = getDaySql( startDate, endDate );
         }
         
-        return hibernateDataStatisticsStore.getSnapshotsInInterval( sql, eventInterval );
+        return dataStatisticsStore.getSnapshotsInInterval( sql, eventInterval );
     }
 
     /**
@@ -238,7 +238,7 @@ public class DefaultDataStatisticsService
         String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
             startDate + "' and '" + now + "') group by eventtype;";
 
-        List<int[]> list = hibernateDataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> list = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
 
         for ( int i = 0; i < list.size(); i++ )
         {
@@ -293,6 +293,6 @@ public class DefaultDataStatisticsService
             savedEventCharts, savedDashboards, savedIndicators,
             totalUsers );
 
-        return hibernateDataStatisticsStore.save( dataStatistics );
+        return dataStatisticsStore.save( dataStatistics );
     }
 }

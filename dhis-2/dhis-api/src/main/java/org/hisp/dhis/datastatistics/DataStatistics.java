@@ -43,11 +43,11 @@ public class DataStatistics
     private Integer activeUsers;
     private Double mapViews;
     private Double chartViews;
-    private Double reportTablesViews;
+    private Double reportTableViews;
     private Double eventReportViews;
     private Double eventChartViews;
     private Double dashboardViews;
-    private Double indicatorsViews;
+    private Double indicatorViews;
     private Double totalViews;
     private Double averageViews;
     private Double savedMaps;
@@ -64,8 +64,8 @@ public class DataStatistics
         super.setAutoFields();
     }
 
-    public DataStatistics( Integer activeUsers, Double mapViews, Double chartViews, Double reportTablesViews, Double eventReportViews,
-        Double eventChartViews, Double dashboardViews, Double indicatorsViews, Double totalViews, Double averageViews, Double savedMaps,
+    public DataStatistics( Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
+        Double eventChartViews, Double dashboardViews, Double indicatorViews, Double totalViews, Double averageViews, Double savedMaps,
         Double savedCharts, Double savedReportTables, Double savedEventReports, Double savedEventCharts, Double savedDashboards,
         Double savedIndicators, Integer users )
     {
@@ -73,11 +73,11 @@ public class DataStatistics
         this.activeUsers = activeUsers;
         this.mapViews = mapViews;
         this.chartViews = chartViews;
-        this.reportTablesViews = reportTablesViews;
+        this.reportTableViews = reportTableViews;
         this.eventReportViews = eventReportViews;
         this.eventChartViews = eventChartViews;
         this.dashboardViews = dashboardViews;
-        this.indicatorsViews = indicatorsViews;
+        this.indicatorViews = indicatorViews;
         this.totalViews = totalViews;
         this.averageViews = averageViews;
         this.savedMaps = savedMaps;
@@ -124,14 +124,14 @@ public class DataStatistics
     }
 
     @JsonProperty
-    public Double getReportTablesViews()
+    public Double getReportTableViews()
     {
-        return reportTablesViews;
+        return reportTableViews;
     }
 
-    public void setReportTablesViews( Double reportTablesViews )
+    public void setReportTableViews( Double reportTableViews )
     {
-        this.reportTablesViews = reportTablesViews;
+        this.reportTableViews = reportTableViews;
     }
 
     @JsonProperty
@@ -168,14 +168,14 @@ public class DataStatistics
     }
 
     @JsonProperty
-    public Double getIndicatorsViews()
+    public Double getIndicatorViews()
     {
-        return indicatorsViews;
+        return indicatorViews;
     }
 
-    public void setIndicatorsViews( Double indicatorsViews )
+    public void setIndicatorViews( Double indicatorViews )
     {
-        this.indicatorsViews = indicatorsViews;
+        this.indicatorViews = indicatorViews;
     }
 
     @JsonProperty
@@ -295,11 +295,11 @@ public class DataStatistics
             "activeUsers=" + activeUsers +
             ", mapViews=" + mapViews +
             ", chartViews=" + chartViews +
-            ", reportTablesViews=" + reportTablesViews +
+            ", reportTableViews=" + reportTableViews +
             ", eventReportViews=" + eventReportViews +
             ", eventChartViews=" + eventChartViews +
             ", dashboardViews=" + dashboardViews +
-            ", indicatorsViews=" + indicatorsViews +
+            ", indicatorViews=" + indicatorViews +
             ", totalViews=" + totalViews +
             ", averageViews=" + averageViews +
             ", savedMaps=" + savedMaps +
