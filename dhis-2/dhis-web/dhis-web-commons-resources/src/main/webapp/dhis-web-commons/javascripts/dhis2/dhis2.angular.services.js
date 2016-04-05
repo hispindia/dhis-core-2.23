@@ -593,7 +593,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                     		att.valueType === "INTEGER" ||
                                     		att.valueType === "INTEGER_POSITIVE" ||
                                     		att.valueType === "INTEGER_NEGATIVE" ||
-                                    		att.valueType === "INTEGER_ZERO_OR_POSITIVE")) {
+                                    		att.valueType === "INTEGER_ZERO_OR_POSITIVE" ) {
                                         newInputField = '<input type="number"' +
                                             ' d2-number-validator ' +
                                             ' number-type="' + att.valueType + '" ' +
