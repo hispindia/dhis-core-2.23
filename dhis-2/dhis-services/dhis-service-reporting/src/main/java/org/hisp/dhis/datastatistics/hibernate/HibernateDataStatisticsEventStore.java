@@ -31,10 +31,11 @@ package org.hisp.dhis.datastatistics.hibernate;
 import org.hisp.dhis.datastatistics.DataStatisticsEvent;
 import org.hisp.dhis.datastatistics.DataStatisticsEventStore;
 import org.hisp.dhis.hibernate.HibernateGenericStore;
-
+import org.hisp.dhis.system.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -50,8 +51,12 @@ public class HibernateDataStatisticsEventStore
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<int[]> getDataStatisticsEventCount( String sql )
+    public List<int[]> getDataStatisticsEventCount( Date startDate, Date endDate )
     {
+        final String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
+            DateUtils.getMediumDateString( startDate ) + "' and '" + 
+            DateUtils.getMediumDateString( endDate ) + "') group by eventtype;";
+
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
             int[] l = new int[2];
             l[0] = resultSet.getInt( "eventtype" );

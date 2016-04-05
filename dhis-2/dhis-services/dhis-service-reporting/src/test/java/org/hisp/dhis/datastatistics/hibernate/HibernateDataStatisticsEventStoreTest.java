@@ -64,8 +64,8 @@ public class HibernateDataStatisticsEventStoreTest
     private Date endDate;
     private Date testDate;
 
-    private String start;
-    private String end;
+    private Date start;
+    private Date end;
 
     @Override
     public void setUpTest() 
@@ -73,8 +73,8 @@ public class HibernateDataStatisticsEventStoreTest
     {
         endDate = new Date();
 
-        end = "2016-03-21";
-        start = "2016-03-19";
+        end = getDate( 2016, 3, 21 );
+        start = getDate( 2016, 3, 19 );
 
         SimpleDateFormat fm = new SimpleDateFormat( "yyyy/MM/dd" );
         endDate = fm.parse( "2016/03/20" );
@@ -102,13 +102,10 @@ public class HibernateDataStatisticsEventStoreTest
     @Test
     public void getDataStatisticsEventCountTest()
     {
-        String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
-            start + "' and '" + end + "') group by eventtype;";
-
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
 
         assertTrue( dsList.size() == 2 );
     }
@@ -116,13 +113,10 @@ public class HibernateDataStatisticsEventStoreTest
     @Test
     public void getDataStatisticsEventCountCorrectContentTest()
     {
-        String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" +
-            start + "' and '" + end + "') group by eventtype;";
-
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
         assertEquals( 2, dsList.get( 0 )[0] );
         assertEquals( 3, dsList.get( 1 )[0] );
     }
@@ -130,28 +124,22 @@ public class HibernateDataStatisticsEventStoreTest
     @Test
     public void getDataStatisticsEventCountCorrectDatesTest()
     {
-        String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" +
-            start + "' and '" + end + "') group by eventtype;";
-
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
         dataStatisticsEventStore.save( dse2 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
         assertTrue( dsList.size() == 3 );
     }
 
     @Test
     public void getDataStatisticsEventCountWrongDatesTest()
     {
-        String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
-            start + "' and '" + end + "') group by eventtype;";
-
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
         dataStatisticsEventStore.save( dse3 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
         assertTrue( dsList.size() == 2 );
     }
 }

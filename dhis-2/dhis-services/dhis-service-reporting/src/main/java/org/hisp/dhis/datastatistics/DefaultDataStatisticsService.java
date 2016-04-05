@@ -235,10 +235,7 @@ public class DefaultDataStatisticsService
         double totalNumberOfViews = 0;
         double averageNumberofViews = 0;
 
-        String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
-            startDate + "' and '" + now + "') group by eventtype;";
-
-        List<int[]> list = dataStatisticsEventStore.getDataStatisticsEventCount( sql );
+        List<int[]> list = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
 
         for ( int i = 0; i < list.size(); i++ )
         {
