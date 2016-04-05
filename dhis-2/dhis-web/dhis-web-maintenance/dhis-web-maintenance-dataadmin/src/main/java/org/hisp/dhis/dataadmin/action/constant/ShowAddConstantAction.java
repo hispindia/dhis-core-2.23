@@ -1,5 +1,6 @@
 package org.hisp.dhis.dataadmin.action.constant;
 
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -28,93 +29,56 @@ package org.hisp.dhis.dataadmin.action.constant;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+
+import com.opensymphony.xwork2.Action;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeService;
 import org.hisp.dhis.attribute.comparator.AttributeSortOrderComparator;
 import org.hisp.dhis.constant.Constant;
-import org.hisp.dhis.constant.ConstantService;
-
-import com.opensymphony.xwork2.Action;
-import org.hisp.dhis.option.OptionSet;
-import org.hisp.dhis.system.util.AttributeUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
- * @author Dang Duy Hieu
- * @version $Id$
+ * @author Viet Nguyen <viet@dhis.org>
  */
-public class GetConstantAction
+public class ShowAddConstantAction
     implements Action
 {
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------
     // Dependencies
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------
 
-    private ConstantService constantService;
-
-    @Autowired
     private AttributeService attributeService;
 
-    public void setAttributeService( AttributeService attributeService ) { this.attributeService = attributeService; }
-
-    public void setConstantService( ConstantService constantService )
+    public void setAttributeService( AttributeService attributeService )
     {
-        this.constantService = constantService;
+        this.attributeService = attributeService;
     }
 
-    // -------------------------------------------------------------------------
-    // Input
-    // -------------------------------------------------------------------------
-
-    private Integer id;
-
-    public void setId( Integer id )
-    {
-        this.id = id;
-    }
-
-    // -------------------------------------------------------------------------
-    // Output
-    // -------------------------------------------------------------------------
-
-    private Constant constant;
+    // -------------------------------------------------------------------------------------------------
+    // Input/Output
+    // -------------------------------------------------------------------------------------------------
 
     private List<Attribute> attributes;
 
-    private Map<Integer, String> attributeValues = new HashMap<>();
-
-    public Constant getConstant()
+    public List<Attribute> getAttributes()
     {
-        return constant;
+        return attributes;
     }
 
-    public List<Attribute> getAttributes() { return attributes; }
-
-    public Map<Integer, String> getAttributeValues() { return attributeValues; }
-
-
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------
     // Action implementation
-    // -------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------
 
     @Override
     public String execute()
+        throws Exception
     {
-        constant = constantService.getConstant( id );
-
-        attributeValues = AttributeUtils.getAttributeValueMap( constant.getAttributeValues() );
-
         attributes = new ArrayList<>( attributeService.getAttributes( Constant.class ) );
         Collections.sort( attributes, AttributeSortOrderComparator.INSTANCE );
 
         return SUCCESS;
     }
-
-
 }

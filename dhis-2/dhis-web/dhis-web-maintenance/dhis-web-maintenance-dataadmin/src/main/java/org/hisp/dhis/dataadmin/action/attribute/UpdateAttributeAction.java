@@ -239,6 +239,17 @@ public class UpdateAttributeAction
         this.optionSetUid = optionSetUid;
     }
 
+    private boolean constantAttribute;
+
+    public void setConstantAttribute( boolean constantAttribute )
+    {
+        this.constantAttribute = constantAttribute;
+    }
+
+    private boolean legendSetAttribute;
+
+    public void setLegendSetAttribute( boolean legendSetAttribute ) { this.legendSetAttribute = legendSetAttribute; }
+
     // -------------------------------------------------------------------------
     // Action implementation
     // -------------------------------------------------------------------------
@@ -278,6 +289,9 @@ public class UpdateAttributeAction
             attribute.setDocumentAttribute( documentAttribute );
             attribute.setOptionAttribute( optionAttribute );
             attribute.setOptionSetAttribute( optionSetAttribute );
+            attribute.setConstantAttribute( constantAttribute );
+            attribute.setLegendSetAttribute( legendSetAttribute );
+
 
             attributeService.updateAttribute( attribute );
 

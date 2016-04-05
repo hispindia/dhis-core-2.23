@@ -157,12 +157,14 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     class="org.hisp.dhis.dataadmin.action.constant.AddConstantAction"
     scope="prototype">
     <property name="constantService" ref="org.hisp.dhis.constant.ConstantService" />
+    <property name="attributeService" ref="org.hisp.dhis.attribute.AttributeService" />
   </bean>
 
   <bean id="org.hisp.dhis.dataadmin.action.constant.UpdateConstantAction"
     class="org.hisp.dhis.dataadmin.action.constant.UpdateConstantAction"
     scope="prototype">
     <property name="constantService" ref="org.hisp.dhis.constant.ConstantService" />
+    <property name="attributeService" ref="org.hisp.dhis.attribute.AttributeService" />
   </bean>
 
   <bean id="org.hisp.dhis.dataadmin.action.constant.ValidateConstantAction"
@@ -181,6 +183,13 @@ http://www.springframework.org/schema/beans http://www.springframework.org/schem
     class="org.hisp.dhis.dataadmin.action.constant.GetConstantAction"
     scope="prototype">
     <property name="constantService" ref="org.hisp.dhis.constant.ConstantService" />
+    <property name="attributeService" ref="org.hisp.dhis.attribute.AttributeService" />
+  </bean>
+
+  <bean id="org.hisp.dhis.dataadmin.action.constant.ShowAddConstantAction"
+    class="org.hisp.dhis.dataadmin.action.constant.ShowAddConstantAction"
+    scope="prototype">
+    <property name="attributeService" ref="org.hisp.dhis.attribute.AttributeService" />
   </bean>
 
   <bean id="org.hisp.dhis.dataadmin.action.constant.GetConstantListAction"

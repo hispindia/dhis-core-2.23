@@ -225,6 +225,17 @@ public class AddAttributeAction
         this.optionSetAttribute = optionSetAttribute;
     }
 
+    private boolean constantAttribute;
+
+    public void setConstantAttribute( boolean constantAttribute )
+    {
+        this.constantAttribute = constantAttribute;
+    }
+
+    private boolean legendSetAttribute;
+
+    public void setLegendSetAttribute( boolean legendSetAttribute ) { this.legendSetAttribute = legendSetAttribute; }
+
     private String optionSetUid;
 
     public void setOptionSetUid( String optionSetUid )
@@ -266,6 +277,8 @@ public class AddAttributeAction
         attribute.setDocumentAttribute( documentAttribute );
         attribute.setOptionAttribute( optionAttribute );
         attribute.setOptionSetAttribute( optionSetAttribute );
+        attribute.setConstantAttribute( constantAttribute );
+        attribute.setLegendSetAttribute( legendSetAttribute );
 
         attributeService.addAttribute( attribute );
 
