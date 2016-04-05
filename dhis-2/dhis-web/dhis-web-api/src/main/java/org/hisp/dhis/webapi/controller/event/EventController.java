@@ -218,37 +218,29 @@ public class EventController
             fields.addAll( Preset.ALL.getFields() );
         }
 
-        Events events;
+        DataElementCategoryOptionCombo attributeOptionCombo = inputUtils.getAttributeOptionCombo( attributeCc, attributeCos );
 
-        if ( event != null )
+        if ( attributeOptionCombo == null )
         {
-            Set<String> eventUids = TextUtils.splitToArray( event, TextUtils.SEMICOLON );
-            events = eventService.getEvents( eventUids );
+            throw new WebMessageException( WebMessageUtils.conflict( "Illegal attribute option combo identifier: " + attributeCc + " " + attributeCos ) );
         }
-        else
+
+        Set<String> eventIds = TextUtils.splitToArray( event, TextUtils.SEMICOLON );
+
+        EventSearchParams params = eventService.getFromUrl( program, programStage, programStatus, followUp,
+            orgUnit, ouMode, trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo,
+            idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams( order ), false, eventIds );
+
+        Events events = eventService.getEvents( params );
+
+        if ( hasHref( fields ) )
         {
-            DataElementCategoryOptionCombo attributeOptionCombo = inputUtils.getAttributeOptionCombo( attributeCc, attributeCos );
+            events.getEvents().forEach( e -> e.setHref( ContextUtils.getRootPath( request ) + RESOURCE_PATH + "/" + e.getEvent() ) );
+        }
 
-            if ( attributeOptionCombo == null )
-            {
-                throw new WebMessageException( WebMessageUtils.conflict( "Illegal attribute option combo identifier: " + attributeCc + " " + attributeCos ) );
-            }
-
-            EventSearchParams params = eventService.getFromUrl( program, programStage, programStatus, followUp,
-                orgUnit, ouMode, trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo,
-                idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams( order ), false );
-
-            events = eventService.getEvents( params );
-
-            for ( Event e : events.getEvents() )
-            {
-                e.setHref( ContextUtils.getRootPath( request ) + RESOURCE_PATH + "/" + e.getEvent() );
-            }
-
-            if ( !skipMeta && params.getProgram() != null )
-            {
-                events.setMetaData( getMetaData( params.getProgram() ) );
-            }
+        if ( !skipMeta && params.getProgram() != null )
+        {
+            events.setMetaData( getMetaData( params.getProgram() ) );
         }
 
         model.addAttribute( "model", events );
@@ -305,7 +297,7 @@ public class EventController
 
         EventSearchParams params = eventService.getFromUrl( program, programStage, programStatus, followUp,
             orgUnit, ouMode, trackedEntityInstance, startDate, endDate, status, lastUpdated, attributeOptionCombo,
-            idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams( order ), false );
+            idSchemes, page, pageSize, totalPages, skipPaging, getOrderParams( order ), false, null );
 
         Events events = eventService.getEvents( params );
 
@@ -357,7 +349,7 @@ public class EventController
 
         EventSearchParams params = eventService.getFromUrl( program, null, programStatus, null,
             orgUnit, ouMode, null, startDate, endDate, eventStatus, null, attributeOptionCombo,
-            null, null, null, totalPages, skipPaging, getOrderParams( order ), true );
+            null, null, null, totalPages, skipPaging, getOrderParams( order ), true, null );
 
         EventRows eventRows = eventRowService.getEventRows( params );
 
@@ -772,5 +764,24 @@ public class EventController
         {
             webMessageService.send( WebMessageUtils.conflict( "Unable to delete event " + uid, ex.getMessage() ), response, request );
         }
+    }
+
+    private boolean fieldsContains( String match, List<String> fields )
+    {
+        for ( String field : fields )
+        {
+            // for now assume href/access if * or preset is requested
+            if ( field.contains( match ) || field.equals( "*" ) || field.startsWith( ":" ) )
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean hasHref( List<String> fields )
+    {
+        return fieldsContains( "href", fields );
     }
 }

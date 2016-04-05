@@ -46,6 +46,7 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -65,7 +66,7 @@ public interface EventService
     EventSearchParams getFromUrl( String program, String programStage, ProgramStatus programStatus, Boolean followUp, String orgUnit,
         OrganisationUnitSelectionMode orgUnitSelectionMode, String trackedEntityInstance, Date startDate, Date endDate,
         EventStatus status, Date lastUpdated, DataElementCategoryOptionCombo attributeCoc, IdSchemes idSchemes, Integer page,
-        Integer pageSize, boolean totalPages, boolean skipPaging, List<Order> orders, boolean includeAttributes );
+        Integer pageSize, boolean totalPages, boolean skipPaging, List<Order> orders, boolean includeAttributes, Set<String> events );
 
     Event getEvent( String uid );
 

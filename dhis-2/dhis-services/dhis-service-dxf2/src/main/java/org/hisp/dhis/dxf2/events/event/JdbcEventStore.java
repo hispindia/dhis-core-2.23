@@ -59,6 +59,7 @@ import java.util.Set;
 
 import static org.hisp.dhis.common.IdentifiableObjectUtils.getIdentifiers;
 import static org.hisp.dhis.commons.util.TextUtils.getCommaDelimitedString;
+import static org.hisp.dhis.commons.util.TextUtils.getQuotedCommaDelimitedString;
 import static org.hisp.dhis.system.util.DateUtils.getMediumDateString;
 
 /**
@@ -250,7 +251,7 @@ public class JdbcEventStore
                 eventRow.setTrackedEntityInstanceOrgUnitName( rowSet.getString( "tei_ou_name" ) );
                 eventRow.setTrackedEntityInstanceCreated( rowSet.getString( "tei_created" ) );
                 eventRow.setTrackedEntityInstanceInactive( rowSet.getBoolean( "tei_inactive" ) );
-                
+
                 eventRow.setProgram( IdSchemes.getValue( rowSet.getString( "p_uid" ), rowSet.getString( "p_code" ),
                     idSchemes.getProgramIdScheme() ) );
                 eventRow.setProgramStage( IdSchemes.getValue( rowSet.getString( "ps_uid" ),
@@ -373,18 +374,18 @@ public class JdbcEventStore
 
         String sql =
             "select psi.programstageinstanceid as psi_id, psi.uid as psi_uid, psi.status as psi_status, psi.executiondate as psi_executiondate, psi.duedate as psi_duedate, psi.completedby as psi_completedby, " +
-            "psi.storedby as psi_storedby, psi.longitude as psi_longitude, psi.latitude as psi_latitude, psi.created as psi_created, psi.lastupdated as psi_lastupdated, psi.completeddate as psi_completeddate, " +
-            "pi.uid as pi_uid, pi.status as pi_status, pi.followup as pi_followup, p.uid as p_uid, p.code as p_code, " +
-            "p.type as p_type, ps.uid as ps_uid, ps.code as ps_code, ps.capturecoordinates as ps_capturecoordinates, " +
-            "ou.uid as ou_uid, ou.code as ou_code, ou.name as ou_name, " +
-            "tei.trackedentityinstanceid as tei_id, tei.uid as tei_uid, teiou.uid as tei_ou, teiou.name as tei_ou_name, tei.created as tei_created, tei.inactive as tei_inactive " +
-            "from programstageinstance psi " +
-            "inner join programinstance pi on pi.programinstanceid=psi.programinstanceid " +
-            "inner join program p on p.programid=pi.programid " +
-            "inner join programstage ps on ps.programstageid=psi.programstageid " +
-            "left join trackedentityinstance tei on tei.trackedentityinstanceid=pi.trackedentityinstanceid " +
-            "left join organisationunit ou on (psi.organisationunitid=ou.organisationunitid) " + 
-            "left join organisationunit teiou on (tei.organisationunitid=teiou.organisationunitid) ";
+                "psi.storedby as psi_storedby, psi.longitude as psi_longitude, psi.latitude as psi_latitude, psi.created as psi_created, psi.lastupdated as psi_lastupdated, psi.completeddate as psi_completeddate, " +
+                "pi.uid as pi_uid, pi.status as pi_status, pi.followup as pi_followup, p.uid as p_uid, p.code as p_code, " +
+                "p.type as p_type, ps.uid as ps_uid, ps.code as ps_code, ps.capturecoordinates as ps_capturecoordinates, " +
+                "ou.uid as ou_uid, ou.code as ou_code, ou.name as ou_name, " +
+                "tei.trackedentityinstanceid as tei_id, tei.uid as tei_uid, teiou.uid as tei_ou, teiou.name as tei_ou_name, tei.created as tei_created, tei.inactive as tei_inactive " +
+                "from programstageinstance psi " +
+                "inner join programinstance pi on pi.programinstanceid=psi.programinstanceid " +
+                "inner join program p on p.programid=pi.programid " +
+                "inner join programstage ps on ps.programstageid=psi.programstageid " +
+                "left join trackedentityinstance tei on tei.trackedentityinstanceid=pi.trackedentityinstanceid " +
+                "left join organisationunit ou on (psi.organisationunitid=ou.organisationunitid) " +
+                "left join organisationunit teiou on (tei.organisationunitid=teiou.organisationunitid) ";
 
         if ( params.getTrackedEntityInstance() != null )
         {
@@ -420,12 +421,12 @@ public class JdbcEventStore
         {
             sql += hlp.whereAnd() + " psi.attributeoptioncomboid = " + params.getCategoryOptionCombo().getId() + " ";
         }
-        
+
         if ( orgUnitIds != null && !orgUnitIds.isEmpty() )
         {
             sql += hlp.whereAnd() + " psi.organisationunitid in (" + getCommaDelimitedString( orgUnitIds ) + ") ";
         }
-        
+
         if ( params.getStartDate() != null )
         {
             sql += hlp.whereAnd() + " (psi.executiondate >= '" + getMediumDateString( params.getStartDate() ) + "' " +
@@ -454,6 +455,11 @@ public class JdbcEventStore
             }
         }
 
+        if ( params.getEvents() != null && !params.getEvents().isEmpty() )
+        {
+            sql += hlp.whereAnd() + "(psi.uid in (" + getQuotedCommaDelimitedString( params.getEvents() ) + ")) ";
+        }
+
         return sql;
     }
 
@@ -473,10 +479,10 @@ public class JdbcEventStore
     {
         String sql =
             "select pdv.programstageinstanceid as pdv_id, pdv.created as pdv_created, pdv.lastupdated as pdv_lastupdated, " +
-            "pdv.value as pdv_value, pdv.storedby as pdv_storedby, pdv.providedelsewhere as pdv_providedelsewhere, " +
-            "de.uid as de_uid, de.code as de_code " +
-            "from trackedentitydatavalue pdv " +
-            "inner join dataelement de on pdv.dataelementid=de.dataelementid ";
+                "pdv.value as pdv_value, pdv.storedby as pdv_storedby, pdv.providedelsewhere as pdv_providedelsewhere, " +
+                "de.uid as de_uid, de.code as de_code " +
+                "from trackedentitydatavalue pdv " +
+                "inner join dataelement de on pdv.dataelementid=de.dataelementid ";
 
         return sql;
     }
@@ -485,35 +491,35 @@ public class JdbcEventStore
     {
         String sql =
             "select psic.programstageinstanceid as psic_id, psinote.trackedentitycommentid as psinote_id, psinote.commenttext as psinote_value, " +
-            "psinote.createddate as psinote_storeddate, psinote.creator as psinote_storedby " +
-            "from programstageinstancecomments psic " +
-            "inner join trackedentitycomment psinote on psic.trackedentitycommentid=psinote.trackedentitycommentid ";
+                "psinote.createddate as psinote_storeddate, psinote.creator as psinote_storedby " +
+                "from programstageinstancecomments psic " +
+                "inner join trackedentitycomment psinote on psic.trackedentitycommentid=psinote.trackedentitycommentid ";
 
         return sql;
     }
-    
+
     private String getOrderQuery( List<Order> orders )
     {
-        if ( orders != null ) 
-        {    
+        if ( orders != null )
+        {
             ArrayList<String> orderFields = new ArrayList<String>();
-            
+
             for ( Order order : orders )
-            {                   
+            {
                 if ( QUERY_PARAM_COL_MAP.containsKey( order.getProperty().getName() ) )
                 {
                     String orderText = QUERY_PARAM_COL_MAP.get( order.getProperty().getName() );
-                    orderText += order.isAscending() ? " asc" : " desc";                    
+                    orderText += order.isAscending() ? " asc" : " desc";
                     orderFields.add( orderText );
                 }
             }
-            
-            if ( !orderFields.isEmpty() ) 
+
+            if ( !orderFields.isEmpty() )
             {
                 return "order by " + StringUtils.join( orderFields, ',' ) + " ";
             }
         }
-        
+
         return "order by psi_lastupdated desc ";
     }
 

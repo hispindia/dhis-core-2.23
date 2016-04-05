@@ -523,7 +523,7 @@ public abstract class AbstractEventService
     public EventSearchParams getFromUrl( String program, String programStage, ProgramStatus programStatus, Boolean followUp, String orgUnit,
         OrganisationUnitSelectionMode orgUnitSelectionMode, String trackedEntityInstance, Date startDate, Date endDate,
         EventStatus status, Date lastUpdated, DataElementCategoryOptionCombo attributeCoc, IdSchemes idSchemes, Integer page, Integer pageSize, boolean totalPages, boolean skipPaging,
-        List<Order> orders, boolean includeAttributes )
+        List<Order> orders, boolean includeAttributes, Set<String> events )
     {
         UserCredentials userCredentials = currentUserService.getCurrentUser().getUserCredentials();
 
@@ -570,6 +570,11 @@ public abstract class AbstractEventService
             throw new IllegalQueryException( "Tracked entity instance is specified but does not exist: " + trackedEntityInstance );
         }
 
+        if ( events == null )
+        {
+            events = new HashSet<>();
+        }
+
         params.setProgram( pr );
         params.setProgramStage( ps );
         params.setOrgUnit( ou );
@@ -589,6 +594,7 @@ public abstract class AbstractEventService
         params.setSkipPaging( skipPaging );
         params.setIncludeAttributes( includeAttributes );
         params.setOrders( orders );
+        params.setEvents( events );
 
         return params;
     }
