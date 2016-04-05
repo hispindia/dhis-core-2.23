@@ -209,7 +209,7 @@ trackerCapture.controller('EventCreationController',
         newEvent.status = newEvent.eventDate ? 'ACTIVE' : 'SCHEDULE';
 
         /*for saving category combo*/
-        if (!$scope.selectedProgram.categoryCombo.isDefault) {
+        if ($scope.selectedProgram.categoryCombo && !$scope.selectedProgram.categoryCombo.isDefault) {
             if ($scope.selectedOptions.length !== $scope.selectedCategories.length) {
                 var dialogOptions = {
                     headerText: 'error',
