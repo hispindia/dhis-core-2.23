@@ -33,9 +33,11 @@ import org.hisp.dhis.datastatistics.DataStatistics;
 import org.hisp.dhis.datastatistics.DataStatisticsStore;
 import org.hisp.dhis.datastatistics.EventInterval;
 import org.hisp.dhis.hibernate.HibernateGenericStore;
+import org.hisp.dhis.system.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,8 +60,10 @@ public class HibernateDataStatisticsStore
      * @return List of aggregated data
      */
     @Override
-    public List<AggregatedStatistics> getSnapshotsInInterval( String sql, EventInterval eventInterval )
+    public List<AggregatedStatistics> getSnapshotsInInterval( EventInterval eventInterval, Date startDate, Date endDate )
     {
+        final String sql = getQuery( eventInterval, startDate, endDate );
+        
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
 
             AggregatedStatistics ads = new AggregatedStatistics();
@@ -78,6 +82,7 @@ public class HibernateDataStatisticsStore
                     ads.setMonth( resultSet.getInt( "mnt" ) );
                     break;
             }
+            
             ads.setActiveUsers( resultSet.getInt( "activeUsers" ) );
             ads.setMapViews( resultSet.getInt( "mapViews" ) );
             ads.setChartViews( resultSet.getInt( "chartViews" ) );
@@ -99,5 +104,122 @@ public class HibernateDataStatisticsStore
             
             return ads;
         } );
+    }
+
+    private String getQuery( EventInterval eventInterval, Date startDate, Date endDate )
+    {
+        String sql = "";
+        
+        switch ( eventInterval )
+        {
+            case DAY:
+                sql = getDaySql( startDate, endDate );
+                break;
+            case WEEK:
+                sql = getWeekSql( startDate, endDate );
+                break;
+            case MONTH:
+                sql = getMonthSql( startDate, endDate );
+                break;
+            case YEAR:
+                sql = getYearSql( startDate, endDate );
+                break;
+            default:
+                sql = getDaySql( startDate, endDate );
+        }
+        
+        return sql;
+    }
+    
+    /**
+     * Creating a SQL for retrieving aggregated data with group by YEAR
+     *
+     * @param start start date
+     * @param end  end date
+     * @return SQL string
+     */
+    private String getYearSql( Date start, Date end )
+    {
+        return "select extract(year from created) as yr, " +
+            commonSql( start, end ) +
+            " order by yr;";
+    }
+
+    /**
+     * Creating a SQL for retrieving aggregated data with group by YEAR, MONTH
+     *
+     * @param start start date
+     * @param end  end date
+     * @return SQL string
+     */
+    private String getMonthSql( Date start, Date end )
+    {
+        return "select extract(year from created) as yr, " +
+            "extract(month from created) as mnt, " +
+            commonSql( start, end ) +
+            ", mnt order by yr, mnt;";
+    }
+
+    /**
+     * Creating a SQL for retrieving aggregated data with group by YEAR, WEEK
+     *
+     * @param start start date
+     * @param end end date
+     * @return SQL string
+     */
+    private String getWeekSql( Date start, Date end )
+    {
+        return "select extract(year from created) as yr, " +
+            "extract(week from created) as week, " +
+            commonSql( start, end ) +
+            ", week order by yr, week;";
+    }
+
+    /**
+     * Creating a SQL for retrieving aggregated data with group by YEAR, DAY
+     *
+     * @param start start date
+     * @param end end date
+     * @return SQL string
+     */
+    private String getDaySql( Date start, Date end )
+    {
+        return "select extract(year from created) as yr, " +
+            "extract(month from created) as mnt,"+
+            "extract(day from created) as day, " +
+            commonSql( start, end ) +
+            ", mnt, day order by yr, mnt, day;";
+    }
+
+    /**
+     * Part of SQL witch is always the same in the different intervals YEAR, MONTH, WEEK and DAY
+     *
+     * @param start start date
+     * @param end end date
+     * @return SQL string
+     */
+    private String commonSql( Date start, Date end )
+    {
+        return "max(active_users) as activeUsers," +
+            "cast(round(cast(sum(mapviews) as numeric),0) as int) as mapViews," +
+            "cast(round(cast(sum(chartviews) as numeric),0) as int) as chartViews," +
+            "cast(round(cast(sum(reporttableviews) as numeric),0) as int) as reportTablesViews, " +
+            "cast(round(cast(sum(eventreportviews) as numeric),0) as int) as eventReportViews, " +
+            "cast(round(cast(sum(eventchartviews) as numeric),0) as int) as eventChartViews," +
+            "cast(round(cast(sum(dashboardviews) as numeric),0) as int) as dashboardViews, " +
+            "cast(round(cast(sum(indicatorviews) as numeric),0) as int) as indicatorsViews, " +
+            "cast(round(cast(sum(totalviews) as numeric),0) as int) as totalViews," +
+            "cast(round(cast(sum(average_views) as numeric),0) as int) as averageViews, " +
+            "cast(round(cast(sum(maps) as numeric),0) as int) as savedMaps," +
+            "cast(round(cast(sum(charts) as numeric),0) as int) as savedCharts," +
+            "cast(round(cast(sum(reporttables) as numeric),0) as int) as savedReportTables," +
+            "cast(round(cast(sum(eventreports) as numeric),0) as int) as savedEventReports," +
+            "cast(round(cast(sum(eventcharts) as numeric),0) as int) as savedEventCharts," +
+            "cast(round(cast(sum(dashborards) as numeric),0) as int) as savedDashboards, " +
+            "cast(round(cast(sum(indicators) as numeric),0) as int) as savedIndicators," +
+            "max(users) as users from datastatistics " +
+            "where (created between '" + DateUtils.getMediumDateString( start ) + 
+            "' and '" + DateUtils.getMediumDateString( end ) + "') " +
+            "group by yr";
     }
 }
