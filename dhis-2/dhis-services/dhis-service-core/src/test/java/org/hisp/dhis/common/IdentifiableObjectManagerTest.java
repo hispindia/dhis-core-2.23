@@ -86,6 +86,19 @@ public class IdentifiableObjectManagerTest
     }
 
     @Test
+    public void testGetObjectWithIdScheme()
+    {
+        DataElement dataElementA = createDataElement( 'A' );
+
+        dataElementService.addDataElement( dataElementA );
+
+
+        assertEquals( dataElementA, identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, IdScheme.CODE, dataElementA.getCode() ) );
+        assertEquals( dataElementA, identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, IdScheme.UID, dataElementA.getUid() ) );
+
+    }
+
+    @Test
     public void testGetObject()
     {
         DataElement dataElementA = createDataElement( 'A' );

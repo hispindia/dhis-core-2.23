@@ -42,6 +42,7 @@ import com.google.common.collect.Sets;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.analytics.DataQueryParams;
 import org.hisp.dhis.analytics.DataQueryService;
+import org.hisp.dhis.analytics.DimensionItem;
 import org.hisp.dhis.chart.Chart;
 import org.hisp.dhis.common.*;
 import org.hisp.dhis.dataelement.DataElement;
@@ -197,6 +198,9 @@ public class DataQueryServiceTest
         
         patA = new ProgramTrackedEntityAttribute( prA, atA );
         patB = new ProgramTrackedEntityAttribute( prA, atB );
+
+        patA.setCode( "ProgramTrackedEntityCodeA" );
+        patB.setCode( "ProgramTrackedEntityCodeB" );
         
         idObjectManager.save( patA );
         idObjectManager.save( patB );
@@ -315,6 +319,21 @@ public class DataQueryServiceTest
         DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, itemUids, null, null, null, false,
             IdScheme.UID );
         
+        assertEquals( DimensionalObject.DATA_X_DIM_ID, actual.getDimension() );
+        assertEquals( DimensionType.DATA_X, actual.getDimensionType() );
+        assertEquals( DataQueryParams.DISPLAY_NAME_DATA_X, actual.getDisplayName() );
+        assertEquals( items, actual.getItems() );
+    }
+
+    @Test
+    public void testGetDimensionDataByCode()
+    {
+        List<DimensionalItemObject> items = Lists.newArrayList( deA, deB, deC, dsA, dsB );
+
+        List<String> itemCodes = Lists.newArrayList( deA.getCode(), deB.getCode(), deC.getCode(), dsA.getCode(), dsB.getCode() );
+
+        DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, itemCodes, null, null, null, false, IdScheme.CODE);
+
         assertEquals( DimensionalObject.DATA_X_DIM_ID, actual.getDimension() );
         assertEquals( DimensionType.DATA_X, actual.getDimensionType() );
         assertEquals( DataQueryParams.DISPLAY_NAME_DATA_X, actual.getDisplayName() );
@@ -482,6 +501,26 @@ public class DataQueryServiceTest
         assertEquals( 2, params.getDataElements().size() );
         assertEquals( 2, params.getProgramAttributes().size() );
         assertEquals( 1, params.getFilterOrganisationUnits().size() );
+    }
+
+    @Test
+    public void testGetFromUrlWithCode()
+    {
+        Set<String> dimensionParams = new HashSet<>();
+        dimensionParams.add( "dx:" + deA.getCode() + ";" + deB.getCode() + ";" + patA.getCode() + ";" + patB.getCode() );
+        System.out.println("DEBUG:: " + "dx:" + deA.getCode() + ";" + deB.getCode() + ";" + patA.getCode() + ";" + patB.getCode());
+
+        Set<String> filterParams = new HashSet<>();
+        filterParams.add( "ou:" + ouA.getCode() );
+        System.out.println("DEBUG:: " +  "ou:" + ouA.getCode() );
+
+        DataQueryParams params = dataQueryService.getFromUrl( dimensionParams, filterParams, null, null,
+            false, false, false, false, false, false, false, false, null, null, IdScheme.CODE, null, null, null, null );
+
+        assertEquals( 2, params.getDataElements().size() );
+        assertEquals( 2, params.getProgramAttributes().size() );
+        assertEquals( 1, params.getFilterOrganisationUnits().size() );
+
     }
 
     @Test
