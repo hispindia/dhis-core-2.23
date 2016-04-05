@@ -1181,108 +1181,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    public void testCreateUsers() throws IOException
-    {
-        createUserAndInjectSecurityContext( true );
-
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/users.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE );
-        params.setAtomicMode( AtomicMode.NONE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidationReport validate = objectBundleService.validate( bundle );
-        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
-        objectBundleService.commit( bundle );
-
-        List<User> users = manager.getAll( User.class );
-        assertEquals( 4, users.size() );
-
-        User userA = manager.get( User.class, "sPWjoHSY03y" );
-        User userB = manager.get( User.class, "MwhEJUnTHkn" );
-
-        assertNotNull( userA );
-        assertNotNull( userB );
-
-        assertNotNull( userA.getUserCredentials().getUserInfo() );
-        assertNotNull( userB.getUserCredentials().getUserInfo() );
-        assertNotNull( userA.getUserCredentials().getUserInfo().getUserCredentials() );
-        assertNotNull( userB.getUserCredentials().getUserInfo().getUserCredentials() );
-        assertEquals( "UserA", userA.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
-        assertEquals( "UserB", userB.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
-
-        assertNotNull( userA.getUserCredentials().getUser() );
-        assertNotNull( userB.getUserCredentials().getUser() );
-        assertNotNull( userA.getUserCredentials().getUser().getUserCredentials() );
-        assertNotNull( userB.getUserCredentials().getUser().getUserCredentials() );
-        assertEquals( "admin", userA.getUserCredentials().getUser().getUserCredentials().getUsername() );
-        assertEquals( "admin", userB.getUserCredentials().getUser().getUserCredentials().getUsername() );
-
-        assertEquals( 1, userA.getOrganisationUnits().size() );
-        assertEquals( 1, userB.getOrganisationUnits().size() );
-    }
-
-    @Test
-    public void testUpdateUsers() throws IOException
-    {
-        createUserAndInjectSecurityContext( true );
-
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/users.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE );
-        params.setAtomicMode( AtomicMode.NONE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        ObjectBundleValidationReport validate = objectBundleService.validate( bundle );
-        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5003 ).size() );
-        objectBundleService.commit( bundle );
-
-        metadata = renderService.fromMetadata( new ClassPathResource( "dxf2/users_update.json" ).getInputStream(), RenderFormat.JSON );
-
-        params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.UPDATE );
-        params.setAtomicMode( AtomicMode.NONE );
-        params.setObjects( metadata );
-
-        bundle = objectBundleService.create( params );
-        validate = objectBundleService.validate( bundle );
-        assertEquals( 1, validate.getErrorReportsByCode( UserAuthorityGroup.class, ErrorCode.E5001 ).size() );
-        objectBundleService.commit( bundle );
-
-        List<User> users = manager.getAll( User.class );
-        assertEquals( 4, users.size() );
-
-        User userA = manager.get( User.class, "sPWjoHSY03y" );
-        User userB = manager.get( User.class, "MwhEJUnTHkn" );
-
-        assertNotNull( userA );
-        assertNotNull( userB );
-
-        assertNotNull( userA.getUserCredentials().getUserInfo() );
-        assertNotNull( userB.getUserCredentials().getUserInfo() );
-        assertNotNull( userA.getUserCredentials().getUserInfo().getUserCredentials() );
-        assertNotNull( userB.getUserCredentials().getUserInfo().getUserCredentials() );
-        assertEquals( "UserAA", userA.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
-        assertEquals( "UserBB", userB.getUserCredentials().getUserInfo().getUserCredentials().getUsername() );
-
-        assertNotNull( userA.getUserCredentials().getUser() );
-        assertNotNull( userB.getUserCredentials().getUser() );
-        assertNotNull( userA.getUserCredentials().getUser().getUserCredentials() );
-        assertNotNull( userB.getUserCredentials().getUser().getUserCredentials() );
-        assertEquals( "admin", userA.getUserCredentials().getUser().getUserCredentials().getUsername() );
-        assertEquals( "admin", userB.getUserCredentials().getUser().getUserCredentials().getUsername() );
-    }
-
-    @Test
     public void testCreateAndUpdateMetadata1() throws IOException
     {
         defaultSetup();
@@ -1474,46 +1372,6 @@ public class ObjectBundleServiceTest
     }
 
     @Test
-    public void testCreateMetadataWithDuplicateUsername() throws IOException
-    {
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/user_duplicate_username.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
-        params.setAtomicMode( AtomicMode.NONE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
-        objectBundleService.commit( bundle );
-
-        assertEquals( 1, manager.getAll( User.class ).size() );
-    }
-
-    @Test
-    public void testCreateMetadataWithDuplicateUsernameAndInjectedUser() throws IOException
-    {
-        createUserAndInjectSecurityContext( true );
-
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/user_duplicate_username.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
-        params.setAtomicMode( AtomicMode.NONE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
-
-        objectBundleService.commit( bundle );
-        assertEquals( 2, manager.getAll( User.class ).size() );
-    }
-
-    @Test
     public void testCreateOrgUnitWithLevels() throws IOException
     {
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
@@ -1593,32 +1451,6 @@ public class ObjectBundleServiceTest
 
         assertNotNull( section1.getDataSet() );
         assertNotNull( section2.getDataSet() );
-    }
-
-    @Test
-    public void testCreateUserRoleWithDataSetProgramAssignment() throws IOException
-    {
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/userrole_program_dataset_assignment.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
-        params.setAtomicMode( AtomicMode.ALL );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        assertTrue( objectBundleService.validate( bundle ).getErrorReports().isEmpty() );
-
-        objectBundleService.commit( bundle );
-
-        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
-        assertEquals( 1, userRoles.size() );
-
-        UserAuthorityGroup userRole = userRoles.get( 0 );
-        assertNotNull( userRole );
-        assertEquals( 1, userRole.getDataSets().size() );
-        assertEquals( 1, userRole.getPrograms().size() );
     }
 
     private void defaultSetup()
