@@ -69,6 +69,17 @@ trackerCapture.controller('RegistrationController',
         });
     }
     
+    $scope.dataElementTranslations = CurrentSelection.getDataElementTranslations();        
+    if($scope.dataElementTranslations.length < 1){
+        $scope.dataElementTranslations = [];
+        MetaDataFactory.getAll('dataElements').then(function(des){
+            angular.forEach(des, function(de){  
+                $scope.dataElementTranslations[de.id] = de;
+            });
+            CurrentSelection.setDataElementTranslations($scope.dataElementTranslations);
+        });
+    }
+    
     $scope.selectedOrgUnit = SessionStorageService.get('SELECTED_OU');
     $scope.selectedEnrollment = {enrollmentDate: $scope.today, incidentDate: $scope.today, orgUnitName: $scope.selectedOrgUnit.displayName};   
             
@@ -157,6 +168,8 @@ trackerCapture.controller('RegistrationController',
                     $rootScope.ruleeffects[$scope.currentEvent.event] = {};
                     $scope.selectedEnrollment.status = 'ACTIVE';
                     angular.forEach($scope.currentStage.programStageDataElements, function (prStDe) {
+                        var tx = $scope.dataElementTranslations[prStDe.dataElement.id];
+                        prStDe.dataElement.displayFormName = tx.displayFormName && tx.displayFormName !== "" ? tx.displayFormName : tx.displayName ? tx.displayName : prStDe.dataElement.displayName;                        
                         $scope.prStDes[prStDe.dataElement.id] = prStDe;
                         if(prStDe.allowProvidedElsewhere){
                             $scope.allowProvidedElsewhereExists[$scope.currentStage.id] = true;
