@@ -457,7 +457,7 @@ public class JdbcEventStore
 
         if ( params.getEvents() != null && !params.getEvents().isEmpty() )
         {
-            sql += hlp.whereAnd() + "(psi.uid in (" + getQuotedCommaDelimitedString( params.getEvents() ) + ")) ";
+            sql += hlp.whereAnd() + " (psi.uid in (" + getQuotedCommaDelimitedString( params.getEvents() ) + ")) ";
         }
 
         return sql;
