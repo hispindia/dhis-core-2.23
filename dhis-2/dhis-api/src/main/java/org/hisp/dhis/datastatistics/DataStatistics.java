@@ -61,7 +61,6 @@ public class DataStatistics
 
     public DataStatistics()
     {
-        super.setAutoFields();
     }
 
     public DataStatistics( Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
@@ -69,7 +68,6 @@ public class DataStatistics
         Double savedCharts, Double savedReportTables, Double savedEventReports, Double savedEventCharts, Double savedDashboards,
         Double savedIndicators, Integer users )
     {
-        super.setAutoFields();
         this.activeUsers = activeUsers;
         this.mapViews = mapViews;
         this.chartViews = chartViews;

@@ -37,7 +37,6 @@ import org.hisp.dhis.datastatistics.EventInterval;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -63,8 +62,6 @@ public class HibernateDataStatisticsStoreTest
     private int ds1Id;
     private int ds2Id;
 
-    private SimpleDateFormat fm;
-
     private Date date;
 
     @Override
@@ -80,8 +77,7 @@ public class HibernateDataStatisticsStoreTest
         ds1Id = 0;
         ds2Id = 0;
 
-        fm = new SimpleDateFormat( "yyyy/MM/dd" );
-        date = fm.parse( "2016/03/21" );
+        date = getDate( 2016, 3, 21 );
 
         ds1.setCreated( date );
         ds2.setCreated( date );
@@ -118,8 +114,7 @@ public class HibernateDataStatisticsStoreTest
     @Test
     public void getSnapshotsInIntervalGetInDAY_DifferenDayesSavedTest() throws Exception
     {
-        fm = new SimpleDateFormat( "yyyy/MM/dd" );
-        date = fm.parse( "2016/03/20" );
+        date = getDate( 2016, 3, 20 );
         ds2.setCreated( date );
 
         dataStatisticsStore.save( ds2 );
