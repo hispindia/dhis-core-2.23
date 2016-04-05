@@ -1670,6 +1670,8 @@ public abstract class DhisConvenienceTest
         userService.addUser( user );
 
         UserCredentials userCredentials = new UserCredentials();
+        userCredentials.setUid( "KvMx6c1eoYo" );
+        userCredentials.setCode( username );
         userCredentials.setUser( user );
         userCredentials.setUserInfo( user );
         userCredentials.setUsername( username );

@@ -671,8 +671,8 @@ public class DefaultPreheatService implements PreheatService
             if ( User.class.isInstance( object ) )
             {
                 User user = (User) object;
-                errorReports.addAll( checkUniqueness( klass, user, preheat, identifier ) );
-                errorReports.addAll( checkUniqueness( klass, user.getUserCredentials(), preheat, identifier ) );
+                errorReports.addAll( checkUniqueness( User.class, user, preheat, identifier ) );
+                errorReports.addAll( checkUniqueness( UserCredentials.class, user.getUserCredentials(), preheat, identifier ) );
             }
             else
             {

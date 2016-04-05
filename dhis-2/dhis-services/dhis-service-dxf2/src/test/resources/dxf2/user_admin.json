@@ -5,17 +5,9 @@
       "teiSearchOrganisationUnits": [ ],
       "surname": "surname",
       "lastUpdated": "2016-03-31T05:13:29.821+0000",
-      "dataViewOrganisationUnits": [
-        {
-          "id": "akbbc91qpUc"
-        }
-      ],
+      "dataViewOrganisationUnits": [ ],
       "id": "M5zQapPyTZI",
-      "organisationUnits": [
-        {
-          "id": "akbbc91qpUc"
-        }
-      ],
+      "organisationUnits": [ ],
       "userCredentials": {
         "externalAuth": false,
         "code": "admin",
@@ -27,7 +19,7 @@
         },
         "catDimensionConstraints": [ ],
         "lastUpdated": "2016-03-31T05:13:29.817+0000",
-        "id": "CRtV5sRR8uw",
+        "id": "KvMx6c1eoYo",
         "passwordLastUpdated": "2016-03-31T05:06:45.457+0000",
         "disabled": false,
         "created": "2016-03-31T05:06:45.456+0000",

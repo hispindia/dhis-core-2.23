@@ -253,8 +253,11 @@ public class ObjectBundleServiceUserTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE_AND_UPDATE );
+        params.setImportMode( ImportStrategy.UPDATE );
         params.setAtomicMode( AtomicMode.ALL );
         params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        assertEquals( 0, objectBundleService.validate( bundle ).getErrorReports().size() );
     }
 }
