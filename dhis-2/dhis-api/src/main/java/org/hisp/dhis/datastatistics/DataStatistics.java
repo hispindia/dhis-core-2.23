@@ -32,31 +32,32 @@ import org.hisp.dhis.common.BaseIdentifiableObject;
 
 
 /**
+ * DataStatistics object to be saved as snapshot.
+ * 
  * @author Julie Hill Roa
  * @author Yrjan A. F. Fraschetti
- *
- *         DataStatistics object to be saved as snapshot
  */
-public class DataStatistics extends BaseIdentifiableObject
+public class DataStatistics 
+    extends BaseIdentifiableObject
 {
-    Integer activeUsers;
-    Double mapViews;
-    Double chartViews;
-    Double reportTablesViews;
-    Double eventReportViews;
-    Double eventChartViews;
-    Double dashboardViews;
-    Double indicatorsViews;
-    Double totalViews;
-    Double averageViews;
-    Double savedMaps;
-    Double savedCharts;
-    Double savedReportTables;
-    Double savedEventReports;
-    Double savedEventCharts;
-    Double savedDashboards;
-    Double savedIndicators;
-    Integer users;
+    private Integer activeUsers;
+    private Double mapViews;
+    private Double chartViews;
+    private Double reportTablesViews;
+    private Double eventReportViews;
+    private Double eventChartViews;
+    private Double dashboardViews;
+    private Double indicatorsViews;
+    private Double totalViews;
+    private Double averageViews;
+    private Double savedMaps;
+    private Double savedCharts;
+    private Double savedReportTables;
+    private Double savedEventReports;
+    private Double savedEventCharts;
+    private Double savedDashboards;
+    private Double savedIndicators;
+    private Integer users;
 
     public DataStatistics()
     {
