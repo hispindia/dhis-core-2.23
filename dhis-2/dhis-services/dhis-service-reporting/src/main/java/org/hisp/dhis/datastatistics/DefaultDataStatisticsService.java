@@ -208,12 +208,12 @@ public class DefaultDataStatisticsService
     @Override
     public int saveSnapshot( )
     {
-        Date now = new Date(  );
-        Date startDate = new Date( );
+        Date now = new Date();
+        Date startDate = new Date();
         Calendar c = Calendar.getInstance();
         c.setTime( startDate );
         c.add( Calendar.DATE, -1 );
-        startDate = c.getTime( );
+        startDate = c.getTime();
 
         int totalUsers = identifiableObjectManager.getCount( User.class );
         double savedMaps = identifiableObjectManager.getCountByCreated( Map.class, startDate );

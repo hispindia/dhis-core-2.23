@@ -36,7 +36,6 @@ import org.hisp.dhis.datastatistics.EventType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -68,18 +67,13 @@ public class HibernateDataStatisticsEventStoreTest
     private Date end;
 
     @Override
-    public void setUpTest() 
-        throws Exception
+    public void setUpTest()
     {
         endDate = new Date();
-
         end = getDate( 2016, 3, 21 );
         start = getDate( 2016, 3, 19 );
-
-        SimpleDateFormat fm = new SimpleDateFormat( "yyyy/MM/dd" );
-        endDate = fm.parse( "2016/03/20" );
-
-        testDate = fm.parse( "2016/03/16" );
+        endDate = getDate( 2016, 3, 20 );
+        testDate = getDate( 2016, 3, 16 );
 
         dse1 = new DataStatisticsEvent( EventType.REPORT_TABLE_VIEW, endDate, "Testuser" );
         dse2 = new DataStatisticsEvent( EventType.EVENT_CHART_VIEW, endDate, "TestUser" );
