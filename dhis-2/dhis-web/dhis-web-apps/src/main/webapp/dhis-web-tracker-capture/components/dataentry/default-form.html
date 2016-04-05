@@ -19,7 +19,7 @@
                     template="dataelement-details.html"
                     trigger="click"
                     placement="right">
-                    <a href title="{{'details'| translate}}">{{prStDe.dataElement.formName ? prStDe.dataElement.formName : prStDe.dataElement.displayName}}</a>
+                    <a href title="{{'details'| translate}}">{{prStDe.dataElement.displayFormName}}</a>
                 </span>
                 <span ng-if="prStDe.compulsory" class="required">*</span>
                 <span class="hideInPrint">                    
@@ -77,7 +77,7 @@
                                     template="dataelement-details.html"
                                     trigger="click"
                                     placement="right">
-                                    <a href title="{{'details'| translate}}">{{prStDes[de.dataElement.id].dataElement.formName ? prStDes[de.dataElement.id].dataElement.formName : prStDes[de.dataElement.id].dataElement.displayName}}</a>
+                                    <a href title="{{'details'| translate}}">{{prStDes[de.dataElement.id].dataElement.displayFormName}}</a>
                                 </span>
                                 <span ng-if="prStDes[de.dataElement.id].compulsory" class="required">*</span>
                                 <span class="hideInPrint">

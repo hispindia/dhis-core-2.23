@@ -2479,7 +2479,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
         this.relationshipOwner = {};
         this.selectedTeiEvents = [];
         this.fileNames = [];
-            this.location = null;
+        this.location = null;
+        this.dataElementTranslations = [];
 
         this.set = function(currentSelection){
             this.currentSelection = currentSelection;
@@ -2549,6 +2550,13 @@ var d2Services = angular.module('d2Services', ['ngResource'])
         };
         this.getLocation = function(){
             return this.location;
+        };
+        
+        this.setDataElementTranslations = function(dataElementTranslations){
+            this.dataElementTranslations = dataElementTranslations;
+        };
+        this.getDataElementTranslations = function(){
+            return this.dataElementTranslations;
         };
     })
 

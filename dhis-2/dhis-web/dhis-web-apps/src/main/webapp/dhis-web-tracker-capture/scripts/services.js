@@ -9,8 +9,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 .factory('TCStorageService', function(){
     var store = new dhis2.storage.Store({
         name: "dhis2tc",
-        adapters: [dhis2.storage.IndexedDBAdapter, dhis2.storage.DomSessionStorageAdapter, dhis2.storage.InMemoryAdapter],
-        objectStores: ['programs', 'programStages', 'trackedEntities', 'attributes', 'relationshipTypes', 'optionSets', 'programValidations', 'ouLevels', 'programRuleVariables', 'programRules', 'programIndicators', 'constants']
+        adapters: [dhis2.storage.IndexedDBAdapter, dhis2.storage.DomSessionStorageAdapter, dhis2.storage.InMemoryAdapter],        
+        objectStores: ['programs', 'programStages', 'trackedEntities', 'attributes', 'relationshipTypes', 'optionSets', 'programValidations', 'programIndicators', 'ouLevels', 'programRuleVariables', 'programRules','constants', 'dataElements']
     });
     return{
         currentStore: store
