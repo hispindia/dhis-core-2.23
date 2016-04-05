@@ -60,6 +60,7 @@ import org.hisp.dhis.user.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import com.google.common.collect.ImmutableList;
@@ -110,6 +111,11 @@ public class MapView
      */
     private Date endDate;
     
+    /**
+     * Dimensions to use as columns.
+     */
+    private List<String> columnDimensions = new ArrayList<>();
+
     private String layer;
 
     private Integer method;
@@ -191,7 +197,11 @@ public class MapView
     @Override
     public void populateAnalyticalProperties()
     {
-        columns.add( getDimensionalObject( DimensionalObject.DATA_X_DIM_ID ) );
+        for ( String column : columnDimensions )
+        {
+            columns.add( getDimensionalObject( column ) );
+        }
+        
         rows.add( getDimensionalObject( DimensionalObject.ORGUNIT_DIM_ID ) );
         
         if ( !periods.isEmpty() || hasRelativePeriods() )
@@ -318,6 +328,20 @@ public class MapView
     public void setEndDate( Date endDate )
     {
         this.endDate = endDate;
+    }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class } )
+    @JacksonXmlElementWrapper( localName = "columnDimensions", namespace = DxfNamespaces.DXF_2_0 )
+    @JacksonXmlProperty( localName = "columnDimension", namespace = DxfNamespaces.DXF_2_0 )
+    public List<String> getColumnDimensions()
+    {
+        return columnDimensions;
+    }
+
+    public void setColumnDimensions( List<String> columnDimensions )
+    {
+        this.columnDimensions = columnDimensions;
     }
 
     @JsonProperty

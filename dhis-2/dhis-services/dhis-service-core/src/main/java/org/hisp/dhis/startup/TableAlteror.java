@@ -875,6 +875,9 @@ public class TableAlteror
         executeSql( "drop table aggregatedorgunitindicatorvalue" );
         executeSql( "drop table aggregatedorgunitindicatorvalue_temp" );
 
+        executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
+        executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
+
         updateEnums();
 
         oauth2();
@@ -896,9 +899,8 @@ public class TableAlteror
 
         updateRelativePeriods();
         updateNameColumnLengths();
-
-        executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
-        executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
+        
+        upgradeMapViewsToColumns();
 
         log.info( "Tables updated" );
     }
@@ -1187,22 +1189,22 @@ public class TableAlteror
     {
         if ( executeSql( "update validationrule set lowoutliers = lowoutliers where validationruleid < 0" ) < 0 )
         {
-            return; // Already converted because lowoutliers fields are gone
+            return; // Already converted because lowoutlier fields are gone
         }
 
         // Just to be extra sure, we don't modify any expressions which already contain a call to AVG or STDDEV
-        executeSql( "update expression set expression=" + statementBuilder.concatenate( "'AVG('", "expression", "')'" ) + " from  validationrule where ruletype='SURVEILLANCE' AND rightexpressionid=expressionid AND expression NOT LIKE '%AVG%' and expression " +
-            "NOT LIKE '%STDDEV%';" );
-        executeSql( "update expression set expression=FORMAT('AVG(%s)',expression) from  validationrule where ruletype='SURVEILLANCE' AND rightexpressionid=expressionid AND expression NOT LIKE '%AVG%' and expression NOT LIKE '%STDDEV%';" );
+        executeSql( "update expression set expression=" + statementBuilder.concatenate( "'AVG('", "expression", "')'" ) + 
+            " from  validationrule where ruletype='SURVEILLANCE' AND rightexpressionid=expressionid " +
+            "AND expression NOT LIKE '%AVG%' and expression NOT LIKE '%STDDEV%';" );
+        
+        executeSql( "update expression set expression=FORMAT('AVG(%s)',expression) from  validationrule " +
+            "where ruletype='SURVEILLANCE' AND rightexpressionid=expressionid AND expression NOT LIKE '%AVG%' and expression NOT LIKE '%STDDEV%';" );
 
         executeSql( "ALTER TABLE validationrule DROP COLUMN highoutliers" );
         executeSql( "ALTER TABLE validationrule DROP COLUMN lowoutliers" );
 
         log.info( "Added explicit AVG calls to olid-style implicit average surveillance rules" );
     }
-    /* For testing purposes, this will undo the wrapping functionality above:
-     * update expression set expression=regexp_replace(regexp_replace(expression,'[)]$',''),'^AVG[(]','') from validationrule where ruletype='SURVEILLANCE' AND rightexpressionid=expressionid;
-     */
 
     private List<Integer> getDistinctIdList( String table, String col1 )
     {
@@ -1324,6 +1326,24 @@ public class TableAlteror
         {
             executeSql( "drop table optionsetmembers" );
         }
+    }
+    
+    /**
+     * Upgrades existing map views to use mapview_columns for multiple column
+     * dimensions.
+     */
+    private void upgradeMapViewsToColumns()
+    {
+        String sql = 
+            "insert into mapview_columns " +
+            "select mapviewid, 'dx', 0 " +
+            "from mapview mv " +
+            "where not exists (" +
+                "select mc.mapviewid " +
+                "from mapview_columns mc " +
+                "where mv.mapviewid = mc.mapviewid)";
+        
+        executeSql( sql );
     }
 
     private int executeSql( String sql )

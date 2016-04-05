@@ -60,6 +60,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import static org.hisp.dhis.common.DimensionalObjectUtils.getDimensions;
+
 import java.awt.image.BufferedImage;
 import java.util.Date;
 import java.util.Iterator;
@@ -275,6 +278,9 @@ public class MapController
     {
         dimensionService.mergeAnalyticalObject( view );
         dimensionService.mergeEventAnalyticalObject( view );
+        
+        view.getColumnDimensions().clear();
+        view.getColumnDimensions().addAll( getDimensions( view.getColumns() ) );
 
         if ( view.getLegendSet() != null )
         {

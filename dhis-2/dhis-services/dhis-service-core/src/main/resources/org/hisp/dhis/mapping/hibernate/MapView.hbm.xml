@@ -80,6 +80,13 @@
         foreign-key="fk_mapview_dataelementdimensions_dataelementdimensionid" />
     </list>    
 
+    <list name="columnDimensions" table="mapview_columns">
+      <cache usage="read-write" />
+      <key column="mapviewid" foreign-key="fk_mapview_columns_mapviewid" />
+      <list-index column="sort_order" base="0" />
+      <element type="string" column="dimension" />
+    </list>
+    
     <property name="userOrganisationUnit" />
 
     <property name="userOrganisationUnitChildren" />
