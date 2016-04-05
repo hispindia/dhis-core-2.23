@@ -4,6 +4,22 @@
   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.1.xsd">
 
+  <!-- DataStatistics -->
+
+  <bean id="org.hisp.dhis.datastatistics.DataStatisticsEventStore" class="org.hisp.dhis.datastatistics.hibernate.HibernateDataStatisticsEventStore">
+    <property name="clazz" value="org.hisp.dhis.datastatistics.DataStatisticsEvent" />
+    <property name="sessionFactory" ref="sessionFactory" />
+  </bean>
+
+  <bean id="org.hisp.dhis.datastatistics.DataStatisticsService" class="org.hisp.dhis.datastatistics.DefaultDataStatisticsService">
+  </bean>
+
+  <bean id="org.hisp.dhis.datastatistics.DataStatisticsStore" class="org.hisp.dhis.datastatistics.hibernate.HibernateDataStatisticsStore">
+    <property name="clazz" value="org.hisp.dhis.datastatistics.DataStatistics"/>
+    <property name="sessionFactory" ref="sessionFactory"/>
+  </bean>
+
+
   <!-- ReportTable -->
 
   <bean id="org.hisp.dhis.reporttable.ReportTableService" class="org.hisp.dhis.reporttable.impl.DefaultReportTableService">
@@ -130,6 +146,7 @@
     <property name="scheduler" ref="scheduler" />
     <property name="tasks">
       <map>
+        <entry key="dataStatisticsTask" value-ref="dataStatisticsTask"/>
         <entry key="resourceTableTask" value-ref="resourceTableTask" />
         <entry key="resourceTable15MinTask" value-ref="resourceTable15MinTask" />
         <entry key="analyticsAllTask" value-ref="analyticsAllTask" />
@@ -142,6 +159,8 @@
       </map>
     </property>
   </bean>
+
+  <bean id="dataStatisticsTask" class="org.hisp.dhis.datastatistics.DataStatisticsTask" scope="prototype"/>
 
   <!-- Startup routine definitions -->
 

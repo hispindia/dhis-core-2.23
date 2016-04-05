@@ -1,4 +1,4 @@
-package org.hisp.dhis.user;
+package org.hisp.dhis.datastatistics;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,37 +28,69 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.List;
-
-import org.hisp.dhis.common.GenericIdentifiableObjectStore;
+import java.util.Date;
 
 /**
- * @author Nguyen Hong Duc
+ * Object of event to be saved
+ * 
+ * @author Yrjan A. F. Fraschetti
+ * @author Julie Hill Roa
  */
-public interface UserStore
-    extends GenericIdentifiableObjectStore<User>
+public class DataStatisticsEvent
 {
-    String ID = UserStore.class.getName();
+    private int id;
+    private EventType type;
+    private Date timestamp;
+    private String userName;
 
-    /**
-     * Returns a list of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return a List of users.
-     */
-    List<User> getUsers( UserQueryParams params );
+    public DataStatisticsEvent()
+    {
+    }
 
-    /**
-     * Returns the number of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return number of users.
-     */
-    int getUserCount( UserQueryParams params );
+    public DataStatisticsEvent( EventType type, Date timestamp, String userName )
+    {
+        this.type = type;
+        this.timestamp = timestamp;
+        this.userName = userName;
+    }
 
-    /**
-     * Returns number of all users
-     * @return number of users
-     */
-    int getUserCount();
+    public int getId()
+    {
+        return id;
+    }
+
+    public Date getTimestamp()
+    {
+        return timestamp;
+    }
+
+    public EventType getType()
+    {
+        return type;
+    }
+
+    public String getUserName()
+    {
+        return userName;
+    }
+
+    public void setId( int id )
+    {
+        this.id = id;
+    }
+
+    public void setTimestamp( Date timestamp )
+    {
+        this.timestamp = timestamp;
+    }
+
+    public void setType( EventType type )
+    {
+        this.type = type;
+    }
+
+    public void setUserName( String userName )
+    {
+        this.userName = userName;
+    }
 }

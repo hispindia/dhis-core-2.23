@@ -34,6 +34,7 @@ import static org.hisp.dhis.scheduling.SchedulingManager.TASK_DATA_SYNCH;
 import static org.hisp.dhis.scheduling.SchedulingManager.TASK_MONITORING_LAST_DAY;
 import static org.hisp.dhis.scheduling.SchedulingManager.TASK_RESOURCE_TABLE;
 import static org.hisp.dhis.scheduling.SchedulingManager.TASK_RESOURCE_TABLE_15_MINS;
+import static org.hisp.dhis.scheduling.SchedulingManager.TASK_DATASTATISTICS;
 import static org.hisp.dhis.scheduling.SchedulingManager.TASK_SMS_SCHEDULER;
 import static org.hisp.dhis.scheduling.SchedulingManager.TASK_SEND_SCHEDULED_SMS;
 import static org.hisp.dhis.system.scheduling.Scheduler.CRON_DAILY_0AM;
@@ -175,6 +176,18 @@ public class ScheduleTasksAction
         this.smsSchedulerStrategy = smsSchedulerStrategy;
     }
 
+    private String dataStatisticsStrategy;
+
+    public String getDataStatisticsStrategy()
+    {
+        return dataStatisticsStrategy;
+    }
+
+    public void setDataStatisticsStrategy( String dataStatisticsStrategy )
+    {
+        this.dataStatisticsStrategy = dataStatisticsStrategy;
+    }
+
     // -------------------------------------------------------------------------
     // Output
     // -------------------------------------------------------------------------
@@ -235,6 +248,10 @@ public class ScheduleTasksAction
         return lastSmsSchedulerSuccess;
     }
 
+    private Date lastDataStatisticSuccess;
+
+    public Date getLastDataStatisticSuccess() { return lastDataStatisticSuccess; }
+
     // -------------------------------------------------------------------------
     // Action implementation
     // -------------------------------------------------------------------------
@@ -258,7 +275,14 @@ public class ScheduleTasksAction
             else
             {
                 ListMap<String, String> cronKeyMap = new ListMap<>();
+                // -------------------------------------------------------------
+                // Data statistics
+                // -------------------------------------------------------------
 
+                if (  STRATEGY_ALL_DAILY.equals( dataStatisticsStrategy ) )
+                {
+                    cronKeyMap.putValue(  CRON_DAILY_0AM, TASK_DATASTATISTICS );
+                }
                 // -------------------------------------------------------------
                 // Resource tables
                 // -------------------------------------------------------------
@@ -320,6 +344,14 @@ public class ScheduleTasksAction
         {
             Collection<String> keys = schedulingManager.getScheduledKeys();
 
+            // -------------------------------------------------------------
+            // Data statistics
+            // -------------------------------------------------------------
+
+            if ( keys.contains( TASK_DATASTATISTICS ) ){
+                dataStatisticsStrategy = STRATEGY_ALL_DAILY;
+            }
+
             // -----------------------------------------------------------------
             // Resource tables
             // -----------------------------------------------------------------
@@ -363,7 +395,7 @@ public class ScheduleTasksAction
             {
                 dataSynchStrategy = STRATEGY_ENABLED;
             }
-            
+
             // -------------------------------------------------------------
             // SMS Scheduler
             // -------------------------------------------------------------
@@ -383,6 +415,7 @@ public class ScheduleTasksAction
         lastAnalyticsTableSuccess = (Date) systemSettingManager.getSystemSetting( SettingKey.LAST_SUCCESSFUL_ANALYTICS_TABLES_UPDATE );
         lastMonitoringSuccess = (Date) systemSettingManager.getSystemSetting( SettingKey.LAST_SUCCESSFUL_MONITORING );
         lastSmsSchedulerSuccess = (Date) systemSettingManager.getSystemSetting( SettingKey.LAST_SUCCESSFUL_SMS_SCHEDULING );
+        lastDataStatisticSuccess = (Date) systemSettingManager.getSystemSetting( SettingKey.LAST_SUCCESSFUL_DATA_STATISTIC );
         lastDataSyncSuccess = synchronizationManager.getLastSynchSuccess();
 
         log.info( "Status: " + status );

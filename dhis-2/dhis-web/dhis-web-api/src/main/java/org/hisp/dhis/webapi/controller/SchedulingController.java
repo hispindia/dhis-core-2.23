@@ -73,7 +73,6 @@ public class SchedulingController
         throws IOException
     {
         SchedulingStrategy strategy = renderService.fromJson( request.getInputStream(), SchedulingStrategy.class );
-
         ListMap<String, String> cronKeyMap = new ListMap<>();
 
         // -------------------------------------------------------------
@@ -127,6 +126,15 @@ public class SchedulingController
         if ( STRATEGY_ENABLED.equals( strategy.getDataSynchStrategy() ) )
         {
             cronKeyMap.putValue( CRON_EVERY_MIN, TASK_DATA_SYNCH );
+        }
+
+        // -------------------------------------------------------------
+        // Data statistics
+        // -------------------------------------------------------------
+
+        if ( STRATEGY_ALL_DAILY.equals(strategy.getDataStatisticsStrategy()))
+        {
+            cronKeyMap.putValue( CRON_DAILY_0AM, TASK_DATASTATISTICS);
         }
 
         schedulingManager.scheduleTasks( cronKeyMap );

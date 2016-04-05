@@ -1,4 +1,4 @@
-package org.hisp.dhis.user;
+package org.hisp.dhis.datastatistics;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,37 +28,19 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.List;
-
-import org.hisp.dhis.common.GenericIdentifiableObjectStore;
-
 /**
- * @author Nguyen Hong Duc
+ * Enum of EventTypes to be used as identifiers in DataStatisticsEvent
+ * 
+ * @author Yrjan A. F. Fraschetti
+ * @author Julie Hill Roa
  */
-public interface UserStore
-    extends GenericIdentifiableObjectStore<User>
+public enum EventType
 {
-    String ID = UserStore.class.getName();
-
-    /**
-     * Returns a list of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return a List of users.
-     */
-    List<User> getUsers( UserQueryParams params );
-
-    /**
-     * Returns the number of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return number of users.
-     */
-    int getUserCount( UserQueryParams params );
-
-    /**
-     * Returns number of all users
-     * @return number of users
-     */
-    int getUserCount();
+    CHART_VIEW, 
+    MAP_VIEW, 
+    DASHBOARD_VIEW, 
+    REPORT_TABLE_VIEW, 
+    EVENT_REPORT_VIEW, 
+    EVENT_CHART_VIEW, 
+    INDICATOR_VIEW
 }

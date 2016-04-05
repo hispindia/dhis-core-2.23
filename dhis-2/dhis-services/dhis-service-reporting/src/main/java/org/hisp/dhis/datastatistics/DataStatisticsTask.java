@@ -1,4 +1,4 @@
-package org.hisp.dhis.user;
+package org.hisp.dhis.datastatistics;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,37 +28,36 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import java.util.List;
+import org.hisp.dhis.setting.SettingKey;
+import org.hisp.dhis.setting.SystemSettingManager;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.hisp.dhis.common.GenericIdentifiableObjectStore;
+import java.util.Date;
 
 /**
- * @author Nguyen Hong Duc
+ * @author Yrjan A. F. Fraschetti
+ * @author Julie Hill Roa
  */
-public interface UserStore
-    extends GenericIdentifiableObjectStore<User>
+
+public class DataStatisticsTask 
+    implements Runnable
 {
-    String ID = UserStore.class.getName();
+    @Autowired
+    private DataStatisticsService dataStatisticsService;
+
+    @Autowired
+    private SystemSettingManager systemSettingManager;
 
     /**
-     * Returns a list of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return a List of users.
+     * Saves calls saveSnapShot() in DefaultDataStatisticsService
      */
-    List<User> getUsers( UserQueryParams params );
-
-    /**
-     * Returns the number of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return number of users.
-     */
-    int getUserCount( UserQueryParams params );
-
-    /**
-     * Returns number of all users
-     * @return number of users
-     */
-    int getUserCount();
+    @Override
+    public void run()
+    {
+        dataStatisticsService.saveSnapshot();
+        
+        //TODO find some level of verification that save actually was successful
+        
+        systemSettingManager.saveSystemSetting( SettingKey.LAST_SUCCESSFUL_DATA_STATISTIC, new Date() );
+    }
 }

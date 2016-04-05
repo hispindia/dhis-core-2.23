@@ -1,4 +1,4 @@
-package org.hisp.dhis.user;
+package org.hisp.dhis.datastatistics.hibernate;
 
 /*
  * Copyright (c) 2004-2016, University of Oslo
@@ -28,37 +28,35 @@ package org.hisp.dhis.user;
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+import org.hisp.dhis.datastatistics.DataStatisticsEvent;
+import org.hisp.dhis.datastatistics.DataStatisticsEventStore;
+import org.hisp.dhis.hibernate.HibernateGenericStore;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import java.util.List;
 
-import org.hisp.dhis.common.GenericIdentifiableObjectStore;
-
 /**
- * @author Nguyen Hong Duc
+ * Class for database logic for datastatisticevent
+ * 
+ * @author Yrjan A. F. Fraschetti
+ * @author Julie Hill Roa        
  */
-public interface UserStore
-    extends GenericIdentifiableObjectStore<User>
+public class HibernateDataStatisticsEventStore 
+    extends HibernateGenericStore<DataStatisticsEvent> 
+    implements DataStatisticsEventStore
 {
-    String ID = UserStore.class.getName();
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
-    /**
-     * Returns a list of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return a List of users.
-     */
-    List<User> getUsers( UserQueryParams params );
-
-    /**
-     * Returns the number of users based on the given query parameters.
-     * 
-     * @param params the user query parameters.
-     * @return number of users.
-     */
-    int getUserCount( UserQueryParams params );
-
-    /**
-     * Returns number of all users
-     * @return number of users
-     */
-    int getUserCount();
+    public List<int[]> getDataStatisticsEventCount( String sql )
+    {
+        return jdbcTemplate.query( sql, ( resultSet, i ) -> {
+            int[] l = new int[2];
+            l[0] = resultSet.getInt( "eventtype" );
+            l[1] = resultSet.getInt( "numberofviews");
+            return l;
+        } );
+    }
 }
