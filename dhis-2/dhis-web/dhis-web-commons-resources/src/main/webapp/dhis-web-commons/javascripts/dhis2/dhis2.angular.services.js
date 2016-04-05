@@ -589,7 +589,11 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 }
                                 else {
                                     //check attribute type and generate corresponding angular input field
-                                    if (att.valueType === "NUMBER" ) {
+                                    if (att.valueType === "NUMBER" ||
+                                    		att.valueType === "INTEGER" ||
+                                    		att.valueType === "INTEGER_POSITIVE" ||
+                                    		att.valueType === "INTEGER_NEGATIVE" ||
+                                    		att.valueType === "INTEGER_ZERO_OR_POSITIVE")) {
                                         newInputField = '<input type="number"' +
                                             ' d2-number-validator ' +
                                             ' number-type="' + att.valueType + '" ' +
