@@ -44,6 +44,8 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 public abstract class SmsGatewayConfig
     implements Serializable
 {
+    private static final long serialVersionUID = -4288220735161151632L;
+
     private String uid;
 
     private String name;
