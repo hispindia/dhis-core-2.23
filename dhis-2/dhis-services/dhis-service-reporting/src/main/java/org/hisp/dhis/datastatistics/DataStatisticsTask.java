@@ -38,7 +38,6 @@ import java.util.Date;
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-
 public class DataStatisticsTask
     implements Runnable
 {
@@ -56,7 +55,7 @@ public class DataStatisticsTask
     {
         int id = dataStatisticsService.saveSnapshot();
 
-        if ( id < 0 )
+        if ( id > 0 )
         {
             systemSettingManager.saveSystemSetting( SettingKey.LAST_SUCCESSFUL_DATA_STATISTIC, new Date() );
         }
