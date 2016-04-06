@@ -510,7 +510,7 @@ dhis2.db.onSetItemWidth = function(id, width, isScrollbar) {
 	if (fn) {
 		fn(width - (isScrollbar ? this.itemScrollbarWidth : 0));
 	}
-};    
+}
 
 dhis2.db.setNormalItemWidth = function( id, isScrollbar ) {
 	$( "#" + id ).css( "width", dhis2.db.widthNormal + "px" );
