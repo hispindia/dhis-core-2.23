@@ -112,12 +112,12 @@ public class DataQueryParams
     public static final Set<Class<? extends IdentifiableObject>> DYNAMIC_DIM_CLASSES = ImmutableSet.<Class<? extends IdentifiableObject>>builder().
         add( OrganisationUnitGroupSet.class ).add( DataElementGroupSet.class ).add( CategoryOptionGroupSet.class ).add( DataElementCategory.class ).build();
     
-    private static final List<String> DIMENSION_PERMUTATION_IGNORE_DIMS = Lists.newArrayList( 
-        DATA_X_DIM_ID, CATEGORYOPTIONCOMBO_DIM_ID );    
-    public static final List<DimensionType> COMPLETENESS_DIMENSION_TYPES = Lists.newArrayList( 
-        DATA_X, PERIOD, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET, CATEGORYOPTION_GROUPSET );
-    private static final List<DimensionType> COMPLETENESS_TARGET_DIMENSION_TYPES = Lists.newArrayList( 
-        DATA_X, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET );
+    private static final List<String> DIMENSION_PERMUTATION_IGNORE_DIMS = ImmutableList.<String>builder().add( 
+        DATA_X_DIM_ID, CATEGORYOPTIONCOMBO_DIM_ID ).build();
+    public static final List<DimensionType> COMPLETENESS_DIMENSION_TYPES = ImmutableList.<DimensionType>builder().add( 
+        DATA_X, PERIOD, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET, CATEGORYOPTION_GROUPSET ).build();
+    private static final List<DimensionType> COMPLETENESS_TARGET_DIMENSION_TYPES = ImmutableList.<DimensionType>builder().add( 
+        DATA_X, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET ).build();
     
     private static final DimensionItem[] DIM_OPT_ARR = new DimensionItem[0];
     private static final DimensionItem[][] DIM_OPT_2D_ARR = new DimensionItem[0][];
@@ -611,17 +611,6 @@ public class DataQueryParams
         return map;
     }
     
-    /**
-     * Returns the index of the category option combo dimension. Returns null
-     * if this dimension is not present. // TODO remove?
-     */
-    public Integer getCocIndex()
-    {
-        int index = dimensions.indexOf( new BaseDimensionalObject( CATEGORYOPTIONCOMBO_DIM_ID ) );
-        
-        return index == -1 ? null : index;
-    }
-
     /**
      * Indicates whether this object is of the given data type.
      */
