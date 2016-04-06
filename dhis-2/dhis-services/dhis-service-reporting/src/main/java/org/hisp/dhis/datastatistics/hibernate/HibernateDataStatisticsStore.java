@@ -37,6 +37,8 @@ import org.hisp.dhis.system.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Date;
 import java.util.List;
 
@@ -56,9 +58,9 @@ public class HibernateDataStatisticsStore
      * AggregatedStatistic object.
      *
      * @param eventInterval interval of DAY, MONTH, WEEK, YEAR.
-     * @param startDate     the start date.
-     * @param endDate       the end date.
-     * @return
+     * @param startDate the start date.
+     * @param endDate the end date.
+     * @return a list of AggregatedStatistics instances.
      */
     @Override
     public List<AggregatedStatistics> getSnapshotsInInterval( EventInterval eventInterval, Date startDate, Date endDate )
@@ -68,8 +70,8 @@ public class HibernateDataStatisticsStore
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
 
             AggregatedStatistics ads = new AggregatedStatistics();
+            
             ads.setYear( resultSet.getInt( "yr" ) );
-
 
             if ( eventInterval == EventInterval.DAY )
             {
@@ -110,7 +112,7 @@ public class HibernateDataStatisticsStore
 
     private String getQuery( EventInterval eventInterval, Date startDate, Date endDate )
     {
-        String sql = "";
+        String sql = StringUtils.EMPTY;
 
         if ( eventInterval == EventInterval.DAY )
         {
@@ -140,51 +142,48 @@ public class HibernateDataStatisticsStore
      * Creating a SQL for retrieving aggregated data with group by YEAR
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getYearSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
-            commonSql( start, end ) +
-            " order by yr;";
+            commonSql( start, end ) + " order by yr;";
     }
 
     /**
      * Creating a SQL for retrieving aggregated data with group by YEAR, MONTH
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getMonthSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt, " +
-            commonSql( start, end ) +
-            ", mnt order by yr, mnt;";
+            commonSql( start, end ) + ", mnt order by yr, mnt;";
     }
 
     /**
      * Creating a SQL for retrieving aggregated data with group by YEAR, WEEK
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getWeekSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
             "extract(week from created) as week, " +
-            commonSql( start, end ) +
-            ", week order by yr, week;";
+            commonSql( start, end ) + ", week order by yr, week;";
     }
 
     /**
      * Creating a SQL for retrieving aggregated data with group by YEAR, DAY
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getDaySql( Date start, Date end )
@@ -192,15 +191,15 @@ public class HibernateDataStatisticsStore
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt," +
             "extract(day from created) as day, " +
-            commonSql( start, end ) +
-            ", mnt, day order by yr, mnt, day;";
+            commonSql( start, end ) + ", mnt, day order by yr, mnt, day;";
     }
 
     /**
-     * Part of SQL witch is always the same in the different intervals YEAR, MONTH, WEEK and DAY
+     * Part of SQL witch is always the same in the different intervals YEAR, 
+     * MONTH, WEEK and DAY
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String commonSql( Date start, Date end )

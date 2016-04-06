@@ -34,7 +34,6 @@ import org.hisp.dhis.dashboard.Dashboard;
 import org.hisp.dhis.eventchart.EventChart;
 import org.hisp.dhis.eventreport.EventReport;
 import org.hisp.dhis.indicator.Indicator;
-import org.hisp.dhis.mapping.Map;
 import org.hisp.dhis.reporttable.ReportTable;
 import org.hisp.dhis.user.User;
 import org.hisp.dhis.user.UserService;
@@ -45,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yrjan A. F. Fraschetti
@@ -66,8 +66,12 @@ public class DefaultDataStatisticsService
     @Autowired
     private IdentifiableObjectManager identifiableObjectManager;
 
+    // -------------------------------------------------------------------------
+    // DataStatisticsService implementation
+    // -------------------------------------------------------------------------
+
     /**
-     * Adds an DataStatistics event in the database
+     * Adds an DataStatistics event.
      *
      * @param event object to be saved
      * @return id of the object in the database
@@ -78,11 +82,12 @@ public class DefaultDataStatisticsService
     }
 
     /**
-     * Gets number of saved Reports from a start date too a end date
+     * Gets number of saved Reports from a start date to an end date.
      *
-     * @param startDate     start date
-     * @param endDate       end date
-     * @param eventInterval event interval.
+     * @param startDate start date
+     * @param endDate end date
+     * @param eventInterval event interval
+     * 
      * @return list of reports
      */
     @Override
@@ -92,8 +97,7 @@ public class DefaultDataStatisticsService
     }
 
     /**
-     * Gets all important information and creates a DataStatistics object
-     * and persists it.
+     * Gets all information and creates a DataStatistics object and persists it.
      */
     @Override
     public int saveSnapshot()
@@ -105,24 +109,29 @@ public class DefaultDataStatisticsService
         c.add( Calendar.DATE, -1 );
         startDate = c.getTime();
 
-        int totalUsers = identifiableObjectManager.getCount( User.class );
-        double savedMaps = identifiableObjectManager.getCountByCreated( Map.class, startDate );
+        double savedMaps = identifiableObjectManager.getCountByCreated( org.hisp.dhis.mapping.Map.class, startDate );
         double savedCharts = identifiableObjectManager.getCountByCreated( Chart.class, startDate );
         double savedReportTables = identifiableObjectManager.getCountByCreated( ReportTable.class, startDate );
         double savedEventReports = identifiableObjectManager.getCountByCreated( EventReport.class, startDate );
         double savedEventCharts = identifiableObjectManager.getCountByCreated( EventChart.class, startDate );
         double savedDashboards = identifiableObjectManager.getCountByCreated( Dashboard.class, startDate );
         double savedIndicators = identifiableObjectManager.getCountByCreated( Indicator.class, startDate );
+        int totalUsers = identifiableObjectManager.getCount( User.class );
         int activeUsers = userService.getActiveUsersCount( 1 );
 
-
-        java.util.Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
-        DataStatistics dataStatistics = new DataStatistics( activeUsers, eventCountMap.get( DataStatisticsEventType.MAP_VIEW ), eventCountMap.get( DataStatisticsEventType.CHART_VIEW ),
-            eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ), eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ), eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ), eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
-            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ), eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ), savedMaps,
-            savedCharts, savedReportTables, savedEventReports,
-            savedEventCharts, savedDashboards, savedIndicators,
-            totalUsers );
+        Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
+        
+        DataStatistics dataStatistics = new DataStatistics( activeUsers, 
+            eventCountMap.get( DataStatisticsEventType.MAP_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.CHART_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ), 
+            savedMaps, savedCharts, savedReportTables, savedEventReports,
+            savedEventCharts, savedDashboards, savedIndicators, totalUsers );
 
         return dataStatisticsStore.save( dataStatistics );
     }

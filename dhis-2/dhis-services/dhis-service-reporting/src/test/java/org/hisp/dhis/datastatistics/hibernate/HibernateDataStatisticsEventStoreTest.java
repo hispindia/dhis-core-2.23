@@ -33,13 +33,11 @@ import org.hisp.dhis.datastatistics.DataStatisticsEvent;
 import org.hisp.dhis.datastatistics.DataStatisticsEventStore;
 import org.hisp.dhis.datastatistics.DataStatisticsEventType;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.Map;
-
 
 import static org.junit.Assert.*;
 
