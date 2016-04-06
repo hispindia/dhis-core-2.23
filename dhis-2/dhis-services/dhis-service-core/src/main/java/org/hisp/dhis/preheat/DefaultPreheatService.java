@@ -29,6 +29,8 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
+import org.hisp.dhis.attribute.Attribute;
+import org.hisp.dhis.attribute.AttributeService;
 import org.hisp.dhis.common.AnalyticalObject;
 import org.hisp.dhis.common.BaseAnalyticalObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
@@ -99,6 +101,9 @@ public class DefaultPreheatService implements PreheatService
 
     @Autowired
     private PeriodService periodService;
+
+    @Autowired
+    private AttributeService attributeService;
 
     @Override
     @SuppressWarnings( "unchecked" )
@@ -227,11 +232,19 @@ public class DefaultPreheatService implements PreheatService
 
         preheat.setUniquenessMap( collectUniqueness( uniqueCollectionMap ) );
 
-        // add preheat placeholders for objects that will be created
+        // add preheat placeholders for objects that will be created and set mandatory/unique attributes
         for ( Class<? extends IdentifiableObject> klass : params.getObjects().keySet() )
         {
             List<IdentifiableObject> objects = params.getObjects().get( klass );
             preheat.put( params.getPreheatIdentifier(), objects );
+
+            List<Attribute> mandatoryAttributes = attributeService.getMandatoryAttributes( klass );
+            preheat.getMandatoryAttributes().put( klass, new ArrayList<>() );
+            mandatoryAttributes.forEach( attribute -> preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() ) );
+
+            List<Attribute> uniqueAttributes = attributeService.getUniqueAttributes( klass );
+            preheat.getUniqueAttributes().put( klass, new ArrayList<>() );
+            uniqueAttributes.forEach( attribute -> preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() ) );
         }
 
         periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
