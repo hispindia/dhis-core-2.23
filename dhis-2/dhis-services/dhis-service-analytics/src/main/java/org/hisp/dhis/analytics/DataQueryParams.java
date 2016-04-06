@@ -67,6 +67,7 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableProperty;
 import org.hisp.dhis.common.ListMap;
 import org.hisp.dhis.common.MapMap;
+import org.hisp.dhis.common.ReportingRate;
 import org.hisp.dhis.commons.collection.CollectionUtils;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.hisp.dhis.dataelement.CategoryOptionGroupSet;
@@ -287,7 +288,7 @@ public class DataQueryParams
         params.outputIdScheme = this.outputIdScheme;
         params.approvalLevel = this.approvalLevel;
         //params.program = this.program; //TODO
-        //params.programStage = this.programStage;
+        //params.programStage = this.programStage; //TODO
         
         params.partitions = new Partitions( this.partitions );
         params.dataType = this.dataType;
@@ -310,7 +311,7 @@ public class DataQueryParams
      */
     public DataQueryParams conform()
     {
-        if ( !( !getDataElements().isEmpty() && getDataElementOperands().isEmpty() && getIndicators().isEmpty() && getDataSets().isEmpty() ) )
+        if ( !( !getDataElements().isEmpty() && getDataElementOperands().isEmpty() && getIndicators().isEmpty() && getReportingRates().isEmpty() ) )
         {
             removeDimension( CATEGORYOPTIONCOMBO_DIM_ID );
         }
@@ -598,10 +599,12 @@ public class DataQueryParams
     {
         Map<String, PeriodType> map = new HashMap<>();
         
-        for ( DimensionalItemObject dataSet : getDataSets() )
+        for ( DimensionalItemObject reportingRate : getReportingRates() )
         {
-            DataSet ds = (DataSet) dataSet;
+            ReportingRate rr = (ReportingRate) reportingRate;
             
+            DataSet ds = rr.getDataSet();
+                        
             map.put( ds.getUid(), ds.getPeriodType() );
         }
         
@@ -610,7 +613,7 @@ public class DataQueryParams
     
     /**
      * Returns the index of the category option combo dimension. Returns null
-     * if this dimension is not present.
+     * if this dimension is not present. // TODO remove?
      */
     public Integer getCocIndex()
     {
@@ -1585,9 +1588,9 @@ public class DataQueryParams
         return ImmutableList.copyOf( ListUtils.union( getDataElements(), getFilterDataElements() ) );
     }
 
-    public List<DimensionalItemObject> getAllDataSets()
+    public List<DimensionalItemObject> getAllReportingRates()
     {
-        return ImmutableList.copyOf( ListUtils.union( getDataSets(), getFilterDataSets() ) );
+        return ImmutableList.copyOf( ListUtils.union( getReportingRates(), getFilterReportingRates() ) );
     }
     
     public List<DimensionalItemObject> getAllProgramAttributes()
@@ -1663,14 +1666,14 @@ public class DataQueryParams
         setDataDimensionOptions( DataDimensionItemType.AGGREGATE_DATA_ELEMENT, dataElements );
     }
     
-    public List<DimensionalItemObject> getDataSets()
+    public List<DimensionalItemObject> getReportingRates()
     {
-        return ImmutableList.copyOf( AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.DATA_SET, getDimensionOptions( DATA_X_DIM_ID ) ) );
+        return ImmutableList.copyOf( AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.REPORTING_RATE, getDimensionOptions( DATA_X_DIM_ID ) ) );
     }
 
-    public void setDataSets( List<? extends DimensionalItemObject> dataSets )
+    public void setReportingRates( List<? extends DimensionalItemObject> reportingRates )
     {
-        setDataDimensionOptions( DataDimensionItemType.DATA_SET, dataSets );
+        setDataDimensionOptions( DataDimensionItemType.REPORTING_RATE, reportingRates );
     }
 
     public List<DimensionalItemObject> getProgramIndicators()
@@ -1773,9 +1776,9 @@ public class DataQueryParams
         return ImmutableList.copyOf( AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.AGGREGATE_DATA_ELEMENT, getFilterOptions( DATA_X_DIM_ID ) ) );
     }
 
-    public List<DimensionalItemObject> getFilterDataSets()
+    public List<DimensionalItemObject> getFilterReportingRates()
     {
-        return ImmutableList.copyOf( AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.DATA_SET, getFilterOptions( DATA_X_DIM_ID ) ) );
+        return ImmutableList.copyOf( AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.REPORTING_RATE, getFilterOptions( DATA_X_DIM_ID ) ) );
     }
     
     public List<DimensionalItemObject> getFilterPeriods()

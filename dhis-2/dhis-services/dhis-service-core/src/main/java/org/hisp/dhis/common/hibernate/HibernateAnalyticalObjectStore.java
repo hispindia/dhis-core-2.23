@@ -86,7 +86,7 @@ public class HibernateAnalyticalObjectStore<T extends BaseAnalyticalObject>
     @SuppressWarnings("unchecked")
     public List<T> getAnalyticalObjects( DataSet dataSet )
     {
-        String hql = "select distinct c from " + clazz.getName() + " c join c.dataDimensionItems d where d.dataSet = :dataSet";
+        String hql = "select distinct c from " + clazz.getName() + " c join c.dataDimensionItems d where d.reportingRate.dataSet = :dataSet";
         return getQuery( hql ).setEntity( "dataSet", dataSet ).list(); 
     }
 

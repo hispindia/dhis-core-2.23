@@ -68,6 +68,7 @@ import org.hisp.dhis.dataelement.DataElementGroup;
 import org.hisp.dhis.dataelement.DataElementGroupSet;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.dataelement.DataElementOperandService;
+import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.legend.LegendSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitGroup;
@@ -338,12 +339,17 @@ public class DefaultDimensionService
             String id1 = splitSafe( dimensionItem, COMPOSITE_DIM_OBJECT_ESCAPED_SEP, 1 );
 
             DataElementOperand operand = null;
+            DataSet dataSet = null;
             ProgramDataElement programDataElement = null;
             ProgramTrackedEntityAttribute programAttribute = null;
-
+            
             if ( ( operand = operandService.getOrAddDataElementOperand( id0, id1 ) ) != null )
             {
                 return operand;
+            }
+            else if ( ( dataSet = identifiableObjectManager.getObject( DataSet.class, idScheme, id0 ) ) != null )
+            {
+                return new ReportingRate( dataSet, ReportingRateMetric.valueOf( id1 ) );
             }
             else if ( ( programDataElement = programService.getOrAddProgramDataElement( id0, id1 ) ) != null )
             {
@@ -355,12 +361,22 @@ public class DefaultDimensionService
             }
         }
         else if ( !idScheme.is( IdentifiableProperty.UID ) || CodeGenerator.isValidCode( dimensionItem ) )
-        {
-            DimensionalItemObject itemObject = identifiableObjectManager.get( DataDimensionItem.DATA_DIMENSION_CLASSES, idScheme, dimensionItem );
+        {            
+            DimensionalItemObject itemObject = identifiableObjectManager.
+                get( DataDimensionItem.DATA_DIMENSION_CLASSES, idScheme, dimensionItem );
 
             if ( itemObject != null )
             {
-                return itemObject;
+                return itemObject;   
+            }
+            
+            // TODO Maintain DataSet compatibility from 2.23 until 2.25
+            
+            DataSet dataSet = identifiableObjectManager.getObject( DataSet.class, idScheme, dimensionItem );
+            
+            if ( dataSet != null )
+            {
+                return new ReportingRate( dataSet );
             }
         }
 
@@ -376,12 +392,17 @@ public class DefaultDimensionService
             String id1 = splitSafe( dimensionItem, COMPOSITE_DIM_OBJECT_ESCAPED_SEP, 1 );
 
             DataElementOperand operand = null;
+            DataSet dataSet = null;
             ProgramDataElement programDataElement = null;
             ProgramTrackedEntityAttribute programAttribute = null;
 
             if ( ( operand = operandService.getDataElementOperand( id0, id1 ) ) != null )
             {
                 return operand;
+            }
+            else if ( ( dataSet = identifiableObjectManager.get( DataSet.class, id0 ) ) != null )
+            {
+                return new ReportingRate( dataSet, ReportingRateMetric.valueOf( id1 ) );
             }
             else if ( ( programDataElement = programService.getProgramDataElement( id0, id1 ) ) != null )
             {
@@ -396,10 +417,19 @@ public class DefaultDimensionService
         {
             DimensionalItemObject itemObject = identifiableObjectManager.
                 get( DataDimensionItem.DATA_DIMENSION_CLASSES, dimensionItem );
-
+            
             if ( itemObject != null )
             {
                 return itemObject;
+            }
+
+            // TODO Maintain DataSet compatibility from 2.23 until 2.25
+            
+            DataSet dataSet = identifiableObjectManager.get( DataSet.class, dimensionItem );
+            
+            if ( dataSet != null )
+            {
+                return new ReportingRate( dataSet );
             }
         }
 

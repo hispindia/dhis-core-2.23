@@ -457,7 +457,6 @@ public class DefaultIdentifiableObjectManager
         return (List<T>) store.getByCode( codes );
     }
 
-
     @Override
     @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> List<T> getByUidOrdered( Class<T> clazz, List<String> uids )
@@ -738,6 +737,11 @@ public class DefaultIdentifiableObjectManager
 
         Set<Integer> ids = new HashSet<>();
 
+        if ( store == null )
+        {
+            return ids;
+        }
+        
         for ( String uid : uids )
         {
             IdentifiableObject object = store.getByUid( uid );
@@ -761,9 +765,9 @@ public class DefaultIdentifiableObjectManager
     @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> Map<String, T> getIdMap( Class<T> clazz, IdScheme idScheme )
     {
-        Map<String, T> map = new HashMap<>();
-
         GenericIdentifiableObjectStore<T> store = (GenericIdentifiableObjectStore<T>) getIdentifiableObjectStore( clazz );
+
+        Map<String, T> map = new HashMap<>();
 
         if ( store == null )
         {
@@ -785,9 +789,9 @@ public class DefaultIdentifiableObjectManager
     @SuppressWarnings( "unchecked" )
     public <T extends IdentifiableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, IdScheme idScheme )
     {
-        Map<String, T> map = new HashMap<>();
-
         GenericIdentifiableObjectStore<T> store = (GenericIdentifiableObjectStore<T>) getIdentifiableObjectStore( clazz );
+
+        Map<String, T> map = new HashMap<>();
 
         if ( store == null )
         {
@@ -803,10 +807,15 @@ public class DefaultIdentifiableObjectManager
     @SuppressWarnings( "unchecked" )
     public <T extends NameableObject> Map<String, T> getIdMap( Class<T> clazz, NameableProperty property )
     {
-        Map<String, T> map = new HashMap<>();
-
         GenericNameableObjectStore<T> store = (GenericNameableObjectStore<T>) getNameableObjectStore( clazz );
 
+        Map<String, T> map = new HashMap<>();
+
+        if ( store == null )
+        {
+            return map;
+        }
+        
         List<T> objects = store.getAll();
 
         for ( T object : objects )
@@ -827,10 +836,15 @@ public class DefaultIdentifiableObjectManager
     @SuppressWarnings( "unchecked" )
     public <T extends NameableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, NameableProperty property )
     {
-        Map<String, T> map = new HashMap<>();
-
         GenericNameableObjectStore<T> store = (GenericNameableObjectStore<T>) getNameableObjectStore( clazz );
 
+        Map<String, T> map = new HashMap<>();
+
+        if ( store == null )
+        {
+            return map;
+        }
+        
         List<T> objects = store.getAllNoAcl();
 
         for ( T object : objects )
@@ -853,6 +867,11 @@ public class DefaultIdentifiableObjectManager
     {
         GenericIdentifiableObjectStore<T> store = (GenericIdentifiableObjectStore<T>) getIdentifiableObjectStore( clazz );
 
+        if ( store == null )
+        {
+            return new ArrayList<>();
+        }
+        
         if ( identifiers != null && !identifiers.isEmpty() )
         {
             if ( property == null || IdentifiableProperty.UID.equals( property ) )
@@ -899,28 +918,34 @@ public class DefaultIdentifiableObjectManager
     public <T extends IdentifiableObject> T getObject( Class<T> clazz, IdScheme idScheme, String value )
     {
         GenericIdentifiableObjectStore<T> store = (GenericIdentifiableObjectStore<T>) getIdentifiableObjectStore( clazz );
+
+        if ( store == null )
+        {
+            return null;
+        }
+        
         Attribute attribute = null;
 
         if ( idScheme.isAttribute() )
         {
             attribute = get( Attribute.class, idScheme.getAttribute() );
         }
-
+        
         if ( !StringUtils.isEmpty( value ) )
         {
             if ( idScheme.isNull() || idScheme.is( IdentifiableProperty.UID ) )
             {
                 return store.getByUid( value );
             }
-            if ( idScheme.is( IdentifiableProperty.CODE ) )
+            else if ( idScheme.is( IdentifiableProperty.CODE ) )
             {
                 return store.getByCode( value );
             }
-            if ( idScheme.is( IdentifiableProperty.NAME ) )
+            else if ( idScheme.is( IdentifiableProperty.NAME ) )
             {
                 return store.getByName( value );
             }
-            if ( idScheme.is( IdentifiableProperty.ATTRIBUTE ) )
+            else if ( idScheme.is( IdentifiableProperty.ATTRIBUTE ) )
             {
                 return store.getByUniqueAttributeValue( attribute, value );
             }

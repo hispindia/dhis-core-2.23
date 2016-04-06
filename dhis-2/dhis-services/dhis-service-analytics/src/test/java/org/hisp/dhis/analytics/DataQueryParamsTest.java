@@ -45,9 +45,9 @@ import org.hisp.dhis.common.DimensionType;
 import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.DimensionalObjectUtils;
+import org.hisp.dhis.common.ReportingRate;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
-import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.period.Period;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,8 +64,8 @@ public class DataQueryParamsTest
     private DataElement deB;
     private DataElement deC;
     
-    private DataSet dsA;
-    private DataSet dsB;
+    private ReportingRate rrA;
+    private ReportingRate rrB;
 
     @Before
     public void setUpTest()
@@ -74,25 +74,25 @@ public class DataQueryParamsTest
         deB = createDataElement( 'B', new DataElementCategoryCombo() );
         deC = createDataElement( 'C', new DataElementCategoryCombo() );
         
-        dsA = createDataSet( 'A', null );
-        dsB = createDataSet( 'B', null );
+        rrA = new ReportingRate( createDataSet( 'A', null ) );
+        rrB = new ReportingRate( createDataSet( 'B', null ) );
     }
     
     @Test
-    public void testSetGetDataElements()
+    public void testSetGetDataElementsReportingRates()
     {
         List<? extends DimensionalItemObject> dataElements = Lists.newArrayList( deA, deB, deC );
-        List<? extends DimensionalItemObject> dataSets = Lists.newArrayList( dsA, dsB );
+        List<? extends DimensionalItemObject> reportingRates = Lists.newArrayList( rrA, rrB );
         
         DataQueryParams params = new DataQueryParams();
         params.setDataElements( dataElements );
-        params.setDataSets( dataSets );
+        params.setReportingRates( reportingRates );
         
         assertEquals( 3, params.getDataElements().size() );
         assertTrue( params.getDataElements().containsAll( dataElements ) );
 
-        assertEquals( 2, params.getDataSets().size() );
-        assertTrue( params.getDataSets().containsAll( dataSets ) );
+        assertEquals( 2, params.getReportingRates().size() );
+        assertTrue( params.getReportingRates().containsAll( reportingRates ) );
     }
     
     @Test

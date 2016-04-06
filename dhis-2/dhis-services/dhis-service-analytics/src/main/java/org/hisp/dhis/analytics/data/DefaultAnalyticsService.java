@@ -88,6 +88,7 @@ import org.hisp.dhis.common.Grid;
 import org.hisp.dhis.common.GridHeader;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.common.NameableObjectUtils;
+import org.hisp.dhis.common.ReportingRateMetric;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.hisp.dhis.commons.util.DebugUtils;
 import org.hisp.dhis.constant.ConstantService;
@@ -208,9 +209,9 @@ public class DefaultAnalyticsService
 
         addDataElementValues( params, grid );
         
-        addDataElementOperands( params, grid );
+        addDataElementOperandValues( params, grid );
 
-        addDataSetValues( params, grid );
+        addReportingRates( params, grid );
         
         addProgramDataElementAttributeIndicatorValues( params, grid );
 
@@ -343,7 +344,7 @@ public class DefaultAnalyticsService
      * @param params the data query parameters.
      * @param grid the grid.
      */
-    private void addDataElementOperands( DataQueryParams params, Grid grid )
+    private void addDataElementOperandValues( DataQueryParams params, Grid grid )
     {
         if ( !params.getDataElementOperands().isEmpty() && !params.isSkipData() )
         {
@@ -384,9 +385,9 @@ public class DefaultAnalyticsService
      * @param params the data query parameters.
      * @param grid the grid.
      */
-    private void addDataSetValues( DataQueryParams params, Grid grid )
+    private void addReportingRates( DataQueryParams params, Grid grid )
     {
-        if ( !params.getDataSets().isEmpty() && !params.isSkipData() )
+        if ( !params.getReportingRates().isEmpty() && !params.isSkipData() )
         {
             // -----------------------------------------------------------------
             // Get complete data set registrations
@@ -394,7 +395,7 @@ public class DefaultAnalyticsService
 
             DataQueryParams dataSourceParams = params.instance();
             dataSourceParams.ignoreDataApproval(); // No approval for reporting rates
-            dataSourceParams.retainDataDimension( DataDimensionItemType.DATA_SET );
+            dataSourceParams.retainDataDimension( DataDimensionItemType.REPORTING_RATE );
             dataSourceParams.setAggregationType( AggregationType.COUNT );
 
             if ( !COMPLETENESS_DIMENSION_TYPES.containsAll( dataSourceParams.getDimensionTypes() ) )
@@ -434,18 +435,32 @@ public class DefaultAnalyticsService
             {
                 List<String> dataRow = Lists.newArrayList( entry.getKey().split( DIMENSION_SEP ) );
 
+                // -------------------------------------------------------------
+                // Get target value
+                // -------------------------------------------------------------
+
                 List<String> targetRow = ListUtils.getAtIndexes( dataRow, completenessDimIndexes );
                 String targetKey = StringUtils.join( targetRow, DIMENSION_SEP );
                 Double target = targetMap.get( targetKey );
 
                 if ( target != null && entry.getValue() != null )
                 {
+                    // ---------------------------------------------------------
+                    // Multiply target value by number of periods in time span
+                    // ---------------------------------------------------------
+
                     PeriodType queryPt = filterPeriodType != null ? filterPeriodType : getPeriodTypeFromIsoString( dataRow.get( periodIndex ) );
                     PeriodType dataSetPt = dsPtMap.get( dataRow.get( dataSetIndex ) );
-
                     target = target * queryPt.getPeriodSpan( dataSetPt );
 
+                    // ---------------------------------------------------------
+                    // Calculate reporting rate and replace data set with rate
+                    // ---------------------------------------------------------
+
                     double value = entry.getValue() * PERCENT / target;
+                    
+                    String reportingRate = DimensionalObjectUtils.getDimensionItem( dataRow.get( DX_INDEX ), ReportingRateMetric.REPORTING_RATE );
+                    dataRow.set( DX_INDEX, reportingRate );
 
                     grid.addRow();
                     grid.addValues( dataRow.toArray() );

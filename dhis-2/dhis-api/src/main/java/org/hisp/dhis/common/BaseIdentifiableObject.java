@@ -563,12 +563,12 @@ public class BaseIdentifiableObject
     {
         return "{" +
             "\"class\":\"" + getClass() + "\", " +
-            "\"id\":\"" + id + "\", " +
-            "\"uid\":\"" + uid + "\", " +
-            "\"code\":\"" + code + "\", " +
-            "\"name\":\"" + name + "\", " +
-            "\"created\":\"" + created + "\", " +
-            "\"lastUpdated\":\"" + lastUpdated + "\" " +
+            "\"id\":\"" + getId() + "\", " +
+            "\"uid\":\"" + getUid() + "\", " +
+            "\"code\":\"" + getCode() + "\", " +
+            "\"name\":\"" + getName() + "\", " +
+            "\"created\":\"" + getCreated() + "\", " +
+            "\"lastUpdated\":\"" + getLastUpdated() + "\" " +
             "}";
     }
 

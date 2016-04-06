@@ -31,8 +31,28 @@ package org.hisp.dhis.common;
 /**
 * @author Lars Helge Overland
 */
-public enum DataDimensionItemType
+public enum ReportingRateMetric
 {
-    INDICATOR, AGGREGATE_DATA_ELEMENT, DATA_ELEMENT_OPERAND, REPORTING_RATE, 
-    PROGRAM_INDICATOR, PROGRAM_DATA_ELEMENT, PROGRAM_ATTRIBUTE;
+    REPORTING_RATE( "reporting_rate", "Reporting rate" ), 
+    ACTUAL_REPORTS( "actual_reports", "Actual reports" ), 
+    EXPECTED_REPORTS( "expected_reports", "Expected reports" );
+    
+    private String key;
+    
+    private String displayName;
+    
+    private ReportingRateMetric( String key, String displayName )
+    {
+        this.displayName = displayName;
+    }
+    
+    public String key()
+    {
+        return key;
+    }
+    
+    public String displayName()
+    {
+        return displayName;
+    }
 }

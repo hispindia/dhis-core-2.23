@@ -94,8 +94,9 @@ public class DataQueryServiceTest
     
     private DataElementCategoryOptionCombo cocA;
     
-    private DataSet dsA;
-    private DataSet dsB;
+    private ReportingRate rrA;
+    private ReportingRate rrB;
+    private ReportingRate rrC;
     
     private TrackedEntityAttribute atA;
     private TrackedEntityAttribute atB;
@@ -183,11 +184,15 @@ public class DataQueryServiceTest
         
         cocA = categoryService.getDefaultDataElementCategoryOptionCombo();
 
-        dsA = createDataSet( 'A', monthly );
-        dsB = createDataSet( 'B', monthly );
+        DataSet dsA = createDataSet( 'A', monthly );
+        DataSet dsB = createDataSet( 'B', monthly );
         
         dataSetService.addDataSet( dsA );
         dataSetService.addDataSet( dsB );
+        
+        rrA = new ReportingRate( dsA, ReportingRateMetric.REPORTING_RATE );
+        rrB = new ReportingRate( dsB, ReportingRateMetric.REPORTING_RATE );
+        rrC = new ReportingRate( dsB, ReportingRateMetric.ACTUAL_REPORTS );
         
         atA = createTrackedEntityAttribute( 'A' );
         atB = createTrackedEntityAttribute( 'B' );
@@ -286,16 +291,43 @@ public class DataQueryServiceTest
     public void testGetDimensionalObjects()
     {
         Set<String> dimensionParams = new LinkedHashSet<>();
-        dimensionParams.add( DimensionalObject.DATA_X_DIM_ID + DIMENSION_NAME_SEP + deA.getUid() + OPTION_SEP + deB.getUid() + OPTION_SEP + dsA.getUid() );
-        dimensionParams.add( DimensionalObject.ORGUNIT_DIM_ID + DIMENSION_NAME_SEP + ouA.getUid() + OPTION_SEP + ouB.getUid() );
+        dimensionParams.add( DimensionalObject.DATA_X_DIM_ID + DIMENSION_NAME_SEP + deA.getDimensionItem() + OPTION_SEP + deB.getDimensionItem() + OPTION_SEP + rrA.getDimensionItem() );
+        dimensionParams.add( DimensionalObject.ORGUNIT_DIM_ID + DIMENSION_NAME_SEP + ouA.getDimensionItem() + OPTION_SEP + ouB.getDimensionItem() );
         
         List<DimensionalObject> dimensionalObject = dataQueryService.getDimensionalObjects( dimensionParams, null, null, null, IdScheme.UID );
         
         DimensionalObject dxObject = dimensionalObject.get( 0 );
         DimensionalObject ouObject = dimensionalObject.get( 1 );
 
-        List<DimensionalItemObject> dxItems = Lists.newArrayList( deA, deB, dsA );
+        List<DimensionalItemObject> dxItems = Lists.newArrayList( deA, deB, rrA );
         List<DimensionalItemObject> ouItems = Lists.newArrayList( ouA, ouB );
+
+        assertEquals( DimensionalObject.DATA_X_DIM_ID, dxObject.getDimension() );
+        assertEquals( DimensionType.DATA_X, dxObject.getDimensionType() );
+        assertEquals( DataQueryParams.DISPLAY_NAME_DATA_X, dxObject.getDisplayName() );
+        assertEquals( dxItems, dxObject.getItems() );
+
+        assertEquals( DimensionalObject.ORGUNIT_DIM_ID, ouObject.getDimension() );
+        assertEquals( DimensionType.ORGANISATIONUNIT, ouObject.getDimensionType() );
+        assertEquals( DataQueryParams.DISPLAY_NAME_ORGUNIT, ouObject.getDisplayName() );
+        assertEquals( ouItems, ouObject.getItems() );
+    }
+
+    @Test
+    public void testGetDimensionalObjectsReportingRates()
+    {
+        Set<String> dimensionParams = new LinkedHashSet<>();
+        dimensionParams.add( DimensionalObject.DATA_X_DIM_ID + DIMENSION_NAME_SEP + deA.getDimensionItem() + 
+            OPTION_SEP + rrA.getDimensionItem() + OPTION_SEP + rrB.getDimensionItem() + OPTION_SEP + rrC.getDimensionItem() );
+        dimensionParams.add( DimensionalObject.ORGUNIT_DIM_ID + DIMENSION_NAME_SEP + ouA.getDimensionItem() );
+        
+        List<DimensionalObject> dimensionalObject = dataQueryService.getDimensionalObjects( dimensionParams, null, null, null, IdScheme.UID );
+        
+        DimensionalObject dxObject = dimensionalObject.get( 0 );
+        DimensionalObject ouObject = dimensionalObject.get( 1 );
+
+        List<DimensionalItemObject> dxItems = Lists.newArrayList( deA, rrA, rrB, rrC );
+        List<DimensionalItemObject> ouItems = Lists.newArrayList( ouA );
 
         assertEquals( DimensionalObject.DATA_X_DIM_ID, dxObject.getDimension() );
         assertEquals( DimensionType.DATA_X, dxObject.getDimensionType() );
@@ -311,12 +343,12 @@ public class DataQueryServiceTest
     @Test
     public void testGetDimensionData()
     {
-        List<DimensionalItemObject> items = Lists.newArrayList( deA, deB, deC, dsA, dsB );
+        List<DimensionalItemObject> items = Lists.newArrayList( deA, deB, deC, rrA, rrB );
         
         List<String> itemUids = DimensionalObjectUtils.getDimensionalItemIds( items );
         
-        DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, itemUids, null, null, null, false,
-            IdScheme.UID );
+        DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, 
+            itemUids, null, null, null, false, IdScheme.UID );
         
         assertEquals( DimensionalObject.DATA_X_DIM_ID, actual.getDimension() );
         assertEquals( DimensionType.DATA_X, actual.getDimensionType() );
@@ -327,11 +359,11 @@ public class DataQueryServiceTest
     @Test
     public void testGetDimensionDataByCode()
     {
-        List<DimensionalItemObject> items = Lists.newArrayList( deA, deB, deC, dsA, dsB );
+        List<DimensionalItemObject> items = Lists.newArrayList( deA, deB, deC );
 
-        List<String> itemCodes = Lists.newArrayList( deA.getCode(), deB.getCode(), deC.getCode(), dsA.getCode(), dsB.getCode() );
+        List<String> itemCodes = Lists.newArrayList( deA.getCode(), deB.getCode(), deC.getCode() );
 
-        DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, itemCodes, null, null, null, false, IdScheme.CODE);
+        DimensionalObject actual = dataQueryService.getDimension( DimensionalObject.DATA_X_DIM_ID, itemCodes, null, null, null, false, IdScheme.CODE );
 
         assertEquals( DimensionalObject.DATA_X_DIM_ID, actual.getDimension() );
         assertEquals( DimensionType.DATA_X, actual.getDimensionType() );
@@ -507,11 +539,9 @@ public class DataQueryServiceTest
     {
         Set<String> dimensionParams = new HashSet<>();
         dimensionParams.add( "dx:" + deA.getCode() + ";" + deB.getCode() + ";" + patA.getCode() + ";" + patB.getCode() );
-        System.out.println("DEBUG:: " + "dx:" + deA.getCode() + ";" + deB.getCode() + ";" + patA.getCode() + ";" + patB.getCode());
 
         Set<String> filterParams = new HashSet<>();
         filterParams.add( "ou:" + ouA.getCode() );
-        System.out.println("DEBUG:: " +  "ou:" + ouA.getCode() );
 
         DataQueryParams params = dataQueryService.getFromUrl( dimensionParams, filterParams, null, null,
             false, false, false, false, false, false, false, false, null, null, IdScheme.CODE, null, null, null, null );
@@ -519,7 +549,6 @@ public class DataQueryServiceTest
         assertEquals( 2, params.getDataElements().size() );
         assertEquals( 2, params.getProgramAttributes().size() );
         assertEquals( 1, params.getFilterOrganisationUnits().size() );
-
     }
 
     @Test
