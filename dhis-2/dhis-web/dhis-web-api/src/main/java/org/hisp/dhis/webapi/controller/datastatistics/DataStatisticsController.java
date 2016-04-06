@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +43,7 @@ import org.hisp.dhis.datastatistics.DataStatisticsEvent;
 import org.hisp.dhis.datastatistics.AggregatedStatistics;
 import org.hisp.dhis.user.CurrentUserService;
 import org.hisp.dhis.user.User;
-import org.hisp.dhis.datastatistics.EventType;
+import org.hisp.dhis.datastatistics.DataStatisticsEventType;
 import org.hisp.dhis.datastatistics.DataStatisticsService;
 import org.hisp.dhis.datastatistics.EventInterval;
 
@@ -66,19 +65,18 @@ public class DataStatisticsController
 
     @RequestMapping( value = "/dataStatistics", method = RequestMethod.POST )
     @ResponseStatus( HttpStatus.CREATED )
-    public void saveEvent( @RequestParam EventType eventType )
+    public void saveEvent( @RequestParam DataStatisticsEventType dataStatisticsEventType )
     {
         Date timestamp = new Date();
         User user = currentUserService.getCurrentUser();
 
-        DataStatisticsEvent event = new DataStatisticsEvent( eventType, timestamp, user.getUsername() );
+        DataStatisticsEvent event = new DataStatisticsEvent( dataStatisticsEventType, timestamp, user.getUsername() );
         dataStatisticsService.addEvent( event );
     }
 
     @RequestMapping( value = "/dataStatistics", method = RequestMethod.GET )
-    public @ResponseBody List<AggregatedStatistics> report( @RequestParam @DateTimeFormat( pattern = "yyyy-mm-dd" ) Date startDate,
-        @RequestParam @DateTimeFormat( pattern = "yyyy-mm-dd" ) Date endDate, 
-        @RequestParam EventInterval interval, HttpServletResponse response )
+    public @ResponseBody List<AggregatedStatistics> report( @RequestParam Date startDate,
+        @RequestParam Date endDate, @RequestParam EventInterval interval, HttpServletResponse response )
     {
         if ( startDate.after( endDate ) )
         {

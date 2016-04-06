@@ -32,14 +32,14 @@ import java.util.Date;
 
 /**
  * Object of event to be saved
- * 
+ *
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
 public class DataStatisticsEvent
 {
     private int id;
-    private EventType type;
+    private DataStatisticsEventType type;
     private Date timestamp;
     private String userName;
 
@@ -47,7 +47,7 @@ public class DataStatisticsEvent
     {
     }
 
-    public DataStatisticsEvent( EventType type, Date timestamp, String userName )
+    public DataStatisticsEvent( DataStatisticsEventType type, Date timestamp, String userName )
     {
         this.type = type;
         this.timestamp = timestamp;
@@ -64,7 +64,7 @@ public class DataStatisticsEvent
         return timestamp;
     }
 
-    public EventType getType()
+    public DataStatisticsEventType getType()
     {
         return type;
     }
@@ -84,7 +84,7 @@ public class DataStatisticsEvent
         this.timestamp = timestamp;
     }
 
-    public void setType( EventType type )
+    public void setType( DataStatisticsEventType type )
     {
         this.type = type;
     }

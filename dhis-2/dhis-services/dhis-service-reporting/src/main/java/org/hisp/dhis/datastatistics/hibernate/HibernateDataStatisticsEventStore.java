@@ -30,38 +30,54 @@ package org.hisp.dhis.datastatistics.hibernate;
 
 import org.hisp.dhis.datastatistics.DataStatisticsEvent;
 import org.hisp.dhis.datastatistics.DataStatisticsEventStore;
+import org.hisp.dhis.datastatistics.DataStatisticsEventType;
 import org.hisp.dhis.hibernate.HibernateGenericStore;
 import org.hisp.dhis.system.util.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * Class for database logic for datastatisticevent
- * 
+ * Class for database logic for datastatisticsevent
+ *
  * @author Yrjan A. F. Fraschetti
- * @author Julie Hill Roa        
+ * @author Julie Hill Roa
  */
-public class HibernateDataStatisticsEventStore 
-    extends HibernateGenericStore<DataStatisticsEvent> 
+public class HibernateDataStatisticsEventStore
+    extends HibernateGenericStore<DataStatisticsEvent>
     implements DataStatisticsEventStore
 {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    public List<int[]> getDataStatisticsEventCount( Date startDate, Date endDate )
+    /**
+     * Method for retrieving aggregated event count data
+     *
+     * @param startDate the start date.
+     * @param endDate   the end date.
+     * @return
+     */
+    public Map<DataStatisticsEventType, Double> getDataStatisticsEventCount( Date startDate, Date endDate )
     {
-        final String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" + 
-            DateUtils.getMediumDateString( startDate ) + "' and '" + 
+        Map<DataStatisticsEventType, Double> eventTypeCountMap = new HashMap<>();
+        final String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" +
+            DateUtils.getMediumDateString( startDate ) + "' and '" +
             DateUtils.getMediumDateString( endDate ) + "') group by eventtype;";
 
-        return jdbcTemplate.query( sql, ( resultSet, i ) -> {
-            int[] l = new int[2];
-            l[0] = resultSet.getInt( "eventtype" );
-            l[1] = resultSet.getInt( "numberofviews");
-            return l;
+        final String totalSql = "select count(eventtype) as total from datastatisticsevent where (timestamp between '" + DateUtils.getMediumDateString( startDate ) + "' and '" +
+            DateUtils.getMediumDateString( endDate ) + "');";
+
+        jdbcTemplate.query( sql, ( resultSet, i ) -> {
+            eventTypeCountMap.put( DataStatisticsEventType.valueOf( resultSet.getString( "eventtype" ) ), resultSet.getDouble( "numberofviews" ) );
+            return eventTypeCountMap;
         } );
+
+        jdbcTemplate.query( totalSql, ( resultSet, i ) -> {
+            return eventTypeCountMap.put( DataStatisticsEventType.TOTAL_VIEW, resultSet.getDouble( "total" ) );
+        } );
+        return eventTypeCountMap;
     }
 }

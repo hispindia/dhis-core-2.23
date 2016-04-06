@@ -31,22 +31,22 @@ package org.hisp.dhis.datastatistics;
 import org.hisp.dhis.common.GenericStore;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 /**
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-public interface DataStatisticsEventStore 
+public interface DataStatisticsEventStore
     extends GenericStore<DataStatisticsEvent>
 {
     /**
-     * Creates a list of DataStatisticsEvent objects in interval date to current 
+     * Creates a map of DataStatisticsEvent objects in interval date to current
      * date.
-     * 
+     *
      * @param startDate the start date.
-     * @param endDate the end date.
-     * @return list of objects
+     * @param endDate   the end date.
+     * @return
      */
-    List<int[]> getDataStatisticsEventCount( Date startDate, Date endDate );
+    Map<DataStatisticsEventType, Double> getDataStatisticsEventCount( Date startDate, Date endDate );
 }

@@ -31,13 +31,14 @@ package org.hisp.dhis.datastatistics.hibernate;
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.datastatistics.DataStatisticsEvent;
 import org.hisp.dhis.datastatistics.DataStatisticsEventStore;
-import org.hisp.dhis.datastatistics.EventType;
+import org.hisp.dhis.datastatistics.DataStatisticsEventType;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
 
 import static org.junit.Assert.*;
@@ -46,7 +47,7 @@ import static org.junit.Assert.*;
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-public class HibernateDataStatisticsEventStoreTest 
+public class HibernateDataStatisticsEventStoreTest
     extends DhisSpringTest
 {
     @Autowired
@@ -60,25 +61,21 @@ public class HibernateDataStatisticsEventStoreTest
     private int dse1Id;
     private int dse2Id;
 
-    private Date endDate;
-    private Date testDate;
-
     private Date start;
     private Date end;
 
     @Override
     public void setUpTest()
     {
-        endDate = new Date();
         end = getDate( 2016, 3, 21 );
         start = getDate( 2016, 3, 19 );
-        endDate = getDate( 2016, 3, 20 );
-        testDate = getDate( 2016, 3, 16 );
+        Date endDate = getDate( 2016, 3, 20 );
+        Date testDate = getDate( 2016, 3, 16 );
 
-        dse1 = new DataStatisticsEvent( EventType.REPORT_TABLE_VIEW, endDate, "Testuser" );
-        dse2 = new DataStatisticsEvent( EventType.EVENT_CHART_VIEW, endDate, "TestUser" );
-        dse3 = new DataStatisticsEvent( EventType.INDICATOR_VIEW, testDate, "Testuser" );
-        dse4 = new DataStatisticsEvent( EventType.DASHBOARD_VIEW, endDate, "TestUser" );
+        dse1 = new DataStatisticsEvent( DataStatisticsEventType.REPORT_TABLE_VIEW, endDate, "Testuser" );
+        dse2 = new DataStatisticsEvent( DataStatisticsEventType.EVENT_CHART_VIEW, endDate, "TestUser" );
+        dse3 = new DataStatisticsEvent( DataStatisticsEventType.INDICATOR_VIEW, testDate, "Testuser" );
+        dse4 = new DataStatisticsEvent( DataStatisticsEventType.DASHBOARD_VIEW, endDate, "TestUser" );
 
         dse1Id = 0;
         dse2Id = 0;
@@ -99,9 +96,10 @@ public class HibernateDataStatisticsEventStoreTest
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
+        Map<DataStatisticsEventType, Double> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
 
-        assertTrue( dsList.size() == 2 );
+        //Test for 3 objects because TOTAL_VIEWS is always present
+        assertTrue( dsList.size() == 3 );
     }
 
     @Test
@@ -110,9 +108,13 @@ public class HibernateDataStatisticsEventStoreTest
         dataStatisticsEventStore.save( dse1 );
         dataStatisticsEventStore.save( dse4 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
-        assertEquals( 2, dsList.get( 0 )[0] );
-        assertEquals( 3, dsList.get( 1 )[0] );
+        Map<DataStatisticsEventType, Double> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
+        double expected = 1.0;
+        double firstActual = dsList.get( DataStatisticsEventType.REPORT_TABLE_VIEW );
+        double secondActual = dsList.get( DataStatisticsEventType.DASHBOARD_VIEW );
+
+        assertEquals( expected, firstActual, 0.0 );
+        assertEquals( expected, secondActual, 0.0 );
     }
 
     @Test
@@ -122,8 +124,9 @@ public class HibernateDataStatisticsEventStoreTest
         dataStatisticsEventStore.save( dse4 );
         dataStatisticsEventStore.save( dse2 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
-        assertTrue( dsList.size() == 3 );
+        Map<DataStatisticsEventType, Double> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
+        //Test for 4 objects, because TOTAL_VIEW is always present
+        assertTrue( dsList.size() == 4 );
     }
 
     @Test
@@ -133,7 +136,8 @@ public class HibernateDataStatisticsEventStoreTest
         dataStatisticsEventStore.save( dse4 );
         dataStatisticsEventStore.save( dse3 );
 
-        List<int[]> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
-        assertTrue( dsList.size() == 2 );
+        Map<DataStatisticsEventType, Double> dsList = dataStatisticsEventStore.getDataStatisticsEventCount( start, end );
+        //Test for 3 objects because TOTAL_VIEW is always present
+        assertTrue( dsList.size() == 3 );
     }
 }

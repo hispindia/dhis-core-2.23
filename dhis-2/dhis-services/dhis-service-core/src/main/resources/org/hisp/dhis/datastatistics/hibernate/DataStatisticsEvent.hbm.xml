@@ -9,10 +9,12 @@
     <id name="id" column="eventid">
       <generator class="native" />
     </id>
-    
+
     <property name="type" column="eventtype">
       <type name="org.hibernate.type.EnumType">
-        <param name="enumClass">org.hisp.dhis.datastatistics.EventType</param>
+        <param name="enumClass">org.hisp.dhis.datastatistics.DataStatisticsEventType</param>
+        <param name="useNamed">true</param>
+        <param name="type">12</param>
       </type>
     </property>
     

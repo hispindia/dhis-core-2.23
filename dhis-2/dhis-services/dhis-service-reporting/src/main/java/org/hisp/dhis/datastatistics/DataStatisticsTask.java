@@ -39,7 +39,7 @@ import java.util.Date;
  * @author Julie Hill Roa
  */
 
-public class DataStatisticsTask 
+public class DataStatisticsTask
     implements Runnable
 {
     @Autowired
@@ -54,10 +54,11 @@ public class DataStatisticsTask
     @Override
     public void run()
     {
-        dataStatisticsService.saveSnapshot();
-        
-        //TODO find some level of verification that save actually was successful
-        
-        systemSettingManager.saveSystemSetting( SettingKey.LAST_SUCCESSFUL_DATA_STATISTIC, new Date() );
+        int id = dataStatisticsService.saveSnapshot();
+
+        if ( id < 0 )
+        {
+            systemSettingManager.saveSystemSetting( SettingKey.LAST_SUCCESSFUL_DATA_STATISTIC, new Date() );
+        }
     }
 }

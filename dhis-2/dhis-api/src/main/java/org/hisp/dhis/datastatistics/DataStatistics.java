@@ -30,14 +30,13 @@ package org.hisp.dhis.datastatistics;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 
-
 /**
  * DataStatistics object to be saved as snapshot.
- * 
+ *
  * @author Julie Hill Roa
  * @author Yrjan A. F. Fraschetti
  */
-public class DataStatistics 
+public class DataStatistics
     extends BaseIdentifiableObject
 {
     private Integer activeUsers;
@@ -64,7 +63,7 @@ public class DataStatistics
     }
 
     public DataStatistics( Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
-        Double eventChartViews, Double dashboardViews, Double indicatorViews, Double totalViews, Double averageViews, Double savedMaps,
+        Double eventChartViews, Double dashboardViews, Double indicatorViews, Double totalViews, Double savedMaps,
         Double savedCharts, Double savedReportTables, Double savedEventReports, Double savedEventCharts, Double savedDashboards,
         Double savedIndicators, Integer users )
     {
@@ -77,7 +76,6 @@ public class DataStatistics
         this.dashboardViews = dashboardViews;
         this.indicatorViews = indicatorViews;
         this.totalViews = totalViews;
-        this.averageViews = averageViews;
         this.savedMaps = savedMaps;
         this.savedCharts = savedCharts;
         this.savedReportTables = savedReportTables;
@@ -86,6 +84,20 @@ public class DataStatistics
         this.savedDashboards = savedDashboards;
         this.savedIndicators = savedIndicators;
         this.users = users;
+
+        this.setAverage();
+    }
+
+    private void setAverage()
+    {
+        if ( activeUsers != 0 )
+        {
+            this.averageViews = this.totalViews / activeUsers;
+        }
+        else
+        {
+            this.averageViews = 0.0;
+        }
     }
 
     @JsonProperty

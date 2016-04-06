@@ -30,17 +30,18 @@ package org.hisp.dhis.datastatistics;
 
 /**
  * Enum of EventTypes to be used as identifiers in DataStatisticsEvent
- * 
+ *
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-public enum EventType
+public enum DataStatisticsEventType
 {
-    CHART_VIEW, 
-    MAP_VIEW, 
-    DASHBOARD_VIEW, 
-    REPORT_TABLE_VIEW, 
-    EVENT_REPORT_VIEW, 
-    EVENT_CHART_VIEW, 
-    INDICATOR_VIEW
+    CHART_VIEW,
+    MAP_VIEW,
+    DASHBOARD_VIEW,
+    REPORT_TABLE_VIEW,
+    EVENT_REPORT_VIEW,
+    EVENT_CHART_VIEW,
+    INDICATOR_VIEW,
+    TOTAL_VIEW
 }

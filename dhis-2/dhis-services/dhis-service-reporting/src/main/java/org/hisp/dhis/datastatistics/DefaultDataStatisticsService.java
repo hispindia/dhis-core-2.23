@@ -51,7 +51,7 @@ import java.util.List;
  * @author Julie Hill Roa
  */
 @Transactional
-public class DefaultDataStatisticsService 
+public class DefaultDataStatisticsService
     implements DataStatisticsService
 {
     @Autowired
@@ -80,8 +80,8 @@ public class DefaultDataStatisticsService
     /**
      * Gets number of saved Reports from a start date too a end date
      *
-     * @param startDate start date
-     * @param endDate end date
+     * @param startDate     start date
+     * @param endDate       end date
      * @param eventInterval event interval.
      * @return list of reports
      */
@@ -92,11 +92,11 @@ public class DefaultDataStatisticsService
     }
 
     /**
-     * Gets all important information and creates a DataStatistics object 
+     * Gets all important information and creates a DataStatistics object
      * and persists it.
      */
     @Override
-    public int saveSnapshot( )
+    public int saveSnapshot()
     {
         Date now = new Date();
         Date startDate = new Date();
@@ -115,67 +115,11 @@ public class DefaultDataStatisticsService
         double savedIndicators = identifiableObjectManager.getCountByCreated( Indicator.class, startDate );
         int activeUsers = userService.getActiveUsersCount( 1 );
 
-        double chartViews = 0;
-        double mapViews = 0;
-        double dashboardViews = 0;
-        double reportTablesViews = 0;
-        double eventReportViews = 0;
-        double eventChartViews = 0;
-        double indicatorsViews = 0;
-        double totalNumberOfViews = 0;
-        double averageNumberofViews = 0;
 
-        List<int[]> list = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
-
-        for ( int i = 0; i < list.size(); i++ )
-        {
-            int[] temp = (int[]) list.get( i );
-            
-            switch ( temp[0] )
-            {
-                case 0:
-                    chartViews = temp[1];
-                    totalNumberOfViews += chartViews;
-                    break;
-                case 1: 
-                    mapViews = temp[1];
-                    totalNumberOfViews += mapViews;
-                    break;
-                case 2: 
-                    dashboardViews = temp[1];
-                    totalNumberOfViews += dashboardViews;
-                    break;
-                case 3: 
-                    reportTablesViews = temp[1];
-                    totalNumberOfViews += reportTablesViews;
-                    break;
-                case 4: 
-                    eventReportViews = temp[1];
-                    totalNumberOfViews += eventReportViews;
-                    break;
-                case 5: 
-                    eventChartViews = temp[1];
-                    totalNumberOfViews += eventChartViews;
-                    break;
-                case 6: 
-                    indicatorsViews = temp[1];
-                    totalNumberOfViews += indicatorsViews;
-                    break;
-            }
-        }
-        
-        if ( activeUsers != 0 )
-        {
-            averageNumberofViews = totalNumberOfViews/activeUsers;
-        }
-        else
-        {
-            averageNumberofViews = totalNumberOfViews;
-        }
-
-        DataStatistics dataStatistics = new DataStatistics( activeUsers, mapViews, chartViews,
-            reportTablesViews, eventReportViews, eventChartViews, dashboardViews,
-            indicatorsViews, totalNumberOfViews, averageNumberofViews, savedMaps,
+        java.util.Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
+        DataStatistics dataStatistics = new DataStatistics( activeUsers, eventCountMap.get( DataStatisticsEventType.MAP_VIEW ), eventCountMap.get( DataStatisticsEventType.CHART_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ), eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ), eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ), eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ), eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ), savedMaps,
             savedCharts, savedReportTables, savedEventReports,
             savedEventCharts, savedDashboards, savedIndicators,
             totalUsers );
