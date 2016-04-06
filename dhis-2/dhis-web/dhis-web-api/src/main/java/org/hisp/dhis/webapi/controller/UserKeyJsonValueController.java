@@ -93,7 +93,9 @@ public class UserKeyJsonValueController
      * Deletes all keys with the given user and namespace.
      */
     @RequestMapping( value = "/{namespace}", method = RequestMethod.DELETE )
-    public void deleteKeys( @PathVariable String namespace, HttpServletResponse response )
+    public void deleteKeys(
+        @PathVariable String namespace,
+        HttpServletResponse response )
         throws WebMessageException
     {
         userKeyJsonValueService.deleteNamespaceFromUser( currentUserService.getCurrentUser(), namespace );
@@ -110,7 +112,8 @@ public class UserKeyJsonValueController
     public
     @ResponseBody
     String getUserKeyJsonValue(
-        @PathVariable String namespace, @PathVariable String key, HttpServletResponse response )
+        @PathVariable String namespace,
+        @PathVariable String key )
         throws IOException, WebMessageException
     {
         UserKeyJsonValue userKeyJsonValue = userKeyJsonValueService.getUserKeyJsonValue(
@@ -130,7 +133,10 @@ public class UserKeyJsonValueController
      */
     @RequestMapping( value = "/{namespace}/{key}", method = RequestMethod.POST, produces = "application/json", consumes = "application/json" )
     public void addUserKeyJsonValue(
-        @PathVariable String namespace, @PathVariable String key, @RequestBody String body,
+        @PathVariable String namespace,
+        @PathVariable String key,
+        @RequestBody String body,
+        @RequestParam( defaultValue = "false" ) boolean encrypt,
         HttpServletResponse response )
         throws IOException, WebMessageException
     {
@@ -152,6 +158,7 @@ public class UserKeyJsonValueController
         userKeyJsonValue.setUser( currentUserService.getCurrentUser() );
         userKeyJsonValue.setNamespace( namespace );
         userKeyJsonValue.setValue( body );
+        userKeyJsonValue.setEncrypted( encrypt );
 
         userKeyJsonValueService.addUserKeyJsonValue( userKeyJsonValue );
 
@@ -165,9 +172,11 @@ public class UserKeyJsonValueController
      * Update a key.
      */
     @RequestMapping( value = "/{namespace}/{key}", method = RequestMethod.PUT, produces = "application/json", consumes = "application/json" )
-    public void updateUserKeyJsonValue( @PathVariable String namespace, @PathVariable String key,
+    public void updateUserKeyJsonValue(
+        @PathVariable String namespace,
+        @PathVariable String key,
         @RequestBody String body,
-        HttpServletRequest request, HttpServletResponse response )
+        HttpServletResponse response )
         throws WebMessageException, IOException
     {
         UserKeyJsonValue userKeyJsonValue = userKeyJsonValueService.getUserKeyJsonValue(
@@ -200,7 +209,8 @@ public class UserKeyJsonValueController
     @RequestMapping( value = "/{namespace}/{key}", method = RequestMethod.DELETE, produces = "application/json" )
     public void deleteUserKeyJsonValue(
         @PathVariable String namespace,
-        @PathVariable String key, HttpServletResponse response )
+        @PathVariable String key,
+        HttpServletResponse response )
         throws WebMessageException
     {
         UserKeyJsonValue userKeyJsonValue = userKeyJsonValueService.getUserKeyJsonValue(
@@ -214,6 +224,8 @@ public class UserKeyJsonValueController
 
         userKeyJsonValueService.deleteUserKeyJsonValue( userKeyJsonValue );
 
-        messageService.sendJson( WebMessageUtils.ok( "Key '" + key + "' deleted from the namespace '" + namespace + "'." ), response );
+        messageService
+            .sendJson( WebMessageUtils.ok( "Key '" + key + "' deleted from the namespace '" + namespace + "'." ),
+                response );
     }
 }

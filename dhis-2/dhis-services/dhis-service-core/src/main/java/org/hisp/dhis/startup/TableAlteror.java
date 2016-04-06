@@ -902,6 +902,8 @@ public class TableAlteror
         
         upgradeMapViewsToColumns();
 
+
+
         log.info( "Tables updated" );
     }
 
