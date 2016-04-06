@@ -31,6 +31,7 @@ package org.hisp.dhis.preheat;
 import com.google.common.collect.Lists;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeService;
+import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.AnalyticalObject;
 import org.hisp.dhis.common.BaseAnalyticalObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
@@ -245,6 +246,17 @@ public class DefaultPreheatService implements PreheatService
             List<Attribute> uniqueAttributes = attributeService.getUniqueAttributes( klass );
             preheat.getUniqueAttributes().put( klass, new ArrayList<>() );
             uniqueAttributes.forEach( attribute -> preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() ) );
+
+            List<AttributeValue> uniqueAttributeValues = attributeService.getAllAttributeValuesByAttributes( uniqueAttributes );
+            preheat.getUniqueAttributeValues().put( klass, new HashMap<>() );
+            uniqueAttributeValues.forEach( attributeValue -> {
+                if ( !preheat.getUniqueAttributeValues().get( klass ).containsKey( attributeValue.getAttribute().getUid() ) )
+                {
+                    preheat.getUniqueAttributeValues().get( klass ).put( attributeValue.getAttribute().getUid(), new ArrayList<>() );
+                }
+
+                preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() ).add( attributeValue.getValue() );
+            } );
         }
 
         periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );

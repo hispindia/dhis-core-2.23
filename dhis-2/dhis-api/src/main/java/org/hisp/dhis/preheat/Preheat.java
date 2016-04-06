@@ -68,6 +68,8 @@ public class Preheat
 
     private Map<Class<? extends IdentifiableObject>, List<String>> uniqueAttributes = new HashMap<>();
 
+    private Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> uniqueAttributeValues = new HashMap<>();
+
     public Preheat()
     {
     }
@@ -451,5 +453,15 @@ public class Preheat
     public void setUniqueAttributes( Map<Class<? extends IdentifiableObject>, List<String>> uniqueAttributes )
     {
         this.uniqueAttributes = uniqueAttributes;
+    }
+
+    public Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> getUniqueAttributeValues()
+    {
+        return uniqueAttributeValues;
+    }
+
+    public void setUniqueAttributeValues( Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> uniqueAttributeValues )
+    {
+        this.uniqueAttributeValues = uniqueAttributeValues;
     }
 }
