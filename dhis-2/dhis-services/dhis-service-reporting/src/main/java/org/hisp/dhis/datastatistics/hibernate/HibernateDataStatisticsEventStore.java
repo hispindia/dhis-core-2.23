@@ -41,8 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class for database logic for datastatisticsevent
- *
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
@@ -57,17 +55,19 @@ public class HibernateDataStatisticsEventStore
      * Method for retrieving aggregated event count data
      *
      * @param startDate the start date.
-     * @param endDate   the end date.
-     * @return
+     * @param endDate the end date.
+     * @return a map between DataStatisticsEventTypes and counts.
      */
     public Map<DataStatisticsEventType, Double> getDataStatisticsEventCount( Date startDate, Date endDate )
     {
         Map<DataStatisticsEventType, Double> eventTypeCountMap = new HashMap<>();
+        
         final String sql = "select eventtype as eventtype, count(eventtype) as numberofviews from datastatisticsevent where (timestamp between '" +
             DateUtils.getMediumDateString( startDate ) + "' and '" +
             DateUtils.getMediumDateString( endDate ) + "') group by eventtype;";
 
-        final String totalSql = "select count(eventtype) as total from datastatisticsevent where (timestamp between '" + DateUtils.getMediumDateString( startDate ) + "' and '" +
+        final String totalSql = "select count(eventtype) as total from datastatisticsevent where (timestamp between '" + 
+            DateUtils.getMediumDateString( startDate ) + "' and '" +
             DateUtils.getMediumDateString( endDate ) + "');";
 
         jdbcTemplate.query( sql, ( resultSet, i ) -> {
@@ -78,6 +78,7 @@ public class HibernateDataStatisticsEventStore
         jdbcTemplate.query( totalSql, ( resultSet, i ) -> {
             return eventTypeCountMap.put( DataStatisticsEventType.TOTAL_VIEW, resultSet.getDouble( "total" ) );
         } );
+        
         return eventTypeCountMap;
     }
 }
