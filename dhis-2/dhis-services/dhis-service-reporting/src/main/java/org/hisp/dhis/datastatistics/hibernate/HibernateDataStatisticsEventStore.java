@@ -51,13 +51,7 @@ public class HibernateDataStatisticsEventStore
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /**
-     * Method for retrieving aggregated event count data
-     *
-     * @param startDate the start date.
-     * @param endDate the end date.
-     * @return a map between DataStatisticsEventTypes and counts.
-     */
+    @Override
     public Map<DataStatisticsEventType, Double> getDataStatisticsEventCount( Date startDate, Date endDate )
     {
         Map<DataStatisticsEventType, Double> eventTypeCountMap = new HashMap<>();

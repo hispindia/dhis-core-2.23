@@ -38,25 +38,28 @@ import java.util.List;
 public interface DataStatisticsService
 {
     /**
-     * Adds a DataStatisticsEvent
+     * Adds an DataStatistics event.
      *
-     * @param event the event to be added
-     * @return the id
+     * @param event object to be saved
+     * @return id of the object in the database
      */
     int addEvent( DataStatisticsEvent event );
 
     /**
-     * Generates a list of DataStatistics snapshots in the given eventInterval
+     * Gets number of saved events from a start date to an end date.
      *
-     * @param startDate
-     * @param endDate
-     * @param eventInterval
-     * @return
+     * @param startDate start date
+     * @param endDate end date
+     * @param eventInterval event interval
+     * 
+     * @return list of reports
      */
     List<AggregatedStatistics> getReports( Date startDate, Date endDate, EventInterval eventInterval );
 
     /**
-     * Creates a snapshot of DataStatistics and saves it
+     * Gets all information and creates a DataStatistics object and persists it.
+     * 
+     * @return identifier of the persisted DataStatistics object.
      */
     int saveSnapshot();
 }

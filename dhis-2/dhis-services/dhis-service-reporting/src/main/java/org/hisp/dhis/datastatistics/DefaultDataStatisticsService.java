@@ -70,35 +70,18 @@ public class DefaultDataStatisticsService
     // DataStatisticsService implementation
     // -------------------------------------------------------------------------
 
-    /**
-     * Adds an DataStatistics event.
-     *
-     * @param event object to be saved
-     * @return id of the object in the database
-     */
+    @Override
     public int addEvent( DataStatisticsEvent event )
     {
         return dataStatisticsEventStore.save( event );
     }
 
-    /**
-     * Gets number of saved Reports from a start date to an end date.
-     *
-     * @param startDate start date
-     * @param endDate end date
-     * @param eventInterval event interval
-     * 
-     * @return list of reports
-     */
     @Override
     public List<AggregatedStatistics> getReports( Date startDate, Date endDate, EventInterval eventInterval )
     {
         return dataStatisticsStore.getSnapshotsInInterval( eventInterval, startDate, endDate );
     }
 
-    /**
-     * Gets all information and creates a DataStatistics object and persists it.
-     */
     @Override
     public int saveSnapshot()
     {

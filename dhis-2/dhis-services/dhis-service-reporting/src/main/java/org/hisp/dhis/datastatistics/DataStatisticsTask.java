@@ -47,9 +47,6 @@ public class DataStatisticsTask
     @Autowired
     private SystemSettingManager systemSettingManager;
 
-    /**
-     * Saves calls saveSnapShot() in DefaultDataStatisticsService
-     */
     @Override
     public void run()
     {

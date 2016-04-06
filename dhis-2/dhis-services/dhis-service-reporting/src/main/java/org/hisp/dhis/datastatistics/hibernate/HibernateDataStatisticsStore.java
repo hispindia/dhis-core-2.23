@@ -53,15 +53,10 @@ public class HibernateDataStatisticsStore
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /**
-     * Retrieves data from database and maps aggregated data to
-     * AggregatedStatistic object.
-     *
-     * @param eventInterval interval of DAY, MONTH, WEEK, YEAR.
-     * @param startDate the start date.
-     * @param endDate the end date.
-     * @return a list of AggregatedStatistics instances.
-     */
+    // -------------------------------------------------------------------------
+    // DataStatisticsStore implementation
+    // -------------------------------------------------------------------------
+
     @Override
     public List<AggregatedStatistics> getSnapshotsInInterval( EventInterval eventInterval, Date startDate, Date endDate )
     {

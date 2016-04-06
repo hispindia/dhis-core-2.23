@@ -41,12 +41,11 @@ public interface DataStatisticsEventStore
     extends GenericStore<DataStatisticsEvent>
 {
     /**
-     * Creates a map of DataStatisticsEvent objects in interval date to current
-     * date.
+     * Method for retrieving aggregated event count data.
      *
      * @param startDate the start date.
-     * @param endDate   the end date.
-     * @return
+     * @param endDate the end date.
+     * @return a map between DataStatisticsEventTypes and counts.
      */
     Map<DataStatisticsEventType, Double> getDataStatisticsEventCount( Date startDate, Date endDate );
 }
