@@ -30,7 +30,6 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import com.google.common.collect.Sets;
 import org.hisp.dhis.DhisSpringTest;
-import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.common.IdScheme;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
@@ -50,7 +49,6 @@ import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.indicator.Indicator;
-import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
 import org.hisp.dhis.organisationunit.OrganisationUnit;
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
@@ -542,95 +540,6 @@ public class ObjectBundleServiceTest
         assertEquals( "PdWlltZnVZe", user.getOrganisationUnit().getUid() );
     }
 
-    @Test
-    public void testCreateSimpleMetadataAttributeValuesUID() throws IOException
-    {
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/simple_metadata_with_av.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
-        objectBundleService.commit( bundle );
-
-        List<OrganisationUnit> organisationUnits = manager.getAll( OrganisationUnit.class );
-        List<DataElement> dataElements = manager.getAll( DataElement.class );
-        List<DataSet> dataSets = manager.getAll( DataSet.class );
-        List<UserAuthorityGroup> userRoles = manager.getAll( UserAuthorityGroup.class );
-        List<User> users = manager.getAll( User.class );
-        List<Option> options = manager.getAll( Option.class );
-        List<OptionSet> optionSets = manager.getAll( OptionSet.class );
-        List<Attribute> attributes = manager.getAll( Attribute.class );
-
-        assertFalse( organisationUnits.isEmpty() );
-        assertFalse( dataElements.isEmpty() );
-        assertFalse( dataSets.isEmpty() );
-        assertFalse( users.isEmpty() );
-        assertFalse( userRoles.isEmpty() );
-        assertEquals( 2, attributes.size() );
-        assertEquals( 2, options.size() );
-        assertEquals( 1, optionSets.size() );
-
-        Map<Class<? extends IdentifiableObject>, IdentifiableObject> defaults = manager.getDefaults();
-
-        DataSet dataSet = dataSets.get( 0 );
-        User user = users.get( 0 );
-        OptionSet optionSet = optionSets.get( 0 );
-
-        for ( DataElement dataElement : dataElements )
-        {
-            assertNotNull( dataElement.getCategoryCombo() );
-            assertEquals( defaults.get( DataElementCategoryCombo.class ), dataElement.getCategoryCombo() );
-        }
-
-        assertFalse( dataSet.getSources().isEmpty() );
-        assertFalse( dataSet.getDataElements().isEmpty() );
-        assertEquals( 1, dataSet.getSources().size() );
-        assertEquals( 2, dataSet.getDataElements().size() );
-        assertEquals( PeriodType.getPeriodTypeByName( "Monthly" ), dataSet.getPeriodType() );
-
-        assertNotNull( user.getUserCredentials() );
-        assertEquals( "admin", user.getUserCredentials().getUsername() );
-        assertFalse( user.getUserCredentials().getUserAuthorityGroups().isEmpty() );
-        assertFalse( user.getOrganisationUnits().isEmpty() );
-        assertEquals( "PdWlltZnVZe", user.getOrganisationUnit().getUid() );
-
-        assertEquals( 2, optionSet.getOptions().size() );
-
-        // attribute value check
-        DataElement dataElementA = manager.get( DataElement.class, "SG4HuKlNEFH" );
-        DataElement dataElementB = manager.get( DataElement.class, "CCwk5Yx440o" );
-        DataElement dataElementC = manager.get( DataElement.class, "j5PneRdU7WT" );
-        DataElement dataElementD = manager.get( DataElement.class, "k90AVpBahO4" );
-
-        assertNotNull( dataElementA );
-        assertNotNull( dataElementB );
-        assertNotNull( dataElementC );
-        assertNotNull( dataElementD );
-
-        assertTrue( dataElementA.getAttributeValues().isEmpty() );
-        assertTrue( dataElementB.getAttributeValues().isEmpty() );
-        assertFalse( dataElementC.getAttributeValues().isEmpty() );
-        assertFalse( dataElementD.getAttributeValues().isEmpty() );
-    }
-
-    @Test
-    public void testValidateMetadataAttributeValuesUniqueAndMandatoryUID() throws IOException
-    {
-        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
-
-        ObjectBundleParams params = new ObjectBundleParams();
-        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
-        params.setObjects( metadata );
-
-        ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
-    }
 
     @Test
     public void testCreateDataSetsWithUgaUID() throws IOException
