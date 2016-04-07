@@ -154,7 +154,7 @@ public class QueryItem
 
     public boolean isProgramIndicator()
     {
-        return DimensionType.PROGRAM_INDICATOR.equals( item.getDimensionType() );
+        return DimensionType.PROGRAM_INDICATOR.equals( item.getDimensionItemType() );
     }
         
     public static List<QueryItem> getQueryItems( Collection<TrackedEntityAttribute> attributes )

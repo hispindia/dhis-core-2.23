@@ -45,7 +45,7 @@ public interface DimensionalItemObject
     /**
      * Gets the dimension type of this dimension item.
      */
-    DimensionType getDimensionType();
+    DimensionType getDimensionItemType();
 
     /**
      * Gets the legend set.

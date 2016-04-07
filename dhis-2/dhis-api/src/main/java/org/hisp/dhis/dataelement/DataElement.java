@@ -509,7 +509,7 @@ public class DataElement
     // -------------------------------------------------------------------------
 
     @Override
-    public DimensionType getDimensionType()
+    public DimensionType getDimensionItemType()
     {
         return DimensionType.PROGRAM_DATAELEMENT;
     }
