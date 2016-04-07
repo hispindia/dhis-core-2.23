@@ -901,8 +901,7 @@ public class TableAlteror
         updateNameColumnLengths();
         
         upgradeMapViewsToColumns();
-
-
+        upgradeDataDimensionItemsToReportingRateMetric();
 
         log.info( "Tables updated" );
     }
@@ -1344,6 +1343,20 @@ public class TableAlteror
                 "select mc.mapviewid " +
                 "from mapview_columns mc " +
                 "where mv.mapviewid = mc.mapviewid)";
+        
+        executeSql( sql );
+    }
+    
+    /**
+     * Upgrade data dimension items for legacy data sets to use REPORTING_RATE
+     * as metric.
+     */
+    public void upgradeDataDimensionItemsToReportingRateMetric()
+    {
+        String sql = "update datadimensionitem " +
+            "set metric='REPORTING_RATE' " +
+            "where datasetid is not null " +
+            "and metric is null;";
         
         executeSql( sql );
     }

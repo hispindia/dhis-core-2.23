@@ -34,6 +34,7 @@ package org.hisp.dhis.common;
 public enum DimensionItemType
 {
     DATA_ELEMENT,
+    DATA_ELEMENT_OPERAND,
     INDICATOR,
     REPORTING_RATE,
     PROGRAM_DATA_ELEMENT,

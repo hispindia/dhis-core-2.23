@@ -97,7 +97,7 @@ public class ReportingRate
     
     @Override
     public String getDimensionItem()
-    {
+    {        
         return dataSet.getUid() + COMPOSITE_DIM_OBJECT_PLAIN_SEP + metric.name();
     }
 
