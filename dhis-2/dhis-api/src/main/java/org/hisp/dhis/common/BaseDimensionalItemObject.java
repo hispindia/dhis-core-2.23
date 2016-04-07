@@ -48,7 +48,7 @@ public class BaseDimensionalItemObject
     /**
      * The dimension type.
      */
-    private DimensionType dimensionItemType;
+    private DimensionItemType dimensionItemType;
 
     /**
      * The legend set for this dimension.
@@ -113,12 +113,12 @@ public class BaseDimensionalItemObject
     @JsonProperty
     @JsonView( { DimensionalView.class } )
     @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
-    public DimensionType getDimensionItemType()
+    public DimensionItemType getDimensionItemType()
     {
         return dimensionItemType;
     }
 
-    public void setDimensionItemType( DimensionType dimensionItemType )
+    public void setDimensionItemType( DimensionItemType dimensionItemType )
     {
         this.dimensionItemType = dimensionItemType;
     }

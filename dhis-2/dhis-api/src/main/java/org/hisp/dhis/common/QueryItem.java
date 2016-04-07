@@ -46,7 +46,7 @@ import org.hisp.dhis.trackedentity.TrackedEntityAttribute;
  */
 public class QueryItem
 {
-    private DimensionalItemObject item;
+    private DimensionalItemObject item; // TODO DimensionObject
 
     private LegendSet legendSet;
 

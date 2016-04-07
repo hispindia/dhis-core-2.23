@@ -429,7 +429,7 @@ public class DefaultDataQueryService
 
             orgUnits = orgUnits.stream().distinct().collect( Collectors.toList() ); // Remove duplicates
 
-            DimensionalObject object = new BaseDimensionalObject( dimension, DimensionType.ORGANISATIONUNIT, null, DISPLAY_NAME_ORGUNIT, orgUnits );
+            DimensionalObject object = new BaseDimensionalObject( dimension, DimensionType.ORGANISATION_UNIT, null, DISPLAY_NAME_ORGUNIT, orgUnits );
 
             return object;
         }

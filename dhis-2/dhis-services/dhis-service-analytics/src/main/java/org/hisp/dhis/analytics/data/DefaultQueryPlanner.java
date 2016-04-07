@@ -448,7 +448,7 @@ public class DefaultQueryPlanner
             for ( Integer level : levelOrgUnitMap.keySet() )
             {
                 DataQueryParams query = params.instance();
-                query.setDimensionOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, LEVEL_PREFIX + level, levelOrgUnitMap.get( level ) );
+                query.setDimensionOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, LEVEL_PREFIX + level, levelOrgUnitMap.get( level ) );
                 queries.add( query );
             }
         }

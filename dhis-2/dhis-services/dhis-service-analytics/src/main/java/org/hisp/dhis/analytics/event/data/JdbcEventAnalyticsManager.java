@@ -652,7 +652,7 @@ public class JdbcEventAnalyticsManager
         // Organisation unit group sets
         // ---------------------------------------------------------------------
 
-        for ( DimensionalObject dim : params.getDimensionsAndFilters( DimensionType.ORGANISATIONUNIT_GROUPSET ) )
+        for ( DimensionalObject dim : params.getDimensionsAndFilters( DimensionType.ORGANISATION_UNIT_GROUP_SET ) )
         {            
             String col = statementBuilder.columnQuote( dim.getDimensionName() );
                 

@@ -38,6 +38,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.StringUtils;
 import org.hisp.dhis.common.BaseDimensionalItemObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
+import org.hisp.dhis.common.DimensionItemType;
 import org.hisp.dhis.common.DisplayProperty;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.common.IdentifiableObject;
@@ -1144,6 +1145,16 @@ public class OrganisationUnit
         this.users = users;
     }
 
+    // -------------------------------------------------------------------------
+    // DimensionalItemObject
+    // -------------------------------------------------------------------------
+
+    @Override
+    public DimensionItemType getDimensionItemType()
+    {
+        return DimensionItemType.ORGANISATION_UNIT;
+    }
+    
     // -------------------------------------------------------------------------
     // Getters and setters for transient fields
     // -------------------------------------------------------------------------

@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 import org.hisp.dhis.common.BaseDimensionalItemObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
-import org.hisp.dhis.common.DimensionType;
+import org.hisp.dhis.common.DimensionItemType;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
@@ -505,13 +505,15 @@ public class DataElement
     }
 
     // -------------------------------------------------------------------------
-    // DimensionalObject
+    // DimensionalItemObject
     // -------------------------------------------------------------------------
 
+    //TODO can also be dimension
+    
     @Override
-    public DimensionType getDimensionItemType()
+    public DimensionItemType getDimensionItemType()
     {
-        return DimensionType.PROGRAM_DATAELEMENT;
+        return DimensionItemType.DATA_ELEMENT;
     }
 
     // -------------------------------------------------------------------------

@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import org.hisp.dhis.analytics.AggregationType;
 import org.hisp.dhis.common.BaseDimensionalItemObject;
 import org.hisp.dhis.common.BaseIdentifiableObject;
-import org.hisp.dhis.common.DimensionType;
+import org.hisp.dhis.common.DimensionItemType;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.MergeMode;
@@ -153,9 +153,9 @@ public class ProgramIndicator
     // -------------------------------------------------------------------------
 
     @Override
-    public DimensionType getDimensionItemType()
+    public DimensionItemType getDimensionItemType()
     {
-        return DimensionType.PROGRAM_INDICATOR;
+        return DimensionItemType.PROGRAM_INDICATOR;
     }
     
     // -------------------------------------------------------------------------

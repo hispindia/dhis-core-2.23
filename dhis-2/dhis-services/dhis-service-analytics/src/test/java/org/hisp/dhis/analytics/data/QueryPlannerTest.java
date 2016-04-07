@@ -867,7 +867,7 @@ public class QueryPlannerTest
     public void validateSuccesA()
     {
         DataQueryParams params = new DataQueryParams();
-        params.getDimensions().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, getList( ouA, ouB ) ) );
+        params.getDimensions().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, getList( ouA, ouB ) ) );
         params.getDimensions().add( new BaseDimensionalObject( PERIOD_DIM_ID, DimensionType.PERIOD, getList( peA, peB ) ) );
         params.getFilters().add( new BaseDimensionalObject( DATA_X_DIM_ID, DimensionType.DATA_X, getList( deA, deB ) ) );
         
@@ -879,7 +879,7 @@ public class QueryPlannerTest
     {
         DataQueryParams params = new DataQueryParams();
         params.getDimensions().add( new BaseDimensionalObject( DATA_X_DIM_ID, DimensionType.DATA_X, getList( deA, deB, pdeA, pdeB ) ) );
-        params.getFilters().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, getList( ouA, ouB ) ) );
+        params.getFilters().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, getList( ouA, ouB ) ) );
         params.getDimensions().add( new BaseDimensionalObject( PERIOD_DIM_ID, DimensionType.PERIOD, getList( peA, peB ) ) );
         
         queryPlanner.validate( params );
@@ -889,7 +889,7 @@ public class QueryPlannerTest
     public void validateFailureA()
     {
         DataQueryParams params = new DataQueryParams();
-        params.getDimensions().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, getList( ouA, ouB ) ) );
+        params.getDimensions().add( new BaseDimensionalObject( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, getList( ouA, ouB ) ) );
         params.getFilters().add( new BaseDimensionalObject( DATA_X_DIM_ID, DimensionType.DATA_X, getList( deA, inA ) ) );
         
         queryPlanner.validate( params );

@@ -82,19 +82,29 @@ public class ReportingRate
     @Override
     public String getName()
     {
-        return dataSet.getName() + " " + metric.displayName();
+        String metricName = metric != null ? metric.displayName() : ReportingRateMetric.REPORTING_RATE.displayName();
+        
+        return dataSet.getName() + " " + metricName;
     }
 
     @Override
     public String getShortName()
     {
-        return dataSet.getShortName() + " " + metric.displayName();
+        String metricName = metric != null ? metric.displayName() : ReportingRateMetric.REPORTING_RATE.displayName();
+        
+        return dataSet.getShortName() + " " + metricName;
     }
     
     @Override
     public String getDimensionItem()
     {
         return dataSet.getUid() + COMPOSITE_DIM_OBJECT_PLAIN_SEP + metric.name();
+    }
+
+    @Override
+    public DimensionItemType getDimensionItemType()
+    {
+        return DimensionItemType.REPORTING_RATE;
     }
     
     @Override

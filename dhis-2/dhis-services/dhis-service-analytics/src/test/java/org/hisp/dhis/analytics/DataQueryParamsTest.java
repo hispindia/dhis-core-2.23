@@ -156,7 +156,7 @@ public class DataQueryParamsTest
         DataQueryParams params = new DataQueryParams();
         params.getDimensions().add( new BaseDimensionalObject( DimensionalObject.DATA_X_DIM_ID, DimensionType.DATA_X, null, null, 
             Lists.newArrayList( createIndicator( 'A', null ), createIndicator( 'B', null ) ) ) );
-        params.getDimensions().add( new BaseDimensionalObject( DimensionalObject.ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, null, null,
+        params.getDimensions().add( new BaseDimensionalObject( DimensionalObject.ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, null, null,
             Lists.newArrayList( createOrganisationUnit( 'A' ), createOrganisationUnit( 'B' ) ) ) );
         params.getFilters().add( new BaseDimensionalObject( DimensionalObject.PERIOD_DIM_ID, DimensionType.PERIOD, null, null,
             Lists.newArrayList( createPeriod( "201201" ), createPeriod( "201202" ) ) ) );
@@ -164,10 +164,10 @@ public class DataQueryParamsTest
         assertEquals( 2, params.getDimensions().size() );
         assertEquals( 1, params.getFilters().size() );
         
-        params.pruneToDimensionType( DimensionType.ORGANISATIONUNIT );
+        params.pruneToDimensionType( DimensionType.ORGANISATION_UNIT );
         
         assertEquals( 1, params.getDimensions().size() );
-        assertEquals( DimensionType.ORGANISATIONUNIT, params.getDimensions().get( 0 ).getDimensionType() );
+        assertEquals( DimensionType.ORGANISATION_UNIT, params.getDimensions().get( 0 ).getDimensionType() );
         assertEquals( 0, params.getFilters().size() );
     }
 }

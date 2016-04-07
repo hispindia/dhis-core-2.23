@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.hisp.dhis.common.BaseDimensionalItemObject;
+import org.hisp.dhis.common.DimensionItemType;
 import org.hisp.dhis.common.DxfNamespaces;
 import org.hisp.dhis.common.adapter.JacksonPeriodTypeDeserializer;
 import org.hisp.dhis.common.adapter.JacksonPeriodTypeSerializer;
@@ -299,6 +300,16 @@ public class Period
         return getEndDate().after( period.getEndDate() );
     }
 
+    // -------------------------------------------------------------------------
+    // DimensionalItemObject
+    // -------------------------------------------------------------------------
+
+    @Override
+    public DimensionItemType getDimensionItemType()
+    {
+        return DimensionItemType.PERIOD;
+    }
+    
     // -------------------------------------------------------------------------
     // hashCode, equals and toString
     // -------------------------------------------------------------------------

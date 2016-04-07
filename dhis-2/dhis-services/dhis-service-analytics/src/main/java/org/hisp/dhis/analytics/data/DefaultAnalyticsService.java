@@ -717,7 +717,7 @@ public class DefaultAnalyticsService
             return null;
         }
 
-        DataQueryParams orgUnitTargetParams = params.instance().pruneToDimensionType( DimensionType.ORGANISATIONUNIT );
+        DataQueryParams orgUnitTargetParams = params.instance().pruneToDimensionType( DimensionType.ORGANISATION_UNIT );
         orgUnitTargetParams.getDimensions().add( new BaseDimensionalObject( DimensionalObject.ORGUNIT_GROUP_DIM_ID, null, new ArrayList<DimensionalItemObject>( orgUnitGroups ) ) );
         orgUnitTargetParams.setSkipPartitioning( true );
 
@@ -967,7 +967,7 @@ public class DefaultAnalyticsService
                     map.put( object.getDimensionItem(), object.getDisplayProperty( params.getDisplayProperty() ) );
                 }
 
-                if ( DimensionType.ORGANISATIONUNIT.equals( dimension.getDimensionType() ) && params.isHierarchyMeta() )
+                if ( DimensionType.ORGANISATION_UNIT.equals( dimension.getDimensionType() ) && params.isHierarchyMeta() )
                 {
                     OrganisationUnit unit = (OrganisationUnit) object;
                     

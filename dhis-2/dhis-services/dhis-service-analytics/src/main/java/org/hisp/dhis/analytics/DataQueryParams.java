@@ -30,10 +30,10 @@ package org.hisp.dhis.analytics;
 
 import static org.hisp.dhis.analytics.AggregationType.AVERAGE_INT_DISAGGREGATION;
 import static org.hisp.dhis.analytics.AggregationType.AVERAGE_SUM_INT_DISAGGREGATION;
-import static org.hisp.dhis.common.DimensionType.CATEGORYOPTION_GROUPSET;
+import static org.hisp.dhis.common.DimensionType.CATEGORY_OPTION_GROUP_SET;
 import static org.hisp.dhis.common.DimensionType.DATA_X;
-import static org.hisp.dhis.common.DimensionType.ORGANISATIONUNIT;
-import static org.hisp.dhis.common.DimensionType.ORGANISATIONUNIT_GROUPSET;
+import static org.hisp.dhis.common.DimensionType.ORGANISATION_UNIT;
+import static org.hisp.dhis.common.DimensionType.ORGANISATION_UNIT_GROUP_SET;
 import static org.hisp.dhis.common.DimensionType.PERIOD;
 import static org.hisp.dhis.common.DimensionalObject.CATEGORYOPTIONCOMBO_DIM_ID;
 import static org.hisp.dhis.common.DimensionalObject.DATA_X_DIM_ID;
@@ -115,9 +115,9 @@ public class DataQueryParams
     private static final List<String> DIMENSION_PERMUTATION_IGNORE_DIMS = ImmutableList.<String>builder().add( 
         DATA_X_DIM_ID, CATEGORYOPTIONCOMBO_DIM_ID ).build();
     public static final List<DimensionType> COMPLETENESS_DIMENSION_TYPES = ImmutableList.<DimensionType>builder().add( 
-        DATA_X, PERIOD, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET, CATEGORYOPTION_GROUPSET ).build();
+        DATA_X, PERIOD, ORGANISATION_UNIT, ORGANISATION_UNIT_GROUP_SET, CATEGORY_OPTION_GROUP_SET ).build();
     private static final List<DimensionType> COMPLETENESS_TARGET_DIMENSION_TYPES = ImmutableList.<DimensionType>builder().add( 
-        DATA_X, ORGANISATIONUNIT, ORGANISATIONUNIT_GROUPSET ).build();
+        DATA_X, ORGANISATION_UNIT, ORGANISATION_UNIT_GROUP_SET ).build();
     
     private static final DimensionItem[] DIM_OPT_ARR = new DimensionItem[0];
     private static final DimensionItem[][] DIM_OPT_2D_ARR = new DimensionItem[0][];
@@ -1717,7 +1717,7 @@ public class DataQueryParams
     
     public void setOrganisationUnits( List<? extends DimensionalItemObject> organisationUnits )
     {
-        setDimensionOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, null, asList( organisationUnits ) );
+        setDimensionOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, null, asList( organisationUnits ) );
     }
     
     public void setOrganisationUnit( DimensionalItemObject organisationUnit )
@@ -1728,17 +1728,17 @@ public class DataQueryParams
     public List<DimensionalObject> getDataElementGroupSets()
     {
         return ListUtils.union( dimensions, filters ).stream().
-            filter( d -> DimensionType.DATAELEMENT_GROUPSET.equals( d.getDimensionType() ) ).collect( Collectors.toList() );
+            filter( d -> DimensionType.DATA_ELEMENT_GROUP_SET.equals( d.getDimensionType() ) ).collect( Collectors.toList() );
     }
     
     public void setDataElementGroupSet( DataElementGroupSet groupSet )
     {
-        setDimensionOptions( groupSet.getUid(), DimensionType.DATAELEMENT_GROUPSET, null, new ArrayList<>( groupSet.getItems() ) );
+        setDimensionOptions( groupSet.getUid(), DimensionType.DATA_ELEMENT_GROUP_SET, null, new ArrayList<>( groupSet.getItems() ) );
     }
     
     public void setOrganisationUnitGroupSet( OrganisationUnitGroupSet groupSet )
     {
-        setDimensionOptions( groupSet.getUid(), DimensionType.ORGANISATIONUNIT_GROUPSET, null, new ArrayList<>( groupSet.getItems() ) );
+        setDimensionOptions( groupSet.getUid(), DimensionType.ORGANISATION_UNIT_GROUP_SET, null, new ArrayList<>( groupSet.getItems() ) );
     }
 
     public void setCategory( DataElementCategory category )
@@ -1792,7 +1792,7 @@ public class DataQueryParams
     
     public void setFilterOrganisationUnits( List<DimensionalItemObject> organisationUnits )
     {
-        setFilterOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATIONUNIT, null, organisationUnits );
+        setFilterOptions( ORGUNIT_DIM_ID, DimensionType.ORGANISATION_UNIT, null, organisationUnits );
     }
     
     public void setFilterOrganisationUnit( DimensionalItemObject organisationUnit )

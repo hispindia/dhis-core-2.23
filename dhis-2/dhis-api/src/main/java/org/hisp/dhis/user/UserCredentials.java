@@ -453,7 +453,7 @@ public class UserCredentials
 
         for ( CategoryOptionGroupSet cogs : cogsDimensionConstraints )
         {
-            cogs.setDimensionType( DimensionType.CATEGORYOPTION_GROUPSET );
+            cogs.setDimensionType( DimensionType.CATEGORY_OPTION_GROUP_SET );
             constraints.add( cogs );
         }
 
