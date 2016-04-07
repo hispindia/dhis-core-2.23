@@ -425,6 +425,9 @@ public abstract class AbstractEventService
     @Override
     public Events getEvents( EventSearchParams params )
     {
+
+        validate( params );
+
         List<OrganisationUnit> organisationUnits = new ArrayList<>();
 
         OrganisationUnit orgUnit = params.getOrgUnit();
@@ -1321,5 +1324,29 @@ public abstract class AbstractEventService
     private DataElement getDataElement( IdScheme idScheme, String id )
     {
         return dataElementCache.get( id, new IdentifiableObjectCallable<>( manager, DataElement.class, idScheme, id ) );
+    }
+
+    @Override
+    public void validate( EventSearchParams params )
+        throws IllegalQueryException
+    {
+        String violation = null;
+
+        if ( params == null )
+        {
+            throw new IllegalQueryException( "Params cannot be null" );
+        }
+
+        if ( params.getProgram() == null && params.getOrgUnit() == null && params.getEvents().isEmpty() )
+        {
+            violation =  "Require at least one of the following params for querying: program, orgUnit, event. ";
+        }
+
+        if ( violation != null )
+        {
+            log.warn( "Validation failed: " + violation );
+
+            throw new IllegalQueryException( violation );
+        }
     }
 }
