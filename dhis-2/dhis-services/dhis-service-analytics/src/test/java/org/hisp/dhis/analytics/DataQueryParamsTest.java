@@ -41,6 +41,7 @@ import java.util.Map;
 
 import org.hisp.dhis.DhisConvenienceTest;
 import org.hisp.dhis.common.BaseDimensionalObject;
+import org.hisp.dhis.common.DataDimensionItemType;
 import org.hisp.dhis.common.DimensionType;
 import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.DimensionalObject;
@@ -48,6 +49,8 @@ import org.hisp.dhis.common.DimensionalObjectUtils;
 import org.hisp.dhis.common.ReportingRate;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
+import org.hisp.dhis.indicator.Indicator;
+import org.hisp.dhis.indicator.IndicatorType;
 import org.hisp.dhis.period.Period;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,6 +63,11 @@ import com.google.common.collect.Lists;
 public class DataQueryParamsTest
     extends DhisConvenienceTest
 {
+    private IndicatorType it;
+    
+    private Indicator inA;
+    private Indicator inB;
+    
     private DataElement deA;
     private DataElement deB;
     private DataElement deC;
@@ -70,6 +78,11 @@ public class DataQueryParamsTest
     @Before
     public void setUpTest()
     {
+        it = createIndicatorType( 'A' );
+        
+        inA = createIndicator( 'A', it );
+        inB = createIndicator( 'A', it );
+        
         deA = createDataElement( 'A', new DataElementCategoryCombo() );
         deB = createDataElement( 'B', new DataElementCategoryCombo() );
         deC = createDataElement( 'C', new DataElementCategoryCombo() );
@@ -169,5 +182,43 @@ public class DataQueryParamsTest
         assertEquals( 1, params.getDimensions().size() );
         assertEquals( DimensionType.ORGANISATION_UNIT, params.getDimensions().get( 0 ).getDimensionType() );
         assertEquals( 0, params.getFilters().size() );
+    }
+    
+    @Test
+    public void testRetainDataDimension()
+    {
+        List<DimensionalItemObject> items = Lists.newArrayList( inA, inB, deA, deB, deC, rrA, rrB );
+        
+        DataQueryParams params = new DataQueryParams();
+        params.setDimensionOptions( DimensionalObject.DATA_X_DIM_ID, DimensionType.DATA_X, null, items );
+        
+        assertEquals( 7, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        
+        params.retainDataDimension( DataDimensionItemType.AGGREGATE_DATA_ELEMENT );
+        
+        assertEquals( 3, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deA ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deB ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deC ) );
+    }
+    
+    @Test
+    public void testRetainDataDimensions()
+    {
+        List<DimensionalItemObject> items = Lists.newArrayList( inA, inB, deA, deB, deC, rrA, rrB );
+        
+        DataQueryParams params = new DataQueryParams();
+        params.setDimensionOptions( DimensionalObject.DATA_X_DIM_ID, DimensionType.DATA_X, null, items );
+        
+        assertEquals( 7, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        
+        params.retainDataDimensions( DataDimensionItemType.AGGREGATE_DATA_ELEMENT, DataDimensionItemType.REPORTING_RATE );
+        
+        assertEquals( 5, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deA ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deB ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( deC ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrA ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrB ) );
     }
 }
