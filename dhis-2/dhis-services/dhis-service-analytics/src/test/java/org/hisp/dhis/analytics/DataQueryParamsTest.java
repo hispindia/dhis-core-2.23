@@ -47,6 +47,7 @@ import org.hisp.dhis.common.DimensionalItemObject;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.DimensionalObjectUtils;
 import org.hisp.dhis.common.ReportingRate;
+import org.hisp.dhis.common.ReportingRateMetric;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.indicator.Indicator;
@@ -74,6 +75,8 @@ public class DataQueryParamsTest
     
     private ReportingRate rrA;
     private ReportingRate rrB;
+    private ReportingRate rrC;
+    private ReportingRate rrD;
 
     @Before
     public void setUpTest()
@@ -87,8 +90,10 @@ public class DataQueryParamsTest
         deB = createDataElement( 'B', new DataElementCategoryCombo() );
         deC = createDataElement( 'C', new DataElementCategoryCombo() );
         
-        rrA = new ReportingRate( createDataSet( 'A', null ) );
-        rrB = new ReportingRate( createDataSet( 'B', null ) );
+        rrA = new ReportingRate( createDataSet( 'A', null ), ReportingRateMetric.REPORTING_RATE );
+        rrB = new ReportingRate( createDataSet( 'B', null ), ReportingRateMetric.REPORTING_RATE );
+        rrC = new ReportingRate( createDataSet( 'C', null ), ReportingRateMetric.EXPECTED_REPORTS );
+        rrD = new ReportingRate( createDataSet( 'D', null ), ReportingRateMetric.ACTUAL_REPORTS );
     }
     
     @Test
@@ -221,4 +226,21 @@ public class DataQueryParamsTest
         assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrA ) );
         assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrB ) );
     }
+
+    @Test
+    public void testRetainDataDimensionReportingRates()
+    {
+        List<DimensionalItemObject> items = Lists.newArrayList( inA, inB, deA, deB, deC, rrA, rrB, rrC, rrD );
+        
+        DataQueryParams params = new DataQueryParams();
+        params.setDimensionOptions( DimensionalObject.DATA_X_DIM_ID, DimensionType.DATA_X, null, items );
+        
+        assertEquals( 9, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        
+        params.retainDataDimensionReportingRates( ReportingRateMetric.REPORTING_RATE );
+        
+        assertEquals( 2, params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().size() );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrA ) );
+        assertTrue( params.getDimension( DimensionalObject.DATA_X_DIM_ID ).getItems().contains( rrB ) );
+    }    
 }

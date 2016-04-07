@@ -68,6 +68,7 @@ import org.hisp.dhis.common.IdentifiableProperty;
 import org.hisp.dhis.common.ListMap;
 import org.hisp.dhis.common.MapMap;
 import org.hisp.dhis.common.ReportingRate;
+import org.hisp.dhis.common.ReportingRateMetric;
 import org.hisp.dhis.commons.collection.CollectionUtils;
 import org.hisp.dhis.commons.collection.ListUtils;
 import org.hisp.dhis.dataelement.CategoryOptionGroupSet;
@@ -1602,6 +1603,21 @@ public class DataQueryParams
         DimensionalObject dimension = getDimensionOrFilter( DATA_X_DIM_ID );
         
         List<DimensionalItemObject> items = AnalyticsUtils.getByDataDimensionType( itemType, dimension.getItems() );
+        
+        dimension.getItems().clear();
+        dimension.getItems().addAll( items );
+        
+        return this;
+    }
+    
+    public DataQueryParams retainDataDimensionReportingRates( ReportingRateMetric metric )
+    {
+        DimensionalObject dimension = getDimensionOrFilter( DATA_X_DIM_ID );
+        
+        List<ReportingRate> items = DimensionalObjectUtils.asTypedList( 
+            AnalyticsUtils.getByDataDimensionType( DataDimensionItemType.REPORTING_RATE, dimension.getItems() ) );
+        
+        items = items.stream().filter( r -> metric == r.getMetric() ).collect( Collectors.toList() );
         
         dimension.getItems().clear();
         dimension.getItems().addAll( items );

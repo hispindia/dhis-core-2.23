@@ -379,7 +379,7 @@ public class DefaultAnalyticsService
     }
     
     /**
-     * Adds data set values to the given grid based on the given data query
+     * Adds reporting rates to the given grid based on the given data query
      * parameters.
      *
      * @param params the data query parameters.
@@ -389,20 +389,39 @@ public class DefaultAnalyticsService
     {
         if ( !params.getReportingRates().isEmpty() && !params.isSkipData() )
         {
-            // -----------------------------------------------------------------
-            // Get complete data set registrations
-            // -----------------------------------------------------------------
+            for ( ReportingRateMetric metric : ReportingRateMetric.values() )
+            {
+                DataQueryParams dataSourceParams = params.instance();
+                dataSourceParams.retainDataDimensionReportingRates( metric );
+                dataSourceParams.ignoreDataApproval(); // No approval for reporting rates
+                dataSourceParams.setAggregationType( AggregationType.COUNT );
+                
+                addReportingRates( dataSourceParams, grid, metric );
+            }
+        }
+    }
 
-            DataQueryParams dataSourceParams = params.instance();
-            dataSourceParams.ignoreDataApproval(); // No approval for reporting rates
-            dataSourceParams.retainDataDimension( DataDimensionItemType.REPORTING_RATE );
-            dataSourceParams.setAggregationType( AggregationType.COUNT );
-
+    /**
+     * Adds reporting rates to the given grid based on the given data query
+     * parameters and reporting rate metric.
+     *
+     * @param params the data query parameters.
+     * @param grid the grid.
+     * @param metic the reporting rate metric.
+     */
+    private void addReportingRates( DataQueryParams dataSourceParams, Grid grid, ReportingRateMetric metric )
+    {
+        if ( !dataSourceParams.getReportingRates().isEmpty() && !dataSourceParams.isSkipData() )
+        {
             if ( !COMPLETENESS_DIMENSION_TYPES.containsAll( dataSourceParams.getDimensionTypes() ) )
             {
                 return;
             }
-            
+
+            // -----------------------------------------------------------------
+            // Get complete data set registrations
+            // -----------------------------------------------------------------
+
             Map<String, Double> aggregatedDataMap = getAggregatedCompletenessValueMap( dataSourceParams );
 
             // -----------------------------------------------------------------
@@ -442,8 +461,10 @@ public class DefaultAnalyticsService
                 List<String> targetRow = ListUtils.getAtIndexes( dataRow, completenessDimIndexes );
                 String targetKey = StringUtils.join( targetRow, DIMENSION_SEP );
                 Double target = targetMap.get( targetKey );
+                
+                Double actual = entry.getValue();
 
-                if ( target != null && entry.getValue() != null )
+                if ( target != null && actual != null )
                 {
                     // ---------------------------------------------------------
                     // Multiply target value by number of periods in time span
@@ -457,14 +478,25 @@ public class DefaultAnalyticsService
                     // Calculate reporting rate and replace data set with rate
                     // ---------------------------------------------------------
 
-                    double value = entry.getValue() * PERCENT / target;
+                    double rate = actual * PERCENT / target;
                     
-                    String reportingRate = DimensionalObjectUtils.getDimensionItem( dataRow.get( DX_INDEX ), ReportingRateMetric.REPORTING_RATE );
+                    Double value = rate;
+                    
+                    if ( ReportingRateMetric.ACTUAL_REPORTS == metric )
+                    {
+                        value = actual;
+                    }
+                    else if ( ReportingRateMetric.EXPECTED_REPORTS == metric )
+                    {
+                        value = target;
+                    }
+                    
+                    String reportingRate = DimensionalObjectUtils.getDimensionItem( dataRow.get( DX_INDEX ), metric );
                     dataRow.set( DX_INDEX, reportingRate );
 
                     grid.addRow();
                     grid.addValues( dataRow.toArray() );
-                    grid.addValue( params.isSkipRounding() ? value : MathUtils.getRounded( value ) );
+                    grid.addValue( dataSourceParams.isSkipRounding() ? value : MathUtils.getRounded( value ) );
                 }
             }
         }
