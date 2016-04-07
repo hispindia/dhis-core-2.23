@@ -238,7 +238,20 @@ public class DefaultPreheatService implements PreheatService
         {
             List<IdentifiableObject> objects = params.getObjects().get( klass );
             preheat.put( params.getPreheatIdentifier(), objects );
+        }
 
+        handleAttributes( params.getObjects(), preheat );
+
+        periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
+        periodStore.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
+
+        return preheat;
+    }
+
+    private void handleAttributes( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects, Preheat preheat )
+    {
+        for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
+        {
             List<Attribute> mandatoryAttributes = attributeService.getMandatoryAttributes( klass );
             preheat.getMandatoryAttributes().put( klass, new ArrayList<>() );
             mandatoryAttributes.forEach( attribute -> preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() ) );
@@ -258,11 +271,6 @@ public class DefaultPreheatService implements PreheatService
                 preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() ).add( attributeValue.getValue() );
             } );
         }
-
-        periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
-        periodStore.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
-
-        return preheat;
     }
 
     @Override
