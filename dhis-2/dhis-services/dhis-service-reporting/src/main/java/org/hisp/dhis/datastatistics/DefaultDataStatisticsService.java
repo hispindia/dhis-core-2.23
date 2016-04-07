@@ -103,16 +103,16 @@ public class DefaultDataStatisticsService
         int activeUsers = userService.getActiveUsersCount( 1 );
 
         Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
-        
-        DataStatistics dataStatistics = new DataStatistics( activeUsers, 
-            eventCountMap.get( DataStatisticsEventType.MAP_VIEW ), 
+
+        DataStatistics dataStatistics = new DataStatistics( activeUsers,
+            eventCountMap.get( DataStatisticsEventType.MAP_VIEW ),
             eventCountMap.get( DataStatisticsEventType.CHART_VIEW ),
-            eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ), 
-            eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ), 
-            eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ),
             eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
-            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ), 
-            eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ), 
+            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ),
+            eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ),
             savedMaps, savedCharts, savedReportTables, savedEventReports,
             savedEventCharts, savedDashboards, savedIndicators, totalUsers );
 

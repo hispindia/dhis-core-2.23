@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-public class HibernateDataStatisticsStoreTest 
+public class HibernateDataStatisticsStoreTest
     extends DhisSpringTest
 {
     @Autowired
@@ -57,7 +57,6 @@ public class HibernateDataStatisticsStoreTest
     private DataStatistics ds3;
     private DataStatistics ds4;
     private DataStatistics ds5;
-    private DataStatistics ds6;
 
     private int ds1Id;
     private int ds2Id;
@@ -68,11 +67,10 @@ public class HibernateDataStatisticsStoreTest
     public void setUpTest() throws Exception
     {
         ds1 = new DataStatistics();
-        ds2 = new DataStatistics( 10, 2.0, 3.0, 4.0, 5.0, 6.0,10.0, 7.0, 8.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18 );
-        ds3 = new DataStatistics();
-        ds4 = new DataStatistics( 10, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0,10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19 );
-        ds5 = new DataStatistics( 3, 2.0, 1.0, 6.0, 5.0, 4.0, 8.0, 3.0,10.0, 4.0, 4.0, 5.0, 9.0, 7.0, 6.0, 4.0, 2 );
-        ds6 = new DataStatistics( 5, 6.0, 4.0, 3.0, 5.0, 7.0, 8.0, 2.8,10.0, 1.6, 5.5, 6.4, 8.3, 8.2, 9.4, 9.6, 9 );
+        ds2 = new DataStatistics( 10, 2.0, 3.0, 4.0, 5.0, 6.0, 10.0, 7.0, 8.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18 );
+        ds3 = new DataStatistics( 10, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 10.0, 11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19 );
+        ds4 = new DataStatistics( 3, 2.0, 1.0, 6.0, 5.0, 4.0, 8.0, 3.0, 10.0, 4.0, 4.0, 5.0, 9.0, 7.0, 6.0, 4.0, 2 );
+        ds5 = new DataStatistics( 5, 6.0, 4.0, 3.0, 5.0, 7.0, 8.0, 2.8, 10.0, 1.6, 5.5, 6.4, 8.3, 8.2, 9.4, 9.6, 9 );
 
         ds1Id = 0;
         ds2Id = 0;
@@ -84,7 +82,6 @@ public class HibernateDataStatisticsStoreTest
         ds3.setCreated( date );
         ds4.setCreated( date );
         ds5.setCreated( date );
-        ds6.setCreated( date );
     }
 
     @Test
@@ -101,12 +98,10 @@ public class HibernateDataStatisticsStoreTest
     public void getSnapshotsInIntervalGetInDAYTest()
     {
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        
-        double expected = ds2.getSavedMaps() + ds4.getSavedMaps() + ds5.getSavedMaps() + ds6.getSavedMaps();
-        
+
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
         assertTrue( asList.size() == 1 );
     }
@@ -118,10 +113,10 @@ public class HibernateDataStatisticsStoreTest
         ds2.setCreated( date );
 
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        
+
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2015, 3, 19 ), getDate( 2016, 3, 21 ) );
         assertTrue( asList.size() == 2 );
     }
@@ -130,25 +125,21 @@ public class HibernateDataStatisticsStoreTest
     public void getSnapshotsInIntervalGetInDAY_GEDatesTest()
     {
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        
-        double expected = ds2.getSavedMaps() + ds4.getSavedMaps() + ds5.getSavedMaps() + ds6.getSavedMaps();
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2017, 3, 21 ), getDate( 2017, 3, 22 ) );
-        assertTrue( asList.size() == 0);
-
+        assertTrue( asList.size() == 0 );
     }
 
     @Test
     public void getSnapshotsInIntervalGetInWEEKTest()
     {
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        double expected = ds2.getSavedMaps() + ds4.getSavedMaps() + ds5.getSavedMaps() + ds6.getSavedMaps();
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.WEEK, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
         assertTrue( asList.size() == 1 );
@@ -158,10 +149,9 @@ public class HibernateDataStatisticsStoreTest
     public void getSnapshotsInIntervalGetInMONTHTest()
     {
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        double expected = ds2.getSavedMaps() + ds4.getSavedMaps() + ds5.getSavedMaps() + ds6.getSavedMaps();
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.MONTH, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
         assertTrue( asList.size() == 1 );
@@ -171,10 +161,9 @@ public class HibernateDataStatisticsStoreTest
     public void getSnapshotsInIntervalGetInYEARTest()
     {
         dataStatisticsStore.save( ds2 );
+        dataStatisticsStore.save( ds3 );
         dataStatisticsStore.save( ds4 );
         dataStatisticsStore.save( ds5 );
-        dataStatisticsStore.save( ds6 );
-        double expected = ds2.getSavedMaps() + ds4.getSavedMaps() + ds5.getSavedMaps() + ds6.getSavedMaps();
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.YEAR, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
         assertTrue( asList.size() == 1 );

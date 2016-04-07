@@ -34,10 +34,8 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 
 import java.util.Calendar;
 import java.util.Date;
@@ -49,7 +47,7 @@ import static org.junit.Assert.*;
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
  */
-public class DefaultDataStatisticsServiceTest 
+public class DefaultDataStatisticsServiceTest
     extends DhisSpringTest
 {
     @Autowired
@@ -58,34 +56,28 @@ public class DefaultDataStatisticsServiceTest
     @Autowired
     private DataStatisticsStore hibernateDataStatisticsStore;
 
-    private Date now;
-    private Date startDate;
     private DataStatisticsEvent dse1;
     private DataStatisticsEvent dse2;
-    private DataStatistics ds;
     private int snapId1;
-    private int snapId2;
 
     private DateTimeFormatter fmt;
 
     @Override
     public void setUpTest() throws Exception
     {
-
         DateTime formatdate;
         fmt = DateTimeFormat.forPattern( "yyyy-mm-dd" );
         formatdate = fmt.parseDateTime( "2016-03-22" );
-        now = formatdate.toDate();
+        Date now = formatdate.toDate();
 
 
         dse1 = new DataStatisticsEvent();
         dse2 = new DataStatisticsEvent( DataStatisticsEventType.EVENT_CHART_VIEW, now, "TestUser" );
-        ds = new DataStatistics( 10, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 11.0, 10.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18 );
+        DataStatistics ds = new DataStatistics( 10, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 11.0, 10.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18 );
 
         snapId1 = hibernateDataStatisticsStore.save( ds );
     }
 
-    @Ignore
     @Test
     public void testAddEvent() throws Exception
     {
@@ -93,7 +85,6 @@ public class DefaultDataStatisticsServiceTest
         assertNotEquals( 0, id );
     }
 
-    @Ignore
     @Test
     public void testAddEventWithParams() throws Exception
     {
@@ -101,7 +92,6 @@ public class DefaultDataStatisticsServiceTest
         assertNotEquals( 0, id );
     }
 
-    @Ignore
     @Test
     public void testSaveSnapshot() throws Exception
     {
@@ -110,12 +100,12 @@ public class DefaultDataStatisticsServiceTest
         fmt = DateTimeFormat.forPattern( "yyyy-mm-dd" );
         c.add( Calendar.DAY_OF_MONTH, -2 );
         formatdate = fmt.parseDateTime( "2016-03-21" );
-        startDate = formatdate.toDate();
+        Date startDate = formatdate.toDate();
 
         dse1 = new DataStatisticsEvent( DataStatisticsEventType.EVENT_CHART_VIEW, startDate, "TestUser" );
         dataStatisticsService.addEvent( dse1 );
         dataStatisticsService.addEvent( dse2 );
-        snapId2 = dataStatisticsService.saveSnapshot();
+        int snapId2 = dataStatisticsService.saveSnapshot();
 
         assertTrue( snapId2 != 0 );
         assertTrue( snapId1 != snapId2 );

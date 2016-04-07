@@ -65,7 +65,7 @@ public class HibernateDataStatisticsStore
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
 
             AggregatedStatistics ads = new AggregatedStatistics();
-            
+
             ads.setYear( resultSet.getInt( "yr" ) );
 
             if ( eventInterval == EventInterval.DAY )
@@ -137,7 +137,7 @@ public class HibernateDataStatisticsStore
      * Creating a SQL for retrieving aggregated data with group by YEAR
      *
      * @param start start date
-     * @param end end date
+     * @param end   end date
      * @return SQL string
      */
     private String getYearSql( Date start, Date end )
@@ -150,7 +150,7 @@ public class HibernateDataStatisticsStore
      * Creating a SQL for retrieving aggregated data with group by YEAR, MONTH
      *
      * @param start start date
-     * @param end end date
+     * @param end   end date
      * @return SQL string
      */
     private String getMonthSql( Date start, Date end )
@@ -164,7 +164,7 @@ public class HibernateDataStatisticsStore
      * Creating a SQL for retrieving aggregated data with group by YEAR, WEEK
      *
      * @param start start date
-     * @param end end date
+     * @param end   end date
      * @return SQL string
      */
     private String getWeekSql( Date start, Date end )
@@ -178,7 +178,7 @@ public class HibernateDataStatisticsStore
      * Creating a SQL for retrieving aggregated data with group by YEAR, DAY
      *
      * @param start start date
-     * @param end end date
+     * @param end   end date
      * @return SQL string
      */
     private String getDaySql( Date start, Date end )
@@ -190,11 +190,11 @@ public class HibernateDataStatisticsStore
     }
 
     /**
-     * Part of SQL witch is always the same in the different intervals YEAR, 
+     * Part of SQL witch is always the same in the different intervals YEAR,
      * MONTH, WEEK and DAY
      *
      * @param start start date
-     * @param end end date
+     * @param end   end date
      * @return SQL string
      */
     private String commonSql( Date start, Date end )
