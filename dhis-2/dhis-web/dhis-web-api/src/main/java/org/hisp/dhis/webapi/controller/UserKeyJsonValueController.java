@@ -37,9 +37,13 @@ import org.hisp.dhis.webapi.service.WebMessageService;
 import org.hisp.dhis.webapi.utils.WebMessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
@@ -100,8 +104,7 @@ public class UserKeyJsonValueController
     {
         userKeyJsonValueService.deleteNamespaceFromUser( currentUserService.getCurrentUser(), namespace );
 
-        messageService
-            .sendJson( WebMessageUtils.ok( "All keys from namespace '" + namespace + "' deleted." ), response );
+        messageService.sendJson( WebMessageUtils.ok( "All keys from namespace '" + namespace + "' deleted." ), response );
     }
 
     /**
@@ -163,9 +166,7 @@ public class UserKeyJsonValueController
         userKeyJsonValueService.addUserKeyJsonValue( userKeyJsonValue );
 
         response.setStatus( HttpServletResponse.SC_CREATED );
-        messageService
-            .sendJson( WebMessageUtils.created( "Key '" + key + "' in namespace '" + namespace + "' created." ),
-                response );
+        messageService.sendJson( WebMessageUtils.created( "Key '" + key + "' in namespace '" + namespace + "' created." ), response );
     }
 
     /**
@@ -184,8 +185,7 @@ public class UserKeyJsonValueController
 
         if ( userKeyJsonValue == null )
         {
-            throw new WebMessageException( WebMessageUtils
-                .notFound( "The key '" + key + "' was not found in the namespace '" + namespace + "'." ) );
+            throw new WebMessageException( WebMessageUtils.notFound( "The key '" + key + "' was not found in the namespace '" + namespace + "'." ) );
         }
 
         if ( !renderService.isValidJson( body ) )
@@ -198,9 +198,7 @@ public class UserKeyJsonValueController
         userKeyJsonValueService.updateUserKeyJsonValue( userKeyJsonValue );
 
         response.setStatus( HttpServletResponse.SC_OK );
-        messageService
-            .sendJson( WebMessageUtils.created( "Key '" + key + "' in namespace '" + namespace + "' updated." ),
-                response );
+        messageService.sendJson( WebMessageUtils.created( "Key '" + key + "' in namespace '" + namespace + "' updated." ), response );
     }
 
     /**
@@ -218,14 +216,11 @@ public class UserKeyJsonValueController
 
         if ( userKeyJsonValue == null )
         {
-            throw new WebMessageException( WebMessageUtils
-                .notFound( "The key '" + key + "' was not found in the namespace '" + namespace + "'." ) );
+            throw new WebMessageException( WebMessageUtils.notFound( "The key '" + key + "' was not found in the namespace '" + namespace + "'." ) );
         }
 
         userKeyJsonValueService.deleteUserKeyJsonValue( userKeyJsonValue );
 
-        messageService
-            .sendJson( WebMessageUtils.ok( "Key '" + key + "' deleted from the namespace '" + namespace + "'." ),
-                response );
+        messageService.sendJson( WebMessageUtils.ok( "Key '" + key + "' deleted from the namespace '" + namespace + "'." ), response );
     }
 }

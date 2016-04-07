@@ -415,15 +415,18 @@ public class DefaultDataApprovalService
     /**
      * Returns the next higher (lower number) level within a workflow.
      */
-    private DataApprovalLevel nextHigherLevel(DataApprovalLevel level, DataApprovalWorkflow workflow)
+    private DataApprovalLevel nextHigherLevel( DataApprovalLevel level, DataApprovalWorkflow workflow )
     {
         List<DataApprovalLevel> sortedLevels = workflow.getSortedLevels();
 
-        for ( int i = 0; i < sortedLevels.size(); i++ ) {
-            if ( i > 0 && sortedLevels.get( i ) == level ) {
+        for ( int i = 0; i < sortedLevels.size(); i++ )
+        {
+            if ( i > 0 && sortedLevels.get( i ) == level )
+            {
                 return sortedLevels.get( i - 1 );
             }
         }
+        
         return level;
     }
 
