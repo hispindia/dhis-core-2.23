@@ -1334,12 +1334,12 @@ public abstract class AbstractEventService
 
         if ( params == null )
         {
-            throw new IllegalQueryException( "Params cannot be null" );
+            throw new IllegalQueryException( "Query parametrs can not be empty." );
         }
 
-        if ( params.getProgram() == null && params.getOrgUnit() == null && params.getEvents().isEmpty() )
+        if ( params.getProgram() == null && params.getOrgUnit() == null && params.getTrackedEntityInstance() == null && params.getEvents().isEmpty() )
         {
-            violation =  "Require at least one of the following params for querying: program, orgUnit, event. ";
+            violation =  "At least one of the following query parameters are requried: orgUnit, program, trackedEntityInstance or event.";
         }
 
         if ( violation != null )
