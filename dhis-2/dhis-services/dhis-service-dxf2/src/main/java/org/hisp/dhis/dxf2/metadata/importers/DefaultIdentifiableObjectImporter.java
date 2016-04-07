@@ -69,6 +69,7 @@ import org.hisp.dhis.period.PeriodType;
 import org.hisp.dhis.program.ProgramStage;
 import org.hisp.dhis.program.ProgramStageDataElement;
 import org.hisp.dhis.program.ProgramValidation;
+import org.hisp.dhis.programrule.ProgramRuleAction;
 import org.hisp.dhis.schema.Schema;
 import org.hisp.dhis.schema.SchemaService;
 import org.hisp.dhis.schema.validation.SchemaValidator;
@@ -629,6 +630,7 @@ public class DefaultIdentifiableObjectImporter<T extends BaseIdentifiableObject>
                 && !CategoryOptionGroupSet.class.isAssignableFrom( object.getClass() )
                 && !DashboardItem.class.isAssignableFrom( object.getClass() )
                 && !ProgramStageDataElement.class.isAssignableFrom( object.getClass() )
+                && !ProgramRuleAction.class.isAssignableFrom( object.getClass() )
                 && !Constant.class.isAssignableFrom( object.getClass() ) )
             {
                 conflict = new ImportConflict( IdentifiableObjectUtils.getDisplayName( object ), "Empty shortName for object " + object );
