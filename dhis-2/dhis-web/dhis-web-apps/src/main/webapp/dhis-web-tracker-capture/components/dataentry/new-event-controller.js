@@ -152,17 +152,10 @@ trackerCapture.controller('EventCreationController',
     });    
 
     $scope.getCategoryOptions = function(){
-        $scope.eventFetched = false;
-        $scope.optionsReady = false;
         $scope.selectedOptions = [];
         for (var i = 0; i < $scope.selectedCategories.length; i++) {
             if ($scope.selectedCategories[i].selectedOption && $scope.selectedCategories[i].selectedOption.id) {
-                $scope.optionsReady = true;
                 $scope.selectedOptions.push($scope.selectedCategories[i].selectedOption.id);
-            }
-            else {
-                $scope.optionsReady = false;
-                break;
             }
         }
     };

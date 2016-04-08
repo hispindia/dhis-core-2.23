@@ -655,6 +655,7 @@ trackerCapture.controller('DataEntryController',
     function broadcastDataEntryControllerData(){
         $rootScope.$broadcast('dataEntryControllerData', {programStages: $scope.programStages, eventsByStage: $scope.eventsByStage, addNewEvent: $scope.addNewEvent, openEvent: $scope.openEventExternal, deleteScheduleOverDueEvents: $scope.deleteScheduleAndOverdueEvents, executeRules: $scope.executeRules });
     }
+    
     $scope.getEvents = function () {
 
         $scope.allEventsSorted = [];
@@ -2912,7 +2913,35 @@ trackerCapture.controller('DataEntryController',
                 $scope.fileNames[$scope.currentEvent.event][dataElement] = $scope.currentFileNames[dataElement];
             }
         }
-    };    
+    };
+    
+    $scope.categoryOptionComboFilter = function(){
+        
+        var modalInstance = $modal.open({
+            templateUrl: 'components/dataentry/modal-category-option.html',
+            controller: 'EventCategoryComboController',
+            resolve: {
+                selectedProgram: function () {
+                    return $scope.selectedProgram;
+                },
+                selectedCategories: function(){
+                    return $scope.selectedCategories;
+                },
+                selectedTeiId: function(){
+                    return $scope.selectedTei.trackedEntityInstance;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (events) {
+            if (angular.isObject(events)) {
+                CurrentSelection.setSelectedTeiEvents( events );
+                $scope.getEvents();
+            }
+        }, function () {
+        });
+        
+    };
 })
 .controller('EventOptionsInTableController', function($scope, $translate){
     
@@ -2938,7 +2967,6 @@ trackerCapture.controller('DataEntryController',
             $scope.completeIncompleteEvent(true);
         }
     };
-    
     
     $scope.eventTableOptions = {};    
     $scope.eventTableOptions[COMPLETE] = {text: "Complete", tooltip: 'Complete', icon: "<span class='glyphicon glyphicon-check'></span>", value: COMPLETE, onClick: $scope.completeIncompleteEventFromTable, sort: 0};

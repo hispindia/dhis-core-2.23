@@ -1023,12 +1023,17 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             });            
             return promise;
         },
-        getEventsByProgram: function(entity, program){   
-            
+        getEventsByProgram: function(entity, program, attributeCategory){            
             var url = '../api/events.json?ouMode=ACCESSIBLE&' + 'trackedEntityInstance=' + entity + skipPaging;            
+            
             if(program){
                 url = url + '&program=' + program;
             }
+            
+            if( attributeCategory && !attributeCategory.default){
+                url = url + '&attributeCc=' + attributeCategory.cc + '&attributeCos=' + attributeCategory.cp;
+            }
+            
             var promise = $http.get( url ).then(function(response){
                 return response.data.events;
             });            

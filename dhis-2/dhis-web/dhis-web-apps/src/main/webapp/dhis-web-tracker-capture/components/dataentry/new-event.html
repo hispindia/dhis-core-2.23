@@ -105,18 +105,7 @@
                 <button ng-disabled="true" type="button" class="btn btn-default small-horizontal-spacing trim" ng-click="fetchPeriod('NEXT')" title="{{'nxt_period'| translate}}"><i class="fa fa-forward"></i></button>        
             </div>        
         </div>
-        <div class="row" ng-if="selectedProgram" ng-repeat="category in selectedCategories">
-            <div class="col-sm-3">{{category.displayName}}</div>
-            <div class="col-sm-9">
-                <select class="form-control"
-                        name="option"
-                        ng-model="category.selectedOption"
-                        ng-options="option as option.displayName for option in category.categoryOptions"
-                        ng-change="getCategoryOptions()">
-                    <option value="" ng-selected="selectDefault.selected">{{pleaseSelectLabel}}</option>
-                </select>
-            </div>
-        </div>
+        <div ng-include="'components/dataentry/category-option-form.html'"></div>        
 
     </form>  
 </div>
