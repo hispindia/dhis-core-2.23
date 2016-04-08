@@ -225,7 +225,7 @@
       "indicatorAttribute": false,
       "organisationUnitGroupSetAttribute": false,
       "valueType": "TEXT",
-      "name": "AttributeA",
+      "name": "AttributeB",
       "indicatorGroupAttribute": false,
       "categoryOptionGroupAttribute": false,
       "mandatory": true,
@@ -239,11 +239,11 @@
       "user": {
         "id": "M5zQapPyTZI"
       },
-      "code": "DataElementCodeA",
+      "code": "DataElementCodeD",
       "publicAccess": "rw------",
       "valueType": "NUMBER",
       "aggregationLevels": [ ],
-      "name": "DataElementA",
+      "name": "DataElementD",
       "attributeValues": [
         {
           "lastUpdated": "2016-04-07T05:52:42.185+0000",
@@ -255,7 +255,7 @@
         }
       ],
       "domainType": "AGGREGATE",
-      "shortName": "DataElementShortNameA",
+      "shortName": "DataElementShortNameD",
       "userGroupAccesses": [ ],
       "zeroIsSignificant": false,
       "categoryCombo": {
@@ -266,7 +266,7 @@
       "created": "2016-04-07T05:52:42.165+0000"
     },
     {
-      "shortName": "DataElementShortNameB",
+      "shortName": "DataElementShortNameE",
       "domainType": "AGGREGATE",
       "attributeValues": [
         {
@@ -279,13 +279,13 @@
         }
       ],
       "aggregationLevels": [ ],
-      "name": "DataElementB",
+      "name": "DataElementE",
       "valueType": "NUMBER",
       "publicAccess": "rw------",
       "user": {
         "id": "M5zQapPyTZI"
       },
-      "code": "DataElementCodeB",
+      "code": "DataElementCodeE",
       "lastUpdated": "2016-04-07T05:53:01.617+0000",
       "created": "2016-04-07T05:52:42.165+0000",
       "aggregationType": "SUM",
@@ -310,9 +310,9 @@
       "user": {
         "id": "M5zQapPyTZI"
       },
-      "code": "DataElementCodeC",
+      "code": "DataElementCodeF",
       "lastUpdated": "2016-04-07T05:53:18.513+0000",
-      "shortName": "DataElementShortNameC",
+      "shortName": "DataElementShortNameF",
       "domainType": "AGGREGATE",
       "attributeValues": [
         {
@@ -324,7 +324,28 @@
           "created": "2016-04-07T05:52:41.951+0000"
         }
       ],
-      "name": "DataElementC",
+      "name": "DataElementF",
+      "aggregationLevels": [ ]
+    },
+    {
+      "categoryCombo": {
+        "id": "bjDvmb4bfuf"
+      },
+      "zeroIsSignificant": false,
+      "userGroupAccesses": [ ],
+      "aggregationType": "SUM",
+      "created": "2016-04-07T05:52:42.165+0000",
+      "valueType": "NUMBER",
+      "publicAccess": "rw------",
+      "user": {
+        "id": "M5zQapPyTZI"
+      },
+      "code": "DataElementCodeG",
+      "lastUpdated": "2016-04-07T05:53:18.513+0000",
+      "shortName": "DataElementShortNameC",
+      "domainType": "AGGREGATE",
+      "attributeValues": [ ],
+      "name": "DataElementG",
       "aggregationLevels": [ ]
     }
   ]

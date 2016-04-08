@@ -779,6 +779,98 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
+    public TypeReport checkMandatoryAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    {
+        TypeReport typeReport = new TypeReport( klass );
+
+        if ( objects.isEmpty() )
+        {
+            return typeReport;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject object = iterator.next();
+            List<ErrorReport> errorReports = new ArrayList<>();
+
+            errorReports = checkMandatoryAttributes( klass, object, preheat, identifier );
+
+            if ( !errorReports.isEmpty() )
+            {
+                ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
+                objectReport.addErrorReports( errorReports );
+                typeReport.addObjectReport( objectReport );
+                typeReport.getStats().incIgnored();
+
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return typeReport;
+    }
+
+    @Override
+    public List<ErrorReport> checkMandatoryAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    {
+        List<ErrorReport> errorReports = new ArrayList<>();
+
+        if ( object == null || Preheat.isDefault( object ) ) return errorReports;
+
+        return errorReports;
+    }
+
+    @Override
+    public TypeReport checkUniqueAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    {
+        TypeReport typeReport = new TypeReport( klass );
+
+        if ( objects.isEmpty() )
+        {
+            return typeReport;
+        }
+
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+        int idx = 0;
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject object = iterator.next();
+            List<ErrorReport> errorReports = new ArrayList<>();
+
+            errorReports = checkUniqueAttributes( klass, object, preheat, identifier );
+
+            if ( !errorReports.isEmpty() )
+            {
+                ObjectReport objectReport = new ObjectReport( object.getClass(), idx );
+                objectReport.addErrorReports( errorReports );
+                typeReport.addObjectReport( objectReport );
+                typeReport.getStats().incIgnored();
+
+                iterator.remove();
+            }
+
+            idx++;
+        }
+
+        return typeReport;
+    }
+
+    @Override
+    public List<ErrorReport> checkUniqueAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    {
+        List<ErrorReport> errorReports = new ArrayList<>();
+
+        if ( object == null || Preheat.isDefault( object ) ) return errorReports;
+
+        return errorReports;
+    }
+
+    @Override
     public void connectReferences( Object object, Preheat preheat, PreheatIdentifier identifier )
     {
         if ( object == null )

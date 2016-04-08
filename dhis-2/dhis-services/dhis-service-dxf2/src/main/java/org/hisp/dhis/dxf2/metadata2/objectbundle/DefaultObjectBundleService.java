@@ -143,6 +143,10 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateBySchemas( klass, persistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkMandatoryAttributes( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkMandatoryAttributes( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkUniqueAttributes( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkUniqueAttributes( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
 
                 TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
@@ -159,6 +163,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateForCreate( klass, persistedObjects, bundle ) );
                 typeReport.merge( validateBySchemas( klass, nonPersistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkMandatoryAttributes( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkUniqueAttributes( klass, nonPersistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
 
                 TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
 
@@ -175,6 +181,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
                 typeReport.merge( validateForUpdate( klass, nonPersistedObjects, bundle ) );
                 typeReport.merge( validateBySchemas( klass, persistedObjects, bundle ) );
                 typeReport.merge( preheatService.checkUniqueness( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkMandatoryAttributes( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
+                typeReport.merge( preheatService.checkUniqueAttributes( klass, persistedObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() ) );
 
                 TypeReport checkReferences = preheatService.checkReferences( klass, allObjects, bundle.getPreheat(), bundle.getPreheatIdentifier() );
 

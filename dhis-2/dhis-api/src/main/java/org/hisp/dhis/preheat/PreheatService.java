@@ -126,6 +126,40 @@ public interface PreheatService
     List<ErrorReport> checkUniqueness( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier );
 
     /**
+     * Check that all required mandatory attributes are present.
+     *
+     * @param objects    Object to check
+     * @param preheat    Preheat Cache to use
+     * @param identifier Use this identifier type report issues
+     */
+    TypeReport checkMandatoryAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+
+    /**
+     * Check that all required mandatory attributes are present.
+     *
+     * @param object  Object to check
+     * @param preheat Preheat Cache to use
+     */
+    List<ErrorReport> checkMandatoryAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier );
+
+    /**
+     * Check that all attribute values where attribute.unique=true is unique.
+     *
+     * @param objects    Object to check
+     * @param preheat    Preheat Cache to use
+     * @param identifier Use this identifier type report issues
+     */
+    TypeReport checkUniqueAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier );
+
+    /**
+     * Check that all attribute values where attribute.unique=true is unique.
+     *
+     * @param object  Object to check
+     * @param preheat Preheat Cache to use
+     */
+    List<ErrorReport> checkUniqueAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier );
+
+    /**
      * Connects id object references on a given object using a given identifier + a preheated Preheat cache.
      *
      * @param object     Object to connect to

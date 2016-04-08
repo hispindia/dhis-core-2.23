@@ -30,11 +30,15 @@ package org.hisp.dhis.dxf2.metadata2.objectbundle;
 
 import org.hisp.dhis.DhisSpringTest;
 import org.hisp.dhis.attribute.Attribute;
+import org.hisp.dhis.attribute.AttributeService;
+import org.hisp.dhis.attribute.AttributeValue;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.common.ValueType;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataset.DataSet;
+import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
@@ -72,6 +76,9 @@ public class ObjectBundleServiceAttributesTest
 
     @Autowired
     private UserService _userService;
+
+    @Autowired
+    private AttributeService attributeService;
 
     @Override
     protected void setUpTest() throws Exception
@@ -157,16 +164,48 @@ public class ObjectBundleServiceAttributesTest
     }
 
     @Test
-    public void testValidateMetadataAttributeValuesUniqueAndMandatoryUID() throws IOException
+    public void testValidateMetadataAttributeValuesUniqueAndMandatory() throws IOException
     {
+        defaultSetupWithAttributes();
+
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/simple_metadata_uga.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/metadata_with_attributes.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
-        objectBundleService.validate( bundle );
+        ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
+        System.err.println( "P: " + validationReport.getErrorReports() );
+    }
+
+    private void defaultSetupWithAttributes()
+    {
+        Attribute attribute = new Attribute( "AttributeA", ValueType.TEXT );
+        attribute.setUnique( true );
+        attribute.setMandatory( true );
+        attribute.setDataElementAttribute( true );
+
+        manager.save( attribute );
+
+        AttributeValue attributeValue1 = new AttributeValue( "Value1", attribute );
+        AttributeValue attributeValue2 = new AttributeValue( "Value2", attribute );
+        AttributeValue attributeValue3 = new AttributeValue( "Value3", attribute );
+
+        DataElement de1 = createDataElement( 'A' );
+        DataElement de2 = createDataElement( 'B' );
+        DataElement de3 = createDataElement( 'C' );
+
+        attributeService.addAttributeValue( de1, attributeValue1 );
+        attributeService.addAttributeValue( de2, attributeValue2 );
+        attributeService.addAttributeValue( de3, attributeValue3 );
+
+        manager.save( de1 );
+        manager.save( de2 );
+        manager.save( de3 );
+
+        User user = createUser( 'A' );
+        manager.save( user );
     }
 }
