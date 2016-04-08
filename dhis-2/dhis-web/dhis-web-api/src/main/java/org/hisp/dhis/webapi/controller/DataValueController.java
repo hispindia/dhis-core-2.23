@@ -578,7 +578,7 @@ public class DataValueController
     private DataElementCategoryOptionCombo getAndValidateAttributeOptionCombo( String cc, String cp )
         throws WebMessageException
     {
-        DataElementCategoryOptionCombo attributeOptionCombo = inputUtils.getAttributeOptionCombo( cc, cp );
+        DataElementCategoryOptionCombo attributeOptionCombo = inputUtils.getAttributeOptionCombo( cc, cp, false );
 
         if ( attributeOptionCombo == null )
         {

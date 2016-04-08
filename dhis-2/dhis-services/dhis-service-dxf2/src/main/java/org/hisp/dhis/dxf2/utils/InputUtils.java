@@ -60,10 +60,11 @@ public class InputUtils
      *
      * @param cc the category combo identifier.
      * @param cp the category and option query string.
+     * @param allowNoAttrOptionCombo
      * @return the attribute option combo identified from the given input, or null
      * if the input was invalid.
      */
-    public DataElementCategoryOptionCombo getAttributeOptionCombo( String cc, String cp )
+    public DataElementCategoryOptionCombo getAttributeOptionCombo( String cc, String cp, boolean allowNoAttrOptionCombo )
     {
         Set<String> opts = TextUtils.splitToArray( cp, TextUtils.SEMICOLON );
 
@@ -85,6 +86,11 @@ public class InputUtils
         
         if ( categoryCombo == null && opts == null )
         {
+            if( allowNoAttrOptionCombo )
+            {
+                return null;
+            }
+            
             categoryCombo = categoryService.getDefaultDataElementCategoryCombo();
         }
 
