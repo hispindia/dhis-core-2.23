@@ -44,6 +44,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
@@ -66,9 +67,9 @@ public class Preheat
 
     private Map<Class<? extends IdentifiableObject>, List<String>> mandatoryAttributes = new HashMap<>();
 
-    private Map<Class<? extends IdentifiableObject>, List<String>> uniqueAttributes = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, Set<String>> uniqueAttributes = new HashMap<>();
 
-    private Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> uniqueAttributeValues = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> uniqueAttributeValues = new HashMap<>();
 
     public Preheat()
     {
@@ -445,22 +446,22 @@ public class Preheat
         this.mandatoryAttributes = mandatoryAttributes;
     }
 
-    public Map<Class<? extends IdentifiableObject>, List<String>> getUniqueAttributes()
+    public Map<Class<? extends IdentifiableObject>, Set<String>> getUniqueAttributes()
     {
         return uniqueAttributes;
     }
 
-    public void setUniqueAttributes( Map<Class<? extends IdentifiableObject>, List<String>> uniqueAttributes )
+    public void setUniqueAttributes( Map<Class<? extends IdentifiableObject>, Set<String>> uniqueAttributes )
     {
         this.uniqueAttributes = uniqueAttributes;
     }
 
-    public Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> getUniqueAttributeValues()
+    public Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> getUniqueAttributeValues()
     {
         return uniqueAttributeValues;
     }
 
-    public void setUniqueAttributeValues( Map<Class<? extends IdentifiableObject>, Map<String, List<String>>> uniqueAttributeValues )
+    public void setUniqueAttributeValues( Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> uniqueAttributeValues )
     {
         this.uniqueAttributeValues = uniqueAttributeValues;
     }

@@ -244,16 +244,7 @@
       "valueType": "NUMBER",
       "aggregationLevels": [ ],
       "name": "DataElementD",
-      "attributeValues": [
-        {
-          "lastUpdated": "2016-04-07T05:52:42.185+0000",
-          "attribute": {
-            "id": "azavAWurpqC"
-          },
-          "value": "Value1",
-          "created": "2016-04-07T05:52:41.951+0000"
-        }
-      ],
+      "attributeValues": [ ],
       "domainType": "AGGREGATE",
       "shortName": "DataElementShortNameD",
       "userGroupAccesses": [ ],
@@ -268,16 +259,7 @@
     {
       "shortName": "DataElementShortNameE",
       "domainType": "AGGREGATE",
-      "attributeValues": [
-        {
-          "attribute": {
-            "id": "azavAWurpqC"
-          },
-          "lastUpdated": "2016-04-07T05:53:01.625+0000",
-          "created": "2016-04-07T05:52:41.951+0000",
-          "value": "Value2"
-        }
-      ],
+      "attributeValues": [ ],
       "aggregationLevels": [ ],
       "name": "DataElementE",
       "valueType": "NUMBER",
@@ -320,7 +302,7 @@
           "attribute": {
             "id": "azavAWurpqC"
           },
-          "value": "Value3",
+          "value": "Value123123",
           "created": "2016-04-07T05:52:41.951+0000"
         }
       ],

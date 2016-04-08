@@ -39,6 +39,8 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
+import org.hisp.dhis.feedback.ErrorCode;
+import org.hisp.dhis.feedback.ErrorReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
@@ -164,12 +166,12 @@ public class ObjectBundleServiceAttributesTest
     }
 
     @Test
-    public void testValidateMetadataAttributeValuesUniqueAndMandatory() throws IOException
+    public void testValidateMetadataAttributeValuesMandatory() throws IOException
     {
         defaultSetupWithAttributes();
 
         Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
-            new ClassPathResource( "dxf2/metadata_with_attributes.json" ).getInputStream(), RenderFormat.JSON );
+            new ClassPathResource( "dxf2/metadata_with_mandatory_attributes.json" ).getInputStream(), RenderFormat.JSON );
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
@@ -177,7 +179,9 @@ public class ObjectBundleServiceAttributesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
-        System.err.println( "P: " + validationReport.getErrorReports() );
+        List<ErrorReport> reportsByCode = validationReport.getErrorReportsByCode( DataElement.class, ErrorCode.E4011 );
+
+        assertFalse( reportsByCode.isEmpty() );
     }
 
     private void defaultSetupWithAttributes()

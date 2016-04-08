@@ -257,7 +257,7 @@ public class DefaultPreheatService implements PreheatService
             mandatoryAttributes.forEach( attribute -> preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() ) );
 
             List<Attribute> uniqueAttributes = attributeService.getUniqueAttributes( klass );
-            preheat.getUniqueAttributes().put( klass, new ArrayList<>() );
+            preheat.getUniqueAttributes().put( klass, new HashSet<>() );
             uniqueAttributes.forEach( attribute -> preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() ) );
 
             List<AttributeValue> uniqueAttributeValues = attributeService.getAllAttributeValuesByAttributes( uniqueAttributes );
@@ -265,7 +265,7 @@ public class DefaultPreheatService implements PreheatService
             uniqueAttributeValues.forEach( attributeValue -> {
                 if ( !preheat.getUniqueAttributeValues().get( klass ).containsKey( attributeValue.getAttribute().getUid() ) )
                 {
-                    preheat.getUniqueAttributeValues().get( klass ).put( attributeValue.getAttribute().getUid(), new ArrayList<>() );
+                    preheat.getUniqueAttributeValues().get( klass ).put( attributeValue.getAttribute().getUid(), new HashSet<>() );
                 }
 
                 preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() ).add( attributeValue.getValue() );
@@ -782,8 +782,9 @@ public class DefaultPreheatService implements PreheatService
     public TypeReport checkMandatoryAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
+        Schema schema = schemaService.getDynamicSchema( klass );
 
-        if ( objects.isEmpty() )
+        if ( objects.isEmpty() || !schema.havePersistedProperty( "attributeValues" ) )
         {
             return typeReport;
         }
@@ -794,9 +795,7 @@ public class DefaultPreheatService implements PreheatService
         while ( iterator.hasNext() )
         {
             IdentifiableObject object = iterator.next();
-            List<ErrorReport> errorReports = new ArrayList<>();
-
-            errorReports = checkMandatoryAttributes( klass, object, preheat, identifier );
+            List<ErrorReport> errorReports = checkMandatoryAttributes( klass, object, preheat, identifier );
 
             if ( !errorReports.isEmpty() )
             {
@@ -819,7 +818,21 @@ public class DefaultPreheatService implements PreheatService
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( object == null || Preheat.isDefault( object ) ) return errorReports;
+        if ( object == null || Preheat.isDefault( object ) || !preheat.getMandatoryAttributes().containsKey( klass ) )
+        {
+            return errorReports;
+        }
+
+        Set<AttributeValue> attributeValues = object.getAttributeValues();
+        Set<String> mandatoryAttributes = new HashSet<>( preheat.getMandatoryAttributes().get( klass ) ); // make copy for modification
+
+        if ( mandatoryAttributes.isEmpty() )
+        {
+            return errorReports;
+        }
+
+        attributeValues.forEach( attributeValue -> mandatoryAttributes.remove( attributeValue.getAttribute().getUid() ) );
+        mandatoryAttributes.forEach( att -> errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E4011, att ) ) );
 
         return errorReports;
     }
@@ -828,8 +841,9 @@ public class DefaultPreheatService implements PreheatService
     public TypeReport checkUniqueAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
+        Schema schema = schemaService.getDynamicSchema( klass );
 
-        if ( objects.isEmpty() )
+        if ( objects.isEmpty() || !schema.havePersistedProperty( "attributeValues" ) )
         {
             return typeReport;
         }
@@ -840,9 +854,7 @@ public class DefaultPreheatService implements PreheatService
         while ( iterator.hasNext() )
         {
             IdentifiableObject object = iterator.next();
-            List<ErrorReport> errorReports = new ArrayList<>();
-
-            errorReports = checkUniqueAttributes( klass, object, preheat, identifier );
+            List<ErrorReport> errorReports = checkUniqueAttributes( klass, object, preheat, identifier );
 
             if ( !errorReports.isEmpty() )
             {
@@ -865,7 +877,20 @@ public class DefaultPreheatService implements PreheatService
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( object == null || Preheat.isDefault( object ) ) return errorReports;
+        if ( object == null || Preheat.isDefault( object ) || !preheat.getUniqueAttributes().containsKey( klass )
+            || !preheat.getUniqueAttributeValues().containsKey( klass ) )
+        {
+            return errorReports;
+        }
+
+        Set<AttributeValue> attributeValues = object.getAttributeValues();
+        List<String> uniqueAttributes = new ArrayList<>( preheat.getUniqueAttributes().get( klass ) ); // make copy for modification
+        Map<String, Set<String>> uniqueAttributeValues = preheat.getUniqueAttributeValues().get( klass );
+
+        if ( uniqueAttributes.isEmpty() || uniqueAttributeValues.isEmpty() )
+        {
+            return errorReports;
+        }
 
         return errorReports;
     }
