@@ -105,26 +105,30 @@ public class ContextUtils
             response.setContentType( contentType );
         }
 
-        if ( cacheStrategy.equals( CacheStrategy.RESPECT_SYSTEM_SETTING ) )
+        if ( CacheStrategy.RESPECT_SYSTEM_SETTING.equals( cacheStrategy ) )
         {
             String strategy = trimToNull( (String) systemSettingManager.getSystemSetting( SettingKey.CACHE_STRATEGY ) );
 
             cacheStrategy = strategy != null ? CacheStrategy.valueOf( strategy ) : CacheStrategy.NO_CACHE;
         }
         
-        if ( cacheStrategy == null || cacheStrategy.equals( CacheStrategy.NO_CACHE ) )
+        if ( cacheStrategy == null || CacheStrategy.NO_CACHE.equals( cacheStrategy ) )
         {            
             response.setHeader( HEADER_CACHE_CONTROL, CacheControl.noStore().getHeaderValue() );
         }
-        else if ( cacheStrategy.equals( CacheStrategy.CACHE_1_HOUR ) )
+        else if ( cacheStrategy.equals( CacheStrategy.CACHE_15_MINUTES ) )
+        {
+            response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( 15, TimeUnit.MINUTES ).cachePublic().getHeaderValue() );
+        }
+        else if ( CacheStrategy.CACHE_1_HOUR.equals( cacheStrategy ) )
         {
             response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( 1, TimeUnit.HOURS ).cachePublic().getHeaderValue() );
         }
-        else if ( cacheStrategy.equals( CacheStrategy.CACHE_6AM_TOMORROW ) )
+        else if ( CacheStrategy.CACHE_6AM_TOMORROW.equals( cacheStrategy ) )
         {     
             response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( getSecondsUntilTomorrow( 6 ), TimeUnit.SECONDS ).cachePublic().getHeaderValue() );
         }
-        else if ( cacheStrategy.equals( CacheStrategy.CACHE_TWO_WEEKS ) )
+        else if ( CacheStrategy.CACHE_TWO_WEEKS.equals( cacheStrategy ) )
         {
             response.setHeader( HEADER_CACHE_CONTROL, CacheControl.maxAge( 14, TimeUnit.DAYS ).cachePublic().getHeaderValue() );
         }
