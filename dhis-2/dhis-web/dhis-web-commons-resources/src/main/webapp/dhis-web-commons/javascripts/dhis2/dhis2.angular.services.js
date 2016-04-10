@@ -1961,15 +1961,25 @@ var d2Services = angular.module('d2Services', ['ngResource'])
             return valueType;
         };
 
-        var performCreateEventAction = function(effect, selectedEntity, selectedEnrollment, currentEvents){
+        var performCreateEventAction = function(effect, selectedEntity, selectedEnrollment, currentEvents,executingEvent, programStage){
             var valArray = [];
             if(effect.data) {
                 valArray = effect.data.split(',');
-            	var newEventDataValues = [];
+                var newEventDataValues = [];
+                var idList = {active:false};
+
                 angular.forEach(valArray, function(value) {
-                    var valParts = value.split(':');
+                    var valParts = value.split(':');                
                     if(valParts && valParts.length >= 1) {
                         var valId = valParts[0];
+
+                        //Check wether one or more fields is marked as the id to use for comparison purposes:
+                        if(valId.trim().substring(0, 4) === "[id]") {
+                            valId = valId.substring(4,valId.length);
+                            idList[valId] = true;
+                            idList.active = true;
+                        }
+
                         var valVal = "";
                         if(valParts.length > 1) {
                             valVal = valParts[1];
@@ -1978,8 +1988,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                         var processedValue = VariableService.processValue(valVal, valueType);
                         processedValue = $filter('trimquotes')(processedValue);
-                    	newEventDataValues.push({dataElement:valId,value:processedValue});
-                    	newEventDataValues[valId] = processedValue;
+                        newEventDataValues.push({dataElement:valId,value:processedValue});
+                        newEventDataValues[valId] = processedValue;
                     }
                 });
 
@@ -1987,11 +1997,23 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 angular.forEach(currentEvents, function(currentEvent) {
                     var misMatch = false;
                     angular.forEach(newEventDataValues, function(value) {
+                        var valueFound = false;
                         angular.forEach(currentEvent.dataValues, function(currentDataValue) {
-                            if(currentDataValue.dataElement === value.dataElement && currentDataValue.value != newEventDataValues[value.dataElement]) {
-                                misMatch = true;
+                            //Only count as mismatch if there is no particular ID to use, or the current field is part of the same ID
+                            if(!idList.active || idList[currentDataValue.dataElement]){
+                                if(currentDataValue.dataElement === value.dataElement) {
+                                    valueFound = true;
+                                    //Truthy comparison is needed to avoid false negatives for differing variable types:
+                                    if( currentDataValue.value != newEventDataValues[value.dataElement] ) {
+                                        misMatch = true;
+                                    }
+                                }
                             }
                         });
+                        //Also treat no value found as a mismatch, but when ID fields is set, only concider ID fields
+                        if((!idList.active || idList[value.dataElement] ) && !valueFound) {
+                            misMatch = true;
+                        }
                     });
                     if(!misMatch) {
                         //if no mismatches on this point, the exact same event already exists, and we dont create it.
@@ -2012,14 +2034,21 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                         dueDate: dueDate,
                         eventDate: eventDate,
                         notes: [],
-                    	dataValues: newEventDataValues,
+                        dataValues: newEventDataValues,
                         status: 'ACTIVE',
-                        event: dhis2.util.uid()
+                        event: dhis2.util.uid(),
                     };
 
-                    DHIS2EventFactory.create(newEvent).then(function(result){
+                    if(programStage && programStage.dontPersistOnCreate){
+                        newEvent.notPersisted = true;
+                        newEvent.executingEvent = executingEvent;
                         $rootScope.$broadcast("eventcreated", { event:newEvent });
-                    });
+                    }
+                    else{
+                        DHIS2EventFactory.create(newEvent).then(function(result){
+                           $rootScope.$broadcast("eventcreated", { event:newEvent });
+                        }); 
+                    }
                     //1 event created
                     return 1;
                 }
