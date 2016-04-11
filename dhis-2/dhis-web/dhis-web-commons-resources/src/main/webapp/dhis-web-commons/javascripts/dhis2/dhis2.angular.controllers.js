@@ -110,4 +110,14 @@ var d2Controllers = angular.module('d2Controllers', [])
             }
         }
     });
+})
+.controller('ExportController', function($scope, $modalInstance) {
+
+    $scope.export = function (format) {
+        $modalInstance.close(format);
+    };
+
+    $scope.close = function() {
+        $modalInstance.close();
+    }
 });

@@ -517,4 +517,34 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
     $scope.setSelectedSearchingOrgUnit = function(orgUnit){    
         $scope.selectedSearchingOrgUnit = orgUnit;
     };
+
+    $scope.getExportList = function() {
+        var deferred = $q.defer();
+        var modalInstance = $modal.open({
+            templateUrl: '../dhis-web-commons/angular-forms/export.html',
+            controller: 'ExportController'
+        });
+        modalInstance.result.then(function (format) {
+            var attrList = null;
+            angular.forEach($scope.gridColumns, function(item) {
+                if (item.show && item.attribute) {
+                    if (!attrList) {
+                        attrList = "attribute=" + item.id;
+                    } else {
+                        attrList += "&attribute=" + item.id;
+                    }
+                }
+            });
+
+            TEIService.search($scope.searchingOrgUnit.id, $scope.selectedOuMode.name, $scope.queryUrl,
+                $scope.programUrl, attrList, false, false, format).then(function (data) {
+                deferred.resolve(data);
+            });
+        });
+        return deferred.promise;
+    };
+
+    $scope.exportEnabled = function() {
+        return $scope.trackedEntityList && $scope.trackedEntityList.length > 0 ;
+    }
 });

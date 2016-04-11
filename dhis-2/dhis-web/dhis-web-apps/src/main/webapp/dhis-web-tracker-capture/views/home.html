@@ -105,6 +105,11 @@
                     {{registerLabel}}
                 </button>
                 <button type="button"
+                        class="btn btn-info small-horizontal-spacing"
+                        ng-if="exportEnabled()" data-ng-click="getExportList()">
+                    {{'export'| translate}}
+                </button>
+                <button type="button"
                         class="btn btn-info"
                         ng-if="teiCount > 0"
                         onclick="javascript:window.print()">

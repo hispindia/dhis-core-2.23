@@ -727,9 +727,16 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             
             return promise;
         },
-        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging) {
-                
-            var url =  '../api/trackedEntityInstances/query.json?ou=' + ouId + '&ouMode='+ ouMode;
+        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging, format) {
+            var url;
+
+            if (format === "csv") {
+                url = '../api/trackedEntityInstances/query.csv?ou=' + ouId + '&ouMode=' + ouMode;
+            } else if (format === "xml") {
+                url = '../api/trackedEntityInstances/query.xml?ou=' + ouId + '&ouMode=' + ouMode;
+            }else {
+                url = '../api/trackedEntityInstances/query.json?ou=' + ouId + '&ouMode=' + ouMode;
+            }
             
             if(queryUrl){
                 url = url + '&'+ queryUrl;
@@ -740,7 +747,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             if(attributeUrl){
                 url = url + '&' + attributeUrl;
             }
-            
+            //http://localhost:8080/api/trackedEntityInstances/query.csv?ou=ImspTQPwCqd&ouMode=DESCENDANTS&query=LIKE:ll&program=IpHINAT79UW&attribute=orgUnitName&attribute=w75KJ2mc4zz&attribute=zDhUuAYrxNC&paging=false
+            //http://localhost:8080/api/trackedEntityInstances/query.csv?ou=ImspTQPwCqd&ouMode=DESCENDANTS&query=LIKE:ll&program=IpHINAT79UW&attribute=w75KJ2mc4zz&attribute=zDhUuAYrxNC&paging=false
             if(paging){
                 var pgSize = pager ? pager.pageSize : 50;
                 var pg = pager ? pager.page : 1;
@@ -753,6 +761,20 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             }
             
             var promise = $http.get( url ).then(function(response){
+                if (format) {
+                    var anchor = angular.element('<a/>');
+                    var data;
+                    if(format === "json") {
+                        data = JSON.stringify(response.data, null, 2);
+                    } else {
+                        data = response.data;
+                    }
+                    anchor.attr({
+                        href: 'data:attachment/'+format+';charset=utf-8,' + encodeURI(data),
+                        target: '_blank',
+                        download: 'trackedEntityList.'+format
+                    })[0].click();
+                }
                 return response.data;
             }, function(error){
                 if(error && error.status === 403){

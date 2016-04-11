@@ -3,7 +3,7 @@
 'use strict';
 
 /* Controllers */
-var eventCaptureControllers = angular.module('eventCaptureControllers', [])
+var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'])
 
 //Controller for settings page
 .controller('MainController',
@@ -13,6 +13,8 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 $translate,
                 $anchorScroll,
                 $window,
+                $q,
+                $filter,
                 orderByFilter,
                 SessionStorageService,
                 Paginator,
@@ -189,7 +191,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 $scope.filterTypes = {};                               
                 $scope.newDhis2Event = {};
 
-                $scope.eventGridColumns.push({displayName: 'form_id', id: 'uid', valueType: 'TEXT', compulsory: false, filterWithRange: false, showFilter: false, show: false});
+                $scope.eventGridColumns.push({displayName: 'event_id', id: 'uid', valueType: 'TEXT', compulsory: false, filterWithRange: false, showFilter: false, show: false});
                 $scope.filterTypes['uid'] = 'TEXT';                
 
                 $scope.eventGridColumns.push({displayName: $scope.selectedProgramStage.reportDateDescription ? $scope.selectedProgramStage.reportDateDescription : $translate.instant('incident_date'), id: 'eventDate', valueType: 'DATE', filterWithRange: true, compulsory: false, showFilter: false, show: true});
@@ -281,7 +283,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
         $scope.eventLength = 0;
         $scope.eventFetched = false;
         
-        var attributeCategoryUrl = {cc: $scope.selectedProgram.categoryCombo.id, default: $scope.selectedProgram.categoryCombo.isDefault, cp: ""};
+        $scope.attributeCategoryUrl = {cc: $scope.selectedProgram.categoryCombo.id, default: $scope.selectedProgram.categoryCombo.isDefault, cp: ""};
         if(!$scope.selectedProgram.categoryCombo.isDefault){            
             if($scope.selectedOptions.length !== $scope.selectedCategories.length){
                 var dialogOptions = {
@@ -292,13 +294,13 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
                 DialogService.showDialog({}, dialogOptions);
                 return;
             }            
-            attributeCategoryUrl.cp = $scope.selectedOptions.join(';');
+            $scope.attributeCategoryUrl.cp = $scope.selectedOptions.join(';');
         }
                
         if( $scope.selectedProgram && $scope.selectedProgramStage && $scope.selectedProgramStage.id){
             
             //Load events for the selected program stage and orgunit
-            DHIS2EventFactory.getByStage($scope.selectedOrgUnit.id, $scope.selectedProgramStage.id, attributeCategoryUrl, $scope.pager, true ).then(function(data){
+            DHIS2EventFactory.getByStage($scope.selectedOrgUnit.id, $scope.selectedProgramStage.id, $scope.attributeCategoryUrl, $scope.pager, true ).then(function(data){
 
                 if(data.events){
                     $scope.eventLength = data.events.length;
@@ -902,7 +904,207 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', [])
             });
         });        
     };
-        
+
+    $scope.getExportList = function() {
+
+        var deferred = $q.defer();
+
+        var modalInstance = $modal.open({
+            templateUrl: '../dhis-web-commons/angular-forms/export.html',
+            controller: 'ExportController',
+            resolve: {
+                gridColumns: function () {
+                    return $scope.eventGridColumns;
+                }
+            }
+        });
+
+        modalInstance.result.then(function (format) {
+            var fieldsToExport = $filter('filter')($scope.eventGridColumns, {show: true});
+            var idList = [];
+            var format = format;
+            var eventsJSON = [];
+            var eventsJSONIndex = -1;
+            var dataValuesJSON;
+            var headers = [];
+            var row;
+            var rowXML;
+            var eventsCSV = [];
+            var eventsCSVIndex = 0;
+            var eventsXML = '';
+            var anchor = angular.element('<a/>');
+            var nameToIdMap={};
+            var emptyRow = [];
+
+            for (var ind = 0; ind < fieldsToExport.length; ind++) {
+                emptyRow[ind] = null;
+                nameToIdMap[fieldsToExport[ind].id] = fieldsToExport[ind].displayName;
+            }
+
+            initExportList();
+
+            /*Get All the events list from the server*/
+            DHIS2EventFactory.getByStage($scope.selectedOrgUnit.id, $scope.selectedProgramStage.id,
+                $scope.attributeCategoryUrl, true).then(function (data) {
+                if (angular.isObject(data.events)) {
+
+                    angular.forEach(data.events, function (event) {
+                        ++eventsJSONIndex;
+                        eventsJSON[eventsJSONIndex]={};
+                        row = angular.copy(emptyRow);
+                        rowXML = angular.copy(emptyRow);
+                        if (format === 'xml') {
+                            eventsXML += '<event>';
+                        }
+                        dataValuesJSON=[];
+                        angular.forEach(event.dataValues, function (dataValue) {
+                            if ($scope.prStDes[dataValue.dataElement]) {
+                                var val = dataValue.value;
+                                if (angular.isObject($scope.prStDes[dataValue.dataElement].dataElement)) {
+                                    val = CommonUtils.formatDataValue(null, val, $scope.prStDes[dataValue.dataElement].dataElement, $scope.optionSets, 'USER');
+                                }
+                                event[dataValue.dataElement] = val;
+
+                                insertDataValueToRow(dataValue, dataValue.dataElement, val);
+                            }
+                        });
+                        event['uid'] = event.event;
+                        event.eventDate = DateUtils.formatFromApiToUser(event.eventDate);
+                        event['eventDate'] = event.eventDate;
+                        if (event.status === "ACTIVE") {
+                            event.status = false;
+                        } else if (event.status === "COMPLETED") {
+                            event.status = true;
+                        }
+                        if (format === 'xml' || format === 'csv') {
+                            insertItemToRow(event, 'uid');
+                            insertItemToRow(event, 'eventDate');
+                            insertItemToRow(event, event['status']);
+                            insertRowToExportList();
+                        } else if (format === 'json') {
+                            if (idList.indexOf('uid') > -1) {
+                                eventsJSON[eventsJSONIndex]['uid'] = event['uid'];
+                            }
+                            if (idList.indexOf('eventDate') > -1) {
+                                eventsJSON[eventsJSONIndex]['eventDate'] = event['eventDate'];
+                            }
+                            if (idList.indexOf('status') > -1) {
+                                eventsJSON[eventsJSONIndex]['status'] = event['status'];
+                            }
+                            if (dataValuesJSON.length > 0) {
+                                eventsJSON[eventsJSONIndex]["dataValues"] = dataValuesJSON;
+                            }
+                        }
+                        delete event.dataValues;
+                    });
+
+                    if (format === 'xml') {
+                        eventsXML += '</events>';
+                    }
+                }
+
+                if (format === 'json') {
+                    anchor.attr({
+                        href: 'data:attachment/json;charset=utf-8,' + encodeURI(JSON.stringify(eventsJSON, null, 2)),
+                        target: '_blank',
+                        download: 'eventList.json'
+                    })[0].click();
+                }
+
+                if (format === 'xml') {
+                    anchor.attr({
+                        href: 'data:attachment/xml;charset=utf-8,' + encodeURI(eventsXML),
+                        target: '_blank',
+                        download: 'eventList.xml'
+                    })[0].click();
+                }
+
+                if (format === 'csv') {
+                    deferred.resolve(eventsCSV);
+                }
+            });
+
+            function initExportList() {
+                if (format === 'csv') {
+                    eventsCSV[eventsCSVIndex] = [];
+                }
+                angular.forEach(fieldsToExport, function (item) {
+                    idList.push(item.id);
+                    if (format === 'json') {
+                        headers.push({
+                            "name": item.displayName
+                        });
+                    }
+                    if (format === 'csv') {
+                        eventsCSV[eventsCSVIndex].push(item.displayName);
+                    }
+                });
+                if (format === 'xml') {
+                    eventsXML += '<events>';
+                }
+            }
+
+            function insertDataValueToRow(dataValue, dataElement, value) {
+                var index = idList.indexOf(dataElement);
+                if (index > -1) {
+                    if (format === 'xml' || format === 'csv') {
+                        row[index] = {value: value, dataElement: dataElement, isDataValue: true};
+                    } else if (format === 'json') {
+                        dataValuesJSON.push(dataValue);
+                    }
+                }
+            }
+
+            function insertItemToRow(item, name) {
+                var index = idList.indexOf(name);
+                if (index > -1) {
+                    if (format === 'xml' || format === 'csv') {
+                        row[index] = {value: item[name], dataElement: name, isDataValue: false};
+                    }
+                }
+            }
+
+            function insertRowToExportList() {
+                var dataValues = '';
+                var csvRow=[];
+                for (var index = 0; index < row.length; index++) {
+                    if (row[index]) {
+                        if (format === 'xml') {
+                            if (row[index].isDataValue) {
+                                if (dataValues.length === 0) {
+                                    dataValues += '<datavalues>';
+                                }
+                                dataValues += '<dataValue dataElementId="'+row[index].dataElement+'" ' +
+                                              'dataElementName="'+nameToIdMap[row[index].dataElement]+'" ' +
+                                              'value="'+row[index].value+'"/>';
+                            } else {
+                                eventsXML += '<' + row[index].dataElement + '>'+row[index].value+'</' + row[index].dataElement + '>';
+                            }
+                        } else if (format === 'csv') {
+                            csvRow.push( row[index].value);
+                        }
+                    } else {
+                        if (format === 'csv') {
+                            csvRow.push(null);
+                        }
+                    }
+                }
+                if (format === 'csv') {
+                    eventsCSV.push(csvRow);
+                }
+
+                if (format === 'xml') {
+                    if (dataValues.length > 0) {
+                        eventsXML += dataValues + '</datavalues>';
+                    }
+                    eventsXML += '</event>';
+                }
+            }
+        });
+
+        return deferred.promise;
+    };
+
     $scope.showNotes = function(dhis2Event){
         
         var modalInstance = $modal.open({

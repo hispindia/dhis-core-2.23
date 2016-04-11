@@ -105,6 +105,13 @@
                     <span ng-if="eventRegistration">{{'print_form'| translate}}</span>
                     <span ng-if="editingEventInFull">{{'print_details'| translate}}</span>
                 </button>
+                <button type="button"
+                        class="btn btn-info small-horizontal-spacing"
+                        ng-if="dhis2Events.length > 0 && !eventRegistration && !editingEventInFull"
+                        ng-csv="getExportList()"
+                        filename="eventList.csv">
+                    {{'export'| translate}}
+                </button>
             </div>
         </div>        
         <!-- selection ends -->        
