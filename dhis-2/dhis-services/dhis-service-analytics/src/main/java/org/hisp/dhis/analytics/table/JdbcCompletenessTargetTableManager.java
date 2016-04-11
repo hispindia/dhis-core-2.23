@@ -135,7 +135,14 @@ public class JdbcCompletenessTargetTableManager
         return null;
     }
     
-    private void populateTable( AnalyticsTable table, String valueClause, String dataSetWhereClause )
+    /**
+     * Populates the given analytics table.
+     * 
+     * @param table the analytics table.
+     * @param valueClause the value part of the select clause.
+     * @param categoryComboWhereClause the category condition for the where clause.
+     */
+    private void populateTable( AnalyticsTable table, String valueClause, String categoryComboWhereClause )
     {
         final String tableName = table.getTempTableName();
 
@@ -163,7 +170,7 @@ public class JdbcCompletenessTargetTableManager
             "inner join categorycombo cc on ds.categorycomboid=cc.categorycomboid " +
             "left join _orgunitstructure ous on dss.sourceid=ous.organisationunitid " +
             "left join _organisationunitgroupsetstructure ougs on dss.sourceid=ougs.organisationunitid " +
-            "where " + dataSetWhereClause;
+            "where " + categoryComboWhereClause;
 
         populateAndLog( sql, tableName );
     }
