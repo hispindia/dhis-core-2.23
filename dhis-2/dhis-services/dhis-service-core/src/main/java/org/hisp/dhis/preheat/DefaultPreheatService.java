@@ -261,7 +261,7 @@ public class DefaultPreheatService implements PreheatService
             preheat.getUniqueAttributes().put( klass, new HashSet<>() );
             uniqueAttributes.forEach( attribute -> preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() ) );
 
-            List<AttributeValue> uniqueAttributeValues = attributeService.getAllAttributeValuesByAttributes( uniqueAttributes );
+            List<AttributeValue> uniqueAttributeValues = manager.getAttributeValueByAttributes( klass, uniqueAttributes );
             preheat.getUniqueAttributeValues().put( klass, new HashMap<>() );
             uniqueAttributeValues.forEach( attributeValue -> {
                 if ( !preheat.getUniqueAttributeValues().get( klass ).containsKey( attributeValue.getAttribute().getUid() ) )
