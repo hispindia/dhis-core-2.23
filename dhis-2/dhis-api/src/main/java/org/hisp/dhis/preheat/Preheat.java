@@ -69,7 +69,7 @@ public class Preheat
 
     private Map<Class<? extends IdentifiableObject>, Set<String>> uniqueAttributes = new HashMap<>();
 
-    private Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> uniqueAttributeValues = new HashMap<>();
+    private Map<Class<? extends IdentifiableObject>, Map<String, Map<String, String>>> uniqueAttributeValues = new HashMap<>();
 
     public Preheat()
     {
@@ -456,12 +456,12 @@ public class Preheat
         this.uniqueAttributes = uniqueAttributes;
     }
 
-    public Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> getUniqueAttributeValues()
+    public Map<Class<? extends IdentifiableObject>, Map<String, Map<String, String>>> getUniqueAttributeValues()
     {
         return uniqueAttributeValues;
     }
 
-    public void setUniqueAttributeValues( Map<Class<? extends IdentifiableObject>, Map<String, Set<String>>> uniqueAttributeValues )
+    public void setUniqueAttributeValues( Map<Class<? extends IdentifiableObject>, Map<String, Map<String, String>>> uniqueAttributeValues )
     {
         this.uniqueAttributeValues = uniqueAttributeValues;
     }

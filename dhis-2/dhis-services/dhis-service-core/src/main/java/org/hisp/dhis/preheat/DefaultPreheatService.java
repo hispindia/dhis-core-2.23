@@ -254,23 +254,25 @@ public class DefaultPreheatService implements PreheatService
         for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
         {
             List<Attribute> mandatoryAttributes = attributeService.getMandatoryAttributes( klass );
-            preheat.getMandatoryAttributes().put( klass, new HashSet<>() );
+
+            if ( !mandatoryAttributes.isEmpty() )
+            {
+                preheat.getMandatoryAttributes().put( klass, new HashSet<>() );
+            }
+
             mandatoryAttributes.forEach( attribute -> preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() ) );
 
             List<Attribute> uniqueAttributes = attributeService.getUniqueAttributes( klass );
-            preheat.getUniqueAttributes().put( klass, new HashSet<>() );
+
+            if ( !uniqueAttributes.isEmpty() )
+            {
+                preheat.getUniqueAttributes().put( klass, new HashSet<>() );
+            }
+
             uniqueAttributes.forEach( attribute -> preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() ) );
 
-            List<AttributeValue> uniqueAttributeValues = manager.getAttributeValueByAttributes( klass, uniqueAttributes );
-            preheat.getUniqueAttributeValues().put( klass, new HashMap<>() );
-            uniqueAttributeValues.forEach( attributeValue -> {
-                if ( !preheat.getUniqueAttributeValues().get( klass ).containsKey( attributeValue.getAttribute().getUid() ) )
-                {
-                    preheat.getUniqueAttributeValues().get( klass ).put( attributeValue.getAttribute().getUid(), new HashSet<>() );
-                }
-
-                preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() ).add( attributeValue.getValue() );
-            } );
+            List<? extends IdentifiableObject> uniqueAttributeValues = manager.getAllByAttributes( klass, uniqueAttributes );
+            handleUniqueAttributeValues( klass, uniqueAttributeValues, preheat );
         }
 
         if ( objects.containsKey( Attribute.class ) )
@@ -298,6 +300,33 @@ public class DefaultPreheatService implements PreheatService
                 }
             }
         }
+    }
+
+    private void handleUniqueAttributeValues( Class<? extends IdentifiableObject> klass, List<? extends IdentifiableObject> objects, Preheat preheat )
+    {
+        if ( objects.isEmpty() )
+        {
+            return;
+        }
+
+        preheat.getUniqueAttributeValues().put( klass, new HashMap<>() );
+
+        objects.forEach( object -> {
+            object.getAttributeValues().forEach( attributeValue -> {
+                Set<String> uids = preheat.getUniqueAttributes().get( klass );
+
+                if ( uids != null && uids.contains( attributeValue.getAttribute().getUid() ) )
+                {
+                    if ( !preheat.getUniqueAttributeValues().get( klass ).containsKey( attributeValue.getAttribute().getUid() ) )
+                    {
+                        preheat.getUniqueAttributeValues().get( klass ).put( attributeValue.getAttribute().getUid(), new HashMap<>() );
+                    }
+
+                    preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() )
+                        .put( attributeValue.getValue(), object.getUid() );
+                }
+            } );
+        } );
     }
 
     @Override
@@ -611,7 +640,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public TypeReport checkReferences( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkReferences( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
 
@@ -636,7 +665,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<PreheatErrorReport> checkReferences( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<PreheatErrorReport> checkReferences( Class<? extends IdentifiableObject> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<PreheatErrorReport> preheatErrorReports = new ArrayList<>();
 
@@ -711,7 +740,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public TypeReport checkUniqueness( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkUniqueness( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
 
@@ -757,7 +786,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ErrorReport> checkUniqueness( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<ErrorReport> checkUniqueness( Class<? extends IdentifiableObject> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
@@ -806,7 +835,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public TypeReport checkMandatoryAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkMandatoryAttributes( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
         Schema schema = schemaService.getDynamicSchema( klass );
@@ -841,7 +870,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ErrorReport> checkMandatoryAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<ErrorReport> checkMandatoryAttributes( Class<? extends IdentifiableObject> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
@@ -865,7 +894,7 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public TypeReport checkUniqueAttributes( Class<?> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
+    public TypeReport checkUniqueAttributes( Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         TypeReport typeReport = new TypeReport( klass );
         Schema schema = schemaService.getDynamicSchema( klass );
@@ -900,21 +929,26 @@ public class DefaultPreheatService implements PreheatService
     }
 
     @Override
-    public List<ErrorReport> checkUniqueAttributes( Class<?> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
+    public List<ErrorReport> checkUniqueAttributes( Class<? extends IdentifiableObject> klass, IdentifiableObject object, Preheat preheat, PreheatIdentifier identifier )
     {
         List<ErrorReport> errorReports = new ArrayList<>();
 
-        if ( object == null || Preheat.isDefault( object ) || !preheat.getUniqueAttributes().containsKey( klass )
-            || !preheat.getUniqueAttributeValues().containsKey( klass ) )
+        if ( object == null || Preheat.isDefault( object ) || !preheat.getUniqueAttributes().containsKey( klass ) )
         {
             return errorReports;
         }
 
         Set<AttributeValue> attributeValues = object.getAttributeValues();
         List<String> uniqueAttributes = new ArrayList<>( preheat.getUniqueAttributes().get( klass ) ); // make copy for modification
-        Map<String, Set<String>> uniqueAttributeValues = preheat.getUniqueAttributeValues().get( klass );
 
-        if ( uniqueAttributes.isEmpty() || uniqueAttributeValues.isEmpty() )
+        if ( !preheat.getUniqueAttributeValues().containsKey( klass ) )
+        {
+            preheat.getUniqueAttributeValues().put( klass, new HashMap<>() );
+        }
+
+        Map<String, Map<String, String>> uniqueAttributeValues = preheat.getUniqueAttributeValues().get( klass );
+
+        if ( uniqueAttributes.isEmpty() )
         {
             return errorReports;
         }
@@ -929,23 +963,22 @@ public class DefaultPreheatService implements PreheatService
 
             if ( uniqueAttributeValues.containsKey( attribute.getUid() ) )
             {
-                Set<String> values = uniqueAttributeValues.get( attribute.getUid() );
+                Map<String, String> values = uniqueAttributeValues.get( attribute.getUid() );
 
-                // TODO check if value is from same object
-                if ( values.contains( attributeValue.getValue() ) )
+                if ( values.containsKey( attributeValue.getValue() ) && !values.get( attributeValue.getValue() ).equals( object.getUid() ) )
                 {
                     errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E4009, IdentifiableObjectUtils.getDisplayName( attribute ),
                         attributeValue.getValue() ) );
                 }
                 else
                 {
-                    uniqueAttributeValues.get( attribute.getUid() ).add( attributeValue.getValue() );
+                    uniqueAttributeValues.get( attribute.getUid() ).put( attributeValue.getValue(), object.getUid() );
                 }
             }
             else
             {
-                uniqueAttributeValues.put( attribute.getUid(), new HashSet<>() );
-                uniqueAttributeValues.get( attribute.getUid() ).add( attributeValue.getValue() );
+                uniqueAttributeValues.put( attribute.getUid(), new HashMap<>() );
+                uniqueAttributeValues.get( attribute.getUid() ).put( attributeValue.getValue(), object.getUid() );
             }
         } );
 
