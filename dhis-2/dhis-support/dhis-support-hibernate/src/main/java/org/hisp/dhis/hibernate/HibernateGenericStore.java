@@ -528,6 +528,23 @@ public class HibernateGenericStore<T>
     }
 
     @Override
+    @SuppressWarnings( "unchecked" )
+    public List<T> getAllByAttributes( List<Attribute> attributes )
+    {
+        Schema schema = schemaService.getDynamicSchema( getClazz() );
+
+        if ( schema == null || !schema.havePersistedProperty( "attributeValues" ) )
+        {
+            return new ArrayList<>();
+        }
+
+        String hql = "select e from " + getClazz().getSimpleName() + "  as e " +
+            "inner join e.attributeValues av inner join av.attribute at where at in (:attributes) )";
+
+        return getQuery( hql ).setParameterList( "attributes", attributes ).list();
+    }
+
+    @Override
     public int getCount()
     {
         return ((Number) getSharingCriteria()

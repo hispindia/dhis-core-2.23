@@ -100,6 +100,8 @@ public interface IdentifiableObjectManager
 
     <T extends IdentifiableObject> List<T> getAllSortedByLastUpdated( Class<T> clazz );
 
+    <T extends IdentifiableObject> List<T> getAllByAttributes( Class<T> klass, List<Attribute> attributes );
+
     <T extends IdentifiableObject> List<T> getByUid( Class<T> clazz, Collection<String> uids );
 
     <T extends IdentifiableObject> List<T> getByUidOrdered( Class<T> clazz, List<String> uids );
