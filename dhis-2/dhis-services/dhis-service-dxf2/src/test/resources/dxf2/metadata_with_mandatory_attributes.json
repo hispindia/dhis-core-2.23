@@ -296,16 +296,7 @@
       "lastUpdated": "2016-04-07T05:53:18.513+0000",
       "shortName": "DataElementShortNameF",
       "domainType": "AGGREGATE",
-      "attributeValues": [
-        {
-          "lastUpdated": "2016-04-07T05:53:18.519+0000",
-          "attribute": {
-            "id": "azavAWurpqC"
-          },
-          "value": "Value123123",
-          "created": "2016-04-07T05:52:41.951+0000"
-        }
-      ],
+      "attributeValues": [ ],
       "name": "DataElementF",
       "aggregationLevels": [ ]
     },

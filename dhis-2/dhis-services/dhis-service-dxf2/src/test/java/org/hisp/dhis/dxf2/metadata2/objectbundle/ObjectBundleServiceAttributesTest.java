@@ -39,8 +39,7 @@ import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
 import org.hisp.dhis.dataset.DataSet;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.feedback.ObjectBundleValidationReport;
-import org.hisp.dhis.feedback.ErrorCode;
-import org.hisp.dhis.feedback.ErrorReport;
+import org.hisp.dhis.feedback.ObjectReport;
 import org.hisp.dhis.importexport.ImportStrategy;
 import org.hisp.dhis.option.Option;
 import org.hisp.dhis.option.OptionSet;
@@ -179,9 +178,11 @@ public class ObjectBundleServiceAttributesTest
 
         ObjectBundle bundle = objectBundleService.create( params );
         ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
-        List<ErrorReport> reportsByCode = validationReport.getErrorReportsByCode( DataElement.class, ErrorCode.E4011 );
+        List<ObjectReport> objectReports = validationReport.getObjectReports( DataElement.class );
 
-        assertFalse( reportsByCode.isEmpty() );
+        assertFalse( objectReports.isEmpty() );
+        assertEquals( 4, objectReports.size() );
+        objectReports.forEach( objectReport -> assertEquals( 2, objectReport.getErrorReports().size() ) );
     }
 
     private void defaultSetupWithAttributes()

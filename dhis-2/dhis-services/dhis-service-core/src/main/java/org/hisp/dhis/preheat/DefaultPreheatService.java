@@ -240,7 +240,7 @@ public class DefaultPreheatService implements PreheatService
             preheat.put( params.getPreheatIdentifier(), objects );
         }
 
-        handleAttributes( params.getObjects(), preheat );
+        handleAttributes( params.getObjects(), preheat, params.getPreheatIdentifier() );
 
         periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
         periodStore.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
@@ -248,12 +248,12 @@ public class DefaultPreheatService implements PreheatService
         return preheat;
     }
 
-    private void handleAttributes( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects, Preheat preheat )
+    private void handleAttributes( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects, Preheat preheat, PreheatIdentifier identifier )
     {
         for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
         {
             List<Attribute> mandatoryAttributes = attributeService.getMandatoryAttributes( klass );
-            preheat.getMandatoryAttributes().put( klass, new ArrayList<>() );
+            preheat.getMandatoryAttributes().put( klass, new HashSet<>() );
             mandatoryAttributes.forEach( attribute -> preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() ) );
 
             List<Attribute> uniqueAttributes = attributeService.getUniqueAttributes( klass );
@@ -270,6 +270,32 @@ public class DefaultPreheatService implements PreheatService
 
                 preheat.getUniqueAttributeValues().get( klass ).get( attributeValue.getAttribute().getUid() ).add( attributeValue.getValue() );
             } );
+        }
+
+        if ( objects.containsKey( Attribute.class ) )
+        {
+            List<IdentifiableObject> attributes = objects.get( Attribute.class );
+
+            for ( IdentifiableObject identifiableObject : attributes )
+            {
+                Attribute attribute = (Attribute) identifiableObject;
+
+                if ( attribute.isMandatory() )
+                {
+                    attribute.getSupportedClasses().forEach( klass -> {
+                        if ( !preheat.getMandatoryAttributes().containsKey( klass ) ) preheat.getMandatoryAttributes().put( klass, new HashSet<>() );
+                        preheat.getMandatoryAttributes().get( klass ).add( attribute.getUid() );
+                    } );
+                }
+
+                if ( attribute.isUnique() )
+                {
+                    attribute.getSupportedClasses().forEach( klass -> {
+                        if ( !preheat.getUniqueAttributes().containsKey( klass ) ) preheat.getUniqueAttributes().put( klass, new HashSet<>() );
+                        preheat.getUniqueAttributes().get( klass ).add( attribute.getUid() );
+                    } );
+                }
+            }
         }
     }
 
