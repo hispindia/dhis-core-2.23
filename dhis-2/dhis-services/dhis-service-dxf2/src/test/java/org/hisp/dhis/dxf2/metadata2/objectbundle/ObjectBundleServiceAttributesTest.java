@@ -185,6 +185,25 @@ public class ObjectBundleServiceAttributesTest
         objectReports.forEach( objectReport -> assertEquals( 2, objectReport.getErrorReports().size() ) );
     }
 
+    @Test
+    public void testValidateMetadataAttributeValuesMandatoryFromPayload() throws IOException
+    {
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_with_mandatory_attributes_from_payload_only.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
+        List<ObjectReport> objectReports = validationReport.getObjectReports( DataElement.class );
+
+        assertFalse( objectReports.isEmpty() );
+        assertEquals( 4, objectReports.size() );
+        objectReports.forEach( objectReport -> assertEquals( 1, objectReport.getErrorReports().size() ) );
+    }
+
     private void defaultSetupWithAttributes()
     {
         Attribute attribute = new Attribute( "AttributeA", ValueType.TEXT );
