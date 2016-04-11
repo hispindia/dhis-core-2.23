@@ -39,6 +39,7 @@ import org.hisp.dhis.common.CodeGenerator;
 import org.hisp.dhis.common.DataDimensionItem;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.common.MergeMode;
 import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementOperand;
@@ -917,6 +918,36 @@ public class DefaultPreheatService implements PreheatService
         {
             return errorReports;
         }
+
+        attributeValues.forEach( attributeValue -> {
+            Attribute attribute = preheat.get( identifier, attributeValue.getAttribute() );
+
+            if ( attribute == null || !attribute.isUnique() || StringUtils.isEmpty( attributeValue.getValue() ) )
+            {
+                return;
+            }
+
+            if ( uniqueAttributeValues.containsKey( attribute.getUid() ) )
+            {
+                Set<String> values = uniqueAttributeValues.get( attribute.getUid() );
+
+                // TODO check if value is from same object
+                if ( values.contains( attributeValue.getValue() ) )
+                {
+                    errorReports.add( new ErrorReport( Attribute.class, ErrorCode.E4009, IdentifiableObjectUtils.getDisplayName( attribute ),
+                        attributeValue.getValue() ) );
+                }
+                else
+                {
+                    uniqueAttributeValues.get( attribute.getUid() ).add( attributeValue.getValue() );
+                }
+            }
+            else
+            {
+                uniqueAttributeValues.put( attribute.getUid(), new HashSet<>() );
+                uniqueAttributeValues.get( attribute.getUid() ).add( attributeValue.getValue() );
+            }
+        } );
 
         return errorReports;
     }

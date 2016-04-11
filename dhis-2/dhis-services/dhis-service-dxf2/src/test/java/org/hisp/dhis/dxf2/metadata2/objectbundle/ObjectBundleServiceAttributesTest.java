@@ -204,9 +204,29 @@ public class ObjectBundleServiceAttributesTest
         objectReports.forEach( objectReport -> assertEquals( 1, objectReport.getErrorReports().size() ) );
     }
 
+    @Test
+    public void testValidateMetadataAttributeValuesUnique() throws IOException
+    {
+        defaultSetupWithAttributes();
+
+        Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> metadata = renderService.fromMetadata(
+            new ClassPathResource( "dxf2/metadata_with_unique_attributes.json" ).getInputStream(), RenderFormat.JSON );
+
+        ObjectBundleParams params = new ObjectBundleParams();
+        params.setObjectBundleMode( ObjectBundleMode.VALIDATE );
+        params.setObjects( metadata );
+
+        ObjectBundle bundle = objectBundleService.create( params );
+        ObjectBundleValidationReport validationReport = objectBundleService.validate( bundle );
+        List<ObjectReport> objectReports = validationReport.getObjectReports( DataElement.class );
+
+        assertTrue( objectReports.isEmpty() );
+    }
+
     private void defaultSetupWithAttributes()
     {
         Attribute attribute = new Attribute( "AttributeA", ValueType.TEXT );
+        attribute.setUid( "d9vw7V9Mw8W" );
         attribute.setUnique( true );
         attribute.setMandatory( true );
         attribute.setDataElementAttribute( true );
