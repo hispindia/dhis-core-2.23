@@ -191,16 +191,16 @@ public class UpdateValidationRuleAction
         this.periodTypeName = periodTypeName;
     }
 
-    private String sequentialSampleCount;
+    private Integer sequentialSampleCount;
 
-    public void setSequentialSampleCount( String sequentialSampleCount )
+    public void setSequentialSampleCount( Integer sequentialSampleCount )
     {
         this.sequentialSampleCount = sequentialSampleCount;
     }
 
-    private String annualSampleCount;
+    private Integer annualSampleCount;
 
-    public void setAnnualSampleCount( String annualSampleCount )
+    public void setAnnualSampleCount( Integer annualSampleCount )
     {
         this.annualSampleCount = annualSampleCount;
     }
@@ -260,10 +260,10 @@ public class UpdateValidationRuleAction
         PeriodType periodType = periodService.getPeriodTypeByName( periodTypeName );
         validationRule.setPeriodType( periodType == null ? null : periodService.getPeriodTypeByClass( periodType.getClass() ) );
 
-        validationRule.setSequentialSampleCount( sequentialSampleCount != null && !sequentialSampleCount.isEmpty() ? Integer.parseInt( sequentialSampleCount ) : null );
-        validationRule.setAnnualSampleCount( annualSampleCount != null && !annualSampleCount.isEmpty() ? Integer.parseInt( annualSampleCount ) : null );
-
-        validationRule.setSequentialSkipCount( sequentialSkipCount != null ? ( sequentialSkipCount ) : null );
+        validationRule.setSequentialSampleCount( sequentialSampleCount );
+        validationRule.setAnnualSampleCount( annualSampleCount );
+        validationRule.setSequentialSkipCount( sequentialSkipCount );
+        
         validationRuleService.updateValidationRule( validationRule );
 
         return SUCCESS;
