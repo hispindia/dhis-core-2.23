@@ -436,6 +436,7 @@ public class DefaultAnalyticsService
             targetParams.setDimensions( ListUtils.getAtIndexes( targetParams.getDimensions(), completenessDimIndexes ) );
             targetParams.setFilters( ListUtils.getAtIndexes( targetParams.getFilters(), completenessFilterIndexes ) );
             targetParams.setSkipPartitioning( true );
+            targetParams.setAggregationType( AggregationType.SUM );
 
             Map<String, Double> targetMap = getAggregatedCompletenessTargetMap( targetParams );
 

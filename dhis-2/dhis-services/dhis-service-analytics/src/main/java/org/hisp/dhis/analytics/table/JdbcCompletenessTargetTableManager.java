@@ -143,6 +143,7 @@ public class JdbcCompletenessTargetTableManager
                 "1 as value " +
                 "from datasetsource dss " +
                 "inner join dataset ds on dss.datasetid=ds.datasetid " +
+                "inner join categorycombo cc on ds.categorycomboid=cc.categorycomboid " +
                 "left join _orgunitstructure ous on dss.sourceid=ous.organisationunitid " +
                 "left join _organisationunitgroupsetstructure ougs on dss.sourceid=ougs.organisationunitid";            
     
