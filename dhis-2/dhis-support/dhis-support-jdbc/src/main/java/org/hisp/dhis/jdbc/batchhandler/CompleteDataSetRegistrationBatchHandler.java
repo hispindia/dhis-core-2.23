@@ -30,21 +30,21 @@ package org.hisp.dhis.jdbc.batchhandler;
 
 import org.amplecode.quick.JdbcConfiguration;
 import org.amplecode.quick.batchhandler.AbstractBatchHandler;
-import org.hisp.dhis.datavalue.DataValue;
+import org.hisp.dhis.dataset.CompleteDataSetRegistration;
 
 import static org.hisp.dhis.system.util.DateUtils.getLongDateString;
 
 /**
  * @author Lars Helge Overland
  */
-public class DataValueBatchHandler
-    extends AbstractBatchHandler<DataValue>
+public class CompleteDataSetRegistrationBatchHandler
+    extends AbstractBatchHandler<CompleteDataSetRegistration>
 {
     // -------------------------------------------------------------------------
     // Constructor
     // -------------------------------------------------------------------------
  
-    public DataValueBatchHandler( JdbcConfiguration config )
+    public CompleteDataSetRegistrationBatchHandler( JdbcConfiguration config )
     {
         super( config, true );
     }
@@ -56,78 +56,64 @@ public class DataValueBatchHandler
     @Override
     protected void setTableName()
     {
-        statementBuilder.setTableName( "datavalue" );
+        statementBuilder.setTableName( "completedatasetregistration" );
     }
 
     @Override
     protected void setIdentifierColumns()
     {
-        statementBuilder.setIdentifierColumn( "dataelementid" );
+        statementBuilder.setIdentifierColumn( "datasetid" );
         statementBuilder.setIdentifierColumn( "periodid" );
         statementBuilder.setIdentifierColumn( "sourceid" );
-        statementBuilder.setIdentifierColumn( "categoryoptioncomboid" );
         statementBuilder.setIdentifierColumn( "attributeoptioncomboid" );
+    }
+    
+    @Override
+    protected void setIdentifierValues( CompleteDataSetRegistration registration )
+    {        
+        statementBuilder.setIdentifierValue( registration.getDataSet().getId() );
+        statementBuilder.setIdentifierValue( registration.getPeriod() );
+        statementBuilder.setIdentifierValue( registration.getSource().getId() );
+        statementBuilder.setIdentifierValue( registration.getAttributeOptionCombo().getId() );
     }
 
     @Override
-    protected void setIdentifierValues( DataValue value )
-    {        
-        statementBuilder.setIdentifierValue( value.getDataElement().getId() );
-        statementBuilder.setIdentifierValue( value.getPeriod().getId() );
-        statementBuilder.setIdentifierValue( value.getSource().getId() );
-        statementBuilder.setIdentifierValue( value.getCategoryOptionCombo().getId() );
-        statementBuilder.setIdentifierValue( value.getAttributeOptionCombo().getId() );
-    }
-    
-    @Override
     protected void setUniqueColumns()
     {
-        statementBuilder.setUniqueColumn( "dataelementid" );
+        statementBuilder.setUniqueColumn( "datasetid" );
         statementBuilder.setUniqueColumn( "periodid" );
         statementBuilder.setUniqueColumn( "sourceid" );
-        statementBuilder.setUniqueColumn( "categoryoptioncomboid" );
-        statementBuilder.setUniqueColumn( "attributeoptioncomboid" );
+        statementBuilder.setIdentifierColumn( "attributeoptioncomboid" );
     }
     
     @Override
-    protected void setUniqueValues( DataValue value )
+    protected void setUniqueValues( CompleteDataSetRegistration registration )
     {        
-        statementBuilder.setUniqueValue( value.getDataElement().getId() );
-        statementBuilder.setUniqueValue( value.getPeriod().getId() );
-        statementBuilder.setUniqueValue( value.getSource().getId() );
-        statementBuilder.setUniqueValue( value.getCategoryOptionCombo().getId() );
-        statementBuilder.setUniqueValue( value.getAttributeOptionCombo().getId() );
+        statementBuilder.setUniqueValue( registration.getDataSet().getId() );
+        statementBuilder.setUniqueValue( registration.getPeriod() );
+        statementBuilder.setUniqueValue( registration.getSource().getId() );
+        statementBuilder.setUniqueValue( registration.getAttributeOptionCombo().getId() );
     }
-    
+
     @Override
     protected void setColumns()
     {
-        statementBuilder.setColumn( "dataelementid" );
+        statementBuilder.setColumn( "datasetid" );
         statementBuilder.setColumn( "periodid" );
         statementBuilder.setColumn( "sourceid" );
-        statementBuilder.setColumn( "categoryoptioncomboid" );
         statementBuilder.setColumn( "attributeoptioncomboid" );
-        statementBuilder.setColumn( "value" );
+        statementBuilder.setColumn( "date" );
         statementBuilder.setColumn( "storedby" );
-        statementBuilder.setColumn( "created ");
-        statementBuilder.setColumn( "lastupdated" );
-        statementBuilder.setColumn( "comment" );
-        statementBuilder.setColumn( "followup" );
     }
     
     @Override
-    protected void setValues( DataValue value )
-    {        
-        statementBuilder.setValue( value.getDataElement().getId() );
-        statementBuilder.setValue( value.getPeriod().getId() );
-        statementBuilder.setValue( value.getSource().getId() );
-        statementBuilder.setValue( value.getCategoryOptionCombo().getId() );
-        statementBuilder.setValue( value.getAttributeOptionCombo().getId() );
-        statementBuilder.setValue( value.getValue() );
-        statementBuilder.setValue( value.getStoredBy() );
-        statementBuilder.setValue( getLongDateString( value.getCreated() ) );
-        statementBuilder.setValue( getLongDateString( value.getLastUpdated() ) );
-        statementBuilder.setValue( value.getComment() );
-        statementBuilder.setValue( value.isFollowup() );
+    public void setValues( CompleteDataSetRegistration registration )
+    {
+        statementBuilder.setValue( registration.getDataSet().getId() );
+        statementBuilder.setValue( registration.getPeriod() );
+        statementBuilder.setValue( registration.getSource().getId() );
+        statementBuilder.setValue( registration.getAttributeOptionCombo().getId() );
+        statementBuilder.setValue( getLongDateString( registration.getDate() ) );
+        statementBuilder.setValue( registration.getStoredBy() );
     }
 }
