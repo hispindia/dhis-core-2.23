@@ -873,7 +873,7 @@ public class DefaultAnalyticsService
 
         int optimalQueries = MathUtils.getWithin( getProcessNo(), 1, MAX_QUERIES );
 
-        int maxLimit = getMaxLimit();
+        int maxLimit = (Integer) systemSettingManager.getSystemSetting( SettingKey.ANALYTICS_MAX_LIMIT );
         
         Timer timer = new Timer().start().disablePrint();
 
@@ -1065,15 +1065,5 @@ public class DefaultAnalyticsService
         Integer cores = (Integer) systemSettingManager.getSystemSetting( SettingKey.DATABASE_SERVER_CPUS );
 
         return ( cores == null || cores == 0 ) ? SystemUtils.getCpuCores() : cores;
-    }
-
-    /**
-     * Returns the max records limit. 0 indicates no limit.
-     * 
-     * @return the max records limit.
-     */
-    private int getMaxLimit()
-    {
-        return (Integer) systemSettingManager.getSystemSetting( SettingKey.ANALYTICS_MAX_LIMIT );
     }
 }
