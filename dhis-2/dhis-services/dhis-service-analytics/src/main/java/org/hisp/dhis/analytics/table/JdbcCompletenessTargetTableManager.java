@@ -110,7 +110,7 @@ public class JdbcCompletenessTargetTableManager
     @Async
     public Future<?> populateTableAsync( ConcurrentLinkedQueue<AnalyticsTable> tables )
     {
-        taskLoop : while ( true )
+        taskLoop: while ( true )
         {
             AnalyticsTable table = tables.poll();
                 
@@ -152,7 +152,7 @@ public class JdbcCompletenessTargetTableManager
         
         return null;
     }
-
+    
     @Override
     public List<AnalyticsTableColumn> getDimensionColumns( AnalyticsTable table )
     {
