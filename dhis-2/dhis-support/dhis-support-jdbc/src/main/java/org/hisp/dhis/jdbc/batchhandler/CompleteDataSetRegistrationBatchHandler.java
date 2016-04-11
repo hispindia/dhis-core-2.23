@@ -72,7 +72,7 @@ public class CompleteDataSetRegistrationBatchHandler
     protected void setIdentifierValues( CompleteDataSetRegistration registration )
     {        
         statementBuilder.setIdentifierValue( registration.getDataSet().getId() );
-        statementBuilder.setIdentifierValue( registration.getPeriod() );
+        statementBuilder.setIdentifierValue( registration.getPeriod().getId() );
         statementBuilder.setIdentifierValue( registration.getSource().getId() );
         statementBuilder.setIdentifierValue( registration.getAttributeOptionCombo().getId() );
     }
@@ -90,7 +90,7 @@ public class CompleteDataSetRegistrationBatchHandler
     protected void setUniqueValues( CompleteDataSetRegistration registration )
     {        
         statementBuilder.setUniqueValue( registration.getDataSet().getId() );
-        statementBuilder.setUniqueValue( registration.getPeriod() );
+        statementBuilder.setUniqueValue( registration.getPeriod().getId() );
         statementBuilder.setUniqueValue( registration.getSource().getId() );
         statementBuilder.setUniqueValue( registration.getAttributeOptionCombo().getId() );
     }
@@ -110,7 +110,7 @@ public class CompleteDataSetRegistrationBatchHandler
     public void setValues( CompleteDataSetRegistration registration )
     {
         statementBuilder.setValue( registration.getDataSet().getId() );
-        statementBuilder.setValue( registration.getPeriod() );
+        statementBuilder.setValue( registration.getPeriod().getId() );
         statementBuilder.setValue( registration.getSource().getId() );
         statementBuilder.setValue( registration.getAttributeOptionCombo().getId() );
         statementBuilder.setValue( getLongDateString( registration.getDate() ) );
