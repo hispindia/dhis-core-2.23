@@ -201,6 +201,7 @@ public class GeoFeatureController
         for ( OrganisationUnit unit : organisationUnits )
         {
             GeoFeature feature = new GeoFeature();
+            
             feature.setId( unit.getUid() );
             feature.setCode( unit.getCode() );
             feature.setHcd( unit.hasChildrenWithCoordinates() );
@@ -211,15 +212,7 @@ public class GeoFeatureController
             feature.setPn( unit.getParent() != null ? unit.getParent().getDisplayName() : null );
             feature.setTy( unit.getFeatureType() != null ? FEATURE_TYPE_MAP.get( unit.getFeatureType() ) : 0 );
             feature.setCo( unit.getCoordinates() );
-
-            if ( DisplayProperty.SHORTNAME.equals( params.getDisplayProperty() ) )
-            {
-                feature.setNa( unit.getDisplayShortName() );
-            }
-            else
-            {
-                feature.setNa( unit.getDisplayName() );
-            }
+            feature.setNa( unit.getDisplayProperty( params.getDisplayProperty() ) );
 
             if ( includeGroupSets )
             {
