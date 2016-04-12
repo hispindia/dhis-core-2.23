@@ -324,7 +324,7 @@ public class DefaultAnalyticsService
         if ( !params.getAllDataElements().isEmpty() && !params.isSkipData() )
         {
             DataQueryParams dataSourceParams = params.instance();
-            dataSourceParams.retainDataDimension( DataDimensionItemType.AGGREGATE_DATA_ELEMENT );
+            dataSourceParams.retainDataDimension( DataDimensionItemType.DATA_ELEMENT );
 
             Map<String, Object> aggregatedDataMap = getAggregatedDataValueMapObjectTyped( dataSourceParams );
 
