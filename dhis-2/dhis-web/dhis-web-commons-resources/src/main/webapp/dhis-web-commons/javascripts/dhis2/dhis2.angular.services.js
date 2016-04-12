@@ -1544,7 +1544,12 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     {name:"d2:lastEventDate",parameters:1},
                     {name:"d2:validatePattern",parameters:2},
                     {name:"d2:addControlDigits",parameters:1},
-                    {name:"d2:checkControlDigits",parameters:1}];
+                    {name:"d2:checkControlDigits",parameters:1},
+                    {name:"d2:left",parameters:2},
+                    {name:"d2:right",parameters:2},
+                    {name:"d2:substring",parameters:3},
+                    {name:"d2:split",parameters:3},
+                    {name:"d2:length",parameters:1}];
                 var continueLooping = true;
                 //Safety harness on 10 loops, in case of unanticipated syntax causing unintencontinued looping
                 for(var i = 0; i < 10 && continueLooping; i++ ) {
@@ -1837,7 +1842,6 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var baseDigits = baseNumber.split('');
                                 var error = false;
 
-
                                 var firstDigit = 0;
                                 var secondDigit = 0;
 
@@ -1893,6 +1897,46 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, parameters[0]);
+                                successfulExecution = false;
+                            }
+                            else if(dhisFunction.name === "d2:left") {
+                                var string = parameters[0];
+                                var numChars = string.length < parameters[1] ? string.length : parameters[1];
+                                var returnString =  string.substring(0,numChars);
+                                returnString = VariableService.processValue(returnString, 'TEXT');
+                                expression = expression.replace(callToThisFunction, returnString);
+                                successfulExecution = false;
+                            }
+                            else if(dhisFunction.name === "d2:right") {
+                                var string = parameters[0];
+                                var numChars = string.length < parameters[1] ? string.length : parameters[1];
+                                var returnString =  string.substring(string.length - numChars, numChars);
+                                returnString = VariableService.processValue(returnString, 'TEXT');
+                                expression = expression.replace(callToThisFunction, returnString);
+                                successfulExecution = false;
+                            }
+                            else if(dhisFunction.name === "d2:substring") {
+                                var string = parameters[0];
+                                var startChar = string.length < parameters[1] - 1 ? string.length : parameters[1];
+                                var endChar = string.length < parameters[2] ? string.length : parameters[2];
+                                var returnString =  string.substring(startChar, endChar);
+                                returnString = VariableService.processValue(returnString, 'TEXT');
+                                expression = expression.replace(callToThisFunction, returnString);
+                                successfulExecution = false;
+                            }
+                            else if(dhisFunction.name === "d2:split") {
+                                var string = parameters[0];
+                                var splitArray = string.split(parameters[1]);
+                                var returnPart = "";
+                                if (splitArray.length >= parameters[2]) {
+                                    returnPart = splitArray[parameters[2]];
+                                }
+                                returnPart = VariableService.processValue(returnPart, 'TEXT');
+                                expression = expression.replace(callToThisFunction, returnPart);
+                                successfulExecution = false;
+                            }
+                            else if(dhisFunction.name === "d2:length") {
+                                expression = expression.replace(callToThisFunction, parameters[0].length);
                                 successfulExecution = false;
                             }
                         });
