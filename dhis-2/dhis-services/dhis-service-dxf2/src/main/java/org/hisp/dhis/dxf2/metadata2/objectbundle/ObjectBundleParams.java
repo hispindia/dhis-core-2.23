@@ -57,7 +57,7 @@ public class ObjectBundleParams
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
-    private ImportStrategy importMode = ImportStrategy.CREATE_AND_UPDATE;
+    private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
 
     private AtomicMode atomicMode = AtomicMode.ALL;
 
@@ -114,14 +114,14 @@ public class ObjectBundleParams
         this.preheatMode = preheatMode;
     }
 
-    public ImportStrategy getImportMode()
+    public ImportStrategy getImportStrategy()
     {
-        return importMode;
+        return importStrategy;
     }
 
-    public void setImportMode( ImportStrategy importMode )
+    public void setImportStrategy( ImportStrategy importStrategy )
     {
-        this.importMode = importMode;
+        this.importStrategy = importStrategy;
     }
 
     public AtomicMode getAtomicMode()
@@ -212,7 +212,7 @@ public class ObjectBundleParams
             .add( "objectBundleMode", objectBundleMode )
             .add( "preheatIdentifier", preheatIdentifier )
             .add( "preheatMode", preheatMode )
-            .add( "importMode", importMode )
+            .add( "importStrategy", importStrategy )
             .add( "mergeMode", mergeMode )
             .toString();
     }

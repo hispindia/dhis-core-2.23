@@ -82,7 +82,7 @@ public class ObjectBundle
         this.user = params.getUser();
         this.objectBundleMode = params.getObjectBundleMode();
         this.preheatIdentifier = params.getPreheatIdentifier();
-        this.importMode = params.getImportMode();
+        this.importMode = params.getImportStrategy();
         this.atomicMode = params.getAtomicMode();
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();

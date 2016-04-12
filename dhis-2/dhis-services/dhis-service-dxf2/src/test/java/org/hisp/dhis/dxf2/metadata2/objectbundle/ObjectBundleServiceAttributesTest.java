@@ -97,7 +97,7 @@ public class ObjectBundleServiceAttributesTest
 
         ObjectBundleParams params = new ObjectBundleParams();
         params.setObjectBundleMode( ObjectBundleMode.COMMIT );
-        params.setImportMode( ImportStrategy.CREATE );
+        params.setImportStrategy( ImportStrategy.CREATE );
         params.setObjects( metadata );
 
         ObjectBundle bundle = objectBundleService.create( params );
