@@ -279,7 +279,7 @@ public class ScheduleTasksAction
                 // Data statistics
                 // -------------------------------------------------------------
 
-                if (  STRATEGY_ALL_DAILY.equals( dataStatisticsStrategy ) )
+                if (  STRATEGY_ENABLED.equals( dataStatisticsStrategy ) )
                 {
                     cronKeyMap.putValue(  CRON_DAILY_0AM, TASK_DATASTATISTICS );
                 }
@@ -349,7 +349,7 @@ public class ScheduleTasksAction
             // -------------------------------------------------------------
 
             if ( keys.contains( TASK_DATASTATISTICS ) ){
-                dataStatisticsStrategy = STRATEGY_ALL_DAILY;
+                dataStatisticsStrategy = STRATEGY_ENABLED;
             }
 
             // -----------------------------------------------------------------

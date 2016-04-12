@@ -97,7 +97,7 @@
   <div class="setting settingIndent">
     <select id="dataStatisticsStrategy" name="dataStatisticsStrategy" class="scheduling">
       <option value="disabled">$i18n.getString( "disabled" )</option>
-      <option value="allDaily"#if( $dataStatisticsStrategy && $dataStatisticsStrategy == "allDaily" ) selected="selected"#end>$i18n.getString( "all_daily" )</option>
+      <option value="enabled"#if( $dataStatisticsStrategy && $dataStatisticsStrategy == "enabled" ) selected="selected"#end>$i18n.getString( "enabled" )</option>
     </select>
   </div>
 

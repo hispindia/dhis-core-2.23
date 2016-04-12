@@ -132,7 +132,7 @@ public class SchedulingController
         // Data statistics
         // -------------------------------------------------------------
 
-        if ( STRATEGY_ALL_DAILY.equals(strategy.getDataStatisticsStrategy()))
+        if ( STRATEGY_ENABLED.equals(strategy.getDataStatisticsStrategy()))
         {
             cronKeyMap.putValue( CRON_DAILY_0AM, TASK_DATASTATISTICS);
         }
