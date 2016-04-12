@@ -52,7 +52,7 @@ public class MetadataImportParams
 
     private ObjectBundleMode importMode = ObjectBundleMode.COMMIT;
 
-    private PreheatIdentifier preheatIdentifier = PreheatIdentifier.UID;
+    private PreheatIdentifier identifier = PreheatIdentifier.UID;
 
     private PreheatMode preheatMode = PreheatMode.REFERENCE;
 
@@ -90,14 +90,14 @@ public class MetadataImportParams
         this.importMode = importMode;
     }
 
-    public PreheatIdentifier getPreheatIdentifier()
+    public PreheatIdentifier getIdentifier()
     {
-        return preheatIdentifier;
+        return identifier;
     }
 
-    public void setPreheatIdentifier( PreheatIdentifier preheatIdentifier )
+    public void setIdentifier( PreheatIdentifier identifier )
     {
-        this.preheatIdentifier = preheatIdentifier;
+        this.identifier = identifier;
     }
 
     public PreheatMode getPreheatMode()
@@ -202,7 +202,7 @@ public class MetadataImportParams
         params.setImportStrategy( importStrategy );
         params.setAtomicMode( atomicMode );
         params.setObjects( objects );
-        params.setPreheatIdentifier( preheatIdentifier );
+        params.setPreheatIdentifier( identifier );
         params.setPreheatMode( preheatMode );
         params.setObjectBundleMode( importMode );
         params.setMergeMode( mergeMode );
@@ -218,7 +218,7 @@ public class MetadataImportParams
         return MoreObjects.toStringHelper( this )
             .add( "user", user )
             .add( "importMode", importMode )
-            .add( "preheatIdentifier", preheatIdentifier )
+            .add( "identifier", identifier )
             .add( "preheatMode", preheatMode )
             .add( "importStrategy", importStrategy )
             .add( "mergeMode", mergeMode )

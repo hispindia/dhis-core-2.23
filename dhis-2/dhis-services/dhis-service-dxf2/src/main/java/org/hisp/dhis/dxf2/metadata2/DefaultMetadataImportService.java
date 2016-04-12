@@ -103,7 +103,7 @@ public class DefaultMetadataImportService implements MetadataImportService
         MetadataImportParams params = new MetadataImportParams();
         params.setImportMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "objectBundleMode", ObjectBundleMode.COMMIT ) );
         params.setPreheatMode( getEnumWithDefault( PreheatMode.class, parameters, "preheatMode", PreheatMode.REFERENCE ) );
-        params.setPreheatIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
+        params.setIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "preheatIdentifier", PreheatIdentifier.UID ) );
         params.setImportStrategy( getEnumWithDefault( ImportStrategy.class, parameters, "importMode", ImportStrategy.CREATE_AND_UPDATE ) );
         params.setAtomicMode( getEnumWithDefault( AtomicMode.class, parameters, "atomicMode", AtomicMode.ALL ) );
         params.setMergeMode( getEnumWithDefault( MergeMode.class, parameters, "mergeMode", MergeMode.MERGE ) );
