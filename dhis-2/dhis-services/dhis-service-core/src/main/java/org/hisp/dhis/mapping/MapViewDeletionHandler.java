@@ -1,5 +1,7 @@
 package org.hisp.dhis.mapping;
 
+import java.util.List;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -30,6 +32,7 @@ package org.hisp.dhis.mapping;
 
 import org.hisp.dhis.common.AnalyticalObjectService;
 import org.hisp.dhis.common.GenericAnalyticalObjectDeletionHandler;
+import org.hisp.dhis.legend.LegendSet;
 
 /**
  * @author Lars Helge Overland
@@ -62,6 +65,18 @@ public class MapViewDeletionHandler
     protected String getClassName()
     {
         return MapView.class.getSimpleName();
+    }
+
+    @Override
+    public void deleteLegendSet( LegendSet legendSet )
+    {
+        List<MapView> mapViews = mappingService.getAnalyticalObjects( legendSet );
+        
+        for ( MapView mapView : mapViews )
+        {
+            mapView.setLegendSet( null );
+            mappingService.update( mapView );
+        }
     }
 
     @Override
