@@ -574,3 +574,8 @@ div#orgUnitTree {
     color: #333 !important;
     text-decoration: none !important;
 }
+
+.default-btn-height {
+    font-size: 9pt;
+    padding: 5px;
+}

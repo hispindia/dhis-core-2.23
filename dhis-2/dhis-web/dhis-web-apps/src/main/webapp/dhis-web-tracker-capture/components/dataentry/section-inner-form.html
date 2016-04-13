@@ -257,7 +257,8 @@
         </div>
         <div ng-switch-when="COORDINATE">
             <div class="hideInPrint">
-                <input type="text"
+                <span class="input-group">                            
+                    <input type="text"
                        placeholder="{{'latitude_longitude_format' | translate}}"
                        d2-custom-coordinate-validator 
                        class="form-control"
@@ -267,8 +268,15 @@
                        ng-disabled="selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id]"
                        ng-change="saveDatavalue(prStDes[de.dataElement.id], innerForm.foo)"
                        name="foo"/>
-                <span ng-if="!(selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id])">
-                    <a href ng-click="showDataElementMap(currentEvent, prStDes[de.dataElement.id].dataElement.id, innerForm.foo)" title="{{'get_from_map'| translate}}"><i class="fa fa-map-marker fa-2x"></i></a>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary trim" 
+                                type="button" 
+                                title="{{'get_from_map'| translate}}"
+                                ng-if="!(selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][de.dataElement.id])"
+                                ng-click="showDataElementMap(currentEvent, prStDes[de.dataElement.id].dataElement.id, innerForm.foo)">
+                                <i class="fa fa-map-marker"></i>                             
+                        </button>
+                    </span>
                 </span>
             </div>
             <div class="not-for-screen">

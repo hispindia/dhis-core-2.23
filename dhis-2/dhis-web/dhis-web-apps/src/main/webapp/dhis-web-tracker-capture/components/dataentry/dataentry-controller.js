@@ -35,7 +35,7 @@ trackerCapture.controller('DataEntryController',
     $scope.eventPagingEnd = $scope.eventPageSize;
     
     //Data entry form
-    $scope.outerDataEntryForm = {};
+    $scope.outerDataEntryForm = {longitude: {}, latitude: {}};
     $scope.displayCustomForm = false;
     $scope.currentElement = {};
     $scope.schedulingEnabled = false;
@@ -1491,7 +1491,7 @@ trackerCapture.controller('DataEntryController',
         if (type === 'LAT' || type === 'LATLNG') {
             $scope.latitudeSaved = false;
         }
-        if (type === 'LAT' || type === 'LATLNG') {
+        if (type === 'LNG' || type === 'LATLNG') {
             $scope.longitudeSaved = false;
         }
 

@@ -92,7 +92,6 @@
                                        input-field-id={{eventGridColumn.id}} 
                                        ng-blur="saveDatavalue()" 
                                        class="form-control"/>
-                                </span>
                             </div>
                             <div ng-switch-when="INTEGER_POSITIVE">
                                 <input type="number"
@@ -226,6 +225,29 @@
                                             </span>                                                
                                         </span>
                                     </span>                
+                                </div>
+                            </div>
+                            <div ng-switch-when="COORDINATE">
+                                <div class="input-group">                            
+                                    <input type="text"
+                                        name="foo" 
+                                        placeholder="{{'latitude_longitude_format' | translate}}"
+                                        class="form-control"
+                                        d2-custom-coordinate-validator 
+                                        ng-model="currentEvent[eventGridColumn.id]"
+                                        ng-required={{eventGridColumn.compulsory}}
+                                        ng-disabled="assignedFields[eventGridColumn.id]"
+                                        input-field-id={{eventGridColumn.id}}
+                                        ng-blur="saveDatavalue()"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary hideInPrint trim" 
+                                                type="button" 
+                                                title="{{'get_from_map'| translate}}"
+                                                ng-disabled="assignedFields[eventGridColumn.id]"
+                                                ng-click="showDataElementMap(currentEvent, eventGridColumn.id)">
+                                                <i class="fa fa-map-marker"></i>                             
+                                        </button>
+                                    </span>
                                 </div>
                             </div>
                             <div ng-switch-default>
@@ -491,6 +513,29 @@
                                             </span>
                                         </span>                
                                     </div>                                    
+                                </div>
+                                <div ng-switch-when="COORDINATE">
+                                    <div class="input-group">                            
+                                        <input type="text"
+                                            name="foo" 
+                                            class="form-control" 
+                                            d2-custom-coordinate-validator 
+                                            placeholder="{{'latitude_longitude_format' | translate}}"
+                                            ng-model="currentEvent[de.dataElement.id]"
+                                            ng-required={{prStDes[de.dataElement.id].compulsory}}
+                                            ng-disabled="assignedFields[de.dataElement.id]"
+                                            input-field-id={{de.dataElement.id}}
+                                            ng-blur="saveDatavalue()"/>
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-primary hideInPrint trim" 
+                                                    type="button" 
+                                                    title="{{'get_from_map'| translate}}"
+                                                    ng-disabled="assignedFields[de.dataElement.id]"
+                                                    ng-click="showDataElementMap(currentEvent, de.dataElement.id)">
+                                                    <i class="fa fa-map-marker"></i>                             
+                                            </button>
+                                        </span>
+                                    </div>
                                 </div>
                                 <div ng-switch-default>
                                     <input type="text"

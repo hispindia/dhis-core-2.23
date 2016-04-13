@@ -489,13 +489,19 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                         </span>';
                                         }
                                         else if (prStDe.dataElement.valueType === "COORDINATE") {
-                                        	newInputField = '<span class="hideInPrint"><input type="text" ' +
-	                                            ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
-	                                            ' ng-blur="saveDatavalue(prStDes.' + fieldId + ', outerForm.' + fieldId + ')"' +
-	                                            commonInputFieldProperty + '>' +
-	                                            '<span class="horizontal-spacing"><a href ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\')" title="{{\'get_from_map\' | translate}}" ' +
-                                                '<i class="fa fa-map-marker fa-2x vertical-center"></i> ' +                     
-                                                '</a></span></span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
+                                                newInputField = '<span class="input-group hideInPrint"> ' +
+                                                                ' <input type="text" ' +
+                                                                ' d2-custom-coordinate-validator ' +
+                                                                ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
+                                                                ' placeholder="{{\'latitude_longitude_format\' | translate}}" ' +
+                                                                commonInputFieldProperty + '>' +
+                                                                '<span class="input-group-btn"> ' +
+                                                                    '<button class="btn btn-primary default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                        'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\')"> ' +
+                                                                        '<i class="fa fa-map-marker"></i> ' +
+                                                                    '</button> ' + 
+                                                                '</span>' +
+                                                                '</span><span class="not-for-screen"><input type="text" value={{currentEvent.' + fieldId + '}}></span>';
                                         }
                                         else {
                                             newInputField = '<span class="hideInPrint"><input type="text" ' +
@@ -641,12 +647,18 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             '</a></span>';
                                     }
                                     else if (att.valueType === "COORDINATE") {
-                                        newInputField = '<input type="text"' +
-                                            ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' >' +
-                                            '<span class="horizontal-spacing hideInPrint"><a href ng-click="showAttributeMap(selectedTei,\'' + attId + '\')" title="{{\'get_from_map\' | translate}}" ' +
-                                            '<i class="fa fa-map-marker fa-2x vertical-center"></i> ' +                     
-                                            '</a></span>';
+                                        newInputField = '<span class="input-group"> ' +
+                                                            ' <input type="text" ' +
+                                                            ' placeholder="{{\'latitude_longitude_format\' | translate}}" ' +
+                                                            ' d2-custom-coordinate-validator ' +
+                                                            ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
+                                                            commonInputFieldProperty + '>' +
+                                                            '<span class="input-group-btn"> ' +
+                                                                '<button class="btn btn-primary default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                    'ng-click="showAttributeMap(selectedTei,\'' + attId + '\')"> ' +
+                                                                    '<i class="fa fa-map-marker"></i> ' +
+                                                                '</button> ' + 
+                                                            '</span></span>';
                                     }
                                     else if (att.valueType === "LONG_TEXT") {
                                         newInputField = '<span><textarea row ="3" ' +

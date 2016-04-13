@@ -1171,7 +1171,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
         });
     };
     
-    $scope.showDataElementMap = function(obj, id, fieldId){
+    $scope.showDataElementMap = function(obj, id){
         var lat = "",
             lng = "";
         if(obj[id] && obj[id].length > 0){
