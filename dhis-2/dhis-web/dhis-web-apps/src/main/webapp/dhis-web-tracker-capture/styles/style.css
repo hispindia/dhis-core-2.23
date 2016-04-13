@@ -766,10 +766,6 @@ div#searchOuTree h4{
     padding-top: 50px;
 }
 
-.modal-dialog {
-    top: 50%;
-}
-
 .expanded{
     border: 1px solid #aaa;
     padding: 6px 8px;
