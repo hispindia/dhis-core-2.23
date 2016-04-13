@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -564,19 +565,19 @@ public class BaseIdentifiableObject
      * @param idScheme the IdScheme.
      * @return the value of the property referred to by the IdScheme.
      */
-    public String getPropertyValue( IdScheme idScheme )
+    public Optional<String> getPropertyValue( IdScheme idScheme )
     {
         if ( idScheme.isNull() || idScheme.is( IdentifiableProperty.UID ) )
         {
-            return uid;
+            return Optional.ofNullable( uid );
         }
         else if ( idScheme.is( IdentifiableProperty.CODE ) )
         {
-            return code;
+            return Optional.ofNullable( code );
         }
         else if ( idScheme.is( IdentifiableProperty.NAME ) )
         {
-            return name;
+            return Optional.ofNullable( name );
         }
         else if ( idScheme.is( IdentifiableProperty.ATTRIBUTE ) )
         {
@@ -584,12 +585,12 @@ public class BaseIdentifiableObject
             {
                 if ( idScheme.getAttribute().equals( attributeValue.getAttribute().getUid() ) )
                 {
-                    return attributeValue.getValue();
+                    return Optional.ofNullable( attributeValue.getValue() );
                 }
             }
         }
         
-        return null;        
+        return Optional.empty();        
     }
 
     @Override

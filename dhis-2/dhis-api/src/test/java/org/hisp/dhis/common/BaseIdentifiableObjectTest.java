@@ -44,14 +44,19 @@ public class BaseIdentifiableObjectTest
         DataElement deA = new DataElement();
         deA.setUid( "A1234567890" );
         deA.setCode( "CodeA" );
-        deA.setName( "NameA" );
+        deA.setName( "NameA" );        
+
+        DataElement deB = new DataElement();
 
         IdScheme idSchemeUid = IdScheme.from( IdentifiableProperty.UID );
         IdScheme idSchemeCode = IdScheme.from( IdentifiableProperty.CODE );
         IdScheme idSchemeName = IdScheme.from( IdentifiableProperty.NAME );
         
-        assertEquals( "A1234567890", deA.getPropertyValue( idSchemeUid ) );
-        assertEquals( "CodeA", deA.getPropertyValue( idSchemeCode ) );
-        assertEquals( "NameA", deA.getPropertyValue( idSchemeName ) );   
+        assertEquals( "A1234567890", deA.getPropertyValue( idSchemeUid ).get() );
+        assertEquals( "CodeA", deA.getPropertyValue( idSchemeCode ).get() );
+        assertEquals( "NameA", deA.getPropertyValue( idSchemeName ).get() );
+        assertTrue( "NameA", deA.getPropertyValue( idSchemeName ).isPresent() );
+        
+        assertFalse( deB.getPropertyValue( idSchemeCode ).isPresent() );
     }
 }
