@@ -127,7 +127,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         if ( bundle.isSkipValidation() )
         {
-            log.warn( "Skipping validation for import by user '" + bundle.getUsername() + "'. Not recommended." );
+            log.warn( "Skipping validation for metadata import by user '" + bundle.getUsername() + "'. Not recommended." );
             return validation;
         }
 
