@@ -964,6 +964,7 @@ public class DefaultExpressionService
         }
 
         Map<String, Double> dimensionItemValueMap = valueMap.entrySet().stream().
+            filter( e -> e.getValue() != null ).
             collect( Collectors.toMap( e -> e.getKey().getDimensionItem(), e -> e.getValue() ) );
 
         Set<String> incompleteItems = incompleteValues != null ?
