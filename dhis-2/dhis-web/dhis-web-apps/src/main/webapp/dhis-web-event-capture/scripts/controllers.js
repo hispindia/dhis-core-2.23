@@ -1377,6 +1377,11 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
         $scope.executeRules();
     };
     
+    $scope.saveDatavalueRadio = function(prStDe, event, value){
+        event[prStDe.id] = value;
+        $scope.executeRules();
+    };
+    
     $scope.getInputNotifcationClass = function(id, custom){
         if($scope.currentElement.id && $scope.currentElement.id === id){
             if($scope.currentElement.pending){
