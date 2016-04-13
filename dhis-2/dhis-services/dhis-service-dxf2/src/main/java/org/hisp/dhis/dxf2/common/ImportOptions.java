@@ -54,7 +54,7 @@ public class ImportOptions
 
     private ImportStrategy importStrategy = ImportStrategy.CREATE_AND_UPDATE;
 
-    private MergeMode mergeMode = MergeMode.MERGE_IF_NOT_NULL;
+    private MergeMode mergeMode = MergeMode.MERGE;
 
     private boolean skipExistingCheck;
 
