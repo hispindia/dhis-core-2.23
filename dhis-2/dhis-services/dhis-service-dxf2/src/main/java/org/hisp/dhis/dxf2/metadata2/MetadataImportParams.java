@@ -64,6 +64,10 @@ public class MetadataImportParams
 
     private FlushMode flushMode = FlushMode.AUTO;
 
+    private boolean skipSharing;
+
+    private boolean skipValidation;
+
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
 
     public MetadataImportParams()
@@ -150,6 +154,26 @@ public class MetadataImportParams
         this.flushMode = flushMode;
     }
 
+    public boolean isSkipSharing()
+    {
+        return skipSharing;
+    }
+
+    public void setSkipSharing( boolean skipSharing )
+    {
+        this.skipSharing = skipSharing;
+    }
+
+    public boolean isSkipValidation()
+    {
+        return skipValidation;
+    }
+
+    public void setSkipValidation( boolean skipValidation )
+    {
+        this.skipValidation = skipValidation;
+    }
+
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
     {
         return objects;
@@ -199,6 +223,8 @@ public class MetadataImportParams
     {
         ObjectBundleParams params = new ObjectBundleParams();
         params.setUser( user );
+        params.setSkipSharing(skipSharing);
+        params.setSkipValidation( skipValidation);
         params.setImportStrategy( importStrategy );
         params.setAtomicMode( atomicMode );
         params.setObjects( objects );

@@ -124,6 +124,13 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundleValidationReport validate( ObjectBundle bundle )
     {
         ObjectBundleValidationReport validation = new ObjectBundleValidationReport();
+        String username = bundle.getUser() != null ? bundle.getUser().getUsername() : "system-process";
+
+        if ( bundle.isSkipValidation() )
+        {
+            log.warn( "Skipping validation for import by user '" + username + "'. Not recommended." );
+            return validation;
+        }
 
         List<Class<? extends IdentifiableObject>> klasses = getSortedClasses( bundle );
 
@@ -289,7 +296,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleCreates( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        
+
         if ( objects.isEmpty() )
         {
             return typeReport;
@@ -328,7 +335,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleUpdates( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        
+
         if ( objects.isEmpty() )
         {
             return typeReport;
@@ -347,7 +354,11 @@ public class DefaultObjectBundleService implements ObjectBundleService
             IdentifiableObject persistedObject = bundle.getPreheat().get( bundle.getPreheatIdentifier(), object );
 
             persistedObject.mergeWith( object, bundle.getMergeMode() );
-            persistedObject.mergeSharingWith( object );
+
+            if ( !bundle.isSkipSharing() )
+            {
+                persistedObject.mergeSharingWith( object );
+            }
 
             prepare( persistedObject, bundle );
             session.update( persistedObject );
@@ -372,7 +383,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
     private TypeReport handleDeletes( Session session, Class<? extends IdentifiableObject> klass, List<IdentifiableObject> objects, ObjectBundle bundle )
     {
         TypeReport typeReport = new TypeReport( klass );
-        
+
         if ( objects.isEmpty() )
         {
             return typeReport;
@@ -425,7 +436,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
         {
             return;
         }
-        
+
         BaseIdentifiableObject identifiableObject = (BaseIdentifiableObject) object;
 
         if ( identifiableObject.getUser() == null ) identifiableObject.setUser( bundle.getUser() );

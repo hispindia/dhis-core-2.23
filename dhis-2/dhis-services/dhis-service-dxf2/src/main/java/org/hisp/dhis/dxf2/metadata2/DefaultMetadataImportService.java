@@ -101,6 +101,8 @@ public class DefaultMetadataImportService implements MetadataImportService
     public MetadataImportParams getParamsFromMap( Map<String, List<String>> parameters )
     {
         MetadataImportParams params = new MetadataImportParams();
+        params.setSkipSharing( getBooleanWithDefault( parameters, "skipSharing", false ) );
+        params.setSkipValidation( getBooleanWithDefault( parameters, "skipValidation", false ) );
         params.setImportMode( getEnumWithDefault( ObjectBundleMode.class, parameters, "importMode", ObjectBundleMode.COMMIT ) );
         params.setPreheatMode( getEnumWithDefault( PreheatMode.class, parameters, "preheatMode", PreheatMode.REFERENCE ) );
         params.setIdentifier( getEnumWithDefault( PreheatIdentifier.class, parameters, "identifier", PreheatIdentifier.UID ) );
@@ -115,6 +117,18 @@ public class DefaultMetadataImportService implements MetadataImportService
     //-----------------------------------------------------------------------------------
     // Utility Methods
     //-----------------------------------------------------------------------------------
+
+    private boolean getBooleanWithDefault( Map<String, List<String>> parameters, String key, boolean defaultValue )
+    {
+        if ( parameters == null || parameters.get( key ) == null || parameters.get( key ).isEmpty() )
+        {
+            return defaultValue;
+        }
+
+        String value = String.valueOf( parameters.get( key ).get( 0 ) );
+
+        return "true".equals( value.toLowerCase() );
+    }
 
     private <T extends Enum<T>> T getEnumWithDefault( Class<T> enumKlass, Map<String, List<String>> parameters, String key, T defaultValue )
     {

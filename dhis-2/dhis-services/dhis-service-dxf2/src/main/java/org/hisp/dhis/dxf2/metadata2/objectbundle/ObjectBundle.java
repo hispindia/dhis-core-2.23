@@ -68,6 +68,10 @@ public class ObjectBundle
 
     private final Preheat preheat;
 
+    private final boolean skipSharing;
+
+    private final boolean skipValidation;
+
     private ObjectBundleStatus objectBundleStatus = ObjectBundleStatus.CREATED;
 
     private Map<Boolean, Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>>> objects = new HashMap<>();
@@ -87,6 +91,8 @@ public class ObjectBundle
         this.preheatMode = params.getPreheatMode();
         this.mergeMode = params.getMergeMode();
         this.flushMode = params.getFlushMode();
+        this.skipSharing = params.isSkipSharing();
+        this.skipValidation = params.isSkipValidation();
         this.preheat = preheat;
 
         addObject( objectMap );
@@ -130,6 +136,16 @@ public class ObjectBundle
     public FlushMode getFlushMode()
     {
         return flushMode;
+    }
+
+    public boolean isSkipSharing()
+    {
+        return skipSharing;
+    }
+
+    public boolean isSkipValidation()
+    {
+        return skipValidation;
     }
 
     public ObjectBundleStatus getObjectBundleStatus()

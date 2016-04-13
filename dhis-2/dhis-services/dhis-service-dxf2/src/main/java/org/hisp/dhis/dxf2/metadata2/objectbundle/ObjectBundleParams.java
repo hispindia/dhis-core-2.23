@@ -66,6 +66,8 @@ public class ObjectBundleParams
     private FlushMode flushMode = FlushMode.AUTO;
 
     private Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects = new HashMap<>();
+    private boolean skipSharing;
+    private boolean skipValidation;
 
     public ObjectBundleParams()
     {
@@ -154,6 +156,26 @@ public class ObjectBundleParams
         this.flushMode = flushMode;
     }
 
+    public boolean isSkipSharing()
+    {
+        return skipSharing;
+    }
+
+    public void setSkipSharing( boolean skipSharing )
+    {
+        this.skipSharing = skipSharing;
+    }
+
+    public boolean isSkipValidation()
+    {
+        return skipValidation;
+    }
+
+    public void setSkipValidation( boolean skipValidation )
+    {
+        this.skipValidation = skipValidation;
+    }
+
     public Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> getObjects()
     {
         return objects;
@@ -202,7 +224,6 @@ public class ObjectBundleParams
 
         return params;
     }
-
 
     @Override
     public String toString()
