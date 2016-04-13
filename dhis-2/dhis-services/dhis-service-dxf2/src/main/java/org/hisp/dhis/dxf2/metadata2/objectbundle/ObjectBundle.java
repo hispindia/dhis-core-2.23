@@ -103,6 +103,11 @@ public class ObjectBundle
         return user;
     }
 
+    public String getUsername()
+    {
+        return user != null ? user.getUsername() : "system-process";
+    }
+
     public ObjectBundleMode getObjectBundleMode()
     {
         return objectBundleMode;

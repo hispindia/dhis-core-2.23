@@ -124,11 +124,10 @@ public class DefaultObjectBundleService implements ObjectBundleService
     public ObjectBundleValidationReport validate( ObjectBundle bundle )
     {
         ObjectBundleValidationReport validation = new ObjectBundleValidationReport();
-        String username = bundle.getUser() != null ? bundle.getUser().getUsername() : "system-process";
 
         if ( bundle.isSkipValidation() )
         {
-            log.warn( "Skipping validation for import by user '" + username + "'. Not recommended." );
+            log.warn( "Skipping validation for import by user '" + bundle.getUsername() + "'. Not recommended." );
             return validation;
         }
 
