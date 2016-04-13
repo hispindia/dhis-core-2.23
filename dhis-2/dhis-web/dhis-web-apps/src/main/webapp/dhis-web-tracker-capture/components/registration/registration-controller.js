@@ -347,11 +347,9 @@ trackerCapture.controller('RegistrationController',
             var newAttributeInArray = {attribute:metaAttribute.id,
                 code:metaAttribute.code,
                 displayName:metaAttribute.displayName,
-                type:metaAttribute.valueType
+                type:metaAttribute.valueType,
+                value: $scope.selectedTei[metaAttribute.id]
             };
-            if($scope.selectedTei[newAttributeInArray.attribute]){
-                newAttributeInArray.value = $scope.selectedTei[newAttributeInArray.attribute];
-            }
             
            $scope.selectedTei.attributes.push(newAttributeInArray);
         });

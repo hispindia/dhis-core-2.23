@@ -1358,6 +1358,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             if(!valueFound) {
                                 if(attribute.attribute === trackedEntityAttributeId
                                         && angular.isDefined(attribute.value)
+                                        && attribute.value !== null
                                         && attribute.value !== "") {
                                     valueFound = true;
                                     //In registration, the attribute type is found in .type, while in data entry the same data is found in .valueType.
