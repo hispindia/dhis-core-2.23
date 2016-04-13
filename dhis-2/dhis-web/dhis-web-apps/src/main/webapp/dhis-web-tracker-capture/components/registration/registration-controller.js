@@ -7,6 +7,7 @@ trackerCapture.controller('RegistrationController',
                 $timeout,
                 $modal,
                 $translate,
+                orderByFilter,
                 AttributesFactory,
                 DHIS2EventFactory,
                 TEService,
@@ -22,6 +23,7 @@ trackerCapture.controller('RegistrationController',
                 TEIGridService,
                 TrackerRulesFactory,
                 TrackerRulesExecutionService,
+                TCStorageService,
                 ModalService) {
     
     $scope.maxOptionSize = 30;
@@ -56,7 +58,15 @@ trackerCapture.controller('RegistrationController',
             
             CurrentSelection.setAttributesById($scope.attributesById);
         });
-    }    
+    }
+    
+    //get ouLevels
+    TCStorageService.currentStore.open().done(function(){
+        TCStorageService.currentStore.getAll('ouLevels').done(function(response){
+            var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
+            CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
+        });
+    });
     
     $scope.optionSets = CurrentSelection.getOptionSets();        
     if(!$scope.optionSets){

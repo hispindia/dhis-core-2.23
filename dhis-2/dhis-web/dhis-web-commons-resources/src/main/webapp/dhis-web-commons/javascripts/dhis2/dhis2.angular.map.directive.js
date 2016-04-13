@@ -267,7 +267,7 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                     this.event_=e;
                         this.draw();
                 };
-    
+                /* Context menu ends */    
     
                 CurrentSelection.setLocation(scope.location);
 
@@ -279,13 +279,20 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
 
                 //get a default center
                 var latCenter = 12.31, lngCenter = 51.48;
+                
+                var isLocationValid = function(){
+                    if (angular.isObject(scope.location)) {
+                        if (scope.location.lat && scope.location.lat !== "" && scope.location.lng && scope.location.lng !== "") {
+                            return true;
+                        }
+                    }
+                    return false;
+                };
 
                 //if there is any marker already - use it as center
-                if (angular.isObject(scope.location)) {
-                    if (scope.location.lat && scope.location.lng) {
-                        latCenter = scope.location.lat;
-                        lngCenter = scope.location.lng;
-                    }
+                if ( isLocationValid() ) {
+                    latCenter = scope.location.lat;
+                    lngCenter = scope.location.lng;
                 }
 
                 var centerLatLng = new google.maps.LatLng(latCenter, lngCenter);
@@ -309,10 +316,8 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                     map: map
                 });
 
-                if (angular.isObject(scope.location)) {
-                    if (scope.location.lat && scope.location.lng) {
-                        addMarker({lat: scope.location.lat, lng: scope.location.lng});
-                    }
+                if( isLocationValid() ) {
+                    addMarker({lat: scope.location.lat, lng: scope.location.lng});
                 }
 
                 var currentLayer = 0, currentGeojson, currentGeojsonFeatures;
@@ -382,14 +387,26 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                 }
 
                 function centerMap() {
-                    if (currentGeojson && currentGeojson.features) {
-                        var latLngBounds = getMapCenter(currentGeojson);
+                    if (currentGeojson && currentGeojson.features) {                        
+                        var latLngBounds = getMapCenter(currentGeojson);                        
+                        if( isLocationValid() ){
+                            if( latLngBounds.contains(marker.getPosition()) ){                                
+                                map.fitBounds(latLngBounds);
+                                map.panToBounds(latLngBounds);
+                                return;
+                            }
+                            else{
+                                map.setCenter(centerLatLng);
+                                return; 
+                            }
+                        }
+                        
                         map.fitBounds(latLngBounds);
                         map.panToBounds(latLngBounds);
+                        return;
                     }
-                    else{    
-                        map.setCenter(centerLatLng);
-                    }
+                    
+                    map.setCenter(centerLatLng);
                 }
 
                 var overLays = [];

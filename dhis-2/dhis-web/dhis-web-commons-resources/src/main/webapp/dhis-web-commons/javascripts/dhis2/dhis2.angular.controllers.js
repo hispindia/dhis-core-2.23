@@ -33,7 +33,8 @@ var d2Controllers = angular.module('d2Controllers', [])
         function($scope, 
                 $modalInstance,
                 CurrentSelection,
-                DHIS2URL,                
+                DHIS2URL,
+                DialogService,
                 location) {
     
     $scope.home = function(){        
@@ -47,8 +48,19 @@ var d2Controllers = angular.module('d2Controllers', [])
     };
     
     $scope.captureCoordinate = function(){
-        $scope.location = CurrentSelection.getLocation();
-        $modalInstance.close($scope.location);
+    	if( $scope.location && $scope.location.lng && $scope.location.lat ){
+    		$scope.location = CurrentSelection.getLocation();
+            $modalInstance.close($scope.location);
+    	}
+    	else{
+    		//notify user
+            var dialogOptions = {
+                headerText: 'error',
+                bodyText: 'nothing_captured'
+            };
+            DialogService.showDialog({}, dialogOptions);
+            return;
+    	}
     };
 })
 
