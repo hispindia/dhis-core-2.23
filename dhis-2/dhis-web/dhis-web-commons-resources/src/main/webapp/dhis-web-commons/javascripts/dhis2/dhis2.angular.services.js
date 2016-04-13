@@ -1923,7 +1923,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             else if(dhisFunction.name === "d2:right") {
                                 var string = parameters[0];
                                 var numChars = string.length < parameters[1] ? string.length : parameters[1];
-                                var returnString =  string.substring(string.length - numChars, numChars);
+                                var returnString =  string.substring(string.length - numChars, string.length);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
                                 successfulExecution = false;
@@ -1949,7 +1949,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 successfulExecution = false;
                             }
                             else if(dhisFunction.name === "d2:length") {
-                                expression = expression.replace(callToThisFunction, parameters[0].length);
+                                expression = expression.replace(callToThisFunction, String(parameters[0]).length);
                                 successfulExecution = false;
                             }
                         });
