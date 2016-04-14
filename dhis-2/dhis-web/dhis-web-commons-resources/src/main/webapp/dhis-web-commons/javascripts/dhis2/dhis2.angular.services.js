@@ -2570,7 +2570,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
         this.selectedTeiEvents = [];
         this.fileNames = [];
         this.location = null;
-        this.dataElementTranslations = [];
+        this.dataElementTranslations = null;
 
         this.set = function(currentSelection){
             this.currentSelection = currentSelection;

@@ -61,12 +61,15 @@ trackerCapture.controller('RegistrationController',
     }
     
     //get ouLevels
-    TCStorageService.currentStore.open().done(function(){
-        TCStorageService.currentStore.getAll('ouLevels').done(function(response){
-            var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
-            CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
+    $scope.ouLevels = CurrentSelection.getOuLevels();
+    if(!$scope.ouLevels){
+        TCStorageService.currentStore.open().done(function(){
+            TCStorageService.currentStore.getAll('ouLevels').done(function(response){
+                var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
+                CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
+            });
         });
-    });
+    }
     
     $scope.optionSets = CurrentSelection.getOptionSets();        
     if(!$scope.optionSets){
@@ -80,7 +83,7 @@ trackerCapture.controller('RegistrationController',
     }
     
     $scope.dataElementTranslations = CurrentSelection.getDataElementTranslations();        
-    if($scope.dataElementTranslations.length < 1){
+    if(!$scope.dataElementTranslations){
         $scope.dataElementTranslations = [];
         MetaDataFactory.getAll('dataElements').then(function(des){
             angular.forEach(des, function(de){  
@@ -179,7 +182,7 @@ trackerCapture.controller('RegistrationController',
                     $scope.selectedEnrollment.status = 'ACTIVE';
                     angular.forEach($scope.currentStage.programStageDataElements, function (prStDe) {
                         var tx = $scope.dataElementTranslations[prStDe.dataElement.id];
-                        prStDe.dataElement.displayFormName = tx.displayFormName && tx.displayFormName !== "" ? tx.displayFormName : tx.displayName ? tx.displayName : prStDe.dataElement.displayName;                        
+                        prStDe.dataElement.displayFormName = tx && tx.displayFormName && tx.displayFormName !== "" ? tx.displayFormName : tx && tx.displayName ? tx.displayName : prStDe.dataElement.displayName;                        
                         $scope.prStDes[prStDe.dataElement.id] = prStDe;
                         if(prStDe.allowProvidedElsewhere){
                             $scope.allowProvidedElsewhereExists[$scope.currentStage.id] = true;

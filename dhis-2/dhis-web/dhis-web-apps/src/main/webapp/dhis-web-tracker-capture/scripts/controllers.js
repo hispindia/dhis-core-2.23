@@ -14,6 +14,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
                 $filter,
                 $timeout,
                 $translate,
+                orderByFilter,
                 Paginator,
                 SessionStorageService,
                 MetaDataFactory,
@@ -27,6 +28,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
                 TEIGridService,
                 TEIService,
                 EventReportService,
+                TCStorageService,
                 $q) {  
     $scope.maxOptionSize = 30;
     $scope.eventsTodayFilters = [{name: $translate.instant('events_today_all'), value: 'all'},{name: $translate.instant('events_today_completeoractive'),value: 'completedOrActive', status:['COMPLETED', 'ACTIVE']},{name: $translate.instant('events_today_skipped') , value: 'skipped', status:['SKIPPED']},{name: $translate.instant('events_today_scheduled'), value: 'scheduled', status:['SCHEDULE']}];
@@ -55,6 +57,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
     $scope.searchMode = { listAll: 'LIST_ALL', freeText: 'FREE_TEXT', attributeBased: 'ATTRIBUTE_BASED' };    
     $scope.optionSets = null;
     $scope.attributesById = null;
+    $scope.dataElementTranslations = null;
     $scope.doSearch = true;    
        
     function resetParams(goToPage){
@@ -109,6 +112,27 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
                     });
                     CurrentSelection.setOptionSets($scope.optionSets);
                 });                
+            }
+            
+            $scope.dataElementTranslations = CurrentSelection.getDataElementTranslations();        
+            if(!$scope.dataElementTranslations){
+                $scope.dataElementTranslations = [];
+                MetaDataFactory.getAll('dataElements').then(function(des){
+                    angular.forEach(des, function(de){  
+                        $scope.dataElementTranslations[de.id] = de;
+                    });
+                    CurrentSelection.setDataElementTranslations($scope.dataElementTranslations);
+                });
+            }
+            
+            $scope.ouLevels = CurrentSelection.getOuLevels();
+            if(!$scope.ouLevels){
+                TCStorageService.currentStore.open().done(function(){
+                    TCStorageService.currentStore.getAll('ouLevels').done(function(response){
+                        var ouLevels = angular.isObject(response) ? orderByFilter(response, '-level').reverse() : [];
+                        CurrentSelection.setOuLevels(orderByFilter(ouLevels, '-level').reverse());
+                    });
+                });
             }
             
             //Labels
