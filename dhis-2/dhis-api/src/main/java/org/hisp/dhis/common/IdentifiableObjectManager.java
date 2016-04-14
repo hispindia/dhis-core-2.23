@@ -30,7 +30,6 @@ package org.hisp.dhis.common;
 
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeValue;
-import org.hisp.dhis.common.NameableObject.NameableProperty;
 import org.hisp.dhis.user.User;
 
 import java.util.Collection;
@@ -137,10 +136,6 @@ public interface IdentifiableObjectManager
     <T extends IdentifiableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, IdentifiableProperty property );
 
     <T extends IdentifiableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, IdScheme idScheme );
-
-    <T extends NameableObject> Map<String, T> getIdMap( Class<T> clazz, NameableProperty property );
-
-    <T extends NameableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, NameableProperty property );
 
     <T extends IdentifiableObject> List<T> getObjects( Class<T> clazz, IdentifiableProperty property, Collection<String> identifiers );
 

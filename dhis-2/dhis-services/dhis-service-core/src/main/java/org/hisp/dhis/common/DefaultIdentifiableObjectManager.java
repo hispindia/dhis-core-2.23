@@ -33,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
 import org.hibernate.SessionFactory;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeValue;
-import org.hisp.dhis.common.NameableObject.NameableProperty;
 import org.hisp.dhis.common.comparator.IdentifiableObjectNameComparator;
 import org.hisp.dhis.common.exception.InvalidIdentifierReferenceException;
 import org.hisp.dhis.dataelement.DataElementCategory;
@@ -815,64 +814,6 @@ public class DefaultIdentifiableObjectManager
         List<T> objects = store.getAllNoAcl();
 
         return IdentifiableObjectUtils.getMap( objects, idScheme );
-    }
-
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public <T extends NameableObject> Map<String, T> getIdMap( Class<T> clazz, NameableProperty property )
-    {
-        GenericNameableObjectStore<T> store = (GenericNameableObjectStore<T>) getNameableObjectStore( clazz );
-
-        Map<String, T> map = new HashMap<>();
-
-        if ( store == null )
-        {
-            return map;
-        }
-
-        List<T> objects = store.getAll();
-
-        for ( T object : objects )
-        {
-            if ( property == NameableProperty.SHORT_NAME )
-            {
-                if ( object.getShortName() != null )
-                {
-                    map.put( object.getShortName(), object );
-                }
-            }
-        }
-
-        return map;
-    }
-
-    @Override
-    @SuppressWarnings( "unchecked" )
-    public <T extends NameableObject> Map<String, T> getIdMapNoAcl( Class<T> clazz, NameableProperty property )
-    {
-        GenericNameableObjectStore<T> store = (GenericNameableObjectStore<T>) getNameableObjectStore( clazz );
-
-        Map<String, T> map = new HashMap<>();
-
-        if ( store == null )
-        {
-            return map;
-        }
-
-        List<T> objects = store.getAllNoAcl();
-
-        for ( T object : objects )
-        {
-            if ( property == NameableProperty.SHORT_NAME )
-            {
-                if ( object.getShortName() != null )
-                {
-                    map.put( object.getShortName(), object );
-                }
-            }
-        }
-
-        return map;
     }
 
     @Override
