@@ -48,7 +48,7 @@ public class ImportOptions
 
     private boolean dryRun;
 
-    private boolean preheatCache = true;
+    private Boolean preheatCache;
 
     private boolean async;
 
@@ -91,6 +91,14 @@ public class ImportOptions
         return DEFAULT_OPTIONS;
     }
 
+    /**
+     * Indicates whether to heat cache. Default is true.
+     */
+    public boolean isPreheatCache()
+    {
+        return preheatCache == null ? true : preheatCache;
+    }
+    
     //--------------------------------------------------------------------------
     // Get methods
     //--------------------------------------------------------------------------
@@ -105,7 +113,7 @@ public class ImportOptions
         return dryRun;
     }
 
-    public boolean isPreheatCache()
+    public Boolean getPreheatCache()
     {
         return preheatCache;
     }
@@ -245,7 +253,7 @@ public class ImportOptions
         return this;
     }
 
-    public ImportOptions setPreheatCache( boolean preheatCache )
+    public ImportOptions setPreheatCache( Boolean preheatCache )
     {
         this.preheatCache = preheatCache;
         return this;
