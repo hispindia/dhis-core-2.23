@@ -46,11 +46,27 @@ public class CachingMapTest
         animals.add( new Animal( 3, "cat" ) );
 
         CachingMap<Integer, Animal> cache = new CachingMap<Integer, Animal>().load( animals, a -> a.getId() );
-        
+
+        assertEquals( 3, cache.size() );
         assertEquals( "horse", cache.get( 1 ).getName() );
         assertEquals( "dog", cache.get( 2 ).getName() );
         assertEquals( "cat", cache.get( 3 ).getName() );        
         assertFalse( cache.containsKey( "deer" ) );
+    }
+    
+    @Test
+    public void testLoadWithNull()
+    {
+        Set<Animal> animals = new HashSet<>();
+        animals.add( new Animal( 1, "horse" ) );
+        animals.add( new Animal( 2, null ) );
+        animals.add( new Animal( 3, "cat" ) );
+
+        CachingMap<String, Animal> cache = new CachingMap<String, Animal>().load( animals, a -> a.getName() );
+
+        assertEquals( 2, cache.size() );
+        assertEquals( 1, cache.get( "horse" ).getId() );       
+        assertFalse( cache.containsKey( "dog" ) );
     }
     
     private class Animal

@@ -74,10 +74,11 @@ public class CachingMap<K, V>
     }
     
     /**
-     * Loads the cache with the given content.
+     * Loads the cache with the given content. Entries for which the key is a
+     * null reference are ignored.
      * 
      * @param collection the content collection.
-     * @param keyMapper the function to produce the cache key for each content item.
+     * @param keyMapper the function to produce the cache key for a content item.
      * @return a reference to this caching map.
      */
     public CachingMap<K, V> load( Collection<V> collection, Function<V, K> keyMapper )
@@ -86,12 +87,10 @@ public class CachingMap<K, V>
         {
             K key = keyMapper.apply( item );
             
-            if ( key == null )
+            if ( key != null )
             {
-                throw new IllegalArgumentException( "Key cannot be null for item: " + item );
-            }
-            
-            super.put( key, item );
+                super.put( key, item );
+            }            
         }
         
         return this;
