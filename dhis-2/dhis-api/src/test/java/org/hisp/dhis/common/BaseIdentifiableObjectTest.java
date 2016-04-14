@@ -52,11 +52,10 @@ public class BaseIdentifiableObjectTest
         IdScheme idSchemeCode = IdScheme.from( IdentifiableProperty.CODE );
         IdScheme idSchemeName = IdScheme.from( IdentifiableProperty.NAME );
         
-        assertEquals( "A1234567890", deA.getPropertyValue( idSchemeUid ).get() );
-        assertEquals( "CodeA", deA.getPropertyValue( idSchemeCode ).get() );
-        assertEquals( "NameA", deA.getPropertyValue( idSchemeName ).get() );
-        assertTrue( "NameA", deA.getPropertyValue( idSchemeName ).isPresent() );
+        assertEquals( "A1234567890", deA.getPropertyValue( idSchemeUid ) );
+        assertEquals( "CodeA", deA.getPropertyValue( idSchemeCode ) );
+        assertEquals( "NameA", deA.getPropertyValue( idSchemeName ) );
         
-        assertFalse( deB.getPropertyValue( idSchemeCode ).isPresent() );
+        assertNull( deB.getPropertyValue( idSchemeCode ) );
     }
 }
