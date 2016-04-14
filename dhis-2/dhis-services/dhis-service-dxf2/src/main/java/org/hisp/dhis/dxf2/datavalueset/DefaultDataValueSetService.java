@@ -596,6 +596,16 @@ public class DefaultDataValueSetService
         IdentifiableObjectCallable<Period> periodCallable = new PeriodCallable( periodService, null, trimToNull( dataValueSet.getPeriod() ) );
 
         // ---------------------------------------------------------------------
+        // Heat caches
+        // ---------------------------------------------------------------------
+
+        if ( importOptions.isPreheatCacheDefaultFalse() )
+        {
+            dataElementMap.load( identifiableObjectManager.getAll( DataElement.class ), o -> o.getPropertyValue( dataElementIdScheme ) );
+            orgUnitMap.load( identifiableObjectManager.getAll( OrganisationUnit.class ), o -> o.getPropertyValue( orgUnitIdScheme ) );
+        }
+        
+        // ---------------------------------------------------------------------
         // Get outer meta-data
         // ---------------------------------------------------------------------
 
