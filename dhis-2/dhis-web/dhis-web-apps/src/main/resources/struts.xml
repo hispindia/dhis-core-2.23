@@ -12,12 +12,6 @@
 		</action>
 	</package>
 
-	<package name="dhis-web-pivot" extends="dhis-web-commons" namespace="/dhis-web-pivot">
-		<action name="index" class="org.hisp.dhis.commons.action.NoAction">
-			<result name="success" type="redirect">index.html</result>
-		</action>
-	</package>
-
 	<package name="dhis-web-visualizer" extends="dhis-web-commons" namespace="/dhis-web-visualizer">
 		<action name="index" class="org.hisp.dhis.commons.action.NoAction">
 			<result name="success" type="redirect">index.html</result>
@@ -63,6 +57,8 @@
 			<result name="success" type="redirect">index.html</result>
 		</action>
 	</package>
+
+    <!-- Pulled from Maven repository -->
 
 	<package name="dhis-web-settings" extends="dhis-web-commons" namespace="/dhis-web-settings">
 		<action name="index" class="org.hisp.dhis.commons.action.NoAction">
