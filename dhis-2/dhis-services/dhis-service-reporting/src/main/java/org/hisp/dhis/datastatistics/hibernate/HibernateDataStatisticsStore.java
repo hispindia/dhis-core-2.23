@@ -205,7 +205,6 @@ public class HibernateDataStatisticsStore
             "cast(round(cast(sum(eventreportviews) as numeric),0) as int) as eventReportViews, " +
             "cast(round(cast(sum(eventchartviews) as numeric),0) as int) as eventChartViews," +
             "cast(round(cast(sum(dashboardviews) as numeric),0) as int) as dashboardViews, " +
-            "cast(round(cast(sum(indicatorviews) as numeric),0) as int) as indicatorsViews, " +
             "cast(round(cast(sum(totalviews) as numeric),0) as int) as totalViews," +
             "cast(round(cast(sum(average_views) as numeric),0) as int) as averageViews, " +
             "cast(round(cast(sum(maps) as numeric),0) as int) as savedMaps," +
