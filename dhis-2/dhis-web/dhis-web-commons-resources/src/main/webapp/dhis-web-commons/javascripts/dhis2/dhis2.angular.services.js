@@ -2338,7 +2338,9 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             //make a sorted list of all events to pass to rules execution service:
                             var allEventsInScope = eventScopeExceptCurrent.concat([currentEvent]);
                             allEventsInScope = orderByFilter(allEventsInScope, '-eventDate').reverse();
-                            return {all: allEventsInScope, byStage:{programStageId:allEventsInScope}};
+                            var byStage = {};
+                            byStage[currentEvent.programStage] = allEventsInScope;
+                            return {all: allEventsInScope, byStage:byStage};
                         });
                     });   
                 }
@@ -2347,13 +2349,17 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     //make a sorted list of all events to pass to rules execution service:
                     var allEvents = eventScopeExceptCurrent.concat([currentEvent]);
                     allEvents = orderByFilter(allEvents, '-eventDate').reverse();
-                    return $q.when({all: allEvents, byStage:{programStageId:allEvents}});
+                    var byStage = {};
+                    byStage[currentEvent.programStage] = allEvents;
+                    return $q.when({all: allEvents, byStage:byStage});
                 }
             }
             else
             {
                 //return a scope containing only the current event
-                return $q.when({all: [currentEvent], byStage:{programStageId:[currentEvent]}});
+                var byStage = {};
+                byStage[currentEvent.programStage] = [currentEvent];
+                return $q.when({all: [currentEvent], byStage:byStage});
             }
         };
         var internalGetOrLoadRules = function(programId) {
