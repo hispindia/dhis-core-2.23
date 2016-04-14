@@ -758,8 +758,7 @@ div#searchOuTree h4{
 }
 
 .modal-full-window .modal-dialog {
-    width: 100%;
-    height: 100%;
+    width: 75%;
 }
 
 .modal {
@@ -1245,7 +1244,7 @@ ul.tree ul li:last-child:before {
 }
 
 #map-container {
-    height: 800px;
+    height: 600px;
     width: 100%;
 }
 
