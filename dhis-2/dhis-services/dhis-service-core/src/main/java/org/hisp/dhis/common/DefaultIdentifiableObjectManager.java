@@ -789,7 +789,7 @@ public class DefaultIdentifiableObjectManager
 
         List<T> objects = store.getAll();
 
-        return IdentifiableObjectUtils.getMap( objects, idScheme );
+        return IdentifiableObjectUtils.getIdMap( objects, idScheme );
     }
 
     @Override
@@ -813,7 +813,7 @@ public class DefaultIdentifiableObjectManager
 
         List<T> objects = store.getAllNoAcl();
 
-        return IdentifiableObjectUtils.getMap( objects, idScheme );
+        return IdentifiableObjectUtils.getIdMap( objects, idScheme );
     }
 
     @Override

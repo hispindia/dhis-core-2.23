@@ -578,6 +578,10 @@ public class BaseIdentifiableObject
         {
             return name;
         }
+        else if ( idScheme.is( IdentifiableProperty.ID ) )
+        {
+            return id > 0 ? String.valueOf( id ) : null;
+        }
         else if ( idScheme.is( IdentifiableProperty.ATTRIBUTE ) )
         {
             for ( AttributeValue attributeValue : attributeValues )
