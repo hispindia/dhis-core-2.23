@@ -90,4 +90,10 @@
 		</action>
 	</package>
 
+	<package name="dhis-web-usage-analytics" extends="dhis-web-commons" namespace="/dhis-web-usage-analytics">
+		<action name="index" class="org.hisp.dhis.commons.action.NoAction">
+			<result name="success" type="redirect">index.html</result>
+		</action>
+	</package>
+
 </struts>
