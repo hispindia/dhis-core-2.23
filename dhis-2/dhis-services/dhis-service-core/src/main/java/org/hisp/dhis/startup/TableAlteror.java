@@ -879,6 +879,7 @@ public class TableAlteror
         executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
         
         executeSql( "alter table datastatisticsevent alter column eventtype type character varying" );
+        executeSql( "alter table orgunitlevel drop constraint orgunitlevel_name_key" );
 
         updateEnums();
 
