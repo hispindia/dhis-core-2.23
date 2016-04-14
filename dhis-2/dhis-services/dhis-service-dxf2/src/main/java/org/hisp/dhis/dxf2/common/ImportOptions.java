@@ -98,6 +98,14 @@ public class ImportOptions
     {
         return preheatCache == null ? true : preheatCache;
     }
+
+    /**
+     * Indicates whether to heat cache. Default is false.
+     */
+    public boolean isPreheatCacheDefaultFalse()
+    {
+        return preheatCache == null ? false : preheatCache;
+    }
     
     //--------------------------------------------------------------------------
     // Get methods
