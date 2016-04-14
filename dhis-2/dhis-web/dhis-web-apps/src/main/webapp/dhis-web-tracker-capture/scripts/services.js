@@ -727,13 +727,14 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             
             return promise;
         },
-        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging, format) {
+        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging, format, attributesList, attrNamesIdMap) {
             var url;
+            var deferred = $q.defer();
 
             if (format === "csv") {
                 url = '../api/trackedEntityInstances/query.csv?ou=' + ouId + '&ouMode=' + ouMode;
             } else if (format === "xml") {
-                url = '../api/trackedEntityInstances/query.xml?ou=' + ouId + '&ouMode=' + ouMode;
+                url = '../api/trackedEntityInstances/query.json?ou=' + ouId + '&ouMode=' + ouMode;
             }else {
                 url = '../api/trackedEntityInstances/query.json?ou=' + ouId + '&ouMode=' + ouMode;
             }
@@ -747,8 +748,6 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             if(attributeUrl){
                 url = url + '&' + attributeUrl;
             }
-            //http://localhost:8080/api/trackedEntityInstances/query.csv?ou=ImspTQPwCqd&ouMode=DESCENDANTS&query=LIKE:ll&program=IpHINAT79UW&attribute=orgUnitName&attribute=w75KJ2mc4zz&attribute=zDhUuAYrxNC&paging=false
-            //http://localhost:8080/api/trackedEntityInstances/query.csv?ou=ImspTQPwCqd&ouMode=DESCENDANTS&query=LIKE:ll&program=IpHINAT79UW&attribute=w75KJ2mc4zz&attribute=zDhUuAYrxNC&paging=false
             if(paging){
                 var pgSize = pager ? pager.pageSize : 50;
                 var pg = pager ? pager.page : 1;
@@ -760,22 +759,75 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 url = url + '&paging=false';
             }
             
-            var promise = $http.get( url ).then(function(response){
+            $http.get( url ).then(function(response){
+                var xmlData, rows, headers, index, itemName, value, jsonData;
+                var trackedEntityInstance;
                 if (format) {
-                    var anchor = angular.element('<a/>');
-                    var data;
-                    if(format === "json") {
-                        data = JSON.stringify(response.data, null, 2);
-                    } else {
-                        data = response.data;
+                    if (format === "json") {
+                        jsonData = {"trackedEntityInstances": []};
+                        rows = response.data.rows;
+                        headers = response.data.headers;
+                        for (var i = 0; i < rows.length; i++) {
+                            trackedEntityInstance = null;
+                            for (var j = 0; j < rows[i].length; j++) {
+                                index = attributesList.indexOf(headers[j].name);
+                                itemName = headers[j].column;
+                                value = rows[i][j].replace(/&/g, "&amp;");
+                                if (trackedEntityInstance === null) {
+                                    trackedEntityInstance = {};
+                                }
+
+                                if (index > -1) {
+                                    if (!trackedEntityInstance["attributes"]) {
+                                        trackedEntityInstance["attributes"] = [];
+                                    }
+                                    trackedEntityInstance["attributes"].push({
+                                        id: attrNamesIdMap[itemName], name: itemName,
+                                        value: value
+                                    });
+                                } else {
+                                    trackedEntityInstance[headers[j].name] = value;
+                                }
+                            }
+                            if (trackedEntityInstance !== null) {
+                                jsonData["trackedEntityInstances"].push(trackedEntityInstance);
+                            }
+                        }
+                        if (jsonData) {
+                            deferred.resolve(JSON.stringify(jsonData, null, 2));
+                        }
+                    } else if (format === "xml") {
+                        xmlData = "";
+                        if (response.data && response.data.rows) {
+                            xmlData += "<trackedEntityInstances>";
+                            rows = response.data.rows;
+                            headers = response.data.headers;
+                            for (var i = 0; i < rows.length; i++) {
+                                xmlData += "<trackedEntityInstance>";
+                                for (var j = 0; j < rows[i].length; j++) {
+                                    index = attributesList.indexOf(headers[j].name);
+                                    itemName = headers[j].column;
+                                    value = rows[i][j].replace(/&/g, "&amp;");
+                                    if (index > -1) {
+                                        xmlData += '<attribute id="' + attrNamesIdMap[itemName] + '" ' +
+                                            'name="' + itemName + '" value="' + value + '"></attribute>';
+                                    } else {
+                                        xmlData += '<' + headers[j].name + ' value="' + value + '"></' + headers[j].name + '>';
+                                    }
+
+                                }
+                                xmlData += "</trackedEntityInstance>";
+
+                            }
+                            xmlData += "</trackedEntityInstances>";
+                            deferred.resolve(xmlData);
+                        }
+                    } else if (format === "csv") {
+                        deferred.resolve(response.data);
                     }
-                    anchor.attr({
-                        href: 'data:attachment/'+format+';charset=utf-8,' + encodeURI(data),
-                        target: '_blank',
-                        download: 'trackedEntityList.'+format
-                    })[0].click();
+                } else {
+                    deferred.resolve(response.data);
                 }
-                return response.data;
             }, function(error){
                 if(error && error.status === 403){
                     var dialogOptions = {
@@ -784,8 +836,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                     };		
                     DialogService.showDialog({}, dialogOptions);
                 }
+                deferred.resolve(null);
             });            
-            return promise;
+            return deferred.promise;
         },                
         update: function(tei, optionSets, attributesById){
             var formattedTei = angular.copy(tei);

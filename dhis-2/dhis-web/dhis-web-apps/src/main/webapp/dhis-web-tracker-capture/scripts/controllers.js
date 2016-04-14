@@ -557,19 +557,31 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             controller: 'ExportController'
         });
         modalInstance.result.then(function (format) {
-            var attrList = null;
-            angular.forEach($scope.gridColumns, function(item) {
+            var attrIdList = null;
+            var attrNamesList = [];
+            var attrNamesIdMap = {};
+            angular.forEach($scope.gridColumns, function (item) {
                 if (item.show && item.attribute) {
-                    if (!attrList) {
-                        attrList = "attribute=" + item.id;
+                    if (!attrIdList) {
+                        attrIdList = "attribute=" + item.id;
                     } else {
-                        attrList += "&attribute=" + item.id;
+                        attrIdList += "&attribute=" + item.id;
                     }
+                    attrNamesList.push(item.id);
+                    attrNamesIdMap[item.displayName] = item.id;
                 }
             });
-
             TEIService.search($scope.searchingOrgUnit.id, $scope.selectedOuMode.name, $scope.queryUrl,
-                $scope.programUrl, attrList, false, false, format).then(function (data) {
+                $scope.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap).then(function (data) {
+                var anchor = angular.element('<a/>');
+                if (format === "xml" || format === "csv") {
+                    data = encodeURI(data);
+                }
+                anchor.attr({
+                    href: 'data:attachment/' + format + ';charset=utf-8,' + data,
+                    target: '_blank',
+                    download: 'trackedEntityList.' + format
+                })[0].click();
                 deferred.resolve(data);
             });
         });
