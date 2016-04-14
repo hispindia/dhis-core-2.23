@@ -33,6 +33,7 @@ import java.util.List;
 import org.hisp.dhis.common.AnalyticalObjectService;
 import org.hisp.dhis.common.GenericAnalyticalObjectDeletionHandler;
 import org.hisp.dhis.legend.LegendSet;
+import org.hisp.dhis.organisationunit.OrganisationUnitGroupSet;
 
 /**
  * @author Lars Helge Overland
@@ -76,6 +77,18 @@ public class MapViewDeletionHandler
         {
             mapView.setLegendSet( null );
             mappingService.update( mapView );
+        }
+    }
+    
+    @Override
+    public void deleteOrganisationUnitGroupSet( OrganisationUnitGroupSet groupSet )
+    {
+        List<MapView> mapViews = mappingService.getMapViewsByOrganisationUnitGroupSet( groupSet );
+        
+        for ( MapView mapView : mapViews )
+        {
+            mapView.setOrganisationUnitGroupSet( null );
+            mappingService.updateMapView( mapView );
         }
     }
 
