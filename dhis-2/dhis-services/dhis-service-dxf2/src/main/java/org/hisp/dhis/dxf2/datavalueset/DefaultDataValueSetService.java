@@ -603,6 +603,7 @@ public class DefaultDataValueSetService
         {
             dataElementMap.load( identifiableObjectManager.getAll( DataElement.class ), o -> o.getPropertyValue( dataElementIdScheme ) );
             orgUnitMap.load( identifiableObjectManager.getAll( OrganisationUnit.class ), o -> o.getPropertyValue( orgUnitIdScheme ) );
+            optionComboMap.load( identifiableObjectManager.getAll( DataElementCategoryOptionCombo.class ), o -> o.getPropertyValue( idScheme ) );
         }
         
         // ---------------------------------------------------------------------
