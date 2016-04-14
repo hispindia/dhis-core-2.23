@@ -145,6 +145,9 @@ public class DefaultObjectBundleService implements ObjectBundleService
             List<IdentifiableObject> persistedObjects = bundle.getObjects( klass, true );
             List<IdentifiableObject> allObjects = bundle.getObjectMap().get( klass );
 
+            handleDefaults( nonPersistedObjects );
+            handleDefaults( persistedObjects );
+
             if ( bundle.getImportMode().isCreateAndUpdate() )
             {
                 typeReport.merge( validateSecurity( klass, nonPersistedObjects, bundle, ImportStrategy.CREATE ) );
@@ -218,6 +221,21 @@ public class DefaultObjectBundleService implements ObjectBundleService
         log.info( "(" + bundle.getUsername() + ") Import:Validation took " + timer.toString() );
 
         return validation;
+    }
+
+    private void handleDefaults( List<IdentifiableObject> objects )
+    {
+        Iterator<IdentifiableObject> iterator = objects.iterator();
+
+        while ( iterator.hasNext() )
+        {
+            IdentifiableObject object = iterator.next();
+
+            if ( Preheat.isDefault( object ) )
+            {
+                iterator.remove();
+            }
+        }
     }
 
     private void validateAtomicity( ObjectBundle bundle, ObjectBundleValidationReport validation )
