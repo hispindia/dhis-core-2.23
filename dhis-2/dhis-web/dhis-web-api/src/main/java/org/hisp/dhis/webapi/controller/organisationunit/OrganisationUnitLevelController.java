@@ -1,5 +1,7 @@
 package org.hisp.dhis.webapi.controller.organisationunit;
 
+import java.util.List;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -29,17 +31,29 @@ package org.hisp.dhis.webapi.controller.organisationunit;
  */
 
 import org.hisp.dhis.organisationunit.OrganisationUnitLevel;
-import org.hisp.dhis.schema.descriptors.OrganisationUnitLevelSchemaDescriptor;
+import org.hisp.dhis.organisationunit.OrganisationUnitService;
 import org.hisp.dhis.webapi.controller.AbstractCrudController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Morten Olav Hansen <mortenoh@gmail.com>
  */
 @Controller
-@RequestMapping( value = OrganisationUnitLevelSchemaDescriptor.API_ENDPOINT )
+@RequestMapping( value = "/filledOrganisationUnitLevels" )
 public class OrganisationUnitLevelController
     extends AbstractCrudController<OrganisationUnitLevel>
 {
+    @Autowired
+    private OrganisationUnitService organisationUnitService;
+    
+    @RequestMapping( method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE )
+    public @ResponseBody List<OrganisationUnitLevel> getList()
+    {
+        return organisationUnitService.getFilledOrganisationUnitLevels();
+    }
 }

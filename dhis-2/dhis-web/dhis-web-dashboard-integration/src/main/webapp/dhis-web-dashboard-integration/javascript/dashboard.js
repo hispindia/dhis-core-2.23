@@ -605,6 +605,7 @@ dhis2.db.renderDashboard = function( id )
 		}
 
 		dhis2.db.dashboardReady();
+		dhis2.db.registerDashboardViewEvent();
 	} );
 }
 
@@ -1197,6 +1198,11 @@ dhis2.db.renderSearch = function( data, $h )
 dhis2.db.hideSearch = function()
 {
 	$( "#hitDiv" ).hide();
+}
+
+dhis2.db.registerDashboardViewEvent = function()
+{
+	$.post( "../api/dataStatistics?eventType=DASHBOARD_VIEW" );
 }
 
 //------------------------------------------------------------------------------
