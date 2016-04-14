@@ -154,9 +154,9 @@ public class DefaultDataValueSetService
         this.currentUserService = currentUserService;
     }
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // DataValueSet implementation
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public DataExportParams getFromUrl( Set<String> dataSets, Set<String> periods, Date startDate, Date endDate,
@@ -247,9 +247,9 @@ public class DefaultDataValueSetService
         }
     }
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Write
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public void writeDataValueSetXml( DataExportParams params, OutputStream out )
@@ -299,9 +299,9 @@ public class DefaultDataValueSetService
         return null;
     }
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Template
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public RootNode getDataValueSetTemplate( DataSet dataSet, Period period, List<String> orgUnits,
@@ -407,9 +407,9 @@ public class DefaultDataValueSetService
         return collectionNode;
     }
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Save
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     @Override
     public ImportSummary saveDataValueSet( InputStream in )
@@ -536,9 +536,9 @@ public class DefaultDataValueSetService
 
         I18n i18n = i18nManager.getI18n();
 
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         // Get import options
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         importOptions = importOptions != null ? importOptions : ImportOptions.getDefaultImportOptions();
 
@@ -568,9 +568,9 @@ public class DefaultDataValueSetService
         boolean requireCategoryOptionCombo = importOptions.isRequireCategoryOptionCombo() || (Boolean) systemSettingManager.getSystemSetting( SettingKey.DATA_IMPORT_REQUIRE_CATEGORY_OPTION_COMBO );
         boolean requireAttrOptionCombo = importOptions.isRequireAttributeOptionCombo() || (Boolean) systemSettingManager.getSystemSetting( SettingKey.DATA_IMPORT_REQUIRE_ATTRIBUTE_OPTION_COMBO );
 
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         // Create meta-data maps
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         CachingMap<String, DataElement> dataElementMap = new CachingMap<>();
         CachingMap<String, OrganisationUnit> orgUnitMap = new CachingMap<>();
@@ -584,9 +584,9 @@ public class DefaultDataValueSetService
         CachingMap<String, Boolean> orgUnitInHierarchyMap = new CachingMap<>();
         CachingMap<String, Optional<Set<String>>> dataElementOptionsMap = new CachingMap<>();
 
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         // Get meta-data maps
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         IdentifiableObjectCallable<DataElement> dataElementCallable = new IdentifiableObjectCallable<>(
             identifiableObjectManager, DataElement.class, dataElementIdScheme, null );
@@ -595,9 +595,9 @@ public class DefaultDataValueSetService
         IdentifiableObjectCallable<DataElementCategoryOptionCombo> optionComboCallable = new CategoryOptionComboAclCallable( categoryService, idScheme, null );
         IdentifiableObjectCallable<Period> periodCallable = new PeriodCallable( periodService, null, trimToNull( dataValueSet.getPeriod() ) );
 
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
         // Get outer meta-data
-        //----------------------------------------------------------------------
+        // ---------------------------------------------------------------------
 
         DataSet dataSet = dataValueSet.getDataSet() != null ? identifiableObjectManager.getObject( DataSet.class, idScheme, dataValueSet.getDataSet() ) : null;
 
@@ -930,9 +930,9 @@ public class DefaultDataValueSetService
         return summary;
     }
 
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     // Supportive methods
-    //--------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     private void handleComplete( DataSet dataSet, Date completeDate, Period period, OrganisationUnit orgUnit,
         DataElementCategoryOptionCombo attributeOptionCombo, ImportSummary summary )
