@@ -3398,13 +3398,13 @@ Ext.onReady( function() {
                 getDefaultChartTitlePositionHandler = function() {
                     return function() {
                         if (this.items) {
-                            for (var i = 0, title; i < this.items.length; i++) {
-                                var title = this.items[i],
-                                    titleWidth = Ext.isIE ? title.el.dom.scrollWidth : title.el.getWidth(),
-                                    titleXFallback = 10,
-                                    legend = this.legend,
-                                    legendCenterX,
-                                    titleX;
+                            for (var i = 0, title, titleWidth, titleXFallback, legend, legendCenterX, titleX; i < this.items.length; i++) {
+                                title = this.items[i];
+                                titleWidth = Ext.isIE ? title.el.dom.scrollWidth : title.el.getWidth();
+                                titleXFallback = 10;
+                                legend = this.legend;
+                                legendCenterX;
+                                titleX;
 
                                 if (this.legend.position === 'top') {
                                     legendCenterX = legend.x + (legend.width / 2);
