@@ -877,6 +877,8 @@ public class TableAlteror
 
         executeSql( "alter table trackedentitydatavalue alter column storedby TYPE character varying(255)" );
         executeSql( "alter table datavalue alter column storedby TYPE character varying(255)" );
+        
+        executeSql( "alter table datastatisticsevent alter column eventtype type character varying" );
 
         updateEnums();
 
