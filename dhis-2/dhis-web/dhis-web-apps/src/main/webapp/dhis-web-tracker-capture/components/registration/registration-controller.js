@@ -486,6 +486,33 @@ trackerCapture.controller('RegistrationController',
         });
     };
     
+    $scope.showDataElementMap = function(obj, id){
+        var lat = "",
+            lng = "";
+        if(obj[id] && obj[id].length > 0){
+            var coordinates = obj[id].split(",");
+            lng = coordinates[0];
+            lat = coordinates[1];
+        }
+        var modalInstance = $modal.open({
+            templateUrl: '../dhis-web-commons/angular-forms/map.html',
+            controller: 'MapController',
+            windowClass: 'modal-full-window',
+            resolve: {
+                location: function () {
+                    return {lat: lat, lng: lng};
+                }
+            }
+        });
+
+        modalInstance.result.then(function (location) {
+            if(angular.isObject(location)){
+                obj[id] = location.lng + ',' + location.lat;
+            }
+        }, function () {
+        });
+    };
+    
     $scope.saveDatavalue = function () {        
         $scope.executeRules();
     };    

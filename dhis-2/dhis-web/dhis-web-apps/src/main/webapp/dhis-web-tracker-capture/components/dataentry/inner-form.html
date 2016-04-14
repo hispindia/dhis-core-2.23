@@ -271,7 +271,7 @@
                                 type="button" 
                                 title="{{'get_from_map'| translate}}"
                                 ng-if="!(selectedEnrollment.status !== 'ACTIVE' || currentEvent.editingNotAllowed || assignedFields[currentEvent.event][prStDe.dataElement.id])"
-                                ng-click="showDataElementMap(currentEvent, prStDe.dataElement.id)">
+                                ng-click="showDataElementMap(currentEvent, prStDe.dataElement.id, innerForm.foo)">
                                 <i class="fa fa-map-marker"></i>                             
                         </button>
                     </span>

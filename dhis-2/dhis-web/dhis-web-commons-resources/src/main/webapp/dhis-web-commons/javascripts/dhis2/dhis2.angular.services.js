@@ -497,7 +497,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 commonInputFieldProperty + '>' +
                                                                 '<span class="input-group-btn"> ' +
                                                                     '<button class="btn btn-primary default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
-                                                                        'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\')"> ' +
+                                                                        'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\', outerForm.' + fieldId + ')"> ' +
                                                                         '<i class="fa fa-map-marker"></i> ' +
                                                                     '</button> ' + 
                                                                 '</span>' +

@@ -1171,7 +1171,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
         });
     };
     
-    $scope.showDataElementMap = function(obj, id){
+    $scope.showDataElementMap = function(obj, id, mode){
         var lat = "",
             lng = "";
         if(obj[id] && obj[id].length > 0){
@@ -1193,6 +1193,9 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
         modalInstance.result.then(function (location) {
             if(angular.isObject(location)){
                 obj[id] = location.lng + ',' + location.lat;
+                if( mode && mode === "UPDATE"){
+                    $scope.updateEventDataValue(obj, id);
+                }
             }
         }, function () {
         });
