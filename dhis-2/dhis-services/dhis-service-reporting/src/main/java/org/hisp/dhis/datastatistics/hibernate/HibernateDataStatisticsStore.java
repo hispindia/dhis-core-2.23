@@ -39,6 +39,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -76,6 +77,11 @@ public class HibernateDataStatisticsStore
             else if ( eventInterval == EventInterval.WEEK )
             {
                 ads.setWeek( resultSet.getInt( "week" ) );
+
+                if ( ads.getWeek() == 53 && resultSet.getInt( "mnt" ) == 1 )
+                {
+                    ads.setYear( ads.getYear() - 1 );
+                }
             }
             else if ( eventInterval == EventInterval.MONTH )
             {
@@ -169,8 +175,9 @@ public class HibernateDataStatisticsStore
     private String getWeekSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
+            "extract(month from created) as mnt," +
             "extract(week from created) as week, " +
-            commonSql( start, end ) + ", week order by yr, week;";
+            commonSql( start, end ) + ", mnt, week order by yr, mnt, week;";
     }
 
     /**
