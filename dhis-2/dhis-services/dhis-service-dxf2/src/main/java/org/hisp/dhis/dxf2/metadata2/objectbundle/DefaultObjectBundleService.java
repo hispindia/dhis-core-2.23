@@ -345,7 +345,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
+                String msg = "(" + bundle.getUsername() + ") Created object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
 
@@ -393,7 +393,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
+                String msg = "(" + bundle.getUsername() + ") Updated object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( persistedObject ) + "'";
                 log.debug( msg );
             }
 
@@ -426,7 +426,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
             if ( log.isDebugEnabled() )
             {
-                String msg = "Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
+                String msg = "(" + bundle.getUsername() + ") Deleted object '" + bundle.getPreheatIdentifier().getIdentifiersWithName( object ) + "'";
                 log.debug( msg );
             }
 
