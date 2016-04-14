@@ -325,7 +325,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             return typeReport;
         }
 
-        log.info( "Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "(" + bundle.getUsername() + ") Creating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
         {
@@ -364,7 +364,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             return typeReport;
         }
 
-        log.info( "Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "(" + bundle.getUsername() + ") Updating " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         for ( IdentifiableObject object : objects )
         {
@@ -412,7 +412,7 @@ public class DefaultObjectBundleService implements ObjectBundleService
             return typeReport;
         }
 
-        log.info( "Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
+        log.info( "(" + bundle.getUsername() + ") Deleting " + objects.size() + " object(s) of type " + objects.get( 0 ).getClass().getSimpleName() );
 
         List<IdentifiableObject> persistedObjects = bundle.getPreheat().getAll( bundle.getPreheatIdentifier(), objects );
 
