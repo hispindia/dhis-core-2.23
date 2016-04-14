@@ -294,29 +294,42 @@ var d2Directives = angular.module('d2Directives', [])
                 dateFormat = 'dd-mm-yyyy';
             }
 
-            var minDate = $parse(attrs.minDate)(scope),
-                    maxDate = $parse(attrs.maxDate)(scope),
-                    calendar = $.calendars.instance(calendarSetting.keyCalendar);
-
-            element.calendarsPicker({
-                changeMonth: true,
-                dateFormat: dateFormat,
-                yearRange: '-120:+30',
-                minDate: minDate,
-                maxDate: maxDate,
-                calendar: calendar,
-                duration: "fast",
-                showAnim: "",
-                renderer: $.calendars.picker.themeRollerRenderer,
-                onSelect: function () {
-                    $(this).change();
-                }
-            })
-                    .change(function () {
-                        ctrl.$setViewValue(this.value);
-                        this.focus();
-                        scope.$apply();
-                    });
+            var minDate = $parse(attrs.minDate)(scope);
+            var maxDate = $parse(attrs.maxDate)(scope);
+            var calendar = $.calendars.instance(calendarSetting.keyCalendar);                      
+            
+            var initializeDatePicker = function( sDate, eDate ){
+                element.calendarsPicker({
+                    changeMonth: true,
+                    dateFormat: dateFormat,
+                    yearRange: '-120:+30',
+                    minDate: sDate,
+                    maxDate: eDate,
+                    calendar: calendar,
+                    duration: "fast",
+                    showAnim: "",
+                    renderer: $.calendars.picker.themeRollerRenderer,
+                    onSelect: function () {
+                        $(this).change();
+                    }
+                }).change(function () {
+                    ctrl.$setViewValue(this.value);
+                    this.focus();
+                    scope.$apply();
+                });
+            };            
+            
+            initializeDatePicker(minDate, maxDate);
+            
+            scope.$watch(attrs.minDate, function(value){
+                element.calendarsPicker('destroy');
+                initializeDatePicker( value, $parse(attrs.maxDate)(scope));
+            });
+            
+            scope.$watch(attrs.maxDate, function(value){
+                element.calendarsPicker('destroy');
+                initializeDatePicker( $parse(attrs.minDate)(scope), value);
+            });            
         }
     };
 })

@@ -309,4 +309,12 @@ trackerCapture.controller('UpcomingEventsController',
         $scope.pager.page = page;
         $scope.generateReport();
     };
+    
+    $scope.interacted = function(field) {
+        var status = false;
+        if(field){            
+            status = $scope.outerForm.submitted || field.$dirty;
+        }
+        return status;        
+    };
 });
