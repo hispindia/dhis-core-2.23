@@ -85,11 +85,10 @@ public class HibernateDataStatisticsStore
             ads.setActiveUsers( resultSet.getInt( "activeUsers" ) );
             ads.setMapViews( resultSet.getInt( "mapViews" ) );
             ads.setChartViews( resultSet.getInt( "chartViews" ) );
-            ads.setReportTablesViews( resultSet.getInt( "reportTablesViews" ) );
-            ads.setEventReportViews( resultSet.getInt( "reportTablesViews" ) );
+            ads.setReportTableViews( resultSet.getInt( "reportTableViews" ) );
+            ads.setEventReportViews( resultSet.getInt( "eventReportViews" ) );
             ads.setEventChartViews( resultSet.getInt( "eventChartViews" ) );
             ads.setDashboardViews( resultSet.getInt( "dashboardViews" ) );
-            ads.setIndicatorsViews( resultSet.getInt( "indicatorsViews" ) );
             ads.setTotalViews( resultSet.getInt( "totalViews" ) );
             ads.setAverageViews( resultSet.getInt( "averageViews" ) );
             ads.setSavedMaps( resultSet.getInt( "savedMaps" ) );
@@ -202,7 +201,7 @@ public class HibernateDataStatisticsStore
         return "max(active_users) as activeUsers," +
             "cast(round(cast(sum(mapviews) as numeric),0) as int) as mapViews," +
             "cast(round(cast(sum(chartviews) as numeric),0) as int) as chartViews," +
-            "cast(round(cast(sum(reporttableviews) as numeric),0) as int) as reportTablesViews, " +
+            "cast(round(cast(sum(reporttableviews) as numeric),0) as int) as reportTableViews, " +
             "cast(round(cast(sum(eventreportviews) as numeric),0) as int) as eventReportViews, " +
             "cast(round(cast(sum(eventchartviews) as numeric),0) as int) as eventChartViews," +
             "cast(round(cast(sum(dashboardviews) as numeric),0) as int) as dashboardViews, " +

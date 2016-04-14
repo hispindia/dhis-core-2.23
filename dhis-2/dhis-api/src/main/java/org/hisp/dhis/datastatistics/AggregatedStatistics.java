@@ -45,11 +45,10 @@ public class AggregatedStatistics
     private Integer activeUsers;
     private Integer mapViews;
     private Integer chartViews;
-    private Integer reportTablesViews;
+    private Integer reportTableViews;
     private Integer eventReportViews;
     private Integer eventChartViews;
     private Integer dashboardViews;
-    private Integer indicatorsViews;
     private Integer totalViews;
     private Integer averageViews;
     private Integer savedMaps;
@@ -144,14 +143,14 @@ public class AggregatedStatistics
     }
 
     @JsonProperty
-    public Integer getReportTablesViews()
+    public Integer getReportTableViews()
     {
-        return reportTablesViews;
+        return reportTableViews;
     }
 
-    public void setReportTablesViews( Integer reportTablesViews )
+    public void setReportTableViews( Integer reportTableViews )
     {
-        this.reportTablesViews = reportTablesViews;
+        this.reportTableViews = reportTableViews;
     }
 
     @JsonProperty
@@ -185,17 +184,6 @@ public class AggregatedStatistics
     public void setDashboardViews( Integer dashboardViews )
     {
         this.dashboardViews = dashboardViews;
-    }
-
-    @JsonProperty
-    public Integer getIndicatorsViews()
-    {
-        return indicatorsViews;
-    }
-
-    public void setIndicatorsViews( Integer indicatorsViews )
-    {
-        this.indicatorsViews = indicatorsViews;
     }
 
     @JsonProperty
@@ -319,11 +307,10 @@ public class AggregatedStatistics
             ", activeUsers=" + activeUsers +
             ", mapViews=" + mapViews +
             ", chartViews=" + chartViews +
-            ", reportTablesViews=" + reportTablesViews +
+            ", reportTableViews=" + reportTableViews +
             ", eventReportViews=" + eventReportViews +
             ", eventChartViews=" + eventChartViews +
             ", dashboardViews=" + dashboardViews +
-            ", indicatorsViews=" + indicatorsViews +
             ", totalViews=" + totalViews +
             ", averageViews=" + averageViews +
             ", savedMaps=" + savedMaps +

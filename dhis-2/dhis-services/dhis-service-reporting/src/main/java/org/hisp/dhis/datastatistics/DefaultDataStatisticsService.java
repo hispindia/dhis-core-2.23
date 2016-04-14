@@ -111,7 +111,6 @@ public class DefaultDataStatisticsService
             eventCountMap.get( DataStatisticsEventType.EVENT_REPORT_VIEW ),
             eventCountMap.get( DataStatisticsEventType.EVENT_CHART_VIEW ),
             eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
-            eventCountMap.get( DataStatisticsEventType.INDICATOR_VIEW ),
             eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ),
             savedMaps, savedCharts, savedReportTables, savedEventReports,
             savedEventCharts, savedDashboards, savedIndicators, totalUsers );

@@ -42,6 +42,5 @@ public enum DataStatisticsEventType
     REPORT_TABLE_VIEW,
     EVENT_REPORT_VIEW,
     EVENT_CHART_VIEW,
-    INDICATOR_VIEW,
     TOTAL_VIEW
 }

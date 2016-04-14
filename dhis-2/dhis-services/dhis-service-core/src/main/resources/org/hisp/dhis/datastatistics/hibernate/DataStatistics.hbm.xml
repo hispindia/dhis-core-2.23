@@ -21,7 +21,6 @@
     <property name="eventReportViews" column="eventreportviews" type="double"/>
     <property name="eventChartViews" column="eventchartviews" type="double"/>
     <property name="dashboardViews" column="dashboardviews" type="double"/>
-    <property name="indicatorViews" column="indicatorviews" type="double"/>
     <property name="activeUsers" column="active_users" type="int"/>
     <property name="totalViews" column="totalviews" type="double"/>
     <property name="averageViews" column="average_views" type="double"/>
