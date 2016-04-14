@@ -35,6 +35,8 @@ import org.hibernate.SessionFactory;
 import org.hisp.dhis.common.BaseIdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
+import org.hisp.dhis.commons.timer.SystemTimer;
+import org.hisp.dhis.commons.timer.Timer;
 import org.hisp.dhis.dbms.DbmsManager;
 import org.hisp.dhis.dxf2.metadata2.AtomicMode;
 import org.hisp.dhis.dxf2.metadata2.FlushMode;
@@ -123,6 +125,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
     @Override
     public ObjectBundleValidationReport validate( ObjectBundle bundle )
     {
+        Timer timer = new SystemTimer().start();
+
         ObjectBundleValidationReport validation = new ObjectBundleValidationReport();
 
         if ( bundle.isSkipValidation() )
@@ -210,6 +214,8 @@ public class DefaultObjectBundleService implements ObjectBundleService
 
         validateAtomicity( bundle, validation );
         bundle.setObjectBundleStatus( ObjectBundleStatus.VALIDATED );
+
+        log.info( "(" + bundle.getUsername() + ") Import:Validation took " + timer.toString() );
 
         return validation;
     }

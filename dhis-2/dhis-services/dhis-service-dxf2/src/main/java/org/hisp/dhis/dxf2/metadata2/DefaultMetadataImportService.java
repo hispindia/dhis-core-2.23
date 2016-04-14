@@ -29,7 +29,11 @@ package org.hisp.dhis.dxf2.metadata2;
  */
 
 import com.google.common.base.Enums;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.commons.timer.SystemTimer;
+import org.hisp.dhis.commons.timer.Timer;
 import org.hisp.dhis.dxf2.common.Status;
 import org.hisp.dhis.dxf2.metadata2.feedback.ImportReport;
 import org.hisp.dhis.dxf2.metadata2.objectbundle.ObjectBundle;
@@ -56,6 +60,8 @@ import java.util.Map;
 @Transactional
 public class DefaultMetadataImportService implements MetadataImportService
 {
+    private static final Log log = LogFactory.getLog( DefaultMetadataImportService.class );
+
     @Autowired
     private CurrentUserService currentUserService;
 
@@ -65,6 +71,8 @@ public class DefaultMetadataImportService implements MetadataImportService
     @Override
     public ImportReport importMetadata( MetadataImportParams params )
     {
+        Timer timer = new SystemTimer().start();
+
         ImportReport report = new ImportReport();
         report.setStatus( Status.OK );
 
@@ -72,6 +80,9 @@ public class DefaultMetadataImportService implements MetadataImportService
         {
             params.setUser( currentUserService.getCurrentUser() );
         }
+
+        String username = params.getUser() != null ? params.getUser().getUsername() : "system-process";
+        log.info( "(" + username + ") Import:Start" );
 
         ObjectBundleParams bundleParams = params.toObjectBundleParams();
         ObjectBundle bundle = objectBundleService.create( bundleParams );
@@ -81,6 +92,8 @@ public class DefaultMetadataImportService implements MetadataImportService
 
         if ( !(!validationReport.getErrorReports().isEmpty() && AtomicMode.ALL == bundle.getAtomicMode()) )
         {
+            Timer commitTimer = new SystemTimer().start();
+
             ObjectBundleCommitReport commitReport = objectBundleService.commit( bundle );
             report.addTypeReports( commitReport.getTypeReportMap() );
 
@@ -88,11 +101,15 @@ public class DefaultMetadataImportService implements MetadataImportService
             {
                 report.setStatus( Status.WARNING );
             }
+
+            log.info( "(" + bundle.getUsername() + ") Import:Commit took " + commitTimer.toString() );
         }
         else
         {
             report.setStatus( Status.ERROR );
         }
+
+        log.info( "(" + bundle.getUsername() + ") Import:Done took " + timer.toString() );
 
         return report;
     }

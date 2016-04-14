@@ -29,6 +29,8 @@ package org.hisp.dhis.preheat;
  */
 
 import com.google.common.collect.Lists;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.attribute.Attribute;
 import org.hisp.dhis.attribute.AttributeService;
 import org.hisp.dhis.attribute.AttributeValue;
@@ -41,6 +43,8 @@ import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.IdentifiableObjectManager;
 import org.hisp.dhis.common.IdentifiableObjectUtils;
 import org.hisp.dhis.common.MergeMode;
+import org.hisp.dhis.commons.timer.SystemTimer;
+import org.hisp.dhis.commons.timer.Timer;
 import org.hisp.dhis.dataelement.DataElementCategoryDimension;
 import org.hisp.dhis.dataelement.DataElementOperand;
 import org.hisp.dhis.feedback.ErrorCode;
@@ -86,6 +90,8 @@ import java.util.stream.Collectors;
 @Transactional
 public class DefaultPreheatService implements PreheatService
 {
+    private static final Log log = LogFactory.getLog( DefaultPreheatService.class );
+
     @Autowired
     private SchemaService schemaService;
 
@@ -111,6 +117,8 @@ public class DefaultPreheatService implements PreheatService
     @SuppressWarnings( "unchecked" )
     public Preheat preheat( PreheatParams params )
     {
+        Timer timer = new SystemTimer().start();
+
         Preheat preheat = new Preheat();
         preheat.setUser( params.getUser() );
         preheat.setDefaults( manager.getDefaults() );
@@ -241,15 +249,17 @@ public class DefaultPreheatService implements PreheatService
             preheat.put( params.getPreheatIdentifier(), objects );
         }
 
-        handleAttributes( params.getObjects(), preheat, params.getPreheatIdentifier() );
+        handleAttributes( params.getObjects(), preheat );
 
         periodStore.getAll().forEach( period -> preheat.getPeriodMap().put( period.getName(), period ) );
         periodStore.getAllPeriodTypes().forEach( periodType -> preheat.getPeriodTypeMap().put( periodType.getName(), periodType ) );
 
+        log.info( "(" + preheat.getUsername() + ") Import:Preheat[" + params.getPreheatMode() + "] took " + timer.toString() );
+
         return preheat;
     }
 
-    private void handleAttributes( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects, Preheat preheat, PreheatIdentifier identifier )
+    private void handleAttributes( Map<Class<? extends IdentifiableObject>, List<IdentifiableObject>> objects, Preheat preheat )
     {
         for ( Class<? extends IdentifiableObject> klass : objects.keySet() )
         {

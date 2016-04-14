@@ -80,6 +80,11 @@ public class Preheat
         return user;
     }
 
+    public String getUsername()
+    {
+        return user != null ? user.getUsername() : "system-process";
+    }
+
     public void setUser( User user )
     {
         this.user = user;
