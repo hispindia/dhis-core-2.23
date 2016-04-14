@@ -67,12 +67,12 @@ public class DataStatisticsController
 
     @RequestMapping( value = "/dataStatistics", method = RequestMethod.POST )
     @ResponseStatus( HttpStatus.CREATED )
-    public void saveEvent( @RequestParam DataStatisticsEventType dataStatisticsEventType )
+    public void saveEvent( @RequestParam DataStatisticsEventType eventType )
     {
         Date timestamp = new Date();
         User user = currentUserService.getCurrentUser();
 
-        DataStatisticsEvent event = new DataStatisticsEvent( dataStatisticsEventType, timestamp, user.getUsername() );
+        DataStatisticsEvent event = new DataStatisticsEvent( eventType, timestamp, user.getUsername() );
         dataStatisticsService.addEvent( event );
     }
 
