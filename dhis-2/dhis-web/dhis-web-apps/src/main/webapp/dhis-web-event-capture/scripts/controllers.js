@@ -191,7 +191,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                 $scope.filterTypes = {};                               
                 $scope.newDhis2Event = {};
 
-                $scope.eventGridColumns.push({displayName: 'event_id', id: 'uid', valueType: 'TEXT', compulsory: false, filterWithRange: false, showFilter: false, show: false});
+                $scope.eventGridColumns.push({displayName: 'event_uid', id: 'uid', valueType: 'TEXT', compulsory: false, filterWithRange: false, showFilter: false, show: false});
                 $scope.filterTypes['uid'] = 'TEXT';                
 
                 $scope.eventGridColumns.push({displayName: $scope.selectedProgramStage.reportDateDescription ? $scope.selectedProgramStage.reportDateDescription : $translate.instant('incident_date'), id: 'eventDate', valueType: 'DATE', filterWithRange: true, compulsory: false, showFilter: false, show: true});
