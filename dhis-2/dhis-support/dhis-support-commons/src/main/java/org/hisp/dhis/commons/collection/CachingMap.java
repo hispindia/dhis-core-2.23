@@ -44,6 +44,18 @@ import java.util.function.Function;
 public class CachingMap<K, V>
     extends HashMap<K, V>
 {
+    // -------------------------------------------------------------------------
+    // Internal variables
+    // -------------------------------------------------------------------------
+
+    private long cacheHitCount;
+    
+    private long cacheMissCount;
+
+    // -------------------------------------------------------------------------
+    // Methods
+    // -------------------------------------------------------------------------
+
     /**
      * Returns the cached value if available or executes the Callable and returns
      * the value, which is also cached. Will not attempt to fetch values for null
@@ -69,11 +81,17 @@ public class CachingMap<K, V>
                 value = callable.call();
                 
                 super.put( key, value );
+                
+                cacheMissCount++;
             }
             catch ( Exception ex )
             {
                 throw new RuntimeException( ex );
             }
+        }
+        else
+        {
+            cacheHitCount++;
         }
         
         return value;
@@ -100,5 +118,36 @@ public class CachingMap<K, V>
         }
         
         return this;
+    }
+
+    /**
+     * Returns the number of cache hits from calling the {@link get} method.
+     * 
+     * @return the number of cache hits.
+     */
+    public long getCacheHitCount()
+    {
+        return cacheHitCount;
+    }
+
+    /**
+     * Returns the number of cache misses from calling the {@link get} method.
+     * 
+     * @return the number of cache misses.
+     */
+    public long getCacheMissCount()
+    {
+        return cacheMissCount;
+    }
+    
+    /**
+     * Returns the ratio between cache hits and misses from calling the 
+     * {@link get} method.
+     * 
+     * @return the cache hit versus miss ratio.
+     */
+    public double getCacheHitRatio()
+    {
+        return (double) cacheHitCount / (double) cacheMissCount;
     }
 }

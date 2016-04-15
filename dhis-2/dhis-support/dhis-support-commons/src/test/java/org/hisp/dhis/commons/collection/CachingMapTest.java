@@ -69,6 +69,27 @@ public class CachingMapTest
         assertFalse( cache.containsKey( "dog" ) );
     }
     
+    @Test
+    public void testCacheHitMissCount()
+    {
+        CachingMap<Integer, Animal> cache = new CachingMap<Integer, Animal>();
+        
+        cache.put( 1, new Animal( 1, "horse" ) );
+        cache.put( 2, new Animal( 2, "dog" ) );
+        
+        cache.get( 1, () -> null ); // Hit
+        cache.get( 1, () -> null ); // Hit
+        cache.get( 1, () -> null ); // Hit
+        cache.get( 2, () -> null ); // Hit
+        cache.get( 2, () -> null ); // Hit
+        cache.get( 3, () -> null ); // Miss
+        cache.get( 3, () -> null ); // Miss
+        cache.get( 4, () -> null ); // Miss
+        
+        assertEquals( 5, cache.getCacheHitCount() );
+        assertEquals( 3, cache.getCacheMissCount() );
+    }
+    
     private class Animal
     {
         private int id;
