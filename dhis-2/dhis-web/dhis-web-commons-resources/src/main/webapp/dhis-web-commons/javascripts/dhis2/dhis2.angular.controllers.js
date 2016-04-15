@@ -102,8 +102,8 @@ var d2Controllers = angular.module('d2Controllers', [])
                 obj.created = DateUtils.formatToHrsMinsSecs(dataValue.created);
                 
                 if (dataType === "attribute") {
-                    if (nameIdMap[dataValue.trackedEntityAttribute.id] && nameIdMap[dataValue.trackedEntityAttribute.id].displayFormName) {                        
-                        obj.name = nameIdMap[dataValue.trackedEntityAttribute.id].displayFormName;
+                    if (nameIdMap[dataValue.trackedEntityAttribute.id]) {                        
+                        obj.name = nameIdMap[dataValue.trackedEntityAttribute.id].displayName;
                     }
                 } else if (dataType === "dataElement") {
                     if (nameIdMap[dataValue.dataElement.id] && nameIdMap[dataValue.dataElement.id].dataElement) {                        
