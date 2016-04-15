@@ -318,12 +318,16 @@ public class DefaultDataIntegrityService
                     {
                         DataElement dataElement = dataElementService.getDataElement( operand.getDataElementId() );
                         DataElementCategoryOptionCombo optionCombo = categoryService.getDataElementCategoryOptionCombo( operand.getOptionComboId() );
-                        Set<DataElementCategoryOptionCombo> optionCombos = dataElement.getCategoryCombo() != null ? dataElement.getCategoryCombo().getOptionCombos() : null;
-
-                        if ( optionCombos == null || !optionCombos.contains( optionCombo ) )
+                        
+                        if ( dataElement != null && optionCombo != null )
                         {
-                            DataElementOperand persistedOperand = new DataElementOperand( dataElement, optionCombo );
-                            map.putValue( dataSet, persistedOperand );
+                            Set<DataElementCategoryOptionCombo> optionCombos = dataElement.getCategoryCombo() != null ? dataElement.getCategoryCombo().getOptionCombos() : null;
+    
+                            if ( optionCombos == null || !optionCombos.contains( optionCombo ) )
+                            {
+                                DataElementOperand persistedOperand = new DataElementOperand( dataElement, optionCombo );
+                                map.putValue( dataSet, persistedOperand );
+                            }
                         }
                     }
                 }
