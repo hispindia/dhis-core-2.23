@@ -251,7 +251,7 @@
                     <arg value="--tree" />
                   </exec>
                   <echo file="${project.build.outputDirectory}/build.properties"
-                    message="build.version = ${project.version}&#10;build.time = ${now}&#10;build.revision = ${revision}&#10;" />
+                    message="build.version = ${project.version}&#10;build.time = ${now}&#10;build.revision = ${revision}&#10;jasperreports.version = ${jasperreports.version}&#10;" />
                 </target>
               </configuration>
               <goals>
