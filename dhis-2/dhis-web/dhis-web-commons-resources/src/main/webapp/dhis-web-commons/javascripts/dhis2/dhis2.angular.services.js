@@ -1566,7 +1566,8 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 var continueLooping = true;
                 //Safety harness on 10 loops, in case of unanticipated syntax causing unintencontinued looping
                 for(var i = 0; i < 10 && continueLooping; i++ ) {
-                    var successfulExecution = false;
+                    var expressionUpdated = false;
+                    var brokenExecution = false;
                     angular.forEach(dhisFunctions, function(dhisFunction){
                         //Select the function call, with any number of parameters inside single quotations, or number parameters witout quotations
                         var regularExFunctionCall = new RegExp(dhisFunction.name + "\\( *(([\\d/\\*\\+\\-%\.]+)|( *'[^']*'))*( *, *(([\\d/\\*\\+\\-%\.]+)|'[^']*'))* *\\)",'g');
@@ -1581,28 +1582,37 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                             //or if the number of parameters is wrong.
                             if(angular.isDefined(dhisFunction.parameters)){
                                 //But we are only checking parameters where the dhisFunction actually has a defined set of parameters(concatenate, for example, does not have a fixed number);
-                                if((!angular.isDefined(parameters) && dhisFunction.parameters > 0)
-                                    || parameters.length !== dhisFunction.parameters){
+                                var numParameters = parameters ? parameters.length : 0;
+                                
+                                if(numParameters !== dhisFunction.parameters){
                                     $log.warn(dhisFunction.name + " was called with the incorrect number of parameters");
+                                    
+                                    //Mark this function call as broken:
+                                    brokenExecution = true;
                                 }
                             }
 
                             //In case the function call is nested, the parameter itself contains an expression, run the expression.
-                            if(angular.isDefined(parameters)) {
+                            if(!brokenExecution && angular.isDefined(parameters) && parameters !== null) {
                                 for (var i = 0; i < parameters.length; i++) {
                                     parameters[i] = runExpression(parameters[i],dhisFunction.name,"parameter:" + i, flag, variablesHash);
                                 }
                             }
 
                             //Special block for d2:weeksBetween(*,*) - add such a block for all other dhis functions.
-                            if(dhisFunction.name === "d2:daysBetween") {
+                            if(brokenExecution) {
+                                //Function call is not possible to evaluate, remove the call:
+                                expression = expression.replace(callToThisFunction, "false");
+                                expressionUpdated = true;
+                            }
+                            else if(dhisFunction.name === "d2:daysBetween") {
                                 var firstdate = $filter('trimquotes')(parameters[0]);
                                 var seconddate = $filter('trimquotes')(parameters[1]);
                                 firstdate = moment(firstdate);
                                 seconddate = moment(seconddate);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, seconddate.diff(firstdate,'days'));
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:weeksBetween") {
                                 var firstdate = $filter('trimquotes')(parameters[0]);
@@ -1611,7 +1621,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 seconddate = moment(seconddate);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, seconddate.diff(firstdate,'weeks'));
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:monthsBetween") {
                                 var firstdate = $filter('trimquotes')(parameters[0]);
@@ -1620,7 +1630,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 seconddate = moment(seconddate);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, seconddate.diff(firstdate,'months'));
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:yearsBetween") {
                                 var firstdate = $filter('trimquotes')(parameters[0]);
@@ -1629,13 +1639,13 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 seconddate = moment(seconddate);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, seconddate.diff(firstdate,'years'));
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:floor") {
                                 var floored = Math.floor(parameters[0]);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, floored);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:modulus") {
                                 var dividend = Number(parameters[0]);
@@ -1643,7 +1653,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var rest = dividend % divisor;
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, rest);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:concatenate") {
                                 var returnString = "'";
@@ -1652,7 +1662,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 }
                                 returnString += "'";
                                 expression = expression.replace(callToThisFunction, returnString);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:addDays") {
                                 var date = $filter('trimquotes')(parameters[0]);
@@ -1661,7 +1671,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var newdatestring = "'" + newdate + "'";
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, newdatestring);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:zing") {
                                 var number = parameters[0];
@@ -1671,7 +1681,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, number);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:oizp") {
                                 var number = parameters[0];
@@ -1682,7 +1692,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, output);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:count") {
                                 var variableName = parameters[0];
@@ -1708,7 +1718,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, count);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:countIfZeroPos") {
                                 var variableName = $filter('trimvariablequalifiers') (parameters[0]);
@@ -1742,7 +1752,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, count);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:countIfValue") {
                                 var variableName = parameters[0];
@@ -1779,19 +1789,19 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, count);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:ceil") {
                                 var ceiled = Math.ceil(parameters[0]);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, ceiled);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:round") {
                                 var rounded = Math.round(parameters[0]);
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, rounded);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:hasValue") {
                                 var variableName = parameters[0];
@@ -1810,7 +1820,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, valueFound);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:lastEventDate") {
                                 var variableName = parameters[0];
@@ -1832,7 +1842,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, valueFound);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:validatePattern") {
                                 var inputToValidate = parameters[0].toString();
@@ -1847,7 +1857,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, matchFound);
-                                successfulExecution = true;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:addControlDigits") {
 
@@ -1896,13 +1906,13 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 if(!error) {
                                     //Replace the end evaluation of the dhis function:
                                     expression = expression.replace(callToThisFunction, baseNumber + firstDigit + secondDigit);
-                                    successfulExecution = true;
+                                    expressionUpdated = true;
                                 }
                                 else
                                 {
                                     //Replace the end evaluation of the dhis function:
                                     expression = expression.replace(callToThisFunction, baseNumber);
-                                    successfulExecution = false;
+                                    expressionUpdated = false;
                                 }
                             }
                             else if(dhisFunction.name === "d2:checkControlDigits") {
@@ -1910,7 +1920,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, parameters[0]);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                             else if(dhisFunction.name === "d2:left") {
                                 var string = parameters[0];
@@ -1918,7 +1928,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var returnString =  string.substring(0,numChars);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                             else if(dhisFunction.name === "d2:right") {
                                 var string = parameters[0];
@@ -1926,7 +1936,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var returnString =  string.substring(string.length - numChars, string.length);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                             else if(dhisFunction.name === "d2:substring") {
                                 var string = parameters[0];
@@ -1935,7 +1945,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 var returnString =  string.substring(startChar, endChar);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                             else if(dhisFunction.name === "d2:split") {
                                 var string = parameters[0];
@@ -1946,11 +1956,11 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 }
                                 returnPart = VariableService.processValue(returnPart, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnPart);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                             else if(dhisFunction.name === "d2:length") {
                                 expression = expression.replace(callToThisFunction, String(parameters[0]).length);
-                                successfulExecution = false;
+                                expressionUpdated = false;
                             }
                         });
                     });
@@ -1960,7 +1970,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                     //the expected d2: function calls, one unneccesary iteration will be done and the
                     //successfulExecution will be false coming back here, ending the loop. The last iteration
                     //should be zero to marginal performancewise.
-                    if(successfulExecution && expression.indexOf("d2:") !== -1) {
+                    if(expressionUpdated && expression.indexOf("d2:") !== -1) {
                         continueLooping = true;
                     } else {
                         continueLooping = false;
