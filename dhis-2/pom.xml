@@ -72,14 +72,6 @@
         <enabled>false</enabled>
       </snapshots>
     </repository>
-    <repository>
-      <id>smslib</id>
-      <name>SMSLib</name>
-      <url>http://smslib.org/maven2/v3</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
   </repositories>
 
   <issueManagement>
