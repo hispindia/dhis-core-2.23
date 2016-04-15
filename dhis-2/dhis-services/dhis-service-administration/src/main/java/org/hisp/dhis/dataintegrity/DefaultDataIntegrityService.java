@@ -308,7 +308,7 @@ public class DefaultDataIntegrityService
 
                 if ( operands != null )
                 {
-                    if ( operands.size() > 2000 )
+                    if ( operands.size() > 1000 )
                     {
                         log.warn( "Skipped integrity check for data set: " + dataSet.getName() + ", too many operands: " + operands.size() );
                         continue;
