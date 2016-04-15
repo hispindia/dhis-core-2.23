@@ -951,8 +951,8 @@
     var userProfile;
     dhis2.menu.ui.initMenu = function () {
         try {
-            
-            var helpPagePromise = dhis2.menu.ui.loadingStatus = jQuery.ajax({
+
+            var helpPagePromise = jQuery.ajax({
                 type : "GET",
                 url : dhis2.settings.getBaseUrl() + "/dhis-web-commons/menu/getHelpPageLinkModule.action",
                 dataType : "json"
@@ -962,7 +962,8 @@
                 url: dhis2.settings.getBaseUrl() + "/api/me/profile.json",
                 dataType: "json"
             });
-            $.when(helpPagePromise, userProfilePromise).then(function(helpPageResponse, userProfileResponse){
+
+            dhis2.menu.ui.loadingStatus = $.when(helpPagePromise, userProfilePromise).then(function(helpPageResponse, userProfileResponse){
                 if(userProfileResponse && userProfileResponse.length >= 2 && userProfileResponse[1] === "success"){
                     userProfile = userProfileResponse[0];
                 }
@@ -979,7 +980,7 @@
             }
         }
     };
-    
+
     function getProfileMenuName(){
         var userProfileName = "profile";
         if(userProfile && userProfile.firstName && userProfile.surname){
@@ -987,7 +988,7 @@
         }
         return userProfileName;
     }
-    
+
     function bootstrapMenu() {
         var isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
         var profileMenuName = getProfileMenuName();
