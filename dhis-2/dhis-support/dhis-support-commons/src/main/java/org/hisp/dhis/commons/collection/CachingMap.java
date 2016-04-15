@@ -51,6 +51,8 @@ public class CachingMap<K, V>
     private long cacheHitCount;
     
     private long cacheMissCount;
+    
+    private long cacheLoadCount;
 
     // -------------------------------------------------------------------------
     // Methods
@@ -117,6 +119,8 @@ public class CachingMap<K, V>
             }            
         }
         
+        cacheLoadCount++;
+        
         return this;
     }
 
@@ -149,5 +153,15 @@ public class CachingMap<K, V>
     public double getCacheHitRatio()
     {
         return (double) cacheHitCount / (double) cacheMissCount;
+    }
+
+    /**
+     * Returns the number of times the cache has been loaded.
+     * 
+     * @return the number of times the cache has been loaded.
+     */
+    public long getCacheLoadCount()
+    {
+        return cacheLoadCount;
     }
 }

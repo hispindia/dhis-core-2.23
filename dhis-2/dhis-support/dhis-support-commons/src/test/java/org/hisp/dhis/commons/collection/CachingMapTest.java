@@ -89,6 +89,23 @@ public class CachingMapTest
         assertEquals( 5, cache.getCacheHitCount() );
         assertEquals( 3, cache.getCacheMissCount() );
     }
+
+    @Test
+    public void testCacheLoadCount()
+    {
+        Set<Animal> animals = new HashSet<>();
+        animals.add( new Animal( 1, "horse" ) );
+        animals.add( new Animal( 2, "dog" ) );
+        animals.add( new Animal( 3, "cat" ) );
+
+        CachingMap<Integer, Animal> cache = new CachingMap<Integer, Animal>();
+        
+        assertEquals( 0, cache.getCacheLoadCount() );
+        
+        cache.load( animals, a -> a.getId() );
+
+        assertEquals( 1, cache.getCacheLoadCount() );
+    }
     
     private class Animal
     {

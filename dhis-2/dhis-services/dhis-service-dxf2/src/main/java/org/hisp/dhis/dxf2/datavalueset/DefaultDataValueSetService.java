@@ -108,6 +108,7 @@ public class DefaultDataValueSetService
     private static final Log log = LogFactory.getLog( DefaultDataValueSetService.class );
 
     private static final String ERROR_OBJECT_NEEDED_TO_COMPLETE = "Must be provided to complete data set";
+    private static final int CACHE_MISS_THRESHOLD = 500;
 
     @Autowired
     private IdentifiableObjectManager identifiableObjectManager;
@@ -699,6 +700,24 @@ public class DefaultDataValueSetService
             DataElementCategoryOptionCombo attrOptionCombo = outerAttrOptionCombo != null ? outerAttrOptionCombo :
                 optionComboMap.get( trimToNull( dataValue.getAttributeOptionCombo() ), optionComboCallable.setId( trimToNull( dataValue.getAttributeOptionCombo() ) ) );
 
+            // -----------------------------------------------------------------
+            // Potentially heat caches
+            // -----------------------------------------------------------------
+
+            if ( dataElementMap.getCacheLoadCount() == 0 && dataElementMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
+            {
+                dataElementMap.load( identifiableObjectManager.getAll( DataElement.class ), o -> o.getPropertyValue( dataElementIdScheme ) );
+                
+                log.info( "Data element cache heated after cache miss threshold reached" );
+            }
+            
+            if ( orgUnitMap.getCacheLoadCount() == 0 && orgUnitMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
+            {
+                orgUnitMap.load( identifiableObjectManager.getAll( OrganisationUnit.class ), o -> o.getPropertyValue( orgUnitIdScheme ) );
+                
+                log.info( "Org unit cache heated after cache miss threshold reached" );
+            }
+            
             // -----------------------------------------------------------------
             // Validation
             // -----------------------------------------------------------------
