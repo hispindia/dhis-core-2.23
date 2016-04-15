@@ -426,6 +426,8 @@ div#orgUnitTree {
 .btn-file {
     position: relative;
     overflow: hidden;
+    width: 34px !important;
+    padding: 6px 10px;
 }
 .btn-file input[type=file] {
     position: absolute;
@@ -575,10 +577,15 @@ div#orgUnitTree {
 }
 
 .default-btn-height {
-    font-size: 9pt;
-    padding: 5px;
+    padding-bottom: 0;
 }
 
 .align-center {
     text-align: center;
+}
+
+.btn-grp { 
+    border-color:  #b7b7b7; 
+    background-color: #cccccc;
+    color: #555 !important;
 }

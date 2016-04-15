@@ -202,7 +202,7 @@
                                         <a ng-if="currentEvent.event && currentEvent.event !=='SINGLE_EVENT'" href ng-click="downloadFile(currentEvent.event, eventGridColumn.id)" title="{{fileNames[currentEvent.event][eventGridColumn.id]}}">{{fileNames[currentEvent.event][eventGridColumn.id].length > 20 ? fileNames[currentEvent.event][eventGridColumn.id].substr(0,20).contact('...') : fileNames[currentEvent.event][eventGridColumn.id]}}</a>                                        
                                     </div>
                                     <span class="input-group-btn">
-                                        <span class="btn btn-primary btn-file" ng-if="currentEvent[eventGridColumn.id]" ng-click="deleteFile(eventGridColumn.id)">
+                                        <span class="btn btn-grp btn-file" ng-if="currentEvent[eventGridColumn.id]" ng-click="deleteFile(eventGridColumn.id)">
                                             <span
                                                   title="{{'delete' | translate}}" 
                                                   d2-file-input-name="fileNames[currentEvent.event][eventGridColumn.id]" 
@@ -210,7 +210,7 @@
                                                 <i class="fa fa-trash"></i>
                                             </span>
                                         </span>
-                                        <span class="btn btn-primary btn-file" ng-if="!currentEvent[eventGridColumn.id]">
+                                        <span class="btn btn-grp btn-file" ng-if="!currentEvent[eventGridColumn.id]">
                                             <span title="{{'upload' | translate}}">
                                                 <i class="fa fa-upload"></i>
                                                 <input type="file" 
@@ -240,7 +240,7 @@
                                         input-field-id={{eventGridColumn.id}}
                                         ng-blur="saveDatavalue()"/>
                                     <span class="input-group-btn">
-                                        <button class="btn btn-primary hideInPrint trim" 
+                                        <button class="btn btn-grp hideInPrint" 
                                                 type="button" 
                                                 title="{{'get_from_map'| translate}}"
                                                 ng-disabled="assignedFields[eventGridColumn.id]"
@@ -489,7 +489,7 @@
                                             <a ng-if="currentEvent.event && currentEvent.event !=='SINGLE_EVENT'" href ng-click="downloadFile(currentEvent.event, de.dataElement.id)">{{fileNames[currentEvent.event][de.dataElement.id]}}</a>                                        
                                         </div>
                                         <span class="input-group-btn">
-                                            <span class="btn btn-primary btn-file"  ng-if="currentEvent[de.dataElement.id]" ng-click="deleteFile(de.dataElement.id)">
+                                            <span class="btn btn-grp btn-file"  ng-if="currentEvent[de.dataElement.id]" ng-click="deleteFile(de.dataElement.id)">
                                                 <span
                                                       title="{{'delete' | translate}}" 
                                                       d2-file-input-name="fileNames[currentEvent.event][de.dataElement.id]" 
@@ -497,7 +497,7 @@
                                                     <i class="fa fa-trash"></i>
                                                 </span>
                                             </span>
-                                            <span class="btn btn-primary btn-file" ng-if="!currentEvent[de.dataElement.id]" >
+                                            <span class="btn btn-grp btn-file" ng-if="!currentEvent[de.dataElement.id]" >
                                                 <span title="{{'upload' | translate}}">
                                                     <i class="fa fa-upload"></i>
                                                     <input type="file" 
@@ -527,7 +527,7 @@
                                             input-field-id={{de.dataElement.id}}
                                             ng-blur="saveDatavalue()"/>
                                         <span class="input-group-btn">
-                                            <button class="btn btn-primary hideInPrint trim" 
+                                            <button class="btn btn-grp hideInPrint" 
                                                     type="button" 
                                                     title="{{'get_from_map'| translate}}"
                                                     ng-disabled="assignedFields[de.dataElement.id]"

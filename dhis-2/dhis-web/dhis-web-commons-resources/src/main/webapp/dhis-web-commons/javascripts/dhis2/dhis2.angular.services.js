@@ -470,7 +470,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 <a href ng-click="downloadFile(null, \'' + fieldId + '\', null)" title="fileNames[currentEvent.event][' + fieldId + ']" >{{fileNames[currentEvent.event][' + fieldId + '].length > 20 ? fileNames[currentEvent.event][' + fieldId + '].substring(0,20).concat(\'...\') : fileNames[currentEvent.event][' + fieldId + ']}}</a>\n\
                                                             </span>\n\
                                                             <span class="input-group-btn">\n\
-                                                                <span class="btn btn-primary btn-file">\n\
+                                                                <span class="btn btn-grp btn-file">\n\
                                                                     <span ng-if="currentEvent.' + fieldId + '" title="{{\'delete\' | translate}}" d2-file-input-name="fileNames[currentEvent.event][' + fieldId + ']" d2-file-input-delete="currentEvent.' + fieldId + '">\n\
                                                                         <a href ng-click="deleteFile(\'' + fieldId + '\')"><i class="fa fa-trash alert-danger"></i></a>\n\
                                                                     </span>\n\
@@ -496,7 +496,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 ' placeholder="{{\'latitude_longitude_format\' | translate}}" ' +
                                                                 commonInputFieldProperty + '>' +
                                                                 '<span class="input-group-btn"> ' +
-                                                                    '<button class="btn btn-primary default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                    '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
                                                                         'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\', outerForm.' + fieldId + ')"> ' +
                                                                         '<i class="fa fa-map-marker"></i> ' +
                                                                     '</button> ' + 
@@ -654,7 +654,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
                                                             commonInputFieldProperty + '>' +
                                                             '<span class="input-group-btn"> ' +
-                                                                '<button class="btn btn-primary default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
                                                                     'ng-click="showAttributeMap(selectedTei,\'' + attId + '\')"> ' +
                                                                     '<i class="fa fa-map-marker"></i> ' +
                                                                 '</button> ' + 
