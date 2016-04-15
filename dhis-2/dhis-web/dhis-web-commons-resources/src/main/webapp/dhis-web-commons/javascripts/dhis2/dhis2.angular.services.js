@@ -1912,7 +1912,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 {
                                     //Replace the end evaluation of the dhis function:
                                     expression = expression.replace(callToThisFunction, baseNumber);
-                                    expressionUpdated = false;
+                                    expressionUpdated = true;
                                 }
                             }
                             else if(dhisFunction.name === "d2:checkControlDigits") {
@@ -1920,35 +1920,40 @@ var d2Services = angular.module('d2Services', ['ngResource'])
 
                                 //Replace the end evaluation of the dhis function:
                                 expression = expression.replace(callToThisFunction, parameters[0]);
-                                expressionUpdated = false;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:left") {
-                                var string = parameters[0];
+                                var string = String(parameters[0]);
                                 var numChars = string.length < parameters[1] ? string.length : parameters[1];
                                 var returnString =  string.substring(0,numChars);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
-                                expressionUpdated = false;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:right") {
-                                var string = parameters[0];
+                                var string = String(parameters[0]);
                                 var numChars = string.length < parameters[1] ? string.length : parameters[1];
                                 var returnString =  string.substring(string.length - numChars, string.length);
                                 returnString = VariableService.processValue(returnString, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnString);
-                                expressionUpdated = false;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:substring") {
-                                var string = parameters[0];
-                                var startChar = string.length < parameters[1] - 1 ? string.length : parameters[1];
-                                var endChar = string.length < parameters[2] ? string.length : parameters[2];
-                                var returnString =  string.substring(startChar, endChar);
-                                returnString = VariableService.processValue(returnString, 'TEXT');
-                                expression = expression.replace(callToThisFunction, returnString);
-                                expressionUpdated = false;
+                                var string = String(parameters[0]);
+                                var startChar = string.length < parameters[1] - 1 ? -1 : parameters[1];
+                                var endChar = string.length < parameters[2] ? -1 : parameters[2];
+                                if(startChar < 0 || endChar < 0) {
+                                    expression = expression.replace(callToThisFunction, "''");
+                                    expressionUpdated = true;
+                                } else {
+                                    var returnString =  string.substring(startChar, endChar);
+                                    returnString = VariableService.processValue(returnString, 'TEXT');
+                                    expression = expression.replace(callToThisFunction, returnString);
+                                    expressionUpdated = true;
+                                }
                             }
                             else if(dhisFunction.name === "d2:split") {
-                                var string = parameters[0];
+                                var string = String(parameters[0]);
                                 var splitArray = string.split(parameters[1]);
                                 var returnPart = "";
                                 if (splitArray.length >= parameters[2]) {
@@ -1956,11 +1961,11 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                 }
                                 returnPart = VariableService.processValue(returnPart, 'TEXT');
                                 expression = expression.replace(callToThisFunction, returnPart);
-                                expressionUpdated = false;
+                                expressionUpdated = true;
                             }
                             else if(dhisFunction.name === "d2:length") {
                                 expression = expression.replace(callToThisFunction, String(parameters[0]).length);
-                                expressionUpdated = false;
+                                expressionUpdated = true;
                             }
                         });
                     });
