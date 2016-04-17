@@ -106,6 +106,23 @@ public class CachingMapTest
 
         assertEquals( 1, cache.getCacheLoadCount() );
     }
+
+    @Test
+    public void testIsCacheLoaded()
+    {
+        Set<Animal> animals = new HashSet<>();
+        animals.add( new Animal( 1, "horse" ) );
+        animals.add( new Animal( 2, "dog" ) );
+        animals.add( new Animal( 3, "cat" ) );
+
+        CachingMap<Integer, Animal> cache = new CachingMap<Integer, Animal>();
+        
+        assertFalse( cache.isCacheLoaded() );
+        
+        cache.load( animals, a -> a.getId() );
+
+        assertTrue( cache.isCacheLoaded() );
+    }
     
     private class Animal
     {

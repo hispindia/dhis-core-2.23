@@ -164,4 +164,14 @@ public class CachingMap<K, V>
     {
         return cacheLoadCount;
     }
+    
+    /**
+     * Indicates whether the cache has been loaded at least one time.
+     * 
+     * @return true if the cache has been loaded at least one time.
+     */
+    public boolean isCacheLoaded()
+    {
+        return cacheLoadCount > 0;
+    }
 }

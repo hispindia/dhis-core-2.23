@@ -704,14 +704,14 @@ public class DefaultDataValueSetService
             // Potentially heat caches
             // -----------------------------------------------------------------
 
-            if ( dataElementMap.getCacheLoadCount() == 0 && dataElementMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
+            if ( !dataElementMap.isCacheLoaded() && dataElementMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
             {
                 dataElementMap.load( identifiableObjectManager.getAll( DataElement.class ), o -> o.getPropertyValue( dataElementIdScheme ) );
                 
                 log.info( "Data element cache heated after cache miss threshold reached" );
             }
             
-            if ( orgUnitMap.getCacheLoadCount() == 0 && orgUnitMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
+            if ( !orgUnitMap.isCacheLoaded() && orgUnitMap.getCacheMissCount() > CACHE_MISS_THRESHOLD )
             {
                 orgUnitMap.load( identifiableObjectManager.getAll( OrganisationUnit.class ), o -> o.getPropertyValue( orgUnitIdScheme ) );
                 
