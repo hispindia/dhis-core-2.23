@@ -922,7 +922,6 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
         modalInstance.result.then(function (format) {
             var fieldsToExport = $filter('filter')($scope.eventGridColumns, {show: true});
             var idList = ["programStage", "orgUnit", "program", "event", "status", "eventDate", "created"];
-            var format = format;
             var eventsJSON = [];
             var eventsJSONIndex = -1;
             var dataValuesJSON;
@@ -948,8 +947,8 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
             /*Get All the events list from the server*/
             DHIS2EventFactory.getByStage($scope.selectedOrgUnit.id, $scope.selectedProgramStage.id,
                 $scope.attributeCategoryUrl, true).then(function (data) {
-                if (angular.isObject(data.events)) {
 
+                if (angular.isObject(data.events)) {
                     angular.forEach(data.events, function (event) {
                         ++eventsJSONIndex;
                         eventsJSON[eventsJSONIndex] = {};
@@ -974,6 +973,9 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                         event.eventDate = DateUtils.formatFromApiToUser(event.eventDate);
                         event['eventDate'] = event.eventDate;
 
+                        event.created = DateUtils.formatFromApiToUser(event.created);
+                        event['created'] = event.created;
+
 
                         if (format === 'xml' || format === 'csv') {
                             insertItemToRow(event, 'programStage');
@@ -982,6 +984,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                             insertItemToRow(event, 'event');
                             insertItemToRow(event, 'status');
                             insertItemToRow(event, 'eventDate');
+                            insertItemToRow(event, 'created');
                             insertRowToExportList();
                         } else if (format === 'json') {
                             if (event['programStage']) {
