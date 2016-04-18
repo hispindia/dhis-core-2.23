@@ -495,7 +495,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 ' ng-class="{{getInputNotifcationClass(prStDes.' + fieldId + '.dataElement.id, true)}}" ' +
                                                                 ' placeholder="{{\'latitude_longitude_format\' | translate}}" ' +
                                                                 commonInputFieldProperty + '>' +
-                                                                '<span class="input-group-btn"> ' +
+                                                                '<span class="input-group-btn input-group-btn-no-width"> ' +
                                                                     '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
                                                                         'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\', outerForm.' + fieldId + ')"> ' +
                                                                         '<i class="fa fa-map-marker"></i> ' +
@@ -653,7 +653,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                             ' d2-custom-coordinate-validator ' +
                                                             ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
                                                             commonInputFieldProperty + '>' +
-                                                            '<span class="input-group-btn"> ' +
+                                                            '<span class="input-group-btn input-group-btn-no-width"> ' +
                                                                 '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
                                                                     'ng-click="showAttributeMap(selectedTei,\'' + attId + '\')"> ' +
                                                                     '<i class="fa fa-map-marker"></i> ' +

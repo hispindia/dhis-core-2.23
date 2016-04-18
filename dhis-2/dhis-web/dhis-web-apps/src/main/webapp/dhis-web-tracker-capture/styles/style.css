@@ -1951,3 +1951,11 @@ a.disable-link-effects:focus {
     background-color: #cccccc;
     color: #555 !important;
 }
+
+.default-btn-height {
+    padding-bottom: 0;
+}
+
+.input-group-btn-no-width {
+    width: 0 !important;
+}
