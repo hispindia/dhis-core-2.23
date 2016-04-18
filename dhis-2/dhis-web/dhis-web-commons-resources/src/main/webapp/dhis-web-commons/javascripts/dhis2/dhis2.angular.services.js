@@ -2025,9 +2025,6 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                 var dhisfunctionsevaluated = runDhisFunctions(expression, variablesHash, flag);
                 answer = eval(dhisfunctionsevaluated);
             }
-            if(dhis2.validation.isNumber(answer)){
-                answer = Math.round(answer*100)/100;
-            }
             return answer;
         };
 
