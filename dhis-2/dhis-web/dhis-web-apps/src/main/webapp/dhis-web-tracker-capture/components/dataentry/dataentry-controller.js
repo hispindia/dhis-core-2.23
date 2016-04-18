@@ -281,6 +281,10 @@ trackerCapture.controller('DataEntryController',
                     //For "ASSIGN" actions where we have a dataelement, we save the calculated value to the dataelement:
                     //Blank out the value:
                     var processedValue = $filter('trimquotes')(effect.data);
+                    
+                    processedValue = processedValue === "true" ? true : processedValue;
+                    processedValue = processedValue === "false" ? false : processedValue;
+                    
                     affectedEvent[effect.dataElement.id] = processedValue;
                     $scope.assignedFields[event][effect.dataElement.id] = true;
                     $scope.saveDataValueForEvent($scope.prStDes[effect.dataElement.id], null, affectedEvent, true);
