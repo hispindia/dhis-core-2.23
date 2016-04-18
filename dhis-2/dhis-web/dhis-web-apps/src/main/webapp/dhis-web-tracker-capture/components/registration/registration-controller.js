@@ -376,19 +376,21 @@ trackerCapture.controller('RegistrationController',
     
     //listen for rule effect changes
     $scope.$on('ruleeffectsupdated', function(event, args){
-        $scope.warningMessages = [];
-        $scope.hiddenFields = [];    
-        $scope.assignedFields = [];
-        $scope.errorMessages = {};
-        $scope.hiddenSections = [];
-        
-        var effectResult = TrackerRulesExecutionService.processRuleEffectAttribute(args.event, $scope.selectedTei, $scope.tei, $scope.currentEvent, {}, $scope.currentEvent, $scope.attributesById, $scope.hiddenFields, $scope.hiddenSections, $scope.warningMessages, $scope.assignedFields);        
-        $scope.selectedTei = effectResult.selectedTei;
-        $scope.currentEvent = effectResult.currentEvent;
-        $scope.hiddenFields = effectResult.hiddenFields;
-        $scope.hiddenSections = effectResult.hiddenSections;
-        $scope.assignedFields = effectResult.assignedFields;
-        $scope.warningMessages = effectResult.warningMessages;
+        if(args.event === "registration") {
+            $scope.warningMessages = [];
+            $scope.hiddenFields = [];    
+            $scope.assignedFields = [];
+            $scope.errorMessages = {};
+            $scope.hiddenSections = [];
+
+            var effectResult = TrackerRulesExecutionService.processRuleEffectAttribute(args.event, $scope.selectedTei, $scope.tei, $scope.currentEvent, {}, $scope.currentEvent, $scope.attributesById, $scope.hiddenFields, $scope.hiddenSections, $scope.warningMessages, $scope.assignedFields);        
+            $scope.selectedTei = effectResult.selectedTei;
+            $scope.currentEvent = effectResult.currentEvent;
+            $scope.hiddenFields = effectResult.hiddenFields;
+            $scope.hiddenSections = effectResult.hiddenSections;
+            $scope.assignedFields = effectResult.assignedFields;
+            $scope.warningMessages = effectResult.warningMessages;
+        }
     });
 
     $scope.interacted = function(field) {        
