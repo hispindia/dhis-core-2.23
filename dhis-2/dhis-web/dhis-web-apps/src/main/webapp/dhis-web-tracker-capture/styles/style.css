@@ -419,10 +419,6 @@ input[type=date]::-webkit-inner-spin-button, input[type=date]::-webkit-outer-spi
     margin: 0;
 }
 
-input[type=text],input[type=password],input[type=email],textarea {
-    padding: 5px 2px !important;
-}
-
 .big-button {
     padding-left: 40px;
     padding-right: 40px;
@@ -1293,10 +1289,6 @@ ul.tree ul li:last-child:before {
     vertical-align: middle;
 }
 
-input, button, select, textarea {
-    color: #444;
-}
-
 .program-drop-down > .dropdown-menu > li > a {
     white-space: normal !important;
 }
@@ -1953,7 +1945,7 @@ a.disable-link-effects:focus {
 }
 
 .default-btn-height {
-    padding-bottom: 0;
+    font-size: 8pt !important;
 }
 
 .input-group-btn-no-width {

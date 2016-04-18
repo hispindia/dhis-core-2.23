@@ -438,7 +438,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                         ' dh-current-element="currentElement" ' +
                                                                         ' dh-event="currentEvent.event" ' +
                                                                         ' dh-id="prStDes.' + fieldId + '.dataElement.id" ' +
-                                                                        ' dh-click="saveDatavalue(prStDes.' + fieldId + ', currentEvent, value )"' +
+                                                                        ' dh-click="saveDatavalue(prStDes.' + fieldId + ', currentEvent, value )" >' +
                                                                 ' </d2-radio-button>';
                                         }
                                         else if (prStDe.dataElement.valueType === "DATE") {
@@ -497,6 +497,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 commonInputFieldProperty + '>' +
                                                                 '<span class="input-group-btn input-group-btn-no-width"> ' +
                                                                     '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                        ' ng-class="{true: \'disable-clicks\'} [isHidden(prStDes.' + fieldId + '.dataElement.id) || selectedEnrollment.status===\'CANCELLED\' || selectedEnrollment.status===\'COMPLETED\' || currentEvent[uid]==\'uid\' || currentEvent.editingNotAllowed]" ' +
                                                                         'ng-click="showDataElementMap(currentEvent,\'' + fieldId + '\', outerForm.' + fieldId + ')"> ' +
                                                                         '<i class="fa fa-map-marker"></i> ' +
                                                                     '</button> ' + 
@@ -614,7 +615,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                                 ' dh-name="foo" ' +
                                                                 ' dh-current-element="currentElement" ' +
                                                                 ' dh-event="currentEvent.event" ' +
-                                                                ' dh-id="' + attId + '" ' +
+                                                                ' dh-id="' + attId + '" >' +
                                                         ' </d2-radio-button>';
                                     }
                                     else if (att.valueType === "DATE") {
@@ -636,15 +637,27 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                             commonInputFieldProperty + ' >';
                                     }
                                     else if (att.valueType === "TRACKER_ASSOCIATE") {
-                                        newInputField = '<input type="text"' +
-                                            ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
-                                            commonInputFieldProperty + ' ></span>' +
-                                            '<span class="hideInPrint"><a href ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="getTrackerAssociate(attributesById.' + attId + ', selectedTei.' + attId + ')" title="{{\'add\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
-                                            '<i class="fa fa-external-link fa-2x vertical-center"></i> ' +
-                                            '</a> ' +
-                                            '<a href ng-if="selectedTei.' + attId + '" ng-class="{true: \'disable-clicks\', false: \'\'} [editingDisabled]" ng-click="selectedTei.' + attId + ' = null" title="{{\'remove\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
-                                            '<i class="fa fa-trash-o fa-2x vertical-center"></i> ' +
-                                            '</a></span>';
+                                    	newInputField = '<span class="input-group"> ' +
+                                                                            ' <input type="text" ' +
+                                                                            ' ng-blur="teiValueUpdated(selectedTei,\'' + attId + '\')" ' +
+                                                                            commonInputFieldProperty + ' >' +
+                                                                            '<span class="input-group-btn input-group-btn-no-width"> ' +
+                                                                '<button class="btn btn-grp default-btn-height" type="button" ' + 
+                                                                    ' title="{{\'add\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
+                                                                    ' ng-if="!selectedTei.' + attId + '" ' +
+                                                                    ' ng-class="{true: \'disable-clicks\'} [editingDisabled]" ' +
+                                                                    ' ng-click="getTrackerAssociate(attributesById.' + attId + ', selectedTei.' + attId + ')" >' +
+                                                                    '<i class="fa fa-external-link"></i> ' +
+                                                                '</button> ' + 
+                                                                '<button class="btn btn-grp default-btn-height" type="button" ' + 
+                                                                    ' title="{{\'remove\' | translate}} {{attributesById.' + attId + '.displayName}}" ' +
+                                                                    ' ng-if="selectedTei.' + attId + '" ' +
+                                                                    ' ng-class="{true: \'disable-clicks\'} [editingDisabled]" ' +
+                                                                    ' ng-click="selectedTei.' + attId + ' = null" >' +
+                                                                    '<i class="fa fa-trash-o"></i> ' +
+                                                                '</button> ' + 
+                                                            '</span>'+
+                                                        '</span>';
                                     }
                                     else if (att.valueType === "COORDINATE") {
                                         newInputField = '<span class="input-group"> ' +
@@ -655,6 +668,7 @@ var d2Services = angular.module('d2Services', ['ngResource'])
                                                             commonInputFieldProperty + '>' +
                                                             '<span class="input-group-btn input-group-btn-no-width"> ' +
                                                                 '<button class="btn btn-grp default-btn-height" type="button" title="{{\'get_from_map\' | translate}}" ' +
+                                                                    ' ng-class="{true: \'disable-clicks\'} [editingDisabled]" ' +
                                                                     'ng-click="showAttributeMap(selectedTei,\'' + attId + '\')"> ' +
                                                                     '<i class="fa fa-map-marker"></i> ' +
                                                                 '</button> ' + 

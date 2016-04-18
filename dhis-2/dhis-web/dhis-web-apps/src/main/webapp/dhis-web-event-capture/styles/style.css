@@ -577,7 +577,7 @@ div#orgUnitTree {
 }
 
 .default-btn-height {
-    padding-bottom: 0;
+    font-size: 8pt !important;
 }
 
 .align-center {
