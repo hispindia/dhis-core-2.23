@@ -550,7 +550,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
         $scope.selectedSearchingOrgUnit = orgUnit;
     };
 
-    $scope.getExportList = function() {
+    $scope.getExportList  = function() {
         var deferred = $q.defer();
         var modalInstance = $modal.open({
             templateUrl: '../dhis-web-commons/angular-forms/export.html',
@@ -560,6 +560,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             var attrIdList = null;
             var attrNamesList = [];
             var attrNamesIdMap = {};
+            var anchor;
             angular.forEach($scope.gridColumns, function (item) {
                 if (item.show && item.attribute) {
                     if (!attrIdList) {
@@ -571,17 +572,17 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
                     attrNamesIdMap[item.displayName] = item.id;
                 }
             });
+
             TEIService.search($scope.searchingOrgUnit.id, $scope.selectedOuMode.name, $scope.queryUrl,
                 $scope.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap).then(function (data) {
-                var anchor = angular.element('<a/>');
                 if (format === "xml" || format === "csv") {
                     data = encodeURI(data);
                 }
-                anchor.attr({
-                    href: 'data:attachment/' + format + ';charset=utf-8,' + data,
-                    target: '_blank',
-                    download: 'trackedEntityList.' + format
-                })[0].click();
+                anchor = document.createElement('a');
+                document.body.appendChild(anchor);
+                anchor.download = 'trackedEntityList.' + format;
+                anchor.href = 'data:attachment/' + format + ';charset=utf-8,' + data;
+                anchor.click();
                 deferred.resolve(data);
             });
         });

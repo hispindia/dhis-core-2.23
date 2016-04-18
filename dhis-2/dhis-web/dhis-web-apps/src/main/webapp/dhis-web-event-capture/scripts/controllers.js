@@ -930,7 +930,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
             var rowXML;
             var eventsCSV = [];
             var eventsXML = '';
-            var anchor = angular.element('<a/>');
+            var anchor;
             var nameToIdMap = {};
             var emptyRow = [];
 
@@ -1017,21 +1017,19 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                         eventsXML += '</events>';
                     }
                 }
+                anchor = document.createElement('a');
+                document.body.appendChild(anchor);
 
                 if (format === 'json') {
-                    anchor.attr({
-                        href: 'data:attachment/json;charset=utf-8,' + encodeURI(JSON.stringify({"events": eventsJSON}, null, 3)),
-                        target: '_blank',
-                        download: 'eventList.json'
-                    })[0].click();
+                    anchor.download = 'eventList.json';
+                    anchor.href = 'data:attachment/json;charset=utf-8,' + encodeURI(JSON.stringify({"events": eventsJSON}, null, 3));
+                    anchor.click();
                 }
 
                 if (format === 'xml') {
-                    anchor.attr({
-                        href: 'data:attachment/xml;charset=utf-8,' + encodeURI(eventsXML),
-                        target: '_blank',
-                        download: 'eventList.xml'
-                    })[0].click();
+                    anchor.download = 'eventList.xml';
+                    anchor.href = 'data:attachment/xml;charset=utf-8,' + encodeURI(eventsXML);
+                    anchor.click();
                 }
 
                 if (format === 'csv') {
