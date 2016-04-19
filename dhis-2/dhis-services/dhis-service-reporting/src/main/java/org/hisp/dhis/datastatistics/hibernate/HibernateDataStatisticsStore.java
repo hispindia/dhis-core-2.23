@@ -38,6 +38,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -50,6 +52,8 @@ public class HibernateDataStatisticsStore
     extends HibernateGenericStore<DataStatistics>
     implements DataStatisticsStore
 {
+    private static final Log log = LogFactory.getLog( HibernateDataStatisticsStore.class );
+    
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -61,6 +65,8 @@ public class HibernateDataStatisticsStore
     public List<AggregatedStatistics> getSnapshotsInInterval( EventInterval eventInterval, Date startDate, Date endDate )
     {
         final String sql = getQuery( eventInterval, startDate, endDate );
+        
+        log.warn( "Get snapshots SQL: " + sql );
 
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
 
@@ -133,51 +139,56 @@ public class HibernateDataStatisticsStore
     }
 
     /**
-     * Creating a SQL for retrieving aggregated data with group by YEAR
+     * Creating a SQL for retrieving aggregated data with group by YEAR.
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getYearSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
-            getCommonSql( start, end ) + " order by yr;";
+            getCommonSql( start, end ) + 
+            "group by yr order by yr;";
     }
 
     /**
-     * Creating a SQL for retrieving aggregated data with group by YEAR, MONTH
+     * Creating a SQL for retrieving aggregated data with group by YEAR, MONTH.
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getMonthSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt, " +
-            getCommonSql( start, end ) + ", mnt order by yr, mnt;";
+            getCommonSql( start, end ) + 
+            "group by yr, mnt order by yr, mnt;";
     }
 
     /**
-     * Creating a SQL for retrieving aggregated data with group by YEAR, WEEK
+     * Creating a SQL for retrieving aggregated data with group by YEAR, WEEK.
+     * Ignoring week 53.
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getWeekSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
             "extract(week from created) as week, " +
-            getCommonSql( start, end ) + ", week order by yr, week;";
+            getCommonSql( start, end ) + 
+            "and extract(week from created) < 53 " +
+            "group by yr, week order by yr, week;";
     }
 
     /**
-     * Creating a SQL for retrieving aggregated data with group by YEAR, DAY
+     * Creating a SQL for retrieving aggregated data with group by YEAR, DAY.
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getDaySql( Date start, Date end )
@@ -185,15 +196,16 @@ public class HibernateDataStatisticsStore
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt," +
             "extract(day from created) as day, " +
-            getCommonSql( start, end ) + ", mnt, day order by yr, mnt, day;";
+            getCommonSql( start, end ) + 
+            "group by yr, mnt, day order by yr, mnt, day;";
     }
 
     /**
      * Part of SQL witch is always the same in the different intervals YEAR,
-     * MONTH, WEEK and DAY
+     * MONTH, WEEK and DAY.
      *
      * @param start start date
-     * @param end   end date
+     * @param end end date
      * @return SQL string
      */
     private String getCommonSql( Date start, Date end )
@@ -215,8 +227,7 @@ public class HibernateDataStatisticsStore
             "cast(round(cast(sum(dashborards) as numeric),0) as int) as savedDashboards, " +
             "cast(round(cast(sum(indicators) as numeric),0) as int) as savedIndicators," +
             "max(users) as users from datastatistics " +
-            "where (created between '" + DateUtils.getMediumDateString( start ) +
-            "' and '" + DateUtils.getMediumDateString( end ) + "') " +
-            "group by yr";
+            "where created >= '" + DateUtils.getMediumDateString( start ) + "' " +
+            "and created <= '" + DateUtils.getMediumDateString( end ) + "' ";
     }
 }
