@@ -50,7 +50,7 @@ public class DataStatisticsTask
     @Override
     public void run()
     {
-        int id = dataStatisticsService.saveSnapshot();
+        int id = dataStatisticsService.saveDataStatisticsSnapshot();
 
         if ( id > 0 )
         {

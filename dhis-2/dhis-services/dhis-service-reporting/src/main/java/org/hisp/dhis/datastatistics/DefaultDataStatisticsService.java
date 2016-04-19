@@ -83,14 +83,12 @@ public class DefaultDataStatisticsService
     }
 
     @Override
-    public int saveSnapshot()
-    {
-        Date now = new Date();
-        
-        Calendar c = Calendar.getInstance();
-        c.setTime( now );
-        c.add( Calendar.DATE, -1 );
-        Date startDate = c.getTime();
+    public DataStatistics getDataStatisticsSnapshot( Date day )
+    {        
+        Calendar cal = Calendar.getInstance();
+        cal.setTime( day );
+        cal.add( Calendar.DATE, -1 );
+        Date startDate = cal.getTime();
 
         double savedMaps = identifiableObjectManager.getCountByCreated( org.hisp.dhis.mapping.Map.class, startDate );
         double savedCharts = identifiableObjectManager.getCountByCreated( Chart.class, startDate );
@@ -102,7 +100,7 @@ public class DefaultDataStatisticsService
         int totalUsers = identifiableObjectManager.getCount( User.class );
         int activeUsers = userService.getActiveUsersCount( 1 );
 
-        Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, now );
+        Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, day );
 
         DataStatistics dataStatistics = new DataStatistics( activeUsers,
             eventCountMap.get( DataStatisticsEventType.MAP_VIEW ),
@@ -114,7 +112,19 @@ public class DefaultDataStatisticsService
             eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ),
             savedMaps, savedCharts, savedReportTables, savedEventReports,
             savedEventCharts, savedDashboards, savedIndicators, totalUsers );
+        
+        return dataStatistics;
+    }
 
+    @Override
+    public int saveDataStatistics( DataStatistics dataStatistics )
+    {
         return dataStatisticsStore.save( dataStatistics );
+    }
+
+    @Override
+    public int saveDataStatisticsSnapshot()
+    {
+        return saveDataStatistics( getDataStatisticsSnapshot( new Date() ) );
     }
 }

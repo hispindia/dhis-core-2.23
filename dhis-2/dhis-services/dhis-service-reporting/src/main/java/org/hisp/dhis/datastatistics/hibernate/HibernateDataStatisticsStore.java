@@ -103,7 +103,7 @@ public class HibernateDataStatisticsStore
             ads.setSavedEventCharts( resultSet.getInt( "savedEventCharts" ) );
             ads.setSavedDashboards( resultSet.getInt( "savedDashboards" ) );
             ads.setSavedIndicators( resultSet.getInt( "savedIndicators" ) );
-            ads.setusers( resultSet.getInt( "users" ) );
+            ads.setUsers( resultSet.getInt( "users" ) );
 
             return ads;
         } );

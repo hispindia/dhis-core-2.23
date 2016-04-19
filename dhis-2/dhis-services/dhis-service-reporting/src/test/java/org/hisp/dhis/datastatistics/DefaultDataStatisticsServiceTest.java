@@ -105,7 +105,7 @@ public class DefaultDataStatisticsServiceTest
         dse1 = new DataStatisticsEvent( DataStatisticsEventType.EVENT_CHART_VIEW, startDate, "TestUser" );
         dataStatisticsService.addEvent( dse1 );
         dataStatisticsService.addEvent( dse2 );
-        int snapId2 = dataStatisticsService.saveSnapshot();
+        int snapId2 = dataStatisticsService.saveDataStatisticsSnapshot();
 
         assertTrue( snapId2 != 0 );
         assertTrue( snapId1 != snapId2 );

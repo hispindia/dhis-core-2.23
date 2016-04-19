@@ -286,12 +286,12 @@ public class AggregatedStatistics
     }
 
     @JsonProperty
-    public Integer getusers()
+    public Integer getUsers()
     {
         return users;
     }
 
-    public void setusers( Integer users )
+    public void setUsers( Integer users )
     {
         this.users = users;
     }
