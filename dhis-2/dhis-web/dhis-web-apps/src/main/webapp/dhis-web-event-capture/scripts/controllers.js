@@ -201,6 +201,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                 angular.forEach($scope.selectedProgramStage.programStageDataElements, function(prStDe){
                     var tx = $scope.dataElementTranslations[prStDe.dataElement.id];                    
                     prStDe.dataElement.displayFormName = tx.displayFormName && tx.displayFormName !== "" ? tx.displayFormName : tx.displayName;
+                    prStDe.dataElement.description = tx.description ? tx.description : prStDe.dataElement.description;
                     $scope.prStDes[prStDe.dataElement.id] = prStDe;
                     $scope.newDhis2Event[prStDe.dataElement.id] = '';
                     
