@@ -76,11 +76,6 @@ public class HibernateDataStatisticsStore
             else if ( eventInterval == EventInterval.WEEK )
             {
                 ads.setWeek( resultSet.getInt( "week" ) );
-
-                if ( ads.getWeek() == 53 && resultSet.getInt( "mnt" ) == 1 )
-                {
-                    ads.setYear( ads.getYear() - 1 );
-                }
             }
             else if ( eventInterval == EventInterval.MONTH )
             {
@@ -147,7 +142,7 @@ public class HibernateDataStatisticsStore
     private String getYearSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
-            commonSql( start, end ) + " order by yr;";
+            getCommonSql( start, end ) + " order by yr;";
     }
 
     /**
@@ -161,7 +156,7 @@ public class HibernateDataStatisticsStore
     {
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt, " +
-            commonSql( start, end ) + ", mnt order by yr, mnt;";
+            getCommonSql( start, end ) + ", mnt order by yr, mnt;";
     }
 
     /**
@@ -174,9 +169,8 @@ public class HibernateDataStatisticsStore
     private String getWeekSql( Date start, Date end )
     {
         return "select extract(year from created) as yr, " +
-            "extract(month from created) as mnt," +
             "extract(week from created) as week, " +
-            commonSql( start, end ) + ", mnt, week order by yr, mnt, week;";
+            getCommonSql( start, end ) + ", week order by yr, week;";
     }
 
     /**
@@ -191,7 +185,7 @@ public class HibernateDataStatisticsStore
         return "select extract(year from created) as yr, " +
             "extract(month from created) as mnt," +
             "extract(day from created) as day, " +
-            commonSql( start, end ) + ", mnt, day order by yr, mnt, day;";
+            getCommonSql( start, end ) + ", mnt, day order by yr, mnt, day;";
     }
 
     /**
@@ -202,7 +196,7 @@ public class HibernateDataStatisticsStore
      * @param end   end date
      * @return SQL string
      */
-    private String commonSql( Date start, Date end )
+    private String getCommonSql( Date start, Date end )
     {
         return "max(active_users) as activeUsers," +
             "cast(round(cast(sum(mapviews) as numeric),0) as int) as mapViews," +
