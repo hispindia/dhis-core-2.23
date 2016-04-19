@@ -86,11 +86,11 @@ public class DefaultDataStatisticsService
     public int saveSnapshot()
     {
         Date now = new Date();
-        Date startDate = new Date();
+        
         Calendar c = Calendar.getInstance();
-        c.setTime( startDate );
+        c.setTime( now );
         c.add( Calendar.DATE, -1 );
-        startDate = c.getTime();
+        Date startDate = c.getTime();
 
         double savedMaps = identifiableObjectManager.getCountByCreated( org.hisp.dhis.mapping.Map.class, startDate );
         double savedCharts = identifiableObjectManager.getCountByCreated( Chart.class, startDate );
