@@ -103,7 +103,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
-        assertTrue( asList.size() == 1 );
+        assertEquals( 1, asList.size() );
     }
 
     @Test
@@ -118,7 +118,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2015, 3, 19 ), getDate( 2016, 3, 21 ) );
-        assertTrue( asList.size() == 2 );
+        assertEquals( 1, asList.size() );
     }
 
     @Test
@@ -130,7 +130,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2017, 3, 21 ), getDate( 2017, 3, 22 ) );
-        assertTrue( asList.size() == 0 );
+        assertEquals( 1, asList.size() );
     }
 
     @Test
@@ -142,7 +142,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.WEEK, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
-        assertTrue( asList.size() == 1 );
+        assertEquals( 1, asList.size() );
     }
 
     @Test
@@ -154,7 +154,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.MONTH, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
-        assertTrue( asList.size() == 1 );
+        assertEquals( 1, asList.size() );
     }
 
     @Test
@@ -166,6 +166,6 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.YEAR, getDate( 2015, 3, 21 ), getDate( 2016, 3, 21 ) );
-        assertTrue( asList.size() == 1 );
+        assertEquals( 1, asList.size() );
     }
 }
