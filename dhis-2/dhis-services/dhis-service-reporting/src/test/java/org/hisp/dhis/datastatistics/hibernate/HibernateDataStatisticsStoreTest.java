@@ -118,7 +118,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2015, 3, 19 ), getDate( 2016, 3, 21 ) );
-        assertEquals( 1, asList.size() );
+        assertEquals( 2, asList.size() );
     }
 
     @Test
@@ -130,7 +130,7 @@ public class HibernateDataStatisticsStoreTest
         dataStatisticsStore.save( ds5 );
 
         List<AggregatedStatistics> asList = dataStatisticsStore.getSnapshotsInInterval( EventInterval.DAY, getDate( 2017, 3, 21 ), getDate( 2017, 3, 22 ) );
-        assertEquals( 1, asList.size() );
+        assertEquals( 0, asList.size() );
     }
 
     @Test
