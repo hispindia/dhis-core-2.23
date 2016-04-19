@@ -66,7 +66,7 @@ public class HibernateDataStatisticsStore
     {
         final String sql = getQuery( eventInterval, startDate, endDate );
         
-        log.warn( "Get snapshots SQL: " + sql );
+        log.debug( "Get snapshots SQL: " + sql );
 
         return jdbcTemplate.query( sql, ( resultSet, i ) -> {
 
