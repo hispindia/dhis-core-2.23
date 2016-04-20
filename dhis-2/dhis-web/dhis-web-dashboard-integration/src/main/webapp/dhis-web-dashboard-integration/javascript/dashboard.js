@@ -1190,7 +1190,7 @@ dhis2.db.renderSearch = function( data, $h )
 			for ( var i in data.apps )
 			{
 				var o = data.apps[i];
-				$h.append( $.tmpl( dhis2.db.tmpl.appHitItem, { "canManage": canManage, "link": "../api/apps/" + o.key, "img": "document_small", "name": o.name, "type": "APP", "id": o.key, "i18n_add": i18n_add } ) );
+				$h.append( $.tmpl( dhis2.db.tmpl.appHitItem, { "canManage": canManage, "link": "../api/apps/" + o.key, "img": "app_small", "name": o.name, "type": "APP", "id": o.key, "i18n_add": i18n_add } ) );
 			}
 		}
 	}
