@@ -59,6 +59,8 @@ public class Map
     private Double latitude;
 
     private Integer zoom;
+    
+    private String basemap;
 
     @Scanned
     private List<MapView> mapViews = new ArrayList<>();
@@ -123,6 +125,19 @@ public class Map
     public void setZoom( Integer zoom )
     {
         this.zoom = zoom;
+    }
+
+    @JsonProperty
+    @JsonView( { DetailedView.class, ExportView.class, DimensionalView.class } )
+    @JacksonXmlProperty( namespace = DxfNamespaces.DXF_2_0 )
+    public String getBasemap()
+    {
+        return basemap;
+    }
+
+    public void setBasemap( String basemap )
+    {
+        this.basemap = basemap;
     }
 
     @JsonProperty
