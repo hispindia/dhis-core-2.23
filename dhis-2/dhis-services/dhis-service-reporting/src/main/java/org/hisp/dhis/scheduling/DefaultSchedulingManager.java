@@ -113,6 +113,10 @@ public class DefaultSchedulingManager
         }
     }
     
+    /**
+     * Schedules fixed tasks, i.e. tasks which are required for various system
+     * functions to work.
+     */
     private void scheduleFixedTasks()
     {
         scheduler.scheduleTask( FileResourceCleanUpTask.KEY_TASK, fileResourceCleanUpTask, Scheduler.CRON_DAILY_2AM );
