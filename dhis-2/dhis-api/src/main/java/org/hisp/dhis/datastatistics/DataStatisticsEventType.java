@@ -29,7 +29,7 @@ package org.hisp.dhis.datastatistics;
  */
 
 /**
- * Enum of EventTypes to be used as identifiers in DataStatisticsEvent
+ * Types of DataStatisticsEvents.
  *
  * @author Yrjan A. F. Fraschetti
  * @author Julie Hill Roa
