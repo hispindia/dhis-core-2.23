@@ -955,7 +955,7 @@ dhis2.db.removeItemContent = function( itemId, contentId )
 
 dhis2.db.addMessagesContent = function()
 {
-	dhis2.db.addItemContent( "messages", "" );
+	dhis2.db.addItemContent( "MESSAGES", "" );
 	$( "#manageDashboardForm" ).dialog( "destroy" );
 }
 
