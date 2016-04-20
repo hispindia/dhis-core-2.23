@@ -675,7 +675,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 })
 
 /* Service for getting tracked entity instances */
-.factory('TEIService', function($http, $q, AttributesFactory, DialogService ) {
+.factory('TEIService', function($http, $q, AttributesFactory, DialogService, CommonUtils ) {
     
     return {
         get: function(entityUid, optionSets, attributesById){
@@ -683,9 +683,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 var tei = response.data;
                 angular.forEach(tei.attributes, function(att){                    
                     if(attributesById[att.attribute]){
-                        att.displayName = attributesById[att.attribute].displayName;
+                        att.displayName = attributesById[att.attribute].displayName;                        
+                        att.value = CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'USER');                
                     }
-                    att.value = AttributesFactory.formatAttributeValue(att, attributesById, optionSets, 'USER');
                 });
                 return tei;
             }, function(error){
@@ -822,8 +822,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
         },                
         update: function(tei, optionSets, attributesById){
             var formattedTei = angular.copy(tei);
-            angular.forEach(formattedTei.attributes, function(att){                        
-                att.value = AttributesFactory.formatAttributeValue(att, attributesById, optionSets, 'API');                                                                
+            angular.forEach(formattedTei.attributes, function(att){
+                att.value = CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API');
             });
             var promise = $http.put( '../api/trackedEntityInstances/' + formattedTei.trackedEntityInstance , formattedTei ).then(function(response){                    
                 return response.data;
@@ -835,7 +835,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             var formattedTei = angular.copy(tei);
             var attributes = [];
             angular.forEach(formattedTei.attributes, function(att){ 
-                attributes.push({attribute: att.attribute, value: AttributesFactory.formatAttributeValue(att, attributesById, optionSets, 'API')});
+                attributes.push({attribute: att.attribute, value: CommonUtils.formatDataValue(null, att.value, attributesById[att.attribute], optionSets, 'API')});
             });
             
             formattedTei.attributes = attributes;
@@ -996,64 +996,6 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             teiAttributes = orderByFilter(teiAttributes, '-order');
             teiAttributes.reverse();
             return teiAttributes;
-        },
-        formatAttributeValue: function(att, attsById, optionSets, destination){
-            var val = att.value;
-            var type = '';
-            if(att.type){
-                type = att.type;
-            }            
-            if(att.valueType){
-                type = att.valueType;
-            }
-            if(type === 'TRUE_ONLY'){
-                if(destination === 'USER'){
-                    val = val === 'true' ? true : '';
-                }
-                else{
-                    val = val === true ? 'true' : '';
-                }                
-            }
-            else{
-                if(val){  
-                    if(type === 'NUMBER' ||
-                        type === 'INTEGER' ||
-                        type === 'INTEGER_POSITIVE' ||
-                        type === 'INTEGER_NEGATIVE' ||
-                        type === 'INTEGER_ZERO_OR_POSITIVE'){
-                        if( dhis2.validation.isNumber(val)){
-                            if(type === 'NUMBER'){
-                                val = parseFloat(val);
-                            }else{
-                                val = parseInt(val);
-                            }
-                        } else {
-                            val = parseInt('0');
-                        }
-                    }
-                    if(type === 'DATE'){
-                        if(destination === 'USER'){
-                            val = DateUtils.formatFromApiToUser(val);
-                        }
-                        else{
-                            val = DateUtils.formatFromUserToApi(val);
-                        }                        
-                    }
-                    if(attsById[att.attribute] && 
-                            attsById[att.attribute].optionSetValue && 
-                            attsById[att.attribute].optionSet && 
-                            attsById[att.attribute].optionSet.id && 
-                            optionSets[attsById[att.attribute].optionSet.id]){
-                        if(destination === 'USER'){
-                            val = OptionSetService.getName(optionSets[attsById[att.attribute].optionSet.id].options, val);                                
-                        }
-                        else{
-                            val = OptionSetService.getCode(optionSets[attsById[att.attribute].optionSet.id].options, val);                                
-                        }                        
-                    }                    
-                }
-            }
-            return val;
         },
         generateAttributeFilters: function(attributes){
             angular.forEach(attributes, function(attribute){
