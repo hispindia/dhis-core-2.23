@@ -35,6 +35,7 @@ import org.hisp.dhis.analytics.AggregationType;
 import org.hisp.dhis.chart.Chart;
 import org.hisp.dhis.chart.ChartType;
 import org.hisp.dhis.common.CodeGenerator;
+import org.hisp.dhis.common.DataDimensionType;
 import org.hisp.dhis.common.DimensionalObject;
 import org.hisp.dhis.common.IdentifiableObject;
 import org.hisp.dhis.common.ValueType;
@@ -441,7 +442,7 @@ public abstract class DhisConvenienceTest
      */
     public static DataElementCategoryCombo createCategoryCombo( char categoryComboUniqueIdentifier, DataElementCategory... categories )
     {
-        DataElementCategoryCombo categoryCombo = new DataElementCategoryCombo( "CategoryCombo" + categoryComboUniqueIdentifier, new ArrayList<>() );
+        DataElementCategoryCombo categoryCombo = new DataElementCategoryCombo( "CategoryCombo" + categoryComboUniqueIdentifier, DataDimensionType.DISAGGREGATION );
         categoryCombo.setAutoFields();
 
         for ( DataElementCategory category : categories )
@@ -466,7 +467,7 @@ public abstract class DhisConvenienceTest
         categoryOptionCombo.setAutoFields();
 
         categoryOptionCombo.setCategoryCombo( new DataElementCategoryCombo( "CategoryCombo"
-            + categoryComboUniqueIdentifier ) );
+            + categoryComboUniqueIdentifier, DataDimensionType.DISAGGREGATION ) );
 
         for ( char identifier : categoryOptionUniqueIdentifiers )
         {

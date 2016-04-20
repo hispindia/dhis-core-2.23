@@ -1,5 +1,7 @@
 package org.hisp.dhis.dataelement;
 
+import org.hisp.dhis.common.DataDimensionType;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -100,7 +102,7 @@ public class CategoryComboMapTest
         categoryC.getCategoryOptions().add( categoryOptionE );
         categoryC.getCategoryOptions().add( categoryOptionF );
 
-        categoryCombo = new DataElementCategoryCombo( "CategoryCombo" );
+        categoryCombo = new DataElementCategoryCombo( "CategoryCombo", DataDimensionType.DISAGGREGATION );
         categoryCombo.setAutoFields();
 
         categoryCombo.addDataElementCategory( categoryA );

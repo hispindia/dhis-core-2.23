@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.DataDimensionType;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -96,8 +97,8 @@ public class DataElementCategoryOptionComboServiceTest
         categoryService.addDataElementCategory( categoryA );
         categoryService.addDataElementCategory( categoryB );
         
-        categoryComboA = new DataElementCategoryCombo( "GenderAgegroup" );
-        categoryComboB = new DataElementCategoryCombo( "Gender" );
+        categoryComboA = new DataElementCategoryCombo( "GenderAgegroup", DataDimensionType.DISAGGREGATION );
+        categoryComboB = new DataElementCategoryCombo( "Gender", DataDimensionType.DISAGGREGATION );
         
         categoryComboA.addDataElementCategory( categoryA );
         categoryComboA.addDataElementCategory( categoryB );

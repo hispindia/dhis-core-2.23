@@ -38,6 +38,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hisp.dhis.DhisSpringTest;
+import org.hisp.dhis.common.DataDimensionType;
 import org.hisp.dhis.dataelement.DataElement;
 import org.hisp.dhis.dataelement.DataElementCategory;
 import org.hisp.dhis.dataelement.DataElementCategoryCombo;
@@ -115,7 +116,7 @@ public class DataValueDimensionTest
         categoryService.addDataElementCategory( gender );
         categoryService.addDataElementCategory( ageGroup );        
         
-        genderAndAgeGroup = new DataElementCategoryCombo( "Gender and Agegroup" );
+        genderAndAgeGroup = new DataElementCategoryCombo( "Gender and Agegroup", DataDimensionType.DISAGGREGATION );
         genderAndAgeGroup.getCategories().add( gender );
         genderAndAgeGroup.getCategories().add( ageGroup );
                 
