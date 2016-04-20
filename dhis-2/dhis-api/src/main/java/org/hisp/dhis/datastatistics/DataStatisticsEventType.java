@@ -36,11 +36,11 @@ package org.hisp.dhis.datastatistics;
  */
 public enum DataStatisticsEventType
 {
+    REPORT_TABLE_VIEW,
     CHART_VIEW,
     MAP_VIEW,
-    DASHBOARD_VIEW,
-    REPORT_TABLE_VIEW,
     EVENT_REPORT_VIEW,
     EVENT_CHART_VIEW,
+    DASHBOARD_VIEW,
     TOTAL_VIEW
 }
