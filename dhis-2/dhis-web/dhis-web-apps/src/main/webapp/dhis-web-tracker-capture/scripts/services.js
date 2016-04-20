@@ -675,7 +675,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 })
 
 /* Service for getting tracked entity instances */
-.factory('TEIService', function($http, $q, AttributesFactory, DialogService, CommonUtils ) {
+.factory('TEIService', function($http, $q, AttributesFactory, DialogService, CommonUtils, CurrentSelection ) {
     
     return {
         get: function(entityUid, optionSets, attributesById){
@@ -707,7 +707,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             
             return promise;
         },
-        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging, format, attributesList, attrNamesIdMap) {
+        search: function(ouId, ouMode, queryUrl, programUrl, attributeUrl, pager, paging, format, attributesList, attrNamesIdMap, optionSets) {
             var url;
             var deferred = $q.defer();
 
@@ -741,8 +741,9 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
             
             $http.get( url ).then(function(response){
                 var xmlData, rows, headers, index, itemName, value, jsonData;
-                var trackedEntityInstance;
+                var trackedEntityInstance, attributesById;
                 if (format) {
+                    attributesById = CurrentSelection.getAttributesById();
                     if (format === "json") {
                         jsonData = {"trackedEntityInstances": []};
                         rows = response.data.rows;
@@ -753,6 +754,10 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                 index = attributesList.indexOf(headers[j].name);
                                 itemName = headers[j].column;
                                 value = rows[i][j].replace(/&/g, "&amp;");
+                                if (attributesById[headers[j].name]) {
+                                    value = CommonUtils.formatDataValue(null, value, attributesById[headers[j].name], optionSets, 'USER');
+                                }
+
                                 if (trackedEntityInstance === null) {
                                     trackedEntityInstance = {};
                                 }

@@ -544,7 +544,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             $scope.fetchTeis();
         }
     };
-    
+
     //load programs for the selected orgunit (from tree)
     $scope.setSelectedSearchingOrgUnit = function(orgUnit){    
         $scope.selectedSearchingOrgUnit = orgUnit;
@@ -574,7 +574,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             });
 
             TEIService.search($scope.searchingOrgUnit.id, $scope.selectedOuMode.name, $scope.queryUrl,
-                $scope.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap).then(function (data) {
+                $scope.programUrl, attrIdList, false, false, format, attrNamesList, attrNamesIdMap, $scope.optionSets).then(function (data) {
                 if (format === "xml" || format === "csv") {
                     data = encodeURI(data);
                 }

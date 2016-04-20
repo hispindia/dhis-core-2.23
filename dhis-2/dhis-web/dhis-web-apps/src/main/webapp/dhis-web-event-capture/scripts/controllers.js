@@ -967,7 +967,7 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                                 }
                                 event[dataValue.dataElement] = val;
 
-                                insertDataValueToRow(dataValue, dataValue.dataElement, val);
+                                insertDataValueToRow(dataValue.dataElement, val);
                             }
                         });
 
@@ -1058,13 +1058,13 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                 }
             }
 
-            function insertDataValueToRow(dataValue, dataElement, value) {
+            function insertDataValueToRow(dataElement, value) {
                 var index = idList.indexOf(dataElement);
                 if (index > -1) {
                     if (format === 'xml' || format === 'csv') {
                         row[index] = {value: value, dataElement: dataElement, isDataValue: true};
                     } else if (format === 'json') {
-                        dataValuesJSON.push(dataValue);
+                        dataValuesJSON.push(value);
                     }
                 }
             }
