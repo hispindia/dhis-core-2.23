@@ -42,7 +42,6 @@ public class AggregatedStatistics
     private Integer month;
     private Integer week;
     private Integer day;
-    private Integer activeUsers;
     private Integer mapViews;
     private Integer chartViews;
     private Integer reportTableViews;
@@ -58,6 +57,7 @@ public class AggregatedStatistics
     private Integer savedEventCharts;
     private Integer savedDashboards;
     private Integer savedIndicators;
+    private Integer activeUsers;
     private Integer users;
 
     public AggregatedStatistics()
@@ -304,7 +304,6 @@ public class AggregatedStatistics
             ", month=" + month +
             ", week=" + week +
             ", day=" + day +
-            ", activeUsers=" + activeUsers +
             ", mapViews=" + mapViews +
             ", chartViews=" + chartViews +
             ", reportTableViews=" + reportTableViews +
@@ -320,6 +319,7 @@ public class AggregatedStatistics
             ", savedEventCharts=" + savedEventCharts +
             ", savedDashboards=" + savedDashboards +
             ", savedIndicators=" + savedIndicators +
+            ", activeUsers=" + activeUsers +
             ", users=" + users +
             '}';
     }

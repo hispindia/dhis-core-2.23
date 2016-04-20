@@ -39,7 +39,6 @@ import org.hisp.dhis.common.BaseIdentifiableObject;
 public class DataStatistics
     extends BaseIdentifiableObject
 {
-    private Integer activeUsers;
     private Double mapViews;
     private Double chartViews;
     private Double reportTableViews;
@@ -55,18 +54,18 @@ public class DataStatistics
     private Double savedEventCharts;
     private Double savedDashboards;
     private Double savedIndicators;
+    private Integer activeUsers;
     private Integer users;
 
     public DataStatistics()
     {
     }
 
-    public DataStatistics( Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
+    public DataStatistics(Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
         Double eventChartViews, Double dashboardViews, Double totalViews, Double savedMaps,
         Double savedCharts, Double savedReportTables, Double savedEventReports, Double savedEventCharts, Double savedDashboards,
         Double savedIndicators, Integer users )
     {
-        this.activeUsers = activeUsers;
         this.mapViews = mapViews;
         this.chartViews = chartViews;
         this.reportTableViews = reportTableViews;
@@ -81,6 +80,7 @@ public class DataStatistics
         this.savedEventCharts = savedEventCharts;
         this.savedDashboards = savedDashboards;
         this.savedIndicators = savedIndicators;
+        this.activeUsers = activeUsers;
         this.users = users;
 
         this.setAverage();
@@ -289,7 +289,6 @@ public class DataStatistics
     @Override public String toString()
     {
         return super.toString() + "DataStatistics{" +
-            "activeUsers=" + activeUsers +
             ", mapViews=" + mapViews +
             ", chartViews=" + chartViews +
             ", reportTableViews=" + reportTableViews +
@@ -305,6 +304,7 @@ public class DataStatistics
             ", savedEventCharts=" + savedEventCharts +
             ", savedDashboards=" + savedDashboards +
             ", savedIndicators=" + savedIndicators +
+            "activeUsers=" + activeUsers +
             ", users=" + users +
             '}';
     }
