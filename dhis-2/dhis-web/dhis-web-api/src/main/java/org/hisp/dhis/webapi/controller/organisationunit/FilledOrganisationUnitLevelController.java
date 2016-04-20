@@ -67,7 +67,7 @@ public class FilledOrganisationUnitLevelController
     }
 
     @RequestMapping( method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE )
-    @ResponseStatus( HttpStatus.NO_CONTENT )
+    @ResponseStatus( HttpStatus.CREATED )
     public void setList( HttpServletRequest request, HttpServletResponse response )
         throws Exception
     {
