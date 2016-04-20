@@ -93,6 +93,9 @@ dhis2.db.tmpl = {
 	hitItem: "<li><a class='viewLink' href='${link}'><img src='../images/${img}.png'>${name}</a>" +
 	"{{if canManage}}<a class='addLink' href='javascript:dhis2.db.addItemContent( \"${type}\", \"${id}\" )'>${i18n_add}</a>{{/if}}</li>",
 
+	appHitItem: "<li><a class='viewLink' href='javascript:dhis2.db.addItemContent( \"${type}\", \"${id}\" )'><img src='../images/${img}.png'>${name}</a>" +
+	"{{if canManage}}<a class='addLink' href='javascript:dhis2.db.addItemContent( \"${type}\", \"${id}\" )'>${i18n_add}</a>{{/if}}</li>",
+
 	chartItem: "<li id='liDrop-${itemId}' class='liDropItem'><div class='dropItem' id='drop-${itemId}' style='${style}' data-item='${itemId}'></div></li>" +
 	"<li id='li-${itemId}' class='liItem'><div class='item' id='${itemId}' style='${style}'><div class='itemHeader'><a href='javascript:dhis2.db.removeItem( \"${itemId}\" )'>${i18n_remove}</a>" +
 	"<a href='javascript:dhis2.db.viewImage( \"../api/charts/${id}/data?width=820&height=550\", \"${name}\" )'>${i18n_get_as_image}</a>" +
@@ -1187,7 +1190,7 @@ dhis2.db.renderSearch = function( data, $h )
 			for ( var i in data.apps )
 			{
 				var o = data.apps[i];
-				$h.append( $.tmpl( dhis2.db.tmpl.hitItem, { "canManage": canManage, "link": "../api/apps/" + o.key, "img": "document_small", "name": o.name, "type": "APP", "id": o.key, "i18n_add": i18n_add } ) );
+				$h.append( $.tmpl( dhis2.db.tmpl.appHitItem, { "canManage": canManage, "link": "../api/apps/" + o.key, "img": "document_small", "name": o.name, "type": "APP", "id": o.key, "i18n_add": i18n_add } ) );
 			}
 		}
 	}
