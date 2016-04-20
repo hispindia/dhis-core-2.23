@@ -105,11 +105,11 @@ public class DataValueDimensionTest
         categoryService.addDataElementCategoryOption( under15 );
         categoryService.addDataElementCategoryOption( over15 );
         
-        gender = new DataElementCategory( "Gender" );
+        gender = new DataElementCategory( "Gender", DataDimensionType.DISAGGREGATION );
         gender.getCategoryOptions().add( male );
         gender.getCategoryOptions().add( female );
         
-        ageGroup = new DataElementCategory( "Agegroup" );
+        ageGroup = new DataElementCategory( "Agegroup", DataDimensionType.DISAGGREGATION );
         ageGroup.getCategoryOptions().add( under15 );
         ageGroup.getCategoryOptions().add( over15 );
         

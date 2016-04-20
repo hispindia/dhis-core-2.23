@@ -622,7 +622,7 @@ public class DefaultDataElementCategoryService
         // DataElementCategory
         // ---------------------------------------------------------------------
 
-        DataElementCategory category = new DataElementCategory( DataElementCategory.DEFAULT_NAME );
+        DataElementCategory category = new DataElementCategory( DataElementCategory.DEFAULT_NAME, DataDimensionType.DISAGGREGATION );
         category.setUid( "GLevLNI9wkl" );
         category.setCode( "default" );
         category.setDataDimension( false );

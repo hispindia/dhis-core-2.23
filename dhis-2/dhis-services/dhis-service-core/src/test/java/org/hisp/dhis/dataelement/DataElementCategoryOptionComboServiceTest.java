@@ -86,8 +86,8 @@ public class DataElementCategoryOptionComboServiceTest
         categoryService.addDataElementCategoryOption( categoryOptionC );
         categoryService.addDataElementCategoryOption( categoryOptionD );
         
-        categoryA = new DataElementCategory( "Gender" );
-        categoryB = new DataElementCategory( "Agegroup" );
+        categoryA = new DataElementCategory( "Gender", DataDimensionType.DISAGGREGATION );
+        categoryB = new DataElementCategory( "Agegroup", DataDimensionType.DISAGGREGATION );
         
         categoryA.addCategoryOption( categoryOptionA );
         categoryA.addCategoryOption( categoryOptionB );

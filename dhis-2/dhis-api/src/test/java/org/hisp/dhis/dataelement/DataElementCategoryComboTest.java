@@ -69,9 +69,9 @@ public class DataElementCategoryComboTest
         categoryOptionE = new DataElementCategoryOption( "OptionE" );
         categoryOptionF = new DataElementCategoryOption( "OptionF" );
         
-        categoryA = new DataElementCategory( "CategoryA" );
-        categoryB = new DataElementCategory( "CategoryB" );
-        categoryC = new DataElementCategory( "CategoryC" );
+        categoryA = new DataElementCategory( "CategoryA", DataDimensionType.DISAGGREGATION );
+        categoryB = new DataElementCategory( "CategoryB", DataDimensionType.DISAGGREGATION );
+        categoryC = new DataElementCategory( "CategoryC", DataDimensionType.DISAGGREGATION );
         
         categoryA.getCategoryOptions().add( categoryOptionA );
         categoryA.getCategoryOptions().add( categoryOptionB );

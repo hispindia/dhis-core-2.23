@@ -217,6 +217,7 @@
       "name": "Gender",
       "lastUpdated": "2016-03-08T07:28:58.740+0000",
       "dataDimension": true,
+      "dataDimensionType": "DISAGGREGATION",
       "userGroupAccesses": [ ],
       "id": "XJGLlMAMCcn"
     }

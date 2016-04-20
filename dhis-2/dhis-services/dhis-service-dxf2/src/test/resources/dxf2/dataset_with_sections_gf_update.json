@@ -317,6 +317,7 @@
       ],
       "userGroupAccesses": [ ],
       "dataDimension": true,
+      "dataDimensionType": "DISAGGREGATION",
       "user": {
         "id": "T12jeH7KPzk"
       },

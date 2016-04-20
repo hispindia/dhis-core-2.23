@@ -179,8 +179,8 @@ public class ExpressionServiceTest
         categoryService.addDataElementCategoryOption( categoryOptionC );
         categoryService.addDataElementCategoryOption( categoryOptionD );
 
-        categoryA = new DataElementCategory( "Age" );
-        categoryB = new DataElementCategory( "Gender" );
+        categoryA = new DataElementCategory( "Age", DataDimensionType.DISAGGREGATION );
+        categoryB = new DataElementCategory( "Gender", DataDimensionType.DISAGGREGATION );
 
         categoryA.getCategoryOptions().add( categoryOptionA );
         categoryA.getCategoryOptions().add( categoryOptionB );

@@ -535,8 +535,7 @@ public abstract class DhisConvenienceTest
     public static DataElementCategory createDataElementCategory( char categoryUniqueIdentifier,
         DataElementCategoryOption... categoryOptions )
     {
-        DataElementCategory dataElementCategory = new DataElementCategory( "DataElementCategory" + categoryUniqueIdentifier,
-            new ArrayList<>() );
+        DataElementCategory dataElementCategory = new DataElementCategory( "DataElementCategory" + categoryUniqueIdentifier, DataDimensionType.DISAGGREGATION );
         dataElementCategory.setAutoFields();
 
         for ( DataElementCategoryOption categoryOption : categoryOptions )

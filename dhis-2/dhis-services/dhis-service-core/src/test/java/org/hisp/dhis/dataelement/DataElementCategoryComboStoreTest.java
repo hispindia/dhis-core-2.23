@@ -76,9 +76,9 @@ public class DataElementCategoryComboStoreTest
     {
         categories = new ArrayList<>();
         
-        categoryA = new DataElementCategory( "CategoryA" );
-        categoryB = new DataElementCategory( "CategoryB" );
-        categoryC = new DataElementCategory( "CategoryC" );
+        categoryA = new DataElementCategory( "CategoryA", DataDimensionType.DISAGGREGATION );
+        categoryB = new DataElementCategory( "CategoryB", DataDimensionType.DISAGGREGATION );
+        categoryC = new DataElementCategory( "CategoryC", DataDimensionType.DISAGGREGATION );
         
         categoryService.addDataElementCategory( categoryA );
         categoryService.addDataElementCategory( categoryB );
