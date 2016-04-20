@@ -36,6 +36,7 @@ import java.util.Set;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hisp.dhis.sms.config.GatewayAdministrationService;
+import org.hisp.dhis.sms.config.SmsGatewayConfig;
 import org.hisp.dhis.sms.outbound.OutboundSms;
 import org.hisp.dhis.sms.outbound.OutboundSmsService;
 import org.hisp.dhis.sms.outbound.OutboundSmsTransportService;
@@ -68,6 +69,10 @@ public class DefaultSmsSender
     @Autowired
     private GatewayAdministrationService gatewayAdminService;
 
+    // -------------------------------------------------------------------------
+    // SmsSender implementation
+    // -------------------------------------------------------------------------
+
     @Transactional
     @Override
     public String sendMessage( OutboundSms sms, String gatewayId )
@@ -92,12 +97,14 @@ public class DefaultSmsSender
     public String sendMessage( OutboundSms sms )
         throws SmsServiceException
     {
-        if ( transportService == null )
+        SmsGatewayConfig gateway = gatewayAdminService.getDefaultGateway();
+        
+        if ( transportService == null || gateway == null )
         {
             throw new SmsServiceNotEnabledException();
         }
-
-        return transportService.sendMessage( sms, gatewayAdminService.getDefaultGateway().getName() )
+                
+        return transportService.sendMessage( sms, gateway.getName() )
             .getResponseMessage();
     }
 
@@ -105,7 +112,14 @@ public class DefaultSmsSender
     @Override
     public String sendMessage( List<OutboundSms> smsBatch )
     {
-        return sendMessage( smsBatch, gatewayAdminService.getDefaultGateway().getName() );
+        SmsGatewayConfig gateway = gatewayAdminService.getDefaultGateway();
+        
+        if ( gateway == null )
+        {
+            throw new SmsServiceNotEnabledException();
+        }
+        
+        return sendMessage( smsBatch, gateway.getName() );
     }
 
     @Transactional
@@ -136,15 +150,16 @@ public class DefaultSmsSender
     {
         String message = null;
 
-        if ( transportService == null )
+        SmsGatewayConfig gateway = gatewayAdminService.getDefaultGateway();
+        
+        if ( transportService == null || gateway == null )
         {
-            message = "No transport service available";
-            return message;
+            throw new SmsServiceNotEnabledException();
         }
-
+        
         List<User> toSendList = new ArrayList<>();
 
-        String gatewayId = gatewayAdminService.getDefaultGateway().getName();
+        String gatewayId = gateway.getName();
 
         if ( gatewayId != null && !gatewayId.trim().isEmpty() )
         {
