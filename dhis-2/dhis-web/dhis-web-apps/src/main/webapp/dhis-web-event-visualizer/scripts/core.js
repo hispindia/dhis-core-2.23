@@ -4076,7 +4076,7 @@ Ext.onReady( function() {
                     return Ext.create('Ext.chart.Legend', chartConfig);
                 };
 
-                getTitleStyle = function(text) {
+                getTitleStyle = function(text, isSubtitle) {
                     var fontSize = (app.getCenterRegionWidth() / text.length) < 11.6 ? 12 : 17,
                         titleFont,
                         titleColor;
@@ -4098,6 +4098,11 @@ Ext.onReady( function() {
                             titleFont += style.titleFontSize ? parseFloat(style.titleFontSize) + 'px ' : (fontSize + 'px ');
                             titleFont +=  style.titleFontFamily ? style.titleFontFamily : conf.chart.style.fontFamily;
                         }
+                    }
+
+                    //TODO
+                    if (isSubtitle) {
+                        titleFont = titleFont.replace('bold', 'normal');
                     }
 
                     return {
@@ -4230,7 +4235,7 @@ Ext.onReady( function() {
                         text: text,
                         height: 14,
                         y: appConfig.dashboard ? 24 : 20
-                    }, getTitleStyle(appConfig.dashboard ? xLayout.name : text)));
+                    }, getTitleStyle((appConfig.dashboard ? xLayout.name : text), true)));
                 };
 
                 getDefaultChartSizeHandler = function() {
