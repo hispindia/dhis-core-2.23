@@ -275,21 +275,23 @@ public class ScheduleTasksAction
             else
             {
                 ListMap<String, String> cronKeyMap = new ListMap<>();
+                
                 // -------------------------------------------------------------
                 // Data statistics
                 // -------------------------------------------------------------
 
                 if (  STRATEGY_ENABLED.equals( dataStatisticsStrategy ) )
                 {
-                    cronKeyMap.putValue(  CRON_DAILY_0AM, TASK_DATASTATISTICS );
+                    cronKeyMap.putValue( CRON_DAILY_0AM, TASK_DATASTATISTICS );
                 }
+                
                 // -------------------------------------------------------------
                 // Resource tables
                 // -------------------------------------------------------------
 
                 if ( STRATEGY_ALL_DAILY.equals( resourceTableStrategy ) )
                 {
-                    cronKeyMap.putValue( CRON_DAILY_0AM, TASK_RESOURCE_TABLE );
+                    cronKeyMap.putValue( CRON_DAILY_11PM, TASK_RESOURCE_TABLE );
                 }
                 else if ( STRATEGY_ALL_15_MIN.equals( resourceTableStrategy ) )
                 {
@@ -331,9 +333,9 @@ public class ScheduleTasksAction
                 // SMS Scheduler
                 // -------------------------------------------------------------
                 
-                if(STRATEGY_EVERY_MIDNIGHT.equals( smsSchedulerStrategy ))
+                if ( STRATEGY_EVERY_MIDNIGHT.equals( smsSchedulerStrategy ) )
                 {
-                    cronKeyMap.putValue(CRON_DAILY_11PM, TASK_SMS_SCHEDULER);
+                    cronKeyMap.putValue( CRON_DAILY_11PM, TASK_SMS_SCHEDULER );
                     cronKeyMap.putValue( CRON_DAILY_8AM, TASK_SEND_SCHEDULED_SMS );
                 }
 
