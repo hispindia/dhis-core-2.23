@@ -46,7 +46,6 @@ public class DataStatistics
     private Double eventChartViews;
     private Double dashboardViews;
     private Double totalViews;
-    private Double averageViews;
     private Double savedMaps;
     private Double savedCharts;
     private Double savedReportTables;
@@ -82,20 +81,6 @@ public class DataStatistics
         this.savedIndicators = savedIndicators;
         this.activeUsers = activeUsers;
         this.users = users;
-
-        this.setAverage();
-    }
-
-    private void setAverage()
-    {
-        if ( activeUsers != 0 )
-        {
-            this.averageViews = this.totalViews / activeUsers;
-        }
-        else
-        {
-            this.averageViews = 0.0;
-        }
     }
 
     @JsonProperty
@@ -184,17 +169,6 @@ public class DataStatistics
     public void setTotalViews( Double totalViews )
     {
         this.totalViews = totalViews;
-    }
-
-    @JsonProperty
-    public Double getAverageViews()
-    {
-        return averageViews;
-    }
-
-    public void setAverageViews( Double averageViews )
-    {
-        this.averageViews = averageViews;
     }
 
     @JsonProperty
@@ -289,14 +263,13 @@ public class DataStatistics
     @Override public String toString()
     {
         return super.toString() + "DataStatistics{" +
-            ", mapViews=" + mapViews +
+            "mapViews=" + mapViews +
             ", chartViews=" + chartViews +
             ", reportTableViews=" + reportTableViews +
             ", eventReportViews=" + eventReportViews +
             ", eventChartViews=" + eventChartViews +
             ", dashboardViews=" + dashboardViews +
             ", totalViews=" + totalViews +
-            ", averageViews=" + averageViews +
             ", savedMaps=" + savedMaps +
             ", savedCharts=" + savedCharts +
             ", savedReportTables=" + savedReportTables +
@@ -304,7 +277,7 @@ public class DataStatistics
             ", savedEventCharts=" + savedEventCharts +
             ", savedDashboards=" + savedDashboards +
             ", savedIndicators=" + savedIndicators +
-            "activeUsers=" + activeUsers +
+            ", activeUsers=" + activeUsers +
             ", users=" + users +
             '}';
     }
