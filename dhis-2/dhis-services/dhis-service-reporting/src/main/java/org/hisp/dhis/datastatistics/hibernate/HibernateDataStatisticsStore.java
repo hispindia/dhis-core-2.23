@@ -88,7 +88,6 @@ public class HibernateDataStatisticsStore
                 ads.setMonth( resultSet.getInt( "mnt" ) );
             }
 
-            ads.setActiveUsers( resultSet.getInt( "activeUsers" ) );
             ads.setMapViews( resultSet.getInt( "mapViews" ) );
             ads.setChartViews( resultSet.getInt( "chartViews" ) );
             ads.setReportTableViews( resultSet.getInt( "reportTableViews" ) );
@@ -104,6 +103,7 @@ public class HibernateDataStatisticsStore
             ads.setSavedEventCharts( resultSet.getInt( "savedEventCharts" ) );
             ads.setSavedDashboards( resultSet.getInt( "savedDashboards" ) );
             ads.setSavedIndicators( resultSet.getInt( "savedIndicators" ) );
+            ads.setActiveUsers( resultSet.getInt( "activeUsers" ) );
             ads.setUsers( resultSet.getInt( "users" ) );
 
             return ads;
@@ -210,7 +210,7 @@ public class HibernateDataStatisticsStore
      */
     private String getCommonSql( Date start, Date end )
     {
-        return "max(active_users) as activeUsers," +
+        return
             "cast(round(cast(sum(mapviews) as numeric),0) as int) as mapViews," +
             "cast(round(cast(sum(chartviews) as numeric),0) as int) as chartViews," +
             "cast(round(cast(sum(reporttableviews) as numeric),0) as int) as reportTableViews, " +
@@ -226,6 +226,7 @@ public class HibernateDataStatisticsStore
             "cast(round(cast(sum(eventcharts) as numeric),0) as int) as savedEventCharts," +
             "cast(round(cast(sum(dashborards) as numeric),0) as int) as savedDashboards, " +
             "cast(round(cast(sum(indicators) as numeric),0) as int) as savedIndicators," +
+            "max(active_users) as activeUsers," +
             "max(users) as users from datastatistics " +
             "where created >= '" + DateUtils.getMediumDateString( start ) + "' " +
             "and created <= '" + DateUtils.getMediumDateString( end ) + "' ";

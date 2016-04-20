@@ -61,10 +61,10 @@ public class DataStatistics
     {
     }
 
-    public DataStatistics(Integer activeUsers, Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
+    public DataStatistics( Double mapViews, Double chartViews, Double reportTableViews, Double eventReportViews,
         Double eventChartViews, Double dashboardViews, Double totalViews, Double savedMaps,
         Double savedCharts, Double savedReportTables, Double savedEventReports, Double savedEventCharts, Double savedDashboards,
-        Double savedIndicators, Integer users )
+        Double savedIndicators, Integer activeUsers, Integer users )
     {
         this.mapViews = mapViews;
         this.chartViews = chartViews;

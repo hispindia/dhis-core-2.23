@@ -97,12 +97,12 @@ public class DefaultDataStatisticsService
         double savedEventCharts = identifiableObjectManager.getCountByCreated( EventChart.class, startDate );
         double savedDashboards = identifiableObjectManager.getCountByCreated( Dashboard.class, startDate );
         double savedIndicators = identifiableObjectManager.getCountByCreated( Indicator.class, startDate );
-        int totalUsers = identifiableObjectManager.getCount( User.class );
         int activeUsers = userService.getActiveUsersCount( 1 );
+        int users = identifiableObjectManager.getCount( User.class );
 
         Map<DataStatisticsEventType, Double> eventCountMap = dataStatisticsEventStore.getDataStatisticsEventCount( startDate, day );
 
-        DataStatistics dataStatistics = new DataStatistics( activeUsers,
+        DataStatistics dataStatistics = new DataStatistics( 
             eventCountMap.get( DataStatisticsEventType.MAP_VIEW ),
             eventCountMap.get( DataStatisticsEventType.CHART_VIEW ),
             eventCountMap.get( DataStatisticsEventType.REPORT_TABLE_VIEW ),
@@ -111,7 +111,7 @@ public class DefaultDataStatisticsService
             eventCountMap.get( DataStatisticsEventType.DASHBOARD_VIEW ),
             eventCountMap.get( DataStatisticsEventType.TOTAL_VIEW ),
             savedMaps, savedCharts, savedReportTables, savedEventReports,
-            savedEventCharts, savedDashboards, savedIndicators, totalUsers );
+            savedEventCharts, savedDashboards, savedIndicators, activeUsers, users );
         
         return dataStatistics;
     }
