@@ -41,6 +41,8 @@ import java.util.Date;
 public class DataStatisticsTask
     implements Runnable
 {
+    public static final String KEY_TASK = "dataStatisticsTask";
+    
     @Autowired
     private DataStatisticsService dataStatisticsService;
 

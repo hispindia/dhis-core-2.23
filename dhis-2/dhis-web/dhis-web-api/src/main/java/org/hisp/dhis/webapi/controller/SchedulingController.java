@@ -128,15 +128,6 @@ public class SchedulingController
             cronKeyMap.putValue( CRON_EVERY_MIN, TASK_DATA_SYNCH );
         }
 
-        // -------------------------------------------------------------
-        // Data statistics
-        // -------------------------------------------------------------
-
-        if ( STRATEGY_ENABLED.equals(strategy.getDataStatisticsStrategy()))
-        {
-            cronKeyMap.putValue( CRON_DAILY_0AM, TASK_DATASTATISTICS);
-        }
-
         schedulingManager.scheduleTasks( cronKeyMap );
     }
 }
