@@ -1154,6 +1154,9 @@ var eventCaptureControllers = angular.module('eventCaptureControllers', ['ngCsv'
                 },
                 nameIdMap: function () {
                     return $scope.prStDes;
+                },
+                optionSets: function(){
+                    return $scope.optionSets;
                 }
             }
         });

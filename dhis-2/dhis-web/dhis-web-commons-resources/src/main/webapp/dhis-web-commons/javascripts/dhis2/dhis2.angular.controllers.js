@@ -65,7 +65,16 @@ var d2Controllers = angular.module('d2Controllers', [])
 })
 
 //Controller for audit history
-.controller('AuditHistoryController', function ($scope, $modalInstance, $modal, AuditHistoryDataService, DateUtils, eventId, dataType, nameIdMap) {
+.controller('AuditHistoryController', 
+    function ($scope, 
+            $modalInstance, 
+            AuditHistoryDataService, 
+            DateUtils, 
+            eventId, 
+            dataType, 
+            nameIdMap,
+            optionSets,
+            CommonUtils) {
 
     $scope.itemList = [];
 
@@ -86,34 +95,31 @@ var d2Controllers = angular.module('d2Controllers', [])
             data.trackedEntityAttributeValueAudits ? data.trackedEntityAttributeValueAudits : null;
 
         if (reponseData) {
-            for (var index = 0; index < reponseData.length; index++) {
-                var dataValue = reponseData[index];
-                /*The true/false values are displayed as Yes/No*/
-                if (dataValue.value === "true") {
-                    dataValue.value = "Yes";
-                } else if (dataValue.value === "false") {
-                    dataValue.value = "No";
-                }
-                
-                var obj = {};                
-                obj.auditType = dataValue.auditType;                
-                obj.value = dataValue.value;
-                obj.modifiedBy = dataValue.modifiedBy;
-                obj.created = DateUtils.formatToHrsMinsSecs(dataValue.created);
-                
+            for (var index = 0; index < reponseData.length; index++) {                
+                var dataValue = reponseData[index];                
+                var audit = {}, obj = {};
                 if (dataType === "attribute") {
-                    if (nameIdMap[dataValue.trackedEntityAttribute.id]) {                        
-                        obj.name = nameIdMap[dataValue.trackedEntityAttribute.id].displayName;
+                    if (nameIdMap[dataValue.trackedEntityAttribute.id]) {
+                        obj = nameIdMap[dataValue.trackedEntityAttribute.id];
+                        audit.name = obj.displayName;
                     }
                 } else if (dataType === "dataElement") {
-                    if (nameIdMap[dataValue.dataElement.id] && nameIdMap[dataValue.dataElement.id].dataElement) {                        
-                        obj.name = nameIdMap[dataValue.dataElement.id].dataElement.displayFormName;
+                    if (nameIdMap[dataValue.dataElement.id] && nameIdMap[dataValue.dataElement.id].dataElement) {
+                        obj = nameIdMap[dataValue.dataElement.id].dataElement;
+                        audit.name = obj.displayFormName;
                     }
-                }                
-                $scope.itemList.push(obj);
+                }
                 
-                if( $scope.uniqueRows.indexOf(obj.name) === -1){
-                    $scope.uniqueRows.push(obj.name);
+                dataValue.value = CommonUtils.formatDataValue(null, dataValue.value, obj, optionSets, 'USER');
+                audit.auditType = dataValue.auditType;                
+                audit.value = dataValue.value;
+                audit.modifiedBy = dataValue.modifiedBy;
+                audit.created = DateUtils.formatToHrsMinsSecs(dataValue.created);                
+                
+                $scope.itemList.push(audit);
+                
+                if( $scope.uniqueRows.indexOf(audit.name) === -1){
+                    $scope.uniqueRows.push(audit.name);
                 }
             }
             
