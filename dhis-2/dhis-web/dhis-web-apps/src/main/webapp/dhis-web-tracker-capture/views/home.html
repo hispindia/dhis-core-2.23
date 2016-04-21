@@ -136,13 +136,13 @@
             <div class="col-sm-12">
                 <span ng-if='!showRegistrationDiv'>
                     <span class="btn-group" ng-if="selectedProgram">
-                        <label class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'TODAY'" title="{{todayLabel}}" ng-click='filterByEnrollmentStatus("TODAY")'><i class='fa fa-calendar-o mouse-pointer'></i></label>
+                        <label ng-if="selectedProgram.displayFrontPageList" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'TODAY'" title="{{todayLabel}}" ng-click='filterByEnrollmentStatus("TODAY")'><i class='fa fa-calendar-o mouse-pointer'></i></label>
                         <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'ALL'" title="{{allEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("ALL")'><i class="fa fa-list mouse-pointer"></i></label>
                         <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'ACTIVE'" title="{{activeEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("ACTIVE")'><i class="fa fa-circle-o mouse-pointer"></i></label>
                         <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'COMPLETED'" title="{{completedEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("COMPLETED")'><i class="fa fa-check mouse-pointer"></i></label>
                         <label ng-if="selectedProgram.displayFrontPageList || frontPageListEnabled" class="btn btn-default" ng-model="enrollmentStatus" btn-radio="'CANCELLED'" title="{{cancelledEnrollmentsLabel}}" ng-click='filterByEnrollmentStatus("CANCELLED")'><i class="fa fa-times mouse-pointer"></i></label>
                     </span>
-                    <span ng-if="teiFetched && enrollmentStatus!== 'TODAY' &&pager.total">
+                    <span ng-if="teiFetched && enrollmentStatus!== 'TODAY' && pager.total">
                         {{'total'| translate}}:  {{pager.total}}
                     </span>
                     <span ng-if="teiFetched && enrollmentStatus=== 'TODAY' && trackedEntityList">

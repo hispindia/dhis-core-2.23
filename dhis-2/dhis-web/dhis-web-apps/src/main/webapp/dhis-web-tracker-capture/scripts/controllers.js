@@ -81,7 +81,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
     
     //watch for selection of org unit from tree
     $scope.$watch('selectedOrgUnit', function() {
-        if( angular.isObject($scope.selectedOrgUnit)){   
+        if( angular.isObject($scope.selectedOrgUnit)){
             $scope.doSearch = true;
             $scope.searchingOrgUnit = $scope.selectedOrgUnit;
             
@@ -222,7 +222,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             }
 
             $scope.setEnrollmentStatus();
-            if($scope.doSearch && $scope.selectedProgram && ($scope.selectedProgram.displayFrontPageList || $scope.enrollmentStatus ==='TODAY')){
+            if($scope.doSearch && $scope.selectedProgram && ($scope.selectedProgram.displayFrontPageList)){
                 $scope.search($scope.searchMode);
             } 
         });
@@ -232,8 +232,9 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
         if($rootScope.enrollmentStatus){
             $scope.enrollmentStatus = $rootScope.enrollmentStatus;
             $rootScope.enrollmentStatus = null;
+            $scope.filterByEnrollmentStatus($scope.enrollmentStatus, true);
         }else if($scope.selectedProgram){
-            $scope.enrollmentStatus = 'TODAY';
+            $scope.enrollmentStatus = 'ALL';
         }
     };
     
@@ -267,15 +268,13 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
         $scope.gridColumns = grid.columns;
             
         $scope.selectedSearchMode = mode;
-        if($scope.selectedProgram){
-            $scope.programUrl = 'program=' + $scope.selectedProgram.id;
-        }        
+  
         
         //check search mode
         if( $scope.selectedSearchMode === $scope.searchMode.freeText ){
             $scope.frontPageListEnabled = true;
             if($scope.enrollmentStatus === 'TODAY') {
-                $scope.enrollmentStatus = 'ACTIVE';
+                $scope.enrollmentStatus = 'ALL';
             }
             if($scope.model.searchText){
                 $scope.queryUrl = 'query=LIKE:' + $scope.model.searchText;
@@ -291,6 +290,14 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             $scope.attributes = EntityQueryFactory.resetAttributesQuery($scope.attributes, $scope.enrollment);
             $scope.searchingOrgUnit = $scope.selectedSearchingOrgUnit && $scope.selectedSearchingOrgUnit.id ? $scope.selectedSearchingOrgUnit : $scope.selectedOrgUnit;
         }
+        
+        if($scope.selectedProgram){
+            $scope.programUrl = 'program=' + $scope.selectedProgram.id;
+            if($scope.enrollmentStatus !== 'ALL'){
+                $scope.programUrl = 'program=' + $scope.selectedProgram.id + '&programStatus=' + $scope.enrollmentStatus;
+            }
+        }     
+        
         if( $scope.selectedSearchMode === $scope.searchMode.attributeBased ){
             
             $scope.model.searchText = null;
@@ -325,12 +332,11 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
         $scope.trackedEntityList = null;
         var today = DateUtils.formatFromUserToApi(DateUtils.getToday());
         var promises = [];
-        
         if(!eventsTodayFilter.status){
-            promises.push(EventReportService.getEventReport($scope.searchingOrgUnit.id,$scope.selectedOuMode.name, $scope.selectedProgram.id,today,today,'ACTIVE',null,$scope.pager));
+            promises.push(EventReportService.getEventReport($scope.selectedOrgUnit.id,$scope.selectedOuMode.name, $scope.selectedProgram.id,today,today,'ACTIVE',null,$scope.pager));
         }else{
             angular.forEach(eventsTodayFilter.status, function(status){
-                promises.push(EventReportService.getEventReport($scope.searchingOrgUnit.id,$scope.selectedOuMode.name, $scope.selectedProgram.id,today,today,'ACTIVE',status,$scope.pager));
+                promises.push(EventReportService.getEventReport($scope.selectedOrgUnit.id,$scope.selectedOuMode.name, $scope.selectedProgram.id,today,today,'ACTIVE',status,$scope.pager));
             });            
         }
         $q.all(promises).then(function(data){
@@ -530,7 +536,7 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
     };
     
     
-    $scope.filterByEnrollmentStatus = function(status){
+    $scope.filterByEnrollmentStatus = function(status, doNotFetch){
         if(status !== $scope.enrollmentStatus){            
             $scope.enrollmentStatus = status;
             if($scope.enrollmentStatus === 'ALL'){
@@ -541,7 +547,10 @@ var trackerCaptureControllers = angular.module('trackerCaptureControllers', [])
             else{
                 $scope.programUrl = 'program=' + $scope.selectedProgram.id + '&programStatus=' + $scope.enrollmentStatus;
             }             
-            $scope.fetchTeis();
+            if(!doNotFetch){
+                $scope.fetchTeis();
+            }
+            
         }
     };
 
