@@ -275,7 +275,9 @@ d2Directives.directive('d2GoogleMap', function ($http, $translate, $q, $window, 
                 var ouLevels = CurrentSelection.getOuLevels();
 
                 //remove angular bootstrap ui modal draggable
-                $(".modal-content").draggable({disabled: true});
+                $(".modal-content").draggable({disabled: true});                
+                var winHeight = $(window).height();
+                $("#map-container").height(winHeight / 2)
 
                 //get a default center
                 var latCenter = 12.31, lngCenter = 51.48;

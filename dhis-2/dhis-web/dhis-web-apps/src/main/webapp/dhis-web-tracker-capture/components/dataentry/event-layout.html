@@ -1,6 +1,6 @@
 <div class="row">
     <div class="col-sm-12" ng-if="model.showEventSearch">
-        <input class="form-control" placeholder="{{'type_your_search_criteria_here' | translate}}" ng-model="model.eventSearchText"/>
+        <input class="form-control" placeholder="{{'event_filter' | translate}}" ng-model="model.eventSearchText"/>
     </div>    
     <div ng-class="getTopLineColumnStyle(1)">
         <div ng-if="!useMainMenu || (useMainMenu && !hideTopLineEventsForFormTypes[displayCustomForm])" 

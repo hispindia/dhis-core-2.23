@@ -107,10 +107,6 @@ input.option {
     width: 260px;
 }
 
-textarea {
-    width: 264px;
-}
-
 #bootstrapSelectForm .selectContainer .form-control-feedback {
     /* Adjust feedback icon position */
     right: -15px;
@@ -758,7 +754,7 @@ div#searchOuTree h4{
 }
 
 .modal {
-    padding-top: 50px;
+    padding-top: 20px;
 }
 
 .expanded{
@@ -880,7 +876,7 @@ div#searchOuTree h4{
     font-size: 14px;
     line-height: 1.0;
     color: #555;
-    padding: 2px;
+    padding: 5px;
     margin-bottom: 5px;
     margin-top: 5px;
     vertical-align: middle;
@@ -1240,8 +1236,8 @@ ul.tree ul li:last-child:before {
 }
 
 #map-container {
-    height: 600px;
     width: 100%;
+    margin-bottom: -30px;
 }
 
 #polygon-label {

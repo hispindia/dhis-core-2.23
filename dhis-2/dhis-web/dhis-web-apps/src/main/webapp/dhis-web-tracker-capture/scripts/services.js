@@ -280,7 +280,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                 TCStorageService.currentStore.getAll('programs').done(function(prs){
                     var programs = [];
                     angular.forEach(prs, function(pr){                            
-                        if(userHasValidRole(pr, userRoles)){
+                        if(CommonUtils.userHasValidRole(pr, 'programs', userRoles)){
                             programs.push(pr);
                         }
                     });
