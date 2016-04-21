@@ -5,7 +5,7 @@
 <div class="modal-body">
     <div class="scroll">
         <table class="listTable dhis2-table-striped-border">
-            <tr ng-repeat="widget in dashboardWidgets">
+            <tr ng-repeat="widget in dashboardWidgets | orderBy: 'title'">
                 <td ng-click="widget.show = !widget.show">
                     {{widget.title| translate}}
                 </td>

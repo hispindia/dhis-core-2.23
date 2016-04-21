@@ -130,7 +130,8 @@ trackerCapture.controller('DashboardController',
             });
             
             setWidgetsSize();
-            $scope.broadCastSelections();            
+            $scope.broadCastSelections(); 
+            setInactiveMessage();
         });        
     };    
     
@@ -149,7 +150,8 @@ trackerCapture.controller('DashboardController',
     
     var setInactiveMessage = function(){
         if($scope.selectedTei.inactive){
-            setHeaderDelayMessage($translate.instant('tei_inactive_only_read'));
+            var teName = $scope.trackedEntity && $scope.trackedEntity.displayName ? $scope.trackedEntity.displayName : $translate.instance('tracked_entity_instance');
+            setHeaderDelayMessage(teName + " " + $translate.instant('tei_inactive_only_read'));
         }
     };
     
@@ -183,8 +185,6 @@ trackerCapture.controller('DashboardController',
                     TEIService.get($scope.selectedTeiId, $scope.optionSets, $scope.attributesById).then(function(response){
                         if(response) {
                             $scope.selectedTei = response;
-
-                            setInactiveMessage();                   
 
                             //get the entity type
                             TEService.get($scope.selectedTei.trackedEntity).then(function(te){                    
