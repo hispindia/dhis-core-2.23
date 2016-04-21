@@ -675,7 +675,7 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
 })
 
 /* Service for getting tracked entity instances */
-.factory('TEIService', function($http, $q, AttributesFactory, DialogService, CommonUtils, CurrentSelection ) {
+.factory('TEIService', function($http, $q, AttributesFactory, DialogService, CommonUtils, CurrentSelection, DateUtils ) {
     
     return {
         get: function(entityUid, optionSets, attributesById){
@@ -756,6 +756,8 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                 value = rows[i][j].replace(/&/g, "&amp;");
                                 if (attributesById[headers[j].name]) {
                                     value = CommonUtils.formatDataValue(null, value, attributesById[headers[j].name], optionSets, 'USER');
+                                } else if ((headers[j].name === "created") || ((headers[j].name === "lastupdated"))) {
+                                    value = DateUtils.formatFromApiToUser(value);
                                 }
 
                                 if (trackedEntityInstance === null) {
@@ -793,6 +795,11 @@ var trackerCaptureServices = angular.module('trackerCaptureServices', ['ngResour
                                     index = attributesList.indexOf(headers[j].name);
                                     itemName = headers[j].column;
                                     value = rows[i][j].replace(/&/g, "&amp;");
+                                    if (attributesById[headers[j].name]) {
+                                        value = CommonUtils.formatDataValue(null, value, attributesById[headers[j].name], optionSets, 'USER');
+                                    } else if ((headers[j].name === "created") || ((headers[j].name === "lastupdated"))) {
+                                        value = DateUtils.formatFromApiToUser(value);
+                                    }
                                     if (index > -1) {
                                         xmlData += '<attribute id="' + attrNamesIdMap[itemName] + '" ' +
                                             'name="' + itemName + '" value="' + value + '"></attribute>';
