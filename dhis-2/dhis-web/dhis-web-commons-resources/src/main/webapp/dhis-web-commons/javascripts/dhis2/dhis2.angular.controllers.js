@@ -67,7 +67,8 @@ var d2Controllers = angular.module('d2Controllers', [])
 //Controller for audit history
 .controller('AuditHistoryController', 
     function ($scope, 
-            $modalInstance, 
+            $modalInstance,
+            $translate,
             AuditHistoryDataService, 
             DateUtils, 
             eventId, 
@@ -78,7 +79,9 @@ var d2Controllers = angular.module('d2Controllers', [])
 
     $scope.itemList = [];
 
-    $scope.model = {type: dataType};
+    $scope.model = {type: dataType, 
+    				name: dataType === 'dataElement' ? $translate.instant('data_element') : $translate.instant('attribute'),
+    				searchPlaceholder: dataType === 'dataElement' ? $translate.instant('search_by_data_element') : $translate.instant('search_by_attribute')};
 
     $scope.close = function () {
         $modalInstance.close();
