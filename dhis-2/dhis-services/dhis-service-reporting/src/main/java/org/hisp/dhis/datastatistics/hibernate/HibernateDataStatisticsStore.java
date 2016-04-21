@@ -96,6 +96,12 @@ public class HibernateDataStatisticsStore
             ads.setDashboardViews( resultSet.getInt( "dashboardViews" ) );
             ads.setTotalViews( resultSet.getInt( "totalViews" ) );
             ads.setAverageViews( resultSet.getInt( "averageViews" ) );
+            ads.setAverageMapViews( resultSet.getInt( "averageMapViews" ) );
+            ads.setAverageChartViews( resultSet.getInt( "averageChartViews" ) );
+            ads.setAverageReportTableViews( resultSet.getInt( "averageReportTableViews" ) );
+            ads.setAverageEventReportViews( resultSet.getInt( "averageEventReportViews" ) );
+            ads.setAverageEventChartViews( resultSet.getInt( "averageEventChartViews" ) );
+            ads.setAverageDashboardViews( resultSet.getInt( "averageDashboardViews" ) );
             ads.setSavedMaps( resultSet.getInt( "savedMaps" ) );
             ads.setSavedCharts( resultSet.getInt( "savedCharts" ) );
             ads.setSavedReportTables( resultSet.getInt( "savedReportTables" ) );
@@ -219,13 +225,19 @@ public class HibernateDataStatisticsStore
                 "cast(round(cast(sum(dashboardviews) as numeric),0) as int) as dashboardViews, " +
                 "max(active_users) as activeUsers," +
                 "sum(totalviews)/max(active_users) as averageViews, " +
+                "sum(mapviews)/max(active_users) as averageMapViews, " +
+                "sum(chartviews)/max(active_users) as averageChartViews, " +
+                "sum(reporttableviews)/max(active_users) as averageReportTableViews, " +
+                "sum(eventreportviews)/max(active_users) as averageEventReportViews, " +
+                "sum(eventchartviews)/max(active_users) as averageEventChartViews, " +
+                "sum(dashboardviews)/max(active_users) as averageDashboardViews, " +
                 "cast(round(cast(sum(totalviews) as numeric),0) as int) as totalViews," +
                 "cast(round(cast(sum(maps) as numeric),0) as int) as savedMaps," +
                 "cast(round(cast(sum(charts) as numeric),0) as int) as savedCharts," +
                 "cast(round(cast(sum(reporttables) as numeric),0) as int) as savedReportTables," +
                 "cast(round(cast(sum(eventreports) as numeric),0) as int) as savedEventReports," +
                 "cast(round(cast(sum(eventcharts) as numeric),0) as int) as savedEventCharts," +
-                "cast(round(cast(sum(dashborards) as numeric),0) as int) as savedDashboards, " +
+                "cast(round(cast(sum(dashboards) as numeric),0) as int) as savedDashboards, " +
                 "cast(round(cast(sum(indicators) as numeric),0) as int) as savedIndicators," +
                 "max(users) as users from datastatistics " +
                 "where created >= '" + DateUtils.getMediumDateString( start ) + "' " +

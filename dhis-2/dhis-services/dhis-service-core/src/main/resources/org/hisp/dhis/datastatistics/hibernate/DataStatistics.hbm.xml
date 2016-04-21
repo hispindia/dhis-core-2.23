@@ -28,7 +28,7 @@
     <property name="savedReportTables" column="reporttables" type="double"/>
     <property name="savedEventReports" column="eventreports" type="double"/>
     <property name="savedEventCharts" column="eventcharts" type="double"/>
-    <property name="savedDashboards" column="dashborards" type="double"/>
+    <property name="savedDashboards" column="dashboards" type="double"/>
     <property name="savedIndicators" column="indicators" type="double"/>
     <property name="users" column="users" type="int"/>
 

@@ -50,6 +50,12 @@ public class AggregatedStatistics
     private Integer dashboardViews;
     private Integer totalViews;
     private Integer averageViews;
+    private Integer averageMapViews;
+    private Integer averageChartViews;
+    private Integer averageReportTableViews;
+    private Integer averageEventReportViews;
+    private Integer averageEventChartViews;
+    private Integer averageDashboardViews;
     private Integer savedMaps;
     private Integer savedCharts;
     private Integer savedReportTables;
@@ -107,7 +113,6 @@ public class AggregatedStatistics
     {
         this.day = day;
     }
-
 
     @JsonProperty
     public Integer getActiveUsers()
@@ -209,6 +214,72 @@ public class AggregatedStatistics
     }
 
     @JsonProperty
+    public Integer getAverageDashboardViews()
+    {
+        return averageDashboardViews;
+    }
+
+    public void setAverageDashboardViews( Integer averageDashboardViews )
+    {
+        this.averageDashboardViews = averageDashboardViews;
+    }
+
+    @JsonProperty
+    public Integer getAverageMapViews()
+    {
+        return averageMapViews;
+    }
+
+    public void setAverageMapViews( Integer averageMapViews )
+    {
+        this.averageMapViews = averageMapViews;
+    }
+
+    @JsonProperty
+    public Integer getAverageChartViews()
+    {
+        return averageChartViews;
+    }
+
+    public void setAverageChartViews( Integer averageChartViews )
+    {
+        this.averageChartViews = averageChartViews;
+    }
+
+    @JsonProperty
+    public Integer getAverageReportTableViews()
+    {
+        return averageReportTableViews;
+    }
+
+    public void setAverageReportTableViews( Integer averageReportTableViews )
+    {
+        this.averageReportTableViews = averageReportTableViews;
+    }
+
+    @JsonProperty
+    public Integer getAverageEventReportViews()
+    {
+        return averageEventReportViews;
+    }
+
+    public void setAverageEventReportViews( Integer averageEventReportViews )
+    {
+        this.averageEventReportViews = averageEventReportViews;
+    }
+
+    @JsonProperty
+    public Integer getAverageEventChartViews()
+    {
+        return averageEventChartViews;
+    }
+
+    public void setAverageEventChartViews( Integer averageEventChartViews )
+    {
+        this.averageEventChartViews = averageEventChartViews;
+    }
+
+    @JsonProperty
     public Integer getSavedMaps()
     {
         return savedMaps;
@@ -296,8 +367,7 @@ public class AggregatedStatistics
         this.users = users;
     }
 
-    @Override
-    public String toString()
+    @Override public String toString()
     {
         return "AggregatedStatistics{" +
             "year=" + year +
@@ -312,6 +382,12 @@ public class AggregatedStatistics
             ", dashboardViews=" + dashboardViews +
             ", totalViews=" + totalViews +
             ", averageViews=" + averageViews +
+            ", averageMapViews=" + averageMapViews +
+            ", averageChartViews=" + averageChartViews +
+            ", averageReportTableViews=" + averageReportTableViews +
+            ", averageEventReportViews=" + averageEventReportViews +
+            ", averageEventChartViews=" + averageEventChartViews +
+            ", averageDashboardViews=" + averageDashboardViews +
             ", savedMaps=" + savedMaps +
             ", savedCharts=" + savedCharts +
             ", savedReportTables=" + savedReportTables +
