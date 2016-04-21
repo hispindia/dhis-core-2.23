@@ -115,18 +115,18 @@ public class BulkSmsGateway
         }
         catch ( HttpClientErrorException ex )
         {
-            log.error( "Error: " + ex.getMessage() );
+            log.error( "Client error", ex );
         }
         catch ( HttpServerErrorException ex )
         {
-            log.error( "Error: " + ex.getMessage() );
+            log.error( "Server error", ex );
         }
         catch ( Exception ex )
         {
-            log.error( "Error: " + ex.getMessage() );
+            log.error( "Error", ex );
         }
 
-        return responseHandler( responseEntity.getBody() );
+        return getResponse( responseEntity );
     }
 
     private String builCsvUrl( List<OutboundSms> smsBatch )
@@ -160,8 +160,15 @@ public class BulkSmsGateway
         return uriBuilder;
     }
 
-    private GatewayResponse responseHandler( String response )
+    private GatewayResponse getResponse( ResponseEntity<String> responseEntity )
     {
+        if ( responseEntity == null )
+        {
+            return GatewayResponse.FAILED;
+        }
+        
+        String response = responseEntity.getBody();
+        
         return BULKSMS_GATEWAY_RESPONSE_MAP.get( StringUtils.split( response, "|" )[0] );
     }
 
