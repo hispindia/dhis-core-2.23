@@ -34,12 +34,12 @@
         </div>
         
         <div class="row">       
-            <div height-change-target ng-if="useTopBar"></div>
+            <div height-change-target ng-if="useTopBar" class="vertical-spacing"></div>
             <!-- dashboard bigger widgets begin -->
             <div ng-class="widgetSize.bigger">
                 
                 <!-- dashboard buttons begin -->
-		<div ng-if="!useTopBar">
+		<div ng-if="!useTopBar" class="vertical-spacing">
                     <button type="button" class="btn btn-default" ng-click="back()">{{getBackButtonText()}}</button>
 
                     <button ng-disabled="!previousTeiExists" type="button" class="btn btn-default small-horizontal-spacing" ng-click="fetchTei('PREV')" title="{{'previous'| translate}}"><i class="fa fa-caret-left"></i></button>
@@ -67,7 +67,7 @@
             <!-- dashboard smaller widgets begin -->
             <div ng-class="[!model.stickyDisabled ? 'widgets-sticky' : '', widgetSize.smaller]">
                 <!-- dashboard setting begins -->
-                <div class="row add-default-right-padding" ng-if="!useTopBar">
+                <div class="row add-default-right-padding vertical-spacing" ng-if="!useTopBar">
                     <div class="pull-right">
                         <button type="button" 
                                 title="{{model.stickyDisabled ? stickLabel : unstickLabel}}" 
