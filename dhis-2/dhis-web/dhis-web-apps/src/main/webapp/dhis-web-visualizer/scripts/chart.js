@@ -3873,7 +3873,7 @@ Ext.onReady(function() {
                         store: store,
                         series: series,
                         insetPaddingObject: {
-                            top: appConfig.dashboard ? 15 : 40,
+                            top: appConfig.dashboard ? 25 : 40,
                             right: appConfig.dashboard ? 2 : 30,
                             bottom: appConfig.dashboard ? 13: 30,
                             left: appConfig.dashboard ? 7 : 30
