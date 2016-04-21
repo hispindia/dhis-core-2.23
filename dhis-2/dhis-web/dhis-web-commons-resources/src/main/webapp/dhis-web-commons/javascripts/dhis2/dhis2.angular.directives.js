@@ -110,7 +110,7 @@ var d2Directives = angular.module('d2Directives', [])
     };
 })
 
-.directive('d2PopOver', function ($compile, $templateCache) {
+.directive('d2PopOver', function ($compile, $templateCache, $translate) {
 
     return {
         restrict: 'EA',
@@ -130,7 +130,7 @@ var d2Directives = angular.module('d2Directives', [])
                 placement: scope.placement ? scope.placement : 'auto',
                 trigger: scope.trigger ? scope.trigger : 'hover',
                 html: true,
-                title: scope.title
+                title: $translate.instant('_details')
             };
             element.popover(options);            
             

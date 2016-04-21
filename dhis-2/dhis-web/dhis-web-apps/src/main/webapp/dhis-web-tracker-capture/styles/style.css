@@ -1934,6 +1934,10 @@ a.disable-link-effects:focus {
     text-decoration: none !important;
 }
 
+.popover {
+    max-width: 500px !important;
+}
+
 .btn-grp { 
     border-color:  #b7b7b7; 
     background-color: #cccccc;

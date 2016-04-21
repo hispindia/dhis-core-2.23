@@ -549,13 +549,6 @@ div#orgUnitTree {
     width: 15px;
 }
 
-/*classes for the details tooltip popup for dataelements*/
-
-.popover {
-    max-width:400px;
-    pointer-events:none;
-}
-
 .tooltip-separator-line {
     height: 0;
     margin-right:0em;
@@ -574,6 +567,10 @@ div#orgUnitTree {
 .popover-label > a {
     color: #333 !important;
     text-decoration: none !important;
+}
+
+.popover {
+    max-width: 500px !important;
 }
 
 .default-btn-height {
