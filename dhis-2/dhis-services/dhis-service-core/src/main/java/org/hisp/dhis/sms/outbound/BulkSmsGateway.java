@@ -1,5 +1,7 @@
 package org.hisp.dhis.sms.outbound;
 
+import java.net.URI;
+
 /*
  * Copyright (c) 2004-2016, University of Oslo
  * All rights reserved.
@@ -107,11 +109,12 @@ public class BulkSmsGateway
     private GatewayResponse send( UriComponentsBuilder uriBuilder )
     {
         ResponseEntity<String> responseEntity = null;
-
+        
         try
         {
-            responseEntity = restTemplate.exchange( uriBuilder.build().encode( "ISO-8859-1" ).toUri(), HttpMethod.POST,
-                null, String.class );
+            URI url = uriBuilder.build().encode( "ISO-8859-1" ).toUri();
+            
+            responseEntity = restTemplate.exchange( url, HttpMethod.POST, null, String.class );
         }
         catch ( HttpClientErrorException ex )
         {
