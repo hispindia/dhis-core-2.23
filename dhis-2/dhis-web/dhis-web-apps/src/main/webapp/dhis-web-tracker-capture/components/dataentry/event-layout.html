@@ -5,7 +5,7 @@
     <div ng-class="getTopLineColumnStyle(1)">
         <div ng-if="!useMainMenu || (useMainMenu && !hideTopLineEventsForFormTypes[displayCustomForm])" 
              ng-repeat="dhis2Event in filteredEvents = (getTopLineEventsPage() | eventListFilter:allEventsSorted:model.eventSearchText)">            
-            <div class="event-container" ng-click="getEventPage('BACKWARD')" ng-if="model.eventSearchText.length === 0 && ($index === 0 && eventPagingStart > 0)">
+            <div class="event-container event-container-navigation" ng-click="getEventPage('BACKWARD')" ng-if="model.eventSearchText.length === 0 && ($index === 0 && eventPagingStart > 0)">
                 {{'previous'| translate}}
             </div>
             
