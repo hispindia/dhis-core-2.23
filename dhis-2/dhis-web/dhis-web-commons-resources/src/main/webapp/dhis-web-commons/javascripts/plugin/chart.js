@@ -3949,9 +3949,9 @@ Ext.onReady(function() {
                         series: series,
                         theme: 'Category2',
                         insetPaddingObject: {
-                            top: 20,
+                            top: appConfig.dashboard ? 30 : 20,
                             right: 2,
-                            bottom: 15,
+                            bottom: appConfig.dashboard ? 20 : 15,
                             left: 7
                         },
                         seriesStyle: {
@@ -3989,7 +3989,7 @@ Ext.onReady(function() {
                         steps: 10,
                         margin: -7
                     };
-
+                    
                     // series, legendset
                     if (legendSet) {
                         valueColor = service.legend.getColorByValue(legendSet, store.getRange()[0].data[failSafeColumnIds[0]]) || valueColor;
@@ -4024,7 +4024,7 @@ Ext.onReady(function() {
                             font: 'normal 26px ' + conf.chart.style.fontFamily,
                             fill: '#111',
                             height: 40,
-                            y: 	60
+                            y: 60
                         }));
                     }
 
@@ -4037,24 +4037,17 @@ Ext.onReady(function() {
 
                     chart.setTitlePosition = function() {
                         if (this.items) {
-                            var title = this.items[0],
-                                subTitle = this.items[1],
-                                titleXFallback = 10;
+                            for (var i = 0, item, itemWidth, itemX, itemXFallback = 10; i < this.items.length; i++) {
+                                item = this.items[i];
 
-                            if (title) {
-                                var titleWidth = Ext.isIE ? title.el.dom.scrollWidth : title.el.getWidth(),
-                                    titleX = titleWidth ? (app.getCenterRegionWidth() / 2) - (titleWidth / 2) : titleXFallback;
-                                title.setAttributes({
-                                    x: titleX
-                                }, true);
-                            }
+                                if (item) {
+                                    itemWidth = Ext.isIE ? item.el.dom.scrollWidth : item.el.getWidth();
+                                    itemX = itemWidth ? (app.getCenterRegionWidth() / 2) - (itemWidth / 2) : itemXFallback;
 
-                            if (subTitle) {
-                                var subTitleWidth = Ext.isIE ? subTitle.el.dom.scrollWidth : subTitle.el.getWidth(),
-                                    subTitleX = subTitleWidth ? (app.getCenterRegionWidth() / 2) - (subTitleWidth / 2) : titleXFallback;
-                                subTitle.setAttributes({
-                                    x: subTitleX
-                                }, true);
+                                    item.setAttributes({
+                                        x: itemX
+                                    }, true);
+                                }
                             }
                         }
                     };
@@ -4445,11 +4438,11 @@ Ext.onReady(function() {
 					xColAxis,
 					xRowAxis,
 					config,
-                    ind = ns.core.conf.finals.dimension.indicator.objectName,
                     legendSet,
                     getReport,
                     success,
-                    chart;
+                    chart,
+                    dx = 'dx';
 
                 success = function() {
 
@@ -4476,21 +4469,6 @@ Ext.onReady(function() {
 
                     // create chart
                     chart = ns.core.web.chart.createChart(xLayout, xResponse, legendSet);
-
-                    // fade
-                    //if (!ns.skipFade) {
-                        //ns.app.chart.on('afterrender', function() {
-                            //Ext.defer( function() {
-                                //var el = Ext.get(init.el);
-
-                                //if (el) {
-                                    //el.fadeIn({
-                                        //duration: 400
-                                    //});
-                                //}
-                            //}, 300 );
-                        //});
-                    //}
 
                     // update viewport
                     ns.app.centerRegion.removeAll();
@@ -4519,9 +4497,9 @@ Ext.onReady(function() {
                     xResponse = service.response.getExtendedResponse(xLayout, response);
 
                     // legend set
-                    if (xLayout.type === 'GAUGE' && Ext.Array.contains(xLayout.axisObjectNames, ind) && xLayout.objectNameIdsMap[ind].length) {
+                    if (xLayout.type === 'gauge' && Ext.Array.contains(xLayout.axisObjectNames, dx) && xLayout.dimensionNameIdsMap[dx].length) {
                         Ext.Ajax.request({
-                            url: ns.core.init.contextPath + '/api/indicators/' + xLayout.objectNameIdsMap[ind][0] + '.json?fields=legendSet[legends[id,name,startValue,endValue,color]]',
+                            url: ns.core.init.contextPath + '/api/indicators/' + xLayout.dimensionNameIdsMap[dx][0] + '.json?fields=legendSet[legends[id,name,startValue,endValue,color]]',
                             disableCaching: false,
                             success: function(r) {
                                 legendSet = Ext.decode(r.responseText).legendSet;

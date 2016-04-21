@@ -3900,10 +3900,10 @@ Ext.onReady( function() {
                         series: series,
                         theme: 'Category2',
                         insetPaddingObject: {
-                            top: 20,
-                            right: 2,
-                            bottom: 15,
-                            left: 7
+                            top: 30,
+                            right: appConfig.dashboard ? 2 : 60,
+                            bottom: 20,
+                            left: appConfig.dashboard ? 80 : 7
                         },
                         seriesStyle: {
                             labelColor: labelColor,
@@ -3988,24 +3988,17 @@ Ext.onReady( function() {
 
                     chart.setTitlePosition = function() {
                         if (this.items) {
-                            var title = this.items[0],
-                                subTitle = this.items[1],
-                                titleXFallback = 10;
+                            for (var i = 0, item, itemWidth, itemX, itemXFallback = 10; i < this.items.length; i++) {
+                                item = this.items[i];
 
-                            if (title) {
-                                var titleWidth = Ext.isIE ? title.el.dom.scrollWidth : title.el.getWidth(),
-                                    titleX = titleWidth ? (app.getCenterRegionWidth() / 2) - (titleWidth / 2) : titleXFallback;
-                                title.setAttributes({
-                                    x: titleX
-                                }, true);
-                            }
+                                if (item) {
+                                    itemWidth = Ext.isIE ? item.el.dom.scrollWidth : item.el.getWidth();
+                                    itemX = itemWidth ? (app.getCenterRegionWidth() / 2) - (itemWidth / 2) : itemXFallback;
 
-                            if (subTitle) {
-                                var subTitleWidth = Ext.isIE ? subTitle.el.dom.scrollWidth : subTitle.el.getWidth(),
-                                    subTitleX = subTitleWidth ? (app.getCenterRegionWidth() / 2) - (subTitleWidth / 2) : titleXFallback;
-                                subTitle.setAttributes({
-                                    x: subTitleX
-                                }, true);
+                                    item.setAttributes({
+                                        x: itemX
+                                    }, true);
+                                }
                             }
                         }
                     };
