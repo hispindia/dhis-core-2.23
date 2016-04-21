@@ -169,6 +169,7 @@ public class Map
                 longitude = map.getLongitude();
                 latitude = map.getLatitude();
                 zoom = map.getZoom();
+                basemap = map.getBasemap();
             }
             else if ( mergeMode.isMerge() )
             {
@@ -176,6 +177,7 @@ public class Map
                 longitude = map.getLongitude() == null ? longitude : map.getLongitude();
                 latitude = map.getLatitude() == null ? latitude : map.getLatitude();
                 zoom = map.getZoom() == null ? zoom : map.getZoom();
+                basemap = map.getBasemap() == null ? basemap : map.getBasemap();
             }
 
             mapViews.clear();
